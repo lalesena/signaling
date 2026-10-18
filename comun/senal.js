@@ -1,4 +1,4 @@
-// Senal: biblioteca de procesamiento de señales del curso «Señales, de 0 a experto» (Ena en Curso).
+// Senal: biblioteca de procesamiento de señales del curso «Señales, desde cero» (Ena en Curso).
 // Script clásico y sin dependencias: en el navegador define la global Senal; en Node, module.exports.
 // Convenios (detalle y ejemplos en SENAL.md):
 //   - señales en Float64Array; fs en Hz, tiempos en s y frecuencias en Hz;

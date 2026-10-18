@@ -1,9 +1,9 @@
-// Temario del curso web «Señales, de 0 a experto» (Ena en Curso).
+// Temario del curso web «Señales, desde cero» (Ena en Curso).
 // Sale del mapa de la «00 — Guía de la serie» (§ 1, § 3 y § 8). Lo usan la portada, la barra de cada lección,
 // los enlaces «anterior / siguiente», los exámenes y el glosario. Si cambia un título, se cambia aquí.
 (function (raiz) {
   const TEMARIO = {
-    titulo: 'Señales, de 0 a experto',
+    titulo: 'Señales, desde cero',
     subtitulo: 'Un curso visual de procesamiento de señales, de la noria al sincrosqueezing',
     autor: 'Ena en Curso',
 

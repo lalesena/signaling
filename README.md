@@ -1,4 +1,4 @@
-# Señales, de 0 a experto
+# Señales, desde cero
 
 Curso interactivo de procesamiento de señales del canal de YouTube **Ena en Curso**: 21 lecciones, de la noria al
 sincrosqueezing, con retos, un laboratorio para analizar tu propia voz y exámenes.

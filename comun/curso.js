@@ -1,4 +1,4 @@
-// Curso: el núcleo de interfaz del curso web «Señales, de 0 a experto» (Ena en Curso).
+// Curso: el núcleo de interfaz del curso web «Señales, desde cero» (Ena en Curso).
 // Script clásico (sin módulos): define la global Curso. Necesita TEMARIO (comun/temario.js) y Graficas
 // (comun/graficas.js); usa Senal (comun/senal.js), si está, para los ejemplos sintéticos del laboratorio de voz.
 //

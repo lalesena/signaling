@@ -1,4 +1,4 @@
-// Graficas: lienzos y dibujo de gráficas del curso «Señales, de 0 a experto» (Ena en Curso).
+// Graficas: lienzos y dibujo de gráficas del curso «Señales, desde cero» (Ena en Curso).
 // Script clásico (sin módulos): define la global Graficas. No depende de Curso ni de Senal.
 //
 // Convenios:

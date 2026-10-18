@@ -1,10 +1,10 @@
-// Syllabus of the web course “Signals, from Zero to Expert” (Ena en Curso).
+// Syllabus of the web course “Signals, from the ground up” (Ena en Curso).
 // English version of comun/temario.js. It comes from the map in the “00 — Guía de la serie” (§ 1, § 3 and § 8).
 // The home page, the bar of each lesson, the previous / next links, the quizzes, and the glossary use it.
 // If a title changes, it changes here. Do not change the id, n, nivel, temporada, or ruta fields.
 (function (raiz) {
   const TEMARIO = {
-    titulo: 'Signals, from Zero to Expert',
+    titulo: 'Signals, from the ground up',
     subtitulo: 'A visual course in signal processing, from the Ferris wheel to synchrosqueezing',
     autor: 'Ena en Curso',
 
