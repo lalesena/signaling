@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exámenes · Señales, de 0 a experto</title>
+<meta name="description" content="Exámenes del curso «Señales, de 0 a experto»: uno al final de cada temporada, con dos preguntas de cada lección, y un examen final con una pregunta de cada lección. Se aprueba con el 70 % y se guarda tu mejor nota.">
+<link rel="stylesheet" href="comun/fuentes.css">
+<link rel="stylesheet" href="comun/estilo.css">
+<style>
+/* Exámenes: estilos propios. El examen en sí (preguntas, marcador, nota y sello) lo pinta y lo estiliza Curso.examen. */
+.exa .exa-intro { max-width: var(--col); margin: 1.4rem 0 0; color: var(--texto-suave); }
+.exa .secciones { margin-top: 2.2rem; }
+
+.exa .sec-examen { margin-top: 0.9rem; background: var(--superficie); border: 1px solid var(--linea); border-radius: 14px; box-shadow: var(--sombra); }
+.exa .sec-examen[open] { border-color: var(--linea-fuerte); }
+.exa .sec-examen > summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "kicker" "titulo" "meta" "lado";
+  gap: 0.15rem 1rem;
+  align-items: center;
+  padding: 1.05rem 1.1rem 1.1rem;
+  border-radius: 14px;
+  list-style: none;
+  cursor: pointer;
+}
+.exa .sec-examen > summary::-webkit-details-marker { display: none; }
+.exa .sec-examen[open] > summary { border-bottom: 1px dashed var(--linea-fuerte); border-radius: 14px 14px 0 0; }
+.exa .se-kicker { grid-area: kicker; font: 500 var(--t-1)/1.3 var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--acento); }
+.exa .se-titulo { grid-area: titulo; margin: 0.1rem 0 0.15rem; font-size: 1.32rem; line-height: 1.2; }
+.exa .se-meta { grid-area: meta; font: 400 var(--t-1)/1.4 var(--f-mono); color: var(--texto-tenue); }
+.exa .se-lado { grid-area: lado; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; margin-top: 0.65rem; }
+.exa .pliegue { font: 500 var(--t-1)/1 var(--f-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--acento); white-space: nowrap; }
+.exa .pliegue::after { content: 'Abrir +'; }
+.exa .sec-examen[open] .pliegue::after { content: 'Cerrar −'; }
+.exa .sec-examen > summary:hover .se-titulo { color: var(--acento); }
+@media (min-width: 40rem) {
+  .exa .sec-examen > summary { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "kicker lado" "titulo lado" "meta lado"; padding: 1.15rem 1.3rem 1.2rem; }
+  .exa .se-lado { flex-direction: column; align-items: flex-end; justify-content: center; margin-top: 0; }
+}
+.exa .se-cuerpo { padding: 1.15rem 1.1rem 1.3rem; }
+@media (min-width: 40rem) { .exa .se-cuerpo { padding: 1.25rem 1.3rem 1.4rem; } }
+.exa .se-cierre { margin: 0 0 1rem; color: var(--texto-suave); }
+.exa .se-cierre b { font: 500 var(--t-1)/1 var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--texto-tenue); margin-right: 0.5rem; }
+.exa .se-lecciones { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 1.1rem; padding: 0; list-style: none; }
+.exa .se-lecciones li { margin: 0; }
+.exa .se-lecciones a, .exa .se-lecciones .prep { display: inline-flex; align-items: baseline; gap: 0.45rem; padding: 0.32rem 0.65rem; border: 1px solid var(--linea); border-radius: 8px; background: var(--superficie-2); font: 400 var(--t-1)/1.25 var(--f-mono); color: var(--texto-suave); text-decoration: none; }
+.exa .se-lecciones a:hover { border-color: var(--acento); color: var(--texto); }
+.exa .se-lecciones b { font-weight: 600; color: var(--acento); }
+.exa .se-lecciones .prep { border-style: dashed; color: var(--texto-tenue); }
+.exa .se-cuerpo > .nota { margin: 0 0 1.1rem; }
+.exa .se-vacio { margin: 0; color: var(--texto-suave); font-size: var(--t-3); line-height: 1.55; }
+
+/* El estado, como pastilla: sin hacer · mejor nota sin aprobar · aprobado · en preparación */
+.exa .estado { display: inline-flex; align-items: center; padding: 0.26rem 0.6rem; border: 1px solid var(--linea-fuerte); border-radius: 999px; font: 500 var(--t-0)/1.2 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--texto-tenue); white-space: nowrap; }
+.exa .estado.intento { border-color: var(--acento); color: var(--acento); }
+.exa .estado.superada { border-color: var(--c-senal); background: var(--senal-suave); color: var(--senal-texto); }
+.exa .estado.prep { border-style: dashed; }
+
+.pie.pie-exa .pie-nav:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.pie.pie-exa .pie-nav a[aria-current="page"] { color: var(--texto); font-weight: 600; text-decoration: none; }
+</style>
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body>
+<main class="leccion exa" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Cuatro temporadas y un final</p>
+    <h1>Exámenes</h1>
+    <p class="exa-intro">Al terminar cada temporada hay un examen con dos preguntas de cada lección, y al final del curso, uno con una pregunta de cada lección. Las preguntas se sacan al azar de los bancos de las lecciones, cada una explica por qué, aciertes o no, y se aprueba con el 70 %. Puedes repetirlos cuando quieras, y se guarda tu mejor nota en este navegador.</p>
+  </header>
+
+  <div class="secciones" id="secciones"><noscript><p class="nota">Los exámenes se montan con JavaScript, que ahora mismo está desactivado.</p></noscript></div>
+
+</main>
+
+<footer class="pie pie-exa">
+  <div class="pie-interior">
+    <nav class="pie-nav" aria-label="Páginas del curso">
+      <a href="index.html">Mapa del curso</a>
+      <a href="glosario.html">Glosario</a>
+      <a href="examenes.html" aria-current="page">Exámenes</a>
+    </nav>
+    <p class="pie-creditos">Señales, de 0 a experto · Ena en Curso · Alejandro Ena. Tu progreso se guarda solo en este navegador.</p>
+  </div>
+</footer>
+
+<script src="comun/temario.js"></script>
+<script src="comun/graficas.js"></script>
+<script src="comun/senal.js"></script>
+<script src="comun/curso.js"></script>
+<script src="datos/e01.js"></script>
+<script src="datos/e02.js"></script>
+<script src="datos/e03.js"></script>
+<script src="datos/e04.js"></script>
+<script src="datos/e05.js"></script>
+<script src="datos/e06.js"></script>
+<script src="datos/e07.js"></script>
+<script src="datos/e08.js"></script>
+<script src="datos/e09.js"></script>
+<script src="datos/e10.js"></script>
+<script src="datos/e11.js"></script>
+<script src="datos/e12.js"></script>
+<script src="datos/e13.js"></script>
+<script src="datos/e14.js"></script>
+<script src="datos/e15.js"></script>
+<script src="datos/e16.js"></script>
+<script src="datos/e17.js"></script>
+<script src="datos/e18.js"></script>
+<script src="datos/e19.js"></script>
+<script src="datos/e20.js"></script>
+<script src="datos/e21.js"></script>
+<script>
+// Exámenes · Señales, de 0 a experto.
+// Una sección por temporada (#t1 … #t4) y otra para el final (#final), todas montadas con Curso.examen sobre los
+// bancos de datos/eNN.js. Si falta el banco de alguna lección, esa lección sale como «en preparación»:
+//   - sin ninguna lección lista, la sección no tiene examen;
+//   - con algunas, se ofrece una prueba provisional con las que hay, que se guarda aparte (clave «t1-parcial») para
+//     que un examen a medias no cuente como aprobado el de la temporada.
+// La nota mínima es el 70 %; el mejor resultado de cada examen lo guarda Curso.progreso.
+(function () {
+  'use strict';
+  const T = TEMARIO, crear = Curso.crear, num = Curso.num;
+  const $ = id => document.getElementById(id);
+  const APROBADO = 0.7;
+  const plural = (n, uno, varios) => num(n) + ' ' + (n === 1 ? uno : varios);
+  const unir = partes => (partes.length < 2 ? partes.join('') : partes.slice(0, -1).join(', ') + ' y ' + partes[partes.length - 1]);
+  function rangos(ns) {
+    const partes = [];
+    for (let i = 0; i < ns.length;) {
+      let j = i;
+      while (j + 1 < ns.length && ns[j + 1] === ns[j] + 1) j++;
+      if (j - i >= 2) partes.push(ns[i] + ' a ' + ns[j]); else for (let k = i; k <= j; k++) partes.push(String(ns[k]));
+      i = j + 1;
+    }
+    return unir(partes);
+  }
+  const numeros = ids => ids.map(id => T.porId[id].n);
+
+  // Las preguntas que una lección puede aportar a un examen de temporada o al final
+  const banco = id => { const d = Curso.datosDe(id); return d && Array.isArray(d.preguntas) ? d.preguntas.filter(p => p && p.temporada !== false) : []; };
+
+  const EXAMENES = [
+    ...T.temporadas.map(t => ({ clave: t.id, kicker: 'Temporada ' + t.n, titulo: t.titulo, cierre: t.cierre, lecciones: t.lecciones, por: 2 })),
+    { clave: 'final', kicker: 'Al terminar el curso', titulo: 'Examen final', cierre: null, lecciones: T.lecciones.map(l => l.id), por: 1 },
+  ];
+  for (const x of EXAMENES) {
+    x.preguntas = x.por * x.lecciones.length;
+    x.listas = x.lecciones.filter(id => banco(id).length >= x.por);
+    x.faltan = x.lecciones.filter(id => !x.listas.includes(id));
+    x.completa = !x.faltan.length;
+  }
+
+  // El estado, con la nota del examen de la temporada (o del final) y no con la de una prueba provisional
+  function estado(x) {
+    if (!x.completa) return { clave: 'prep', corto: 'En preparación', largo: x.listas.length ? 'Faltan lecciones por escribir' : 'Todavía no hay preguntas' };
+    const p = Curso.progreso.examen(x.clave);
+    if (!p) return { clave: 'sin', corto: 'Sin hacer', largo: 'Todavía no has hecho este examen' };
+    const nota = p.mejorAciertos != null && p.total ? p.mejorAciertos + ' de ' + p.total : num(Math.round((p.mejor || 0) * 100)) + ' %';
+    return p.aprobado ? { clave: 'superada', corto: 'Aprobado · ' + nota, largo: 'Aprobado con tu mejor nota, ' + nota }
+      : { clave: 'intento', corto: 'Mejor nota · ' + nota, largo: 'Todavía sin aprobar; tu mejor nota es ' + nota };
+  }
+  function pintarEstado(x) {
+    const chip = document.querySelector('#' + x.clave + ' .estado'), e = estado(x);
+    if (!chip) return;
+    chip.className = 'estado ' + e.clave;
+    chip.textContent = e.corto;
+    chip.title = e.largo;
+  }
+
+  function seccion(x) {
+    const lecciones = crear('ul', { class: 'se-lecciones', 'aria-label': 'Lecciones del examen' });
+    for (const id of x.lecciones) {
+      const l = T.porId[id];
+      lecciones.appendChild(crear('li', {}, x.listas.includes(id)
+        ? crear('a', { href: id + '.html', title: l.titulo }, crear('b', {}, String(l.n)), l.corto)
+        : crear('span', { class: 'prep', title: 'Esta lección está en preparación' }, crear('b', {}, String(l.n)), l.corto + ' · en preparación')));
+    }
+    const montaje = crear('div', { class: 'se-examen', id: 'examen-' + x.clave });
+    const cuerpo = crear('div', { class: 'se-cuerpo' },
+      x.cierre ? crear('p', { class: 'se-cierre' }, crear('b', {}, 'Al terminar'), crear('i', {}, '«' + x.cierre + '»')) : null,
+      lecciones);
+    if (x.listas.length && !x.completa) {
+      cuerpo.appendChild(crear('aside', { class: 'nota' }, crear('span', { class: 'antetitulo' }, 'Examen provisional'),
+        crear('p', {}, 'Faltan ' + (x.faltan.length === 1 ? 'la lección ' : 'las lecciones ') + rangos(numeros(x.faltan)) + ', que ' + (x.faltan.length === 1 ? 'está' : 'están') + ' en preparación. Mientras tanto puedes probar con '
+          + (x.listas.length === 1 ? 'la lección ' : 'las lecciones ') + rangos(numeros(x.listas)) + '; esta prueba no cuenta como el examen de la ' + (x.clave === 'final' ? 'final del curso.' : 'temporada.'))));
+    }
+    cuerpo.appendChild(montaje);
+    const sec = crear('details', { class: 'sec-examen', id: x.clave },
+      crear('summary', {},
+        crear('span', { class: 'se-kicker' }, x.kicker),
+        crear('h2', { class: 'se-titulo' }, x.titulo),
+        crear('span', { class: 'se-meta' }, (x.clave === 'final' ? plural(x.lecciones.length, 'lección', 'lecciones') : 'Lecciones ' + rangos(numeros(x.lecciones))) + ' · ' + plural(x.preguntas, 'pregunta', 'preguntas')),
+        crear('span', { class: 'se-lado' }, crear('span', { class: 'estado' }), crear('span', { class: 'pliegue', 'aria-hidden': 'true' }))),
+      cuerpo);
+    $('secciones').appendChild(sec);
+    if (x.listas.length) {
+      Curso.examen(montaje, {
+        lecciones: x.listas, porLeccion: x.por, n: x.por * x.listas.length, aprobado: APROBADO,
+        clave: x.completa ? x.clave : x.clave + '-parcial',
+        titulo: !x.completa ? 'Prueba provisional con ' + (x.listas.length === 1 ? 'la lección ' : 'las lecciones ') + rangos(numeros(x.listas)) + ': ' + plural(x.por * x.listas.length, 'pregunta', 'preguntas') + ', sacadas al azar. No cuenta para tu progreso.'
+          : x.clave === 'final' ? 'Una pregunta de cada lección del curso, sacada al azar de su banco. Cambian en cada intento y cada una explica por qué.'
+          : 'Dos preguntas de cada lección de la temporada, sacadas al azar de sus bancos. Cambian en cada intento y cada una explica por qué.',
+      });
+    } else {
+      montaje.appendChild(crear('p', { class: 'se-vacio' }, 'Este examen se abrirá cuando las lecciones tengan sus preguntas.'));
+    }
+    pintarEstado(x);
+  }
+
+  // Un enlace como examenes.html#t2 abre ese examen. Las secciones se montan con JavaScript, así que se hace a mano.
+  function abrirDelHash() {
+    const id = decodeURIComponent((location.hash || '').slice(1));
+    const sec = id && EXAMENES.some(x => x.clave === id) ? $(id) : null;
+    if (!sec) return;
+    sec.open = true;
+    sec.scrollIntoView({ block: 'start' });
+  }
+
+  for (const x of EXAMENES) seccion(x);
+  Curso.on('examen', clave => { const x = EXAMENES.find(e => e.clave === clave); if (x) pintarEstado(x); });
+  abrirDelHash();
+  window.addEventListener('hashchange', abrirDelHash);
+})();
+</script>
+</body>
+</html>

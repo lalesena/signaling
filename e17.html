@@ -1,0 +1,1025 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cuando suenan varias norias a la vez · Señales</title>
+<meta name="description" content="Lección 17 del curso visual «Señales, de 0 a experto»: cómo separar varias norias de una sola onda con la descomposición empírica en modos, hasta dónde llega y por qué se lía, con seis retos y tu propia voz.">
+<link rel="stylesheet" href="comun/fuentes.css">
+<link rel="stylesheet" href="comun/estilo.css">
+<style>
+  /* Tres paneles lado a lado en el reto 3 (se apilan en el móvil). */
+  .tres-paneles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.8rem; }
+  @media (max-width: 860px) { .tres-paneles { grid-template-columns: minmax(0, 1fr); } }
+</style>
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e17">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Nivel 5 · Lección 17</p>
+    <h1>Cuando suenan varias norias a la vez</h1>
+    <aside class="pregunta">
+      <p>En un coro, cada voz lleva su nota y todas cambian a la vez, pero el micrófono solo recoge la suma: una única onda que sube y baja. La <a href="e16.html">lección 16</a> dejó claro que la frecuencia instantánea solo cuenta una historia limpia cuando hay una sola noria, y un coro está hecho de muchas. ¿Se pueden separar las voces a partir de una sola grabación?</p>
+    </aside>
+    <ul class="meta"><li>Unos 50 minutos</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>La idea en una imagen</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>La señal de arriba es la suma de tres capas: una noria rápida cuyo tamaño respira, otra más lenta y una tendencia que apenas se mueve. Pela una capa tras otra y verás cómo cada una baja a su propia fila, mientras arriba queda lo que falta por pelar. Las capas están calculadas sobre esta misma señal, con el método de esta lección.</figcaption>
+    </figure>
+    <p>En la <a href="e03.html">lección 3</a> un sonido era una pila de norias, los epiciclos, cada una con su tamaño y su velocidad. Aquí cada noria puede además cambiar de tamaño y de velocidad mientras gira, siempre que lo haga despacio comparado con su propio giro. A cada una de esas norias la llamaremos <b class="termino" data-termino="Modo (componente)">modo</b>, y a una señal hecha de varias, <b class="termino" data-termino="Señal multicomponente">señal multicomponente</b>. El problema del coro es sacar los modos de una suma sin saber de antemano cuántos hay ni a qué frecuencia suenan.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Paso a paso</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>Las dos cuerdas</h3>
+      <p>El método de esta lección pela la señal como una cebolla, de la capa más rápida a la más lenta, y solo usa los picos y los valles de la propia señal. Se llama <b class="termino" data-termino="Descomposición empírica en modos (EMD)">descomposición empírica en modos</b>, y la publicó en 1998 Norden Huang, que trabajaba en el centro Goddard de la NASA, junto con ocho colegas. La palabra empírica quiere decir que no se decide de antemano qué frecuencias buscar: las capas salen de la señal que tienes delante.</p>
+      <p>El primer gesto es unir todos los máximos con una curva suave, como una cuerda tensa por encima de la onda, y todos los mínimos con otra por debajo. Esas dos curvas son las <b class="termino" data-termino="Envolventes de picos y valles">envolventes</b>, y la línea que va justo por el medio de las dos es la parte lenta de la señal, la que la onda rápida va cabalgando. Para tensar las cuerdas hay que encontrar los picos y los valles, que no siempre son tan evidentes como parecen, porque un máximo es un punto más alto que sus dos vecinos aunque esté por debajo del cero.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Toca cada máximo y cada mínimo de la señal, o muévete entre ellos con las flechas del teclado y marca con Intro. Cuando tengas todos los de una familia aparecerá su cuerda, y cuando estén las dos, la línea del medio.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="fila" id="r1-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>Pelar una capa: el tamizado</h3>
+      <p>Restar a la señal esa línea del medio la deja más centrada, aunque todavía no del todo: al quitar la media, las envolventes cambian y la nueva línea del medio ya no es exactamente cero. Se repite, y cada vuelta se llama <b class="termino">tamizado</b>, como el de la harina, que deja pasar lo fino y retiene lo grueso. Cuando la línea del medio ya casi no se mueve, lo que queda es la primera capa, la más rápida, que cumple lo que Huang llamó <b class="termino" data-termino="Función de modo intrínseco (IMF)">función de modo intrínseco</b>: tiene tantos picos y valles como cruces por el cero, o uno de diferencia, y sus dos envolventes son simétricas respecto al cero. Puede cambiar de tamaño y de velocidad, y no tiene por qué ser una onda fija.</p>
+      <p>La capa se resta de la señal y con lo que queda se vuelve a empezar, hasta que solo sobra una tendencia sin vaivenes, el <b class="termino">residuo</b>, que es el corazón de la cebolla. Como cada capa se resta de lo que queda, la suma de todas las capas y el residuo devuelve la señal exacta; lo que nadie garantiza es que cada capa signifique algo.</p>
+      <p>Falta saber cuándo parar, y para eso hay un <b class="termino" data-termino="Criterio de parada">criterio de parada</b>. Si se tamiza de más, la capa pierde sus subidas y bajadas de volumen y acaba siendo una onda de tamaño constante, y el propio Huang avisaba de no pasarse. Rilling, Flandrin y Gonçalvès (2003) proponen comparar la línea del medio con el tamaño de la capa, y mucha gente se conforma con un número fijo de pasadas, unas diez, que es una costumbre más que una regla. Si a cada capa se le aplica después la señal analítica de la <a href="e16.html">lección 16</a>, su radio y su velocidad dibujan un mapa de tiempo y frecuencia, el <b class="termino" data-termino="Espectro de Hilbert">espectro de Hilbert</b>, y los dos pasos juntos se llaman <b class="termino" data-termino="Transformada de Hilbert-Huang">transformada de Hilbert-Huang</b>. En el laboratorio de esta lección dibujarás uno.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Pulsa «Tamizar» hasta que la línea del medio sea menor que el 5&nbsp;% del tamaño de la capa durante al menos el 95&nbsp;% del tiempo, y no pase del 50&nbsp;% en ningún momento.</p>
+        <div class="escena" id="r2-escena"></div>
+        <div class="fila" id="r2-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>¿Una noria o dos?</h3>
+      <p>¿Qué pasa cuando las dos norias son casi iguales? Dos notas muy cercanas, por ejemplo de 1.000 y de 1.100 Hz, suenan como una sola nota que late, es decir, como un batido. La suma no tiene entonces dos familias de picos que separar, sino una sola con el volumen subiendo y bajando, y el método hace lo mismo que el oído: se queda con una noria que late. Rilling y Flandrin titularon su estudio de 2008 «¿Una frecuencia o dos?», y es exactamente esta pregunta.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Escucha cada pareja de notas y decide si el método verá una noria que late o dos norias. Después de elegir, se enseña lo que sacó de cada una.</p>
+        <div class="tres-paneles" id="r3-paneles"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>La regla de la octava</h3>
+      <p>El límite tiene número. Con dos norias del mismo tamaño y diez pasadas de tamizado, el método solo las separa si la lenta gira a menos de unos dos tercios de la velocidad de la rápida, y en la práctica el margen cómodo es más estrecho, alrededor de la mitad, que es una octava. Rilling y Flandrin (2008) lo demostraron: por encima de ese cociente es imposible separarlas, sea cual sea la diferencia de tamaño. Y si la lenta es mucho más grande que la rápida, el límite baja todavía más. Huang reconocía en su artículo de 1998 que esta es quizá la mayor limitación del método.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Sube la noria lenta todo lo que puedas sin que la separación se estropee: el primer modo tiene que seguir pareciéndose a la noria rápida de 1.000 Hz, con un error menor del 20&nbsp;%. Escucha el modo 1 mientras subes.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="mandos" id="r4-mandos"></div>
+        <div class="fila" id="r4-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>Cuando la lenta es mucho más grande</h3>
+      <p>El tamaño también cuenta. Si la noria lenta es mucho mayor que la rápida, la mayoría de los máximos de la suma son suyos, y los de la rápida se pierden entre ellos. Un caso de investigación lo ilustra bien: un radar apuntado al pecho mide su vaivén, que lleva la respiración, lenta y grande, y encima el latido, rápido y diminuto. Según Hu y Jin (2016), el corazón desplaza el pecho unos 0,6 milímetros y la respiración, entre 12 milímetros y varios centímetros, y por eso los trabajos de este campo usan variantes mejoradas del método o filtros previos.</p>
+      <p>Aquí todo es sintético: un pecho de mentira con 72 latidos y 15 respiraciones por minuto, que es un juego y no un instrumento médico. Las velocidades están de sobra por debajo de la octava, porque el latido va unas cinco veces más deprisa que la respiración, así que el único problema es el tamaño.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Sube el tamaño de la respiración, de 0,5 a 20 veces el del latido, hasta el máximo con el que el primer modo todavía se parece al latido, con un error menor del 20&nbsp;%.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>La mezcla de modos y sus remedios</h3>
+      <p>Queda un fallo, y es el más conocido. Cuando una oscilación aparece y desaparece, una capa termina mezclando escalas distintas: mientras suena el pitido rápido, la primera capa lo lleva, y cuando calla, esa misma capa recoge lo siguiente más rápido que encuentra, que es la onda lenta. Eso es la <b class="termino" data-termino="Mezcla de modos">mezcla de modos</b>, y Huang ya la advertía en 1998.</p>
+      <p>El remedio más conocido es la <b class="termino" data-termino="EEMD">EEMD</b>, de Wu y Huang (2009). Se hace la descomposición muchas veces, cada una sobre una copia de la señal con un ruido distinto, y se promedian las capas. El ruido pone norias de todas las velocidades por todas partes, de modo que cada escala encuentra su capa, y al promediar el ruido se anula, igual que promediar bajaba el ruido de un espectro en la <a href="e10.html">lección 10</a>. Otras alternativas cambian de estrategia: la EWT de Gilles (2013) reparte el espectro en tramos con filtros wavelet, y la <b class="termino" data-termino="VMD">VMD</b> de Dragomiretskiy y Zosso (2014) saca todas las capas a la vez, cada una estrecha alrededor de su frecuencia, aunque hay que decirle de antemano cuántas.</p>
+      <p>Ninguna separa norias que se cruzan. La descomposición empírica se define por un algoritmo y no por un modelo matemático que garantice qué saldrá, y tampoco sabe qué es una voz o un piano: las herramientas que hoy separan la voz de una canción han aprendido de muchas canciones cómo suena cada instrumento. Para separar con garantías hay que mirar lo que el espectrograma tira a la basura, la fase, y de eso trata la <a href="e18.html">lección 18</a>.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">Una onda lenta lleva dos pitidos rápidos que aparecen y desaparecen. Consigue que una capa lleve los pitidos sin colar la onda lenta (menos del 5&nbsp;%) y que se parezca a los pitidos (error menor de 0,5). Prueba primero con la descomposición sola y luego con la repetida con ruido.</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>En tu voz</h2>
+    <p><b>Qué grabar.</b> El tramo de la grabación de referencia de la serie en que dos personas silban a la vez, una subiendo y otra bajando (tramo 8). Si estás solo, graba un silbido que sube y baja con el micrófono y luego otro que baje y suba, o prueba con los ejemplos sintéticos. Con el micrófono bloqueado, sube un audio grabado con el móvil.</p>
+    <p><b>Qué mirar.</b> Arriba, el espectrograma de la suma, y debajo, el espectro de Hilbert: la frecuencia instantánea de cada una de las primeras capas, más gruesa cuando su volumen es mayor. Con silbidos que empiezan muy lejos, el primer modo sigue al más agudo y el segundo al más grave al principio y al final, y hacia el cruce el primero lleva los dos y suena a batido. Si en tu grabación los silbidos no se alejan más de una octava, el método no los separa en ningún momento: es su límite, no un fallo de tu grabación. Con tu «aaa», ninguna capa es tu nota: la primera se lleva los armónicos más altos y las siguientes van bajando, más o menos de octava en octava.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>Lo que tienes que recordar</h2>
+    <ol class="tres">
+      <li>Un sonido real es una suma de modos, norias cuyo tamaño y velocidad cambian despacio. La descomposición empírica los pela de la capa más rápida a la más lenta usando solo los picos y los valles, y la suma de las capas y el residuo devuelve la señal exacta.</li>
+      <li>Solo separa dos norias si la lenta gira a menos de entre la mitad y los dos tercios de la velocidad de la rápida y no es mucho más grande. Más cerca, ve una sola noria que late, igual que el oído oye un batido.</li>
+      <li>Es un algoritmo sin teoría que lo respalde: mezcla los modos cuando algo aparece y desaparece, se tuerce en los bordes y depende del criterio de parada. La EEMD, la EWT y la VMD lo mejoran, pero ninguna separa norias que se cruzan, y para eso hay que mirar la fase.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Errores típicos</h2>
+    <ul class="errores">
+      <li><b>«Cada capa es un instrumento o una persona.»</b> Las capas separan por escalas de oscilación. Una voz con armónicos se reparte en varias capas, y dos fuentes a menos de una octava caen en la misma.</li>
+      <li><b>«Un modo es una frecuencia fija.»</b> Un modo puede cambiar de tamaño y de frecuencia, mientras no lo haga demasiado deprisa. Huang lo decía así: puede estar modulado en amplitud y en frecuencia.</li>
+      <li><b>«Cuantas más pasadas de tamizado, mejor.»</b> Con demasiadas, la capa pierde sus cambios de volumen y se queda en una onda de tamaño constante. Hay que parar con un criterio.</li>
+      <li><b>«Separa cualquier par de notas distintas.»</b> Solo si la lenta va a menos de entre la mitad y los dos tercios de la rápida y no es mucho más fuerte. Con 1.000 y 1.300 Hz no las separa nunca.</li>
+      <li><b>«El primer modo es el ruido y se tira.»</b> El primer modo es lo más rápido que hay en la señal. Puede ser ruido o puede ser lo que buscas, como el latido del ejemplo del radar.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Abrir</span>
+      <h2>Rincón matemático</h2>
+      <span class="resumen">Las fórmulas, para quien las quiera. Cada una va después de su lectura en palabras.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>El modelo</h3>
+      <p>La señal es una suma de norias, cada una con un radio y una velocidad que cambian despacio, más una tendencia:</p>
+      <div class="tex">x(t) = \sum_{k=1}^{K} a_k(t)\,\cos\theta_k(t) + r(t), \qquad f_k(t) = \frac{\theta_k'(t)}{2\pi}</div>
+
+      <h3>Las dos condiciones de un modo</h3>
+      <p>Un modo tiene tantos extremos como cruces por cero, o uno de diferencia, y la media de sus dos envolventes es cero:</p>
+      <div class="tex">\left|N_{\text{extremos}} - N_{\text{ceros}}\right| \le 1, \qquad m(t) = \frac{e_{\max}(t) + e_{\min}(t)}{2} = 0</div>
+
+      <h3>Una pasada de tamizado</h3>
+      <p>A lo que tienes, réstale la media de sus dos envolventes:</p>
+      <div class="tex">h_{j+1}(t) = h_j(t) - \frac{e_{\max}^{(j)}(t) + e_{\min}^{(j)}(t)}{2}</div>
+
+      <h3>Cuándo parar: el criterio de Huang</h3>
+      <p>Se compara cada pasada con la anterior y se para cuando el cambio relativo acumulado baja de un valor típico entre 0,2 y 0,3:</p>
+      <div class="tex">\mathrm{SD} = \sum_{t} \frac{\left|h_{k-1}(t) - h_k(t)\right|^2}{h_{k-1}^2(t)}</div>
+
+      <h3>Cuándo parar: los dos umbrales</h3>
+      <p>La media tiene que ser pequeña comparada con el tamaño del modo: menor que un umbral pequeño casi todo el tiempo y menor que otro mayor en todo momento (Rilling, Flandrin y Gonçalvès, 2003, con valores típicos de 0,05 para el primero, 0,5 para el segundo y 0,05 para la fracción de tiempo que se perdona):</p>
+      <div class="tex">a(t) = \frac{e_{\max}(t) - e_{\min}(t)}{2}, \qquad \sigma(t) = \left|\frac{m(t)}{a(t)}\right|, \qquad \sigma < \theta_1 \ \text{en}\ (1-\alpha)\ \text{del tiempo}, \quad \sigma < \theta_2 \ \text{siempre}</div>
+
+      <h3>La descomposición completa</h3>
+      <p>Cada modo se quita de lo que queda y al final todo suma la señal:</p>
+      <div class="tex">x(t) = \sum_{i=1}^{n} c_i(t) + r_n(t)</div>
+
+      <h3>El espectro de Hilbert</h3>
+      <p>A cada modo se le calcula su señal analítica, y su radio y su velocidad dibujan el mapa de tiempo y frecuencia:</p>
+      <div class="tex">c_i(t) + i\,\mathcal{H}[c_i](t) = a_i(t)\,e^{i\theta_i(t)}, \qquad f_i(t) = \frac{1}{2\pi}\,\frac{d\theta_i}{dt}</div>
+
+      <h3>Dos norias y su límite</h3>
+      <p>Con una noria rápida de tamaño 1 y otra lenta de tamaño <span class="tex">a</span> y velocidad relativa <span class="tex">f</span>:</p>
+      <div class="tex">x(t) = \cos 2\pi t + a\,\cos(2\pi f t + \varphi), \qquad 0 &lt; f &lt; 1</div>
+      <p>Los extremos de la suma son los de la rápida si <span class="tex">a f</span> es menor que 1, y los de la lenta si <span class="tex">a f^2</span> es mayor que 1. Con diez pasadas, por encima de <span class="tex">f \approx 0{,}67</span> no hay separación, sea cual sea <span class="tex">a</span> (Rilling y Flandrin, 2008):</p>
+      <div class="tex">a f &lt; 1 \Rightarrow \text{extremos de la rápida}, \qquad a f^2 &gt; 1 \Rightarrow \text{extremos de la lenta}</div>
+
+      <h3>La EEMD</h3>
+      <p>Cada modo final es la media de los modos de <span class="tex">I</span> copias con ruido distinto, y el ruido que queda baja con la raíz de <span class="tex">I</span>:</p>
+      <div class="tex">\mathrm{IMF}_k = \frac{1}{I}\sum_{i=1}^{I}\mathrm{IMF}_k\!\left[x + w_i\right], \qquad \text{ruido residual} \propto \frac{\varepsilon}{\sqrt{I}}</div>
+
+      <h3>La VMD</h3>
+      <p>Busca <span class="tex">K</span> modos que sumen la señal y que, bajados a frecuencia cero alrededor de su centro, cambien lo menos posible (Dragomiretskiy y Zosso, 2014):</p>
+      <div class="tex">\min_{\{u_k\},\{\omega_k\}} \sum_{k} \left\| \partial_t\!\left[\left(\delta(t) + \frac{i}{\pi t}\right) * u_k(t)\right] e^{-i\omega_k t} \right\|_2^2 \quad \text{sujeto a} \quad \sum_k u_k = x</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Para saber más</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Artículo abierto · inglés</span>Rilling, G. y Flandrin, P. (2008). <a href="https://hal.science/ensl-00113834"><i>One or two frequencies? The empirical mode decomposition answers</i></a>. El estudio de cuándo separa el método dos tonos, con las figuras de las zonas en que lo consigue y en que no.</li>
+      <li><span class="tipo">Artículo abierto · inglés</span>Rilling, G., Flandrin, P. y Gonçalvès, P. (2003). <a href="https://perso.ens-lyon.fr/patrick.flandrin/NSIP03.pdf"><i>On empirical mode decomposition and its algorithms</i></a>. Cinco páginas con el tamizado, los bordes y el criterio de parada de los dos umbrales.</li>
+      <li><span class="tipo">Documentación · inglés</span>Documentación del paquete <code>emd</code> de Python, <a href="https://emd.readthedocs.io/en/stable/emd_tutorials/01_sifting/emd_tutorial_01_sift_02_siftindetail.html">«The sift in detail»</a>. El tamizado paso a paso, con las envolventes dibujadas.</li>
+      <li><span class="tipo">Artículo abierto · inglés</span>Torres, M. E., Colominas, M. A., Schlotthauer, G. y Flandrin, P. (2011). <a href="https://perso.ens-lyon.fr/patrick.flandrin/0004144.pdf"><i>A complete ensemble empirical mode decomposition with adaptive noise</i></a>. Explica la mezcla de modos y la EEMD en cuatro páginas.</li>
+      <li><span class="tipo">Artículo abierto · inglés</span>Dragomiretskiy, K. y Zosso, D. (2013). <a href="https://ww3.math.ucla.edu/camreport/cam13-22.pdf"><i>Variational mode decomposition</i></a> (versión previa, UCLA CAM 13-22). La alternativa con teoría: todas las capas a la vez.</li>
+      <li><span class="tipo">Artículo abierto · inglés</span>Hu, X. y Jin, T. (2016). <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5191006/"><i>Short-Range Vital Signs Sensing Based on EEMD and CWT Using IR-UWB Radar</i></a>, <i>Sensors</i>. El radar que ve latido y respiración, con las cifras de desplazamiento del pecho.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>Términos nuevos</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Examen</h2>
+  </section>
+
+</main>
+
+<script src="comun/temario.js"></script>
+<script src="comun/graficas.js"></script>
+<script src="comun/senal.js"></script>
+<script src="comun/curso.js"></script>
+<script src="datos/e17.js"></script>
+<script>
+// Lección 17 · Cuando suenan varias norias a la vez: la imagen ancla (la cebolla), los seis retos y el laboratorio
+// «En tu voz». Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo.
+(function () {
+  'use strict';
+  const G = Graficas, S = Senal, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const altoEscena = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); (typeof contenedor === 'string' ? document.querySelector(contenedor) : contenedor).appendChild(f); return f; };
+  const perezoso = fn => { let hecho = false, v; return () => { if (!hecho) { v = fn(); hecho = true; } return v; }; };
+  // Texto sobre el color de una serie: en papel se oscurece un poco para que se lea.
+  const textoDe = (C, color) => G.mezclar(color, C.texto, C.oscuro ? 0 : 0.4);
+  const rms = (x, a = 0, b = x.length) => { let s = 0; for (let i = a; i < b; i++) s += x[i] * x[i]; return Math.sqrt(s / Math.max(1, b - a)); };
+  // Un trazo con halo en oscuro (la luz se suma), a partir de una lista de puntos [x, y].
+  function trazo(ctx, pts, color, ancho, C, guiones) {
+    if (pts.length < 2) return;
+    const p = new Path2D();
+    pts.forEach((q, i) => { if (i) p.lineTo(q[0], q[1]); else p.moveTo(q[0], q[1]); });
+    ctx.save();
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    if (C.oscuro && !guiones) {
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.strokeStyle = G.alfa(color, 0.07); ctx.lineWidth = ancho * 5.5; ctx.stroke(p);
+      ctx.strokeStyle = G.alfa(color, 0.16); ctx.lineWidth = ancho * 2.6; ctx.stroke(p);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    ctx.strokeStyle = color;
+    ctx.lineWidth = ancho;
+    ctx.setLineDash(guiones || []);
+    ctx.stroke(p);
+    ctx.restore();
+  }
+  function punto(ctx, x, y, r, color, C, hueco) {
+    ctx.save();
+    if (C.oscuro && !hueco) {
+      ctx.globalCompositeOperation = 'lighter';
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r * 3);
+      g.addColorStop(0, G.alfa(color, 0.5)); g.addColorStop(1, G.alfa(color, 0));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 3, 0, TAU); ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU);
+    if (hueco) { ctx.strokeStyle = color; ctx.lineWidth = 1.8; ctx.setLineDash([3, 2]); ctx.stroke(); }
+    else { ctx.fillStyle = color; ctx.fill(); ctx.strokeStyle = C.pantalla; ctx.lineWidth = 1.2; ctx.stroke(); }
+    ctx.restore();
+  }
+  // Un mapa tiempo-frecuencia recortado a una zona (E: { t, f, nT, nF, db }), listo para Graficas.mapa.
+  function recortarMapa(E, t0, t1, f0, f1) {
+    const dt = E.nT > 1 ? E.t[1] - E.t[0] : 1, df = E.nF > 1 ? E.f[1] - E.f[0] : 1;
+    const j0 = limitar(Math.floor(t0 / dt), 0, E.nT - 1), j1 = limitar(Math.ceil(t1 / dt), j0, E.nT - 1);
+    const k0 = limitar(Math.floor(f0 / df), 0, E.nF - 1), k1 = limitar(Math.ceil(f1 / df), k0, E.nF - 1);
+    const nT = j1 - j0 + 1, nF = k1 - k0 + 1, datos = new Float32Array(nF * nT);
+    for (let k = 0; k < nF; k++) for (let j = 0; j < nT; j++) datos[k * nT + j] = E.db[(k + k0) * E.nT + j + j0];
+    return { datos, nF, nT, t: E.t.subarray(j0, j1 + 1), f: E.f.subarray(k0, k1 + 1) };
+  }
+  // Dos sinusoides y su suma; devuelve también las dos componentes, para medir el error del primer modo.
+  function dosNorias(fs, n, fRapida, fLenta, aLenta, faseLenta) {
+    const rapida = new Float64Array(n), lenta = new Float64Array(n), suma = new Float64Array(n);
+    for (let i = 0; i < n; i++) {
+      const t = i / fs;
+      rapida[i] = Math.sin(TAU * fRapida * t); lenta[i] = aLenta * Math.sin(TAU * fLenta * t + faseLenta);
+      suma[i] = rapida[i] + lenta[i];
+    }
+    return { rapida, lenta, suma };
+  }
+  // Error de un modo respecto a una componente: la norma de la diferencia entre la norma de la referencia (sin los bordes).
+  function error(modo, ref, norma, margen) {
+    const n = ref.length, a = Math.round((margen == null ? 0.15 : margen) * n), b = n - a;
+    let d = 0, s = 0;
+    for (let i = a; i < b; i++) { d += (modo[i] - ref[i]) * (modo[i] - ref[i]); s += norma[i] * norma[i]; }
+    return Math.sqrt(d / Math.max(s, 1e-12));
+  }
+
+  // ── La idea en una imagen: la cebolla ─────────────────────────────────────────────────────────────────
+  // x = una noria rápida cuyo tamaño respira + una más lenta + una tendencia, a 200 Hz durante 2 s. Las capas son las
+  // de Senal.emd sobre esa misma señal (el tercer modo se une al residuo). «Pelar» mueve cada capa de su fila de arriba a la suya.
+  (function () {
+    const FS = 200, N = 400, DUR = 2;
+    const e = { p: 1, auto: true };
+    const datos = perezoso(() => {
+      const x = new Float64Array(N);
+      for (let i = 0; i < N; i++) {
+        const t = i / FS;
+        x[i] = 0.55 * (1 + 0.35 * Math.sin(TAU * 0.6 * t)) * Math.sin(TAU * 16 * t) + Math.sin(TAU * 3.5 * t + 0.7) + 0.9 * Math.cos(TAU * 0.3 * t + 0.4) + 0.3;
+      }
+      const r = S.emd(x, { maxModos: 4 });
+      const c1 = r.modos[0], c2 = r.modos[1], res = Float64Array.from(r.residuo);
+      for (let k = 2; k < r.modos.length; k++) for (let i = 0; i < N; i++) res[i] += r.modos[k][i];
+      let pico = 0;
+      for (let i = 0; i < N; i++) pico = Math.max(pico, Math.abs(x[i]), Math.abs(c1[i]), Math.abs(c2[i]), Math.abs(res[i]));
+      const ts = new Float64Array(N);
+      for (let i = 0; i < N; i++) ts[i] = i / FS;
+      return { x, capas: [c1, c2, res], pico, ts };
+    });
+    const ease = u => { u = limitar(u, 0, 1); return u * u * (3 - 2 * u); };
+    const L = G.lienzo('#ancla-escena', {
+      alto: altoEscena(300, 340),
+      etiqueta: 'Una señal hecha de tres capas, dibujada en cuatro filas. La primera fila enseña lo que queda por pelar y las otras tres, las capas ya peladas: una oscilación rápida cuyo volumen respira, una más lenta y una tendencia sin vaivenes. Un deslizador pela las capas una a una.',
+      dibujar: (ctx, w, h, C) => {
+        const D = datos();
+        const esc = G.ejes(ctx, { margen: { izquierda: 12, derecha: 12, arriba: 10, abajo: 28 }, x: [0, DUR], y: [0, 4], marcasX: [0, 0.5, 1, 1.5, 2], marcasY: false, formatoX: v => num(v, 1), etiquetaX: 'tiempo (s)', rejilla: false, cero: false, C });
+        const k = 0.44 / D.pico, fila = i => 3.5 - i;       // centro de la fila i (0 = arriba)
+        const resto = new Float64Array(N), capaVis = u => ease(u);
+        for (let i = 0; i < N; i++) {
+          let v = D.x[i];
+          for (let c = 0; c < 3; c++) v -= D.capas[c][i] * capaVis(e.p - c);
+          resto[i] = v;
+        }
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.eje, 0.4); ctx.setLineDash([2, 4]); ctx.lineWidth = 1;
+        for (let i = 0; i < 4; i++) { const y = Math.round(esc.y(fila(i))) + 0.5; ctx.beginPath(); ctx.moveTo(esc.caja.x, y); ctx.lineTo(esc.caja.x + esc.caja.w, y); ctx.stroke(); }
+        ctx.restore();
+        const ys = new Float64Array(N);
+        for (let c = 2; c >= 0; c--) {
+          const u = capaVis(e.p - c);
+          if (u <= 0.001) continue;
+          const y0 = fila(0) + (fila(c + 1) - fila(0)) * u;
+          for (let i = 0; i < N; i++) ys[i] = y0 + D.capas[c][i] * k;
+          G.linea(ctx, esc, D.ts, ys, { color: c === 2 ? C.cuerpo : C.respuesta, ancho: 1.8, alfa: 0.35 + 0.65 * u, C });
+        }
+        for (let i = 0; i < N; i++) ys[i] = fila(0) + resto[i] * k;
+        G.linea(ctx, esc, D.ts, ys, { color: C.senal, ancho: 2.2, C });
+        const c0 = esc.caja;
+        G.texto(ctx, c0.x + 4, esc.y(4) + 12, e.p < 0.02 ? 'la señal' : e.p > 2.98 ? 'no queda nada por pelar' : 'lo que queda por pelar', { color: textoDe(C, C.senal), tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.75), C });
+        const rotulos = ['capa 1: la más rápida', 'capa 2: más lenta', 'residuo: la tendencia'];
+        for (let c = 0; c < 3; c++) if (e.p - c > 0.6) G.texto(ctx, c0.x + 4, esc.y(fila(c + 1)) - 0.45 * (esc.y(0) - esc.y(1)) + 2, rotulos[c], { color: c === 2 ? C.suave : textoDe(C, C.respuesta), tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.75), C });
+      },
+    });
+    const mandos = document.getElementById('ancla-mandos');
+    let anim = null, mCapas = null;
+    mCapas = Curso.mando(mandos, {
+      etiqueta: 'Capas peladas', min: 0, max: 3, paso: 0.05, valor: 1,
+      formato: v => (v < 0.05 ? 'ninguna' : v > 2.95 ? 'las tres' : num(v, 1)),
+      alCambiar: v => { e.p = v; if (anim && anim.corriendo) anim.pausar(); L.dibujar(); },
+    });
+    const fila = crear('div', { class: 'botones' });
+    mandos.appendChild(fila);
+    Curso.botones(fila, [{ id: 'otra', texto: 'Empezar de nuevo', icono: 'otra', alPulsar: () => { e.p = 0; mCapas.fijar(0, false); L.dibujar(); } }]);
+    // Al mover el deslizador a mano, la animación se pausa; así no se pelean.
+    anim = Curso.animar(L, (t, dt) => {
+      if (dt > 0) {
+        e.p += dt * 0.28;
+        if (e.p > 3.6) e.p = 0;
+        mCapas.fijar(Math.min(3, e.p), false);
+      }
+      L.dibujar();
+    }, { boton: fila });
+  })();
+
+  // ── Reto 1 · Marca los picos (tocar para colocar) ────────────────────────────────────────────────────
+  // x(t) = sen(2π·3t)·(1 + 0,3·sen(2π·0,5t)) + 1,5·sen(2π·0,7t + 0,4), 2 s a 200 Hz: seis máximos y seis mínimos (uno de los
+  // máximos queda por debajo de cero y dos mínimos por encima). Al marcar una familia entera aparece su cuerda, un spline cúbico.
+  (function () {
+    const FS = 200, N = 400, DUR = 2;
+    const x = new Float64Array(N), ts = new Float64Array(N);
+    for (let i = 0; i < N; i++) { const t = i / FS; ts[i] = t; x[i] = Math.sin(TAU * 3 * t) * (1 + 0.3 * Math.sin(TAU * 0.5 * t)) + 1.5 * Math.sin(TAU * 0.7 * t + 0.4); }
+    const ext = S.extremos(x);
+    const lista = ext.maximos.map(i => ({ i, tipo: 'max' })).concat(ext.minimos.map(i => ({ i, tipo: 'min' }))).sort((a, b) => a.i - b.i);
+    const marcas = new Set();
+    const e = { cursor: 0, enfocado: false };
+    let esc = null, lect = null, reto = null;
+    const marcados = tipo => lista.filter(q => q.tipo === tipo && marcas.has(q.i));
+    const total = tipo => lista.filter(q => q.tipo === tipo).length;
+    // La cuerda de una familia, entre su primer y su último punto.
+    const cuerda = tipo => {
+      const m = marcados(tipo);
+      if (m.length < 2 || m.length < total(tipo)) return null;
+      const xs = m.map(q => q.i / FS), ys = m.map(q => x[q.i]), t0 = xs[0], t1 = xs[xs.length - 1], n = Math.round((t1 - t0) * FS) + 1;
+      const xq = new Float64Array(n);
+      for (let k = 0; k < n; k++) xq[k] = t0 + k / FS;
+      return { xq, yq: S.spline(xs, ys, xq), t0 };
+    };
+    const L = G.lienzo('#r1-escena', {
+      alto: altoEscena(230, 280), rol: 'application',
+      etiqueta: 'Una señal de dos segundos con seis máximos y seis mínimos. Toca los picos para marcarlos, o muévete entre ellos con las flechas del teclado y marca con Intro. Al marcar todos los máximos aparece su cuerda, y lo mismo con los mínimos; con las dos, la línea del medio.',
+      dibujar: (ctx, w, h, C) => {
+        esc = G.ejes(ctx, { margen: { izquierda: 14, derecha: 14, arriba: 14, abajo: 30 }, x: [0, DUR], y: [-3.1, 3.1], marcasX: [0, 0.5, 1, 1.5, 2], marcasY: false, formatoX: v => num(v, 1), etiquetaX: 'tiempo (s)', C });
+        const cM = cuerda('max'), cm = cuerda('min');
+        if (cM) G.linea(ctx, esc, cM.xq, cM.yq, { color: C.respuesta, ancho: 2, C });
+        if (cm) G.linea(ctx, esc, cm.xq, cm.yq, { color: C.cuerpo, ancho: 2, guiones: [6, 4], halo: false, C });
+        if (cM && cm) {
+          const a = Math.max(cM.xq[0], cm.xq[0]), b = Math.min(cM.xq[cM.xq.length - 1], cm.xq[cm.xq.length - 1]), medio = [], xm = [];
+          for (let t = a; t <= b + 1e-9; t += 1 / FS) {
+            const ia = Math.round((t - cM.xq[0]) * FS), ib = Math.round((t - cm.xq[0]) * FS);
+            xm.push(t); medio.push((cM.yq[ia] + cm.yq[ib]) / 2);
+          }
+          G.linea(ctx, esc, xm, medio, { color: C.plantilla, ancho: 3, C });
+          G.texto(ctx, esc.x(b) - 4, esc.y(medio[medio.length - 1]) - 8, 'la línea del medio', { alinear: 'right', color: textoDe(C, C.plantilla), tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.85), C });
+        }
+        G.linea(ctx, esc, null, x, { t0: 0, dt: 1 / FS, color: C.senal, ancho: 2, C });
+        for (const q of lista) {
+          const px = esc.x(q.i / FS), py = esc.y(x[q.i]);
+          if (marcas.has(q.i)) punto(ctx, px, py, 6, q.tipo === 'max' ? C.respuesta : C.cuerpo, C);
+        }
+        if (e.enfocado) {
+          const q = lista[e.cursor];
+          ctx.save(); ctx.strokeStyle = C.acento; ctx.lineWidth = 2; ctx.setLineDash([3, 3]);
+          ctx.beginPath(); ctx.arc(esc.x(q.i / FS), esc.y(x[q.i]), 11, 0, TAU); ctx.stroke(); ctx.restore();
+        }
+      },
+    });
+    L.canvas.classList.add('tocable');
+    L.canvas.tabIndex = 0;
+    lect = Curso.lecturas('#r1-fila', [
+      { id: 'max', nombre: 'Máximos marcados', clase: 'respuesta' },
+      { id: 'min', nombre: 'Mínimos marcados' },
+    ]);
+    const refrescar = () => {
+      lect.fijar('max', marcados('max').length + ' de ' + total('max'));
+      lect.fijar('min', marcados('min').length + ' de ' + total('min'));
+      L.dibujar();
+      Curso.cambio('reto-1');
+    };
+    const alternar = q => { if (marcas.has(q.i)) marcas.delete(q.i); else marcas.add(q.i); refrescar(); };
+    L.canvas.addEventListener('click', ev => {
+      if (!esc) return;
+      const r = L.canvas.getBoundingClientRect(), px = ev.clientX - r.left, py = ev.clientY - r.top;
+      let mejor = null, dm = 34;
+      lista.forEach((q, k) => { const d = Math.hypot(esc.x(q.i / FS) - px, esc.y(x[q.i]) - py); if (d < dm) { dm = d; mejor = k; } });
+      if (mejor != null) { e.cursor = mejor; alternar(lista[mejor]); }
+    });
+    L.canvas.addEventListener('focus', () => { e.enfocado = true; L.dibujar(); });
+    L.canvas.addEventListener('blur', () => { e.enfocado = false; L.dibujar(); });
+    L.canvas.addEventListener('keydown', ev => {
+      if (ev.key === 'ArrowRight' || ev.key === 'ArrowUp') { ev.preventDefault(); e.cursor = Math.min(lista.length - 1, e.cursor + 1); L.dibujar(); }
+      else if (ev.key === 'ArrowLeft' || ev.key === 'ArrowDown') { ev.preventDefault(); e.cursor = Math.max(0, e.cursor - 1); L.dibujar(); }
+      else if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); alternar(lista[e.cursor]); }
+    });
+    Curso.botones('#r1-fila', [{ id: 'borrar', texto: 'Quitar las marcas', icono: 'otra', alPulsar: () => { marcas.clear(); refrescar(); } }]);
+    refrescar();
+    reto = Curso.reto('reto-1', {
+      titulo: 'Marca los picos', nivel: 'fácil',
+      comprobar: () => {
+        const fm = total('max') - marcados('max').length, fn = total('min') - marcados('min').length;
+        if (!fm && !fn) return { ok: true, mensaje: 'Están los doce: las dos cuerdas y la línea del medio, que es la parte lenta de la señal.' };
+        if (fm + fn === lista.length) return { ok: false, mensaje: '' };
+        const trozos = [];
+        if (fm) trozos.push(fm === 1 ? 'un máximo' : fm + ' máximos');
+        if (fn) trozos.push(fn === 1 ? 'un mínimo' : fn + ' mínimos');
+        return { ok: false, mensaje: 'Te falta' + (fm + fn > 1 ? 'n' : '') + ' ' + trozos.join(' y ') + '. Un máximo es un punto más alto que sus dos vecinos, aunque esté por debajo del cero.' };
+      },
+      resolver: () => { lista.forEach(q => marcas.add(q.i)); refrescar(); },
+      pista: [
+        'Un máximo es un punto más alto que sus dos vecinos, y un mínimo, uno más bajo que los dos. No importa si están por encima o por debajo del cero: hay máximos negativos y mínimos positivos.',
+        'Hay seis máximos y seis mínimos en total. Si te falta alguno, mira dónde la onda grande lenta empuja a la rápida hacia abajo o hacia arriba: ahí los picos se esconden.',
+      ],
+      exito: '<p>Con los dos grupos de picos marcados, cada cuerda es una envolvente, y la línea que va por el medio de las dos es la parte lenta de la señal. Restarla de la señal es el primer paso de la descomposición: lo que quede será más rápido y más centrado.</p>',
+    });
+  })();
+
+  // ── Reto 2 · Tamiza hasta que la línea del medio se aplane (botones y contadores) ───────────────────────
+  // La misma señal. Cada pulsación aplica Senal.tamizado: resta la media de las dos envolventes. El criterio es el de Rilling,
+  // Flandrin y Gonçalvès (2003): |media| / tamaño < 0,05 en el 95&nbsp;% del tiempo y < 0,5 siempre, sin el 5 % de cada borde.
+  (function () {
+    const FS = 200, N = 400, DUR = 2;
+    const x0 = new Float64Array(N), ts = new Float64Array(N);
+    for (let i = 0; i < N; i++) { const t = i / FS; ts[i] = t; x0[i] = Math.sin(TAU * 3 * t) * (1 + 0.3 * Math.sin(TAU * 0.5 * t)) + 1.5 * Math.sin(TAU * 0.7 * t + 0.4); }
+    const e = { h: x0, pasadas: 0, cur: null, st: null };
+    let reto = null, lect = null, botones = null;
+    function evaluar() {
+      const p = S.tamizado(e.h);
+      e.cur = p;
+      const a = Math.round(0.05 * N), b = N - a;
+      let ok = 0, peor = 0, mn = 1e9, mx = 0;
+      for (let i = a; i < b; i++) {
+        const tam = (p.sup[i] - p.inf[i]) / 2, r = Math.abs(p.media[i]) / Math.max(tam, 1e-9);
+        if (r < 0.05) ok++;
+        if (r > peor) peor = r;
+        if (tam < mn) mn = tam;
+        if (tam > mx) mx = tam;
+      }
+      e.st = { frac: ok / (b - a), peor, volumen: mx > 0 ? (mx - mn) / mx : 0, valido: p.valido !== false };
+    }
+    evaluar();
+    const L = G.lienzo('#r2-escena', {
+      alto: altoEscena(230, 290),
+      etiqueta: 'La capa que se está tamizando, en verde, con sus dos envolventes punteadas y la línea del medio en púrpura. Cada pasada resta esa línea.',
+      dibujar: (ctx, w, h, C) => {
+        let pico = 0;
+        for (let i = 0; i < N; i++) pico = Math.max(pico, Math.abs(e.h[i]), Math.abs(e.cur.sup[i]), Math.abs(e.cur.inf[i]));
+        const m = Math.max(0.8, pico * 1.15);
+        const esc = G.ejes(ctx, { margen: { izquierda: 14, derecha: 14, arriba: 14, abajo: 30 }, x: [0, DUR], y: [-m, m], marcasX: [0, 0.5, 1, 1.5, 2], marcasY: false, formatoX: v => num(v, 1), etiquetaX: 'tiempo (s)', C });
+        G.linea(ctx, esc, null, e.cur.sup, { t0: 0, dt: 1 / FS, color: C.cuerpo, ancho: 1.3, guiones: [5, 4], alfa: 0.8, halo: false, C });
+        G.linea(ctx, esc, null, e.cur.inf, { t0: 0, dt: 1 / FS, color: C.cuerpo, ancho: 1.3, guiones: [5, 4], alfa: 0.8, halo: false, C });
+        G.linea(ctx, esc, null, e.h, { t0: 0, dt: 1 / FS, color: C.senal, ancho: 2, C });
+        G.linea(ctx, esc, null, e.cur.media, { t0: 0, dt: 1 / FS, color: C.plantilla, ancho: 3, C });
+        G.texto(ctx, esc.caja.x + 4, esc.caja.y + 12, e.pasadas ? 'tras ' + e.pasadas + (e.pasadas === 1 ? ' pasada' : ' pasadas') : 'la señal original', { color: C.suave, tam: 11, peso: 600, C });
+      },
+    });
+    lect = Curso.lecturas('#r2-fila', [
+      { id: 'pasadas', nombre: 'Pasadas', clase: 'respuesta' },
+      { id: 'frac', nombre: 'Tiempo con el medio < 5 %' },
+      { id: 'peor', nombre: 'Peor momento' },
+      { id: 'vol', nombre: 'Cambio de volumen de la capa' },
+    ]);
+    const refrescar = () => {
+      lect.fijar('pasadas', String(e.pasadas));
+      lect.fijar('frac', num(Math.round(e.st.frac * 100)) + ' %');
+      lect.fijar('peor', num(Math.min(999, e.st.peor * 100), 0) + ' %');
+      lect.fijar('vol', num(Math.round(e.st.volumen * 100)) + ' %');
+      L.dibujar();
+      Curso.cambio('reto-2');
+    };
+    const tamizar = veces => {
+      for (let k = 0; k < veces; k++) {
+        if (!e.cur || e.st.valido === false) break;
+        const sig = e.cur.resto;
+        e.h = sig; e.pasadas++;
+        evaluar();
+      }
+      if (botones && botones.tamizar) botones.tamizar.disabled = !e.st.valido;
+      refrescar();
+    };
+    const reiniciar = () => { e.h = x0; e.pasadas = 0; evaluar(); if (botones && botones.tamizar) botones.tamizar.disabled = false; refrescar(); };
+    botones = Curso.botones('#r2-fila', [
+      { id: 'tamizar', texto: 'Tamizar', tipo: 'principal', icono: 'otra', alPulsar: () => tamizar(1) },
+      { id: 'cincuenta', texto: '50 pasadas más', tipo: 'discreto', alPulsar: () => tamizar(50) },
+      { id: 'reiniciar', texto: 'Empezar de nuevo', tipo: 'discreto', alPulsar: reiniciar },
+    ]);
+    refrescar();
+    reto = Curso.reto('reto-2', {
+      titulo: 'Tamiza la primera capa', nivel: 'fácil',
+      comprobar: () => {
+        const s = e.st;
+        if (!e.pasadas) return { ok: false, mensaje: 'Pulsa «Tamizar» para restar la línea del medio y ver qué queda.' };
+        if (s.frac < 0.95) return { ok: false, mensaje: 'La línea del medio todavía pasa del 5 % del tamaño de la capa durante el ' + num(Math.round((1 - s.frac) * 100)) + ' % del tiempo. Tamiza otra vez.' };
+        if (s.peor >= 0.5) return { ok: false, mensaje: 'En algún momento la línea del medio llega al ' + num(Math.round(s.peor * 100)) + ' % del tamaño de la capa. Sigue tamizando.' };
+        return { ok: true, mensaje: 'Tras ' + e.pasadas + (e.pasadas === 1 ? ' pasada' : ' pasadas') + ' la línea del medio es casi plana: esta es la primera capa.' };
+      },
+      resolver: () => { e.h = x0; e.pasadas = 0; evaluar(); tamizar(3); },
+      pista: [
+        'Cada pulsación resta la línea púrpura a la onda verde. Mira cómo se encoge la línea del medio de una pasada a la siguiente.',
+        'Con tres pasadas suele bastar. Fíjate en las dos lecturas del medio: la primera tiene que pasar del 95 % y la segunda quedarse por debajo del 50 %.',
+      ],
+      exito: '<p>Esa es la primera capa de la cebolla: una oscilación centrada en el cero, con sus dos envolventes casi simétricas. Si siguieras tamizando decenas de veces, la capa perdería sus cambios de volumen y acabaría siendo una onda de tamaño constante, como avisaba Huang: prueba el botón «50 pasadas más» y mira cómo baja la lectura del cambio de volumen.</p>',
+    });
+  })();
+
+  // ── Reto 3 · ¿Una noria o dos? (escuchar y elegir) ─────────────────────────────────────────────────────
+  // Tres parejas de notas de 0,8 s a 16 kHz. La verdad la da la propia descomposición: «dos» si el primer modo se parece a la
+  // noria rápida (error relativo a la lenta < 0,3), y «una» si no. Con 1.000 + 1.100 Hz y con 1.000 + 700 Hz sale una; con 1.000 + 400 Hz, dos.
+  (function () {
+    const FS = 16000, N = 12800;
+    const PAREJAS = [
+      { id: 'A', fLenta: 1000, fRapida: 1100, fase: 0.5 },
+      { id: 'B', fLenta: 400, fRapida: 1000, fase: 0.5 },
+      { id: 'C', fLenta: 700, fRapida: 1000, fase: 0.5 },
+    ];
+    const datos = perezoso(() => {
+      const r = {};
+      for (const P of PAREJAS) {
+        const d = dosNorias(FS, N, P.fRapida, P.fLenta, 1, P.fase), emd = S.emd(d.suma, { maxModos: 2 });
+        const err = error(emd.modos[0], d.rapida, d.lenta);
+        r[P.id] = { suma: d.suma, modos: emd.modos, rapida: d.rapida, err, verdad: err < 0.3 ? 'dos' : 'una' };
+      }
+      return r;
+    });
+    const e = { A: null, B: null, C: null };
+    const cont = document.getElementById('r3-paneles');
+    const lienzos = {}, elecciones = {};
+    for (const P of PAREJAS) {
+      const panel = crear('div', { class: 'panel-mini' });
+      const cabeza = crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, 'Pareja ' + P.id));
+      panel.appendChild(cabeza);
+      Curso.audio.boton(cabeza, () => ({ x: datos()[P.id].suma, fs: FS, volumen: 0.35 }), 'Oír', { clase: 'peque' });
+      const mandos = crear('div', { class: 'mandos' });
+      panel.appendChild(mandos);
+      elecciones[P.id] = Curso.eleccion(mandos, {
+        etiqueta: 'Lo que ve el método', valor: 'ninguno', reto: 'reto-3',
+        opciones: [{ valor: 'una', texto: 'Una noria que late' }, { valor: 'dos', texto: 'Dos norias' }],
+        alCambiar: v => { e[P.id] = v; lienzos[P.id].dibujar(); },
+      });
+      const escena = crear('div', { class: 'escena' });
+      panel.appendChild(escena);
+      cont.appendChild(panel);
+      lienzos[P.id] = G.lienzo(escena, {
+        alto: 140,
+        etiqueta: 'Pareja ' + P.id + ': después de elegir, 12 milisegundos de la suma en gris, el primer modo en naranja y el segundo en verde.',
+        dibujar: (ctx, w, h, C) => {
+          if (!e[P.id]) { G.texto(ctx, w / 2, h / 2, 'escucha y elige', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C }); return; }
+          const D = datos()[P.id], a = Math.round(0.3 * FS), n = Math.round(0.012 * FS);
+          const esc = G.ejes(ctx, { margen: { izquierda: 10, derecha: 10, arriba: 20, abajo: 26 }, x: [0, 0.012], y: [-2.2, 2.2], marcasX: [0, 0.006, 0.012], marcasY: false, formatoX: v => num(v * 1000) + ' ms', rejilla: false, C });
+          G.linea(ctx, esc, null, D.suma.subarray(a, a + n), { t0: 0, dt: 1 / FS, color: C.cuerpo, ancho: 1.2, alfa: 0.4, halo: false, C });
+          G.linea(ctx, esc, null, D.modos[0].subarray(a, a + n), { t0: 0, dt: 1 / FS, color: C.respuesta, ancho: 2, C });
+          if (D.modos[1]) G.linea(ctx, esc, null, D.modos[1].subarray(a, a + n), { t0: 0, dt: 1 / FS, color: C.senal, ancho: 2, C });
+          G.texto(ctx, esc.caja.x + 4, 12, D.verdad === 'dos' ? 'el método ve dos norias' : 'el método ve una noria que late', { color: C.suave, tam: 11, peso: 600, C });
+        },
+      });
+    }
+    Curso.alVerse(cont, () => { datos(); Object.values(lienzos).forEach(L => L.dibujar()); });
+    Curso.reto('reto-3', {
+      titulo: '¿Una noria o dos?', nivel: 'medio',
+      comprobar: () => {
+        const D = datos();
+        if (PAREJAS.some(P => !e[P.id])) return { ok: false, mensaje: 'Escucha las tres parejas y elige en cada una.' };
+        const mal = PAREJAS.filter(P => e[P.id] !== D[P.id].verdad).map(P => P.id);
+        if (mal.length) return { ok: false, mensaje: mal.length === 1 ? 'La pareja ' + mal[0] + ' no es como la has elegido: mira la gráfica que sale debajo y escúchala otra vez.' : 'Las parejas ' + mal.join(' y ') + ' no son como las has elegido: mira lo que sale debajo y vuelve a escucharlas.' };
+        return { ok: true, mensaje: 'Las tres bien: las dos notas cercanas son una noria que late, y la lejana, dos norias.' };
+      },
+      resolver: () => PAREJAS.forEach(P => elecciones[P.id].fijar(datos()[P.id].verdad)),
+      pista: [
+        'Si oyes un «ua-ua-ua», el oído está oyendo una sola nota que late, y el método ve lo mismo.',
+        'Dos notas muy cercanas dan un batido. Las que están bien separadas, como un 1.000 y un 400, se oyen como dos notas distintas.',
+      ],
+      exito: '<p>El método decide como tu oído: dos notas muy cercanas son una noria que late, y solo las separa cuando están lo bastante lejos. Rilling y Flandrin titularon su estudio de 2008 «¿Una frecuencia o dos?», y la pareja C, a 0,7 de distancia, es la que más sorprende: se oyen dos notas, pero el método ve una.</p>',
+    });
+  })();
+
+  // ── Reto 4 · La regla de la octava (deslizador y ▶) ─────────────────────────────────────────────────
+  // Dos norias del mismo tamaño: la rápida, de 1.000 Hz, y la lenta, entre 300 y 950 Hz, a 16 kHz durante 0,5 s. Senal.emd
+  // da los dos modos; el error es |modo 1 − rápida| / |lenta| en el tramo central. La frontera se calcula la primera vez, con un barrido.
+  (function () {
+    const FS = 16000, N = 8000, FR = 1000, FASE = 0.5, UMBRAL = 0.2;
+    const e = { f: 400, d: null };
+    const medir = f => {
+      const d = dosNorias(FS, N, FR, f, 1, FASE), emd = S.emd(d.suma, { maxModos: 2 });
+      return { f, suma: d.suma, rapida: d.rapida, modos: emd.modos, err: error(emd.modos[0], d.rapida, d.lenta) };
+    };
+    const frontera = perezoso(() => {
+      let ultima = 300;
+      for (let f = 300; f <= 950; f += 10) { if (medir(f).err >= UMBRAL) break; ultima = f; }
+      return ultima;
+    });
+    let lect = null, mando = null, L = null;
+    function actualizar() {
+      e.d = medir(e.f);
+      lect.fijar('cociente', num(e.f / FR, 2));
+      lect.fijar('error', num(Math.min(e.d.err, 9.99) * 100, 0) + ' %');
+      lect.clase('error', e.d.err < UMBRAL ? 'senal' : 'respuesta');
+      L.dibujar();
+    }
+    L = G.lienzo('#r4-escena', {
+      alto: altoEscena(240, 270),
+      etiqueta: 'Arriba, ocho milisegundos de la suma de dos norias en gris, el primer modo en naranja y la noria rápida de verdad, punteada. Abajo, una barra con el error del primer modo y una marca en el 20 %.',
+      dibujar: (ctx, w, h, C) => {
+        if (!e.d) return;
+        const D = e.d, a = Math.round(0.2 * FS), n = Math.round(0.008 * FS), hOnda = h - 74;
+        const esc = G.ejes(ctx, { caja: { x: 12, y: 22, w: w - 24, h: hOnda - 40 }, x: [0, 0.008], y: [-2.2, 2.2], marcasX: [0, 0.004, 0.008], marcasY: false, formatoX: v => num(v * 1000) + ' ms', rejilla: false, C });
+        G.linea(ctx, esc, null, D.suma.subarray(a, a + n), { t0: 0, dt: 1 / FS, color: C.cuerpo, ancho: 1.2, alfa: 0.35, halo: false, C });
+        G.linea(ctx, esc, null, D.rapida.subarray(a, a + n), { t0: 0, dt: 1 / FS, color: C.cuerpo, ancho: 1.6, guiones: [5, 4], halo: false, C });
+        G.linea(ctx, esc, null, D.modos[0].subarray(a, a + n), { t0: 0, dt: 1 / FS, color: C.respuesta, ancho: 2.2, C });
+        G.texto(ctx, 12, 13, 'modo 1 y noria rápida (punteada)', { color: C.suave, tam: 11, peso: 600, C });
+        // El medidor
+        const by = h - 34, bx = 12, bw = w - 24, k = bw / 1.0, ok = D.err < UMBRAL;
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.cuerpo, 0.1); ctx.fillRect(bx, by, bw, 12);
+        ctx.fillStyle = ok ? C.ok : C.mal; ctx.fillRect(bx, by, Math.min(bw, D.err * k), 12);
+        ctx.strokeStyle = C.texto; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(bx + UMBRAL * k, by - 4); ctx.lineTo(bx + UMBRAL * k, by + 16); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, bx + UMBRAL * k + 5, by - 6, 'límite: 20 %', { color: C.tenue, tam: 10, C });
+        G.texto(ctx, bx, by + 28, 'error del modo 1', { color: C.suave, tam: 11, C });
+        G.texto(ctx, bx + bw, by + 28, ok ? 'el método las separa' : 'el método ya no las separa', { alinear: 'right', color: ok ? textoDe(C, C.ok) : textoDe(C, C.mal), tam: 11, peso: 600, C });
+      },
+    });
+    lect = Curso.lecturas('#r4-fila', [
+      { id: 'cociente', nombre: 'Lenta / rápida', clase: 'cuerpo' },
+      { id: 'error', nombre: 'Error del modo 1', clase: 'senal' },
+    ]);
+    mando = Curso.mando('#r4-mandos', { etiqueta: 'Frecuencia de la noria lenta', clase: 'respuesta', min: 300, max: 950, paso: 10, valor: e.f, formato: v => num(v) + ' Hz', reto: 'reto-4', alCambiar: v => { e.f = v; actualizar(); } });
+    const fila = filaBotones('#r4-fila');
+    Curso.audio.boton(fila, () => (e.d ? { x: e.d.modos[0], fs: FS, volumen: 0.35 } : null), 'Oír el modo 1', { clase: 'peque' });
+    Curso.audio.boton(fila, () => (e.d && e.d.modos[1] ? { x: e.d.modos[1], fs: FS, volumen: 0.35 } : null), 'Oír el modo 2', { clase: 'peque' });
+    actualizar();
+    Curso.reto('reto-4', {
+      titulo: 'La regla de la octava', nivel: 'medio',
+      comprobar: () => {
+        const D = e.d;
+        if (D.err >= UMBRAL) return { ok: false, mensaje: 'El modo 1 ya no sigue a la noria rápida (error del ' + num(Math.min(D.err, 9.99) * 100, 0) + ' %). Baja la noria lenta hasta que la barra se ponga verde.' };
+        if (e.f < frontera() - 10) return { ok: false, mensaje: 'Funciona, pero todavía puedes subir la noria lenta bastante más sin que el método se rinda.' };
+        return { ok: true, mensaje: 'Con la lenta en ' + num(e.f) + ' Hz, a ' + num(e.f / FR, 2) + ' de la rápida, el método todavía las separa. Un poco más y se rinde.' };
+      },
+      resolver: () => mando.fijar(frontera()),
+      pista: [
+        'Ve subiendo de 50 en 50 y escucha el modo 1: cuando empiece a latir, te has pasado.',
+        'La separación aguanta hasta que la lenta va a algo más de la mitad de la velocidad de la rápida. Prueba por los 550 o 600 Hz y afina de 10 en 10.',
+      ],
+      exito: '<p>El método separa bien hasta que la lenta va a algo más de la mitad de la rápida, entre nueve y diez semitonos más grave. Más cerca, se rinde y entrega una sola noria que late, y no hay forma de arreglarlo con más pasadas: lo demostraron Rilling y Flandrin en 2008.</p>',
+    });
+  })();
+
+  // ── Reto 5 · El latido escondido (deslizador; aplicado, todo sintético) ──────────────────────────────────
+  // Un vaivén sintético del pecho, 60 s a 20 Hz: latido de 1,2 Hz (72 por minuto, tamaño 1) más respiración de 0,25 Hz (15 por
+  // minuto, tamaño a, con armónicos al 25 % y al 10 %). El error es |modo 1 − latido| / |latido|, sin el 5 % de cada borde. La
+  // frontera (el mayor a con error < 0,2) se calcula la primera vez con un barrido de Senal.emd.
+  (function () {
+    const FS = 20, N = 1200, UMBRAL = 0.2;
+    const latido = new Float64Array(N), base = new Float64Array(N);
+    for (let i = 0; i < N; i++) {
+      const t = i / FS;
+      latido[i] = Math.sin(TAU * 1.2 * t);
+      base[i] = Math.sin(TAU * 0.25 * t) + 0.25 * Math.sin(TAU * 0.5 * t + 1) + 0.1 * Math.sin(TAU * 0.75 * t + 2);
+    }
+    const medir = a => {
+      const x = new Float64Array(N);
+      for (let i = 0; i < N; i++) x[i] = latido[i] + a * base[i];
+      const emd = S.emd(x, { maxModos: 3 });
+      return { a, x, modo: emd.modos[0], err: error(emd.modos[0], latido, latido, 0.05) };
+    };
+    const frontera = perezoso(() => {
+      let ultima = 0.5;
+      for (let a = 0.5; a <= 20; a += 0.5) { if (medir(a).err >= UMBRAL) break; ultima = a; }
+      return ultima;
+    });
+    const e = { a: 1, d: null };
+    let lect = null, mando = null, L = null;
+    function actualizar() {
+      e.d = medir(e.a);
+      lect.fijar('tam', num(e.a, 1) + ' veces');
+      lect.fijar('error', num(Math.min(e.d.err, 9.99) * 100, 0) + ' %');
+      lect.clase('error', e.d.err < UMBRAL ? 'senal' : 'respuesta');
+      L.dibujar();
+    }
+    L = G.lienzo('#r5-escena', {
+      alto: altoEscena(300, 340),
+      etiqueta: 'Diez segundos de un vaivén sintético del pecho, en verde, con la respiración grande y el latido diminuto encima. Debajo, el primer modo en naranja y el latido de verdad, punteado, y abajo una barra con el error del modo 1 y una marca en el 20 %.',
+      dibujar: (ctx, w, h, C) => {
+        if (!e.d) return;
+        const D = e.d, a0 = 400, n = 200, hOndas = h - 56;
+        const esc = G.ejes(ctx, { caja: { x: 12, y: 22, w: w - 24, h: hOndas - 54 }, x: [20, 30], y: [0, 2], marcasX: [20, 22, 24, 26, 28, 30], marcasY: false, formatoX: v => num(v), etiquetaX: 'tiempo (s)', rejilla: false, cero: false, C });
+        let pico = 1e-9;
+        for (let i = a0; i < a0 + n; i++) pico = Math.max(pico, Math.abs(D.x[i]));
+        const ts = new Float64Array(n), y1 = new Float64Array(n), y2 = new Float64Array(n), y3 = new Float64Array(n);
+        for (let i = 0; i < n; i++) { ts[i] = (a0 + i) / FS; y1[i] = 1.5 + 0.38 * D.x[a0 + i] / pico; y2[i] = 0.5 + 0.38 * latido[a0 + i] / 1.25; y3[i] = 0.5 + 0.38 * D.modo[a0 + i] / 1.25; }
+        G.linea(ctx, esc, ts, y1, { color: C.senal, ancho: 2, C });
+        G.linea(ctx, esc, ts, y2, { color: C.cuerpo, ancho: 1.6, guiones: [5, 4], halo: false, C });
+        G.linea(ctx, esc, ts, y3, { color: C.respuesta, ancho: 2.2, C });
+        G.texto(ctx, 16, 13, 'vaivén del pecho (sintético)', { color: C.suave, tam: 11, peso: 600, C });
+        G.texto(ctx, 16, esc.y(1) + 11, 'modo 1 y latido de verdad (punteado)', { color: C.suave, tam: 11, peso: 600, C });
+        const by = h - 34, bx = 12, bw = w - 24, k = bw / 1.0, ok = D.err < UMBRAL;
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.cuerpo, 0.1); ctx.fillRect(bx, by, bw, 12);
+        ctx.fillStyle = ok ? C.ok : C.mal; ctx.fillRect(bx, by, Math.min(bw, D.err * k), 12);
+        ctx.strokeStyle = C.texto; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(bx + UMBRAL * k, by - 4); ctx.lineTo(bx + UMBRAL * k, by + 16); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, bx + UMBRAL * k + 5, by - 6, 'límite: 20 %', { color: C.tenue, tam: 10, C });
+        G.texto(ctx, bx, by + 28, 'error del modo 1', { color: C.suave, tam: 11, C });
+        G.texto(ctx, bx + bw, by + 28, ok ? 'el latido se ve' : 'el latido se pierde', { alinear: 'right', color: ok ? textoDe(C, C.ok) : textoDe(C, C.mal), tam: 11, peso: 600, C });
+      },
+    });
+    lect = Curso.lecturas('#r5-fila', [
+      { id: 'tam', nombre: 'Respiración, tamaño del latido', clase: 'cuerpo' },
+      { id: 'error', nombre: 'Error del modo 1', clase: 'senal' },
+    ]);
+    mando = Curso.mando('#r5-mandos', { etiqueta: 'Tamaño de la respiración', clase: 'respuesta', min: 0.5, max: 20, paso: 0.5, valor: e.a, formato: v => num(v, 1) + ' veces el latido', reto: 'reto-5', alCambiar: v => { e.a = v; actualizar(); } });
+    actualizar();
+    Curso.reto('reto-5', {
+      titulo: 'El latido escondido', nivel: 'difícil',
+      comprobar: () => {
+        const D = e.d;
+        if (D.err >= UMBRAL) return { ok: false, mensaje: 'El modo 1 ya no se parece al latido (error del ' + num(Math.min(D.err, 9.99) * 100, 0) + ' %). Baja la respiración hasta que la barra se ponga verde.' };
+        if (e.a < frontera() - 0.5) return { ok: false, mensaje: 'El latido sale bien, pero la respiración todavía puede ser algo mayor. Sigue subiendo.' };
+        return { ok: true, mensaje: 'Con la respiración ' + num(e.a, 1) + ' veces mayor que el latido, el primer modo todavía lo saca. Un poco más y se pierde.' };
+      },
+      resolver: () => mando.fijar(frontera()),
+      pista: [
+        'Empieza con una respiración pequeña y ve subiendo de una en una. Mira cómo el modo 1 deja de parecerse a la línea punteada.',
+        'La barra de error tiene que quedarse por debajo del 20&nbsp;%. El límite está a pocas veces el tamaño del latido; no hace falta llegar a 20.',
+      ],
+      exito: '<p>Con la respiración solo unas pocas veces mayor que el latido, la descomposición ya empieza a perderlo, y en un pecho real la diferencia es de unas veinte veces: Hu y Jin (2016) dan unos 0,6 milímetros para el corazón y entre 12 milímetros y varios centímetros para la respiración. Con esa diferencia, los máximos del latido casi desaparecen entre los de la respiración, y por eso los trabajos de este campo usan variantes como la EEMD o la VMD, o filtran antes.</p>',
+    });
+  })();
+
+  // ── Reto 6 · Arregla la mezcla de modos (interruptor, dos deslizadores y botón) ──────────────────────────
+  // 5 s a 200 Hz: onda lenta de 2 Hz (tamaño 1) y pitidos de 25 Hz (tamaño 0,3) solo entre 1,0 y 1,4 s y entre 3,0 y 3,4 s.
+  // La capa que se enseña es la de las dos primeras que más se parece a los pitidos. «Colada» es el valor eficaz de esa capa entre
+  // 1,6 y 2,8 s, dividido por el de la onda lenta en el mismo tramo; el error es |capa − pitidos| / |pitidos|. La EEMD añade
+  // a cada copia ruido blanco de σ veces la desviación de la señal y promedia los modos (Wu y Huang, 2009).
+  (function () {
+    const FS = 200, N = 1000, K = 4;
+    const lenta = new Float64Array(N), pitidos = new Float64Array(N), x = new Float64Array(N), ts = new Float64Array(N);
+    for (let i = 0; i < N; i++) {
+      const t = i / FS;
+      ts[i] = t;
+      lenta[i] = Math.sin(TAU * 2 * t);
+      pitidos[i] = (t >= 1 && t < 1.4) || (t >= 3 && t < 3.4) ? 0.3 * Math.sin(TAU * 25 * t) : 0;
+      x[i] = lenta[i] + pitidos[i];
+    }
+    const e = { metodo: 'emd', ruido: 0.05, reps: 20, r: null };
+    let lect = null, L = null, eleccion = null, mRuido = null, mReps = null;
+    function descomponer() {
+      let modos;
+      if (e.metodo === 'emd') modos = S.emd(x, { maxModos: K }).modos;
+      else {
+        const az = S.azar(7), sd = S.rms(x);
+        modos = Array.from({ length: K }, () => new Float64Array(N));
+        for (let r = 0; r < e.reps; r++) {
+          const y = new Float64Array(N);
+          for (let i = 0; i < N; i++) y[i] = x[i] + e.ruido * sd * az.normal();
+          const d = S.emd(y, { maxModos: K }).modos;
+          for (let k = 0; k < Math.min(K, d.length); k++) for (let i = 0; i < N; i++) modos[k][i] += d[k][i] / e.reps;
+        }
+      }
+      let mejor = null;
+      for (let k = 0; k < Math.min(2, modos.length); k++) {
+        const err = error(modos[k], pitidos, pitidos, 0);
+        if (!mejor || err < mejor.err) mejor = { k, err, capa: modos[k] };
+      }
+      const a = Math.round(1.6 * FS), b = Math.round(2.8 * FS);
+      mejor.colada = rms(mejor.capa, a, b) / rms(lenta, a, b);
+      e.r = mejor;
+      lect.fijar('colada', num(Math.min(mejor.colada, 9.99) * 100, 0) + ' %');
+      lect.fijar('error', num(Math.min(mejor.err, 9.99), 2));
+      lect.fijar('capa', 'la ' + (mejor.k + 1));
+      L.dibujar();
+      Curso.cambio('reto-6');
+    }
+    L = G.lienzo('#r6-escena', {
+      alto: altoEscena(280, 320),
+      etiqueta: 'Cinco segundos de una onda lenta con dos pitidos rápidos, en verde. Debajo, la capa que más se parece a los pitidos, en naranja, y los pitidos de verdad, en gris.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { izquierda: 14, derecha: 14, arriba: 14, abajo: 30 }, x: [0, 5], y: [0, 2], marcasX: [0, 1, 2, 3, 4, 5], marcasY: false, formatoX: v => num(v), etiquetaX: 'tiempo (s)', rejilla: false, cero: false, C });
+        const y1 = new Float64Array(N), y2 = new Float64Array(N), y3 = new Float64Array(N);
+        for (let i = 0; i < N; i++) { y1[i] = 1.5 + 0.42 * x[i] / 1.3; y2[i] = 0.5 + 0.42 * pitidos[i] / 0.3; if (e.r) y3[i] = 0.5 + 0.42 * e.r.capa[i] / 0.3; }
+        G.linea(ctx, esc, ts, y1, { color: C.senal, ancho: 1.8, C });
+        G.linea(ctx, esc, ts, y2, { color: C.cuerpo, ancho: 1.2, alfa: 0.65, halo: false, C });
+        if (e.r) G.linea(ctx, esc, ts, y3, { color: C.respuesta, ancho: 2, C });
+        else G.texto(ctx, esc.x(2.5), esc.y(0.5), 'pulsa «Calcular»', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, fondo: G.alfa(C.pantalla, 0.9), C });
+        G.texto(ctx, esc.caja.x + 4, esc.caja.y + 12, 'onda lenta con dos pitidos', { color: C.suave, tam: 11, peso: 600, C });
+        G.texto(ctx, esc.caja.x + 4, esc.y(1) + 12, e.r ? 'la capa ' + (e.r.k + 1) + ' (naranja) y los pitidos de verdad (en gris)' : 'los pitidos de verdad (en gris)', { color: C.suave, tam: 11, peso: 600, C });
+      },
+    });
+    eleccion = Curso.eleccion('#r6-mandos', {
+      etiqueta: 'Método', valor: e.metodo,
+      opciones: [{ valor: 'emd', texto: 'Descomposición sola (EMD)' }, { valor: 'eemd', texto: 'Repetida con ruido (EEMD)' }],
+      alCambiar: v => { e.metodo = v; mRuido.input.disabled = v === 'emd'; mReps.input.disabled = v === 'emd'; e.r = null; lect.fijar('colada', '—'); lect.fijar('error', '—'); lect.fijar('capa', '—'); L.dibujar(); Curso.cambio('reto-6'); },
+    });
+    mRuido = Curso.mando('#r6-mandos', { etiqueta: 'Ruido (veces la desviación)', min: 0, max: 0.5, paso: 0.01, valor: e.ruido, formato: v => num(v, 2), alCambiar: v => { e.ruido = v; } });
+    mReps = Curso.mando('#r6-mandos', { etiqueta: 'Repeticiones', min: 1, max: 100, paso: 1, valor: e.reps, formato: v => num(v, 0) + (v === 1 ? ' copia' : ' copias'), alCambiar: v => { e.reps = v; } });
+    mRuido.input.disabled = true; mReps.input.disabled = true;
+    lect = Curso.lecturas('#r6-fila', [
+      { id: 'capa', nombre: 'Capa que se enseña', clase: 'cuerpo' },
+      { id: 'colada', nombre: 'Onda lenta colada', clase: 'respuesta' },
+      { id: 'error', nombre: 'Error frente a los pitidos' },
+    ]);
+    lect.fijar('capa', '—'); lect.fijar('colada', '—'); lect.fijar('error', '—');
+    Curso.botones('#r6-fila', [{ id: 'calcular', texto: 'Calcular', tipo: 'principal', alPulsar: () => descomponer() }]);
+    L.dibujar();
+    Curso.reto('reto-6', {
+      titulo: 'Arregla la mezcla de modos', nivel: 'difícil',
+      comprobar: () => {
+        const r = e.r;
+        if (!r) return { ok: false, mensaje: 'Pulsa «Calcular» para ver qué capa sale con estos ajustes.' };
+        if (r.colada < 0.05 && r.err < 0.5) return { ok: true, mensaje: 'La capa ' + (r.k + 1) + ' lleva los pitidos y solo cuela el ' + num(Math.round(r.colada * 100)) + ' % de la onda lenta.' };
+        if (e.metodo === 'emd') return { ok: false, mensaje: 'Entre los pitidos, esa capa recoge la onda lenta: cuela el ' + num(Math.min(Math.round(r.colada * 100), 999)) + ' %. Prueba con la repetida con ruido.' };
+        if (r.err >= 0.5) return { ok: false, mensaje: 'Con tanto ruido los pitidos se reparten entre capas: la que mejor se les parece tiene un error de ' + num(r.err, 2) + '. Baja el ruido.' };
+        return { ok: false, mensaje: 'Todavía cuela el ' + num(Math.round(r.colada * 100)) + ' % de la onda lenta. Prueba con algo de ruido y más copias.' };
+      },
+      resolver: () => { eleccion.fijar('eemd'); mRuido.input.disabled = false; mReps.input.disabled = false; mRuido.fijar(0.05); mReps.fijar(20); e.ruido = 0.05; e.reps = 20; e.metodo = 'eemd'; descomponer(); },
+      pista: [
+        'Con la descomposición sola, mira qué hace la capa que sigue a los pitidos cuando los pitidos callan: coge lo siguiente más rápido que encuentra.',
+        'Cambia al método repetido con ruido, deja el ruido en torno a 0,05 y las copias en torno a 20, y pulsa «Calcular». Con demasiado ruido, los pitidos pasan a otra capa.',
+      ],
+      exito: '<p>El ruido pone norias de todas las velocidades por todas partes, de modo que cada escala encuentra su capa, y al promediar muchas copias el ruido se anula. Esa es la EEMD de Wu y Huang (2009). Con la descomposición sola, la capa de los pitidos recogía la onda lenta cuando ellos callaban: la mezcla de modos.</p>',
+    });
+  })();
+
+  // ── En tu voz · el espectrograma y el espectro de Hilbert de tu audio ───────────────────────────────────
+  // Todo sobre el audio cargado (mono, a 16 kHz, hasta 4 s, normalizado a pico 1): Senal.emd con hasta cuatro modos, y de cada uno de los
+  // tres primeros, su señal analítica: la frecuencia instantánea (el giro entre dos muestras seguidas, con mediana de 5 ms) se dibuja
+  // más gruesa cuanto mayor es el volumen del modo en ese instante, y se tapa donde cae por debajo del 10 % de su máximo.
+  (function () {
+    const FS = 16000, FMAX = 4000;
+    var lect = null, nota = null, V1 = null, V2 = null;
+    const st = { x: null, fs: FS, dur: 0, base: null, rango: [-90, 0] };
+    const lab = Curso.voz('#voz-lab', {
+      ejemplos: [
+        { id: 'dos-lejos', nombre: 'Dos silbidos, bien separados', crear: fs => Senal.ejemplos.dosSilbidos(fs, { dur: 3, fBaja: 750, fAlta: 3000 }) },
+        'dosSilbidos', 'aaa',
+      ],
+      fsAnalisis: FS, maxSegundos: 4,
+      alCargar: (x, fs) => { st.x = x; st.fs = fs; st.dur = x.length / fs; analizar(); },
+    });
+    const colorDe = (C, k) => [C.respuesta, C.senal, C.borde][k];
+
+    // La frecuencia de giro en cada muestra y su envolvente, para un modo.
+    function analitica(m, fs) {
+      const z = S.hilbert(m), n = m.length, env = new Float64Array(n), fi = new Float64Array(n);
+      let mx = 1e-12;
+      for (let i = 0; i < n; i++) { env[i] = Math.hypot(z.re[i], z.im[i]); if (env[i] > mx) mx = env[i]; }
+      for (let i = 0; i < n - 1; i++) {
+        const re = z.re[i + 1] * z.re[i] + z.im[i + 1] * z.im[i], im = z.im[i + 1] * z.re[i] - z.re[i + 1] * z.im[i];
+        fi[i] = fs / TAU * Math.atan2(im, re);
+      }
+      if (n > 1) fi[n - 1] = fi[n - 2];
+      // Se dibuja cada 2,5 ms con la mediana de los 5 ms de alrededor; se tapa lo que está por debajo del 10 % del máximo y los extremos.
+      const paso = Math.max(1, Math.round(0.0025 * fs)), mitad = Math.max(1, Math.round(0.0025 * fs)), borde = Math.min(Math.round(0.05 * fs), n >> 3);
+      const t = [], f = [], a = [];
+      for (let i = borde; i < n - borde; i += paso) {
+        if (env[i] < 0.1 * mx) continue;
+        const v = Array.from(fi.subarray(Math.max(0, i - mitad), Math.min(n, i + mitad + 1))).sort((p, q) => p - q);
+        t.push(i / fs); f.push(v[v.length >> 1]); a.push(env[i] / mx);
+      }
+      return { t, f, a, mx };
+    }
+    function analizar() {
+      const x = st.x, fs = st.fs;
+      st.base = null;
+      if (!x || x.length < 64) { refrescar(); return; }
+      const pico = Math.max(1e-9, S.pico(x));
+      const xn = Float64Array.from(x, v => v / pico);
+      try {
+        const emd = S.emd(xn, { maxModos: 4 });
+        const modos = emd.modos.slice(0, 3).map(m => ({ m, an: analitica(m, fs) }));
+        let E = null;
+        try {
+          const n = Math.max(128, Math.min(Math.floor(xn.length / 2), 512));
+          E = S.espectrograma(xn, fs, { n, salto: Math.max(32, n >> 2), ventana: 'hann', nfft: Math.max(512, S.siguientePotencia2(2 * n)), suelo: -120 });
+        } catch (err) { E = null; }
+        st.base = { xn, pico, modos, nModos: emd.modos.length, E };
+        if (E) { st.mapa = recortarMapa(E, 0, st.dur, 0, FMAX); st.rango = [E.max - 70, E.max]; } else st.mapa = null;
+      } catch (err) { st.base = null; }
+      refrescar();
+    }
+    const mediana = a => { if (!a.length) return NaN; const v = a.slice().sort((p, q) => p - q); return v[v.length >> 1]; };
+
+    function dibujarEjes(ctx, w, h, C, conMapa) {
+      const margen = { izquierda: w < 380 ? 44 : 52, derecha: w < 380 ? 52 : 60, arriba: 14, abajo: 32 };
+      const esc = G.ejes(ctx, { x: [0, Math.max(0.1, st.dur)], y: [0, FMAX], marcasY: [0, 1000, 2000, 3000, 4000], formatoX: v => num(v, 1), etiquetaX: 'tiempo (s)', etiquetaY: 'frecuencia (Hz)', rejilla: !conMapa, margen, C });
+      if (conMapa && st.mapa) G.mapa(ctx, esc, { datos: st.mapa.datos, nF: st.mapa.nF, nT: st.mapa.nT, t: st.mapa.t, f: st.mapa.f, rango: st.rango });
+      ctx.save();
+      ctx.strokeStyle = C.eje; ctx.strokeRect(Math.round(esc.caja.x) + 0.5, Math.round(esc.caja.y) + 0.5, Math.round(esc.caja.w), Math.round(esc.caja.h));
+      ctx.restore();
+      if (conMapa) G.leyenda(ctx, { x: w - margen.derecha + 14, y: esc.caja.y + 14, ancho: 9, alto: Math.max(40, esc.caja.h - 14), rango: st.rango, etiqueta: 'dB', C });
+      return esc;
+    }
+    const escena1 = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena1);
+    V1 = G.lienzo(escena1, {
+      alto: altoEscena(210, 250),
+      etiqueta: 'El espectrograma de la grabación, de 0 a 4.000 hercios, en escala magma con su leyenda en decibelios.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = dibujarEjes(ctx, w, h, C, true);
+        if (!st.base || !st.mapa) G.texto(ctx, w / 2, h / 2, st.base === null && st.x ? 'No he podido separar este audio' : 'Graba, sube un audio o elige un ejemplo', { alinear: 'center', color: C.tenue, tam: 12, fondo: G.alfa(C.pantalla, 0.8), C });
+        else G.texto(ctx, esc.caja.x + 6, esc.caja.y + 12, 'lo que ve el espectrograma', { color: C.texto, tam: 10, peso: 600, fondo: G.alfa(C.pantalla, 0.6), C });
+      },
+    });
+    const escena2 = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena2);
+    V2 = G.lienzo(escena2, {
+      alto: altoEscena(230, 270),
+      etiqueta: 'El espectro de Hilbert de la grabación: la frecuencia instantánea de cada una de las tres primeras capas, en un color por capa, más gruesa cuanto mayor es el volumen de la capa en ese instante.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = dibujarEjes(ctx, w, h, C, false);
+        const b = st.base;
+        if (!b) return;
+        const c = esc.caja;
+        ctx.save();
+        ctx.beginPath(); ctx.rect(c.x, c.y, c.w, c.h); ctx.clip();
+        b.modos.forEach((q, k) => {
+          ctx.fillStyle = colorDe(C, k);
+          for (let i = 0; i < q.an.t.length; i++) {
+            const f = q.an.f[i];
+            if (!(f >= 0 && f <= FMAX)) continue;
+            const r = 0.8 + 1.8 * q.an.a[i];
+            ctx.globalAlpha = 0.3 + 0.7 * q.an.a[i];
+            ctx.fillRect(esc.x(q.an.t[i]) - r / 2, esc.y(f) - r / 2, r, r);
+          }
+        });
+        ctx.restore();
+        b.modos.forEach((q, k) => {
+          const x = c.x + 8 + k * 78, y = c.y + c.h - 18;
+          if (k === 0) { ctx.fillStyle = G.alfa(C.pantalla, 0.8); ctx.fillRect(c.x + 3, y - 4, 3 * 78, 18); }
+          ctx.fillStyle = colorDe(C, k); ctx.fillRect(x, y, 9, 9);
+          G.texto(ctx, x + 13, y + 8, 'modo ' + (k + 1), { color: C.suave, tam: 10, peso: 600, C });
+        });
+      },
+    });
+    lect = Curso.lecturas(lab.panel, [
+      { id: 'n', nombre: 'Capas que ha sacado', clase: 'cuerpo' },
+      { id: 'f1', nombre: 'Modo 1, frecuencia mediana', clase: 'respuesta' },
+      { id: 'f2', nombre: 'Modo 2', clase: 'senal' },
+      { id: 'f3', nombre: 'Modo 3' },
+    ]);
+    nota = crear('p', { class: 'nota-reto' }, 'Elige un audio o graba el tuyo.');
+    lab.panel.appendChild(nota);
+    const fila = crear('div', { class: 'botones' });
+    lab.panel.appendChild(fila);
+    Curso.audio.boton(fila, () => (st.x ? { x: st.x, fs: st.fs, volumen: 0.6 } : null), 'Oír la grabación', { clase: 'peque' });
+    for (let k = 0; k < 3; k++) Curso.audio.boton(fila, () => (st.base && st.base.modos[k] ? { x: st.base.modos[k].m, fs: st.fs, volumen: 0.5 } : null), 'Oír el modo ' + (k + 1), { clase: 'peque' });
+
+    const hz = v => (Number.isFinite(v) ? num(v, 0) + ' Hz' : '—');
+    function refrescar() {
+      if (!lect || !V1 || !V2) return;
+      V1.dibujar(); V2.dibujar();
+      const b = st.base;
+      if (!b) {
+        for (const id of ['n', 'f1', 'f2', 'f3']) lect.fijar(id, '—');
+        nota.textContent = st.x ? 'No he podido sacar capas de este audio: puede que sea silencio o que sea demasiado corto. Prueba con otro.' : 'Elige un audio o graba el tuyo.';
+        return;
+      }
+      lect.fijar('n', String(b.nModos));
+      for (let k = 0; k < 3; k++) lect.fijar('f' + (k + 1), b.modos[k] ? hz(mediana(b.modos[k].an.f)) : '—');
+      nota.textContent = b.nModos < 2
+        ? 'Solo ha salido una capa: la señal casi no tiene oscilaciones distintas que separar.'
+        : 'Escucha cada modo con su botón. Con dos silbidos bien separados, el modo 1 sigue al más agudo y el modo 2 al más grave mientras estén lejos, y hacia el cruce el modo 1 lleva los dos y suena a batido. Con una «aaa», la primera capa se lleva los armónicos más altos y las siguientes van bajando, de octava en octava, más o menos.';
+    }
+  })();
+})();
+</script>
+</body>
+</html>

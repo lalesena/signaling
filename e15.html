@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>¿Qué frecuencia tiene una sirena? · Señales</title>
+<meta name="description" content="Lección 15 del curso visual «Señales, de 0 a experto»: qué significa «la frecuencia ahora», con una noria que acelera y frena, chirps, el efecto Doppler de una ambulancia, AM y FM, una onda gravitacional y tu propio silbido.">
+<link rel="stylesheet" href="comun/fuentes.css">
+<link rel="stylesheet" href="comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e15">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Nivel 5 · Lección 15</p>
+    <h1>¿Qué frecuencia tiene una sirena?</h1>
+    <aside class="pregunta">
+      <p>Una ambulancia pasa por tu calle con la sirena subiendo y bajando, y oyes sin esfuerzo que ahora sube. Sin embargo, la frecuencia que has aprendido a medir con Fourier es una lista de vueltas por segundo para la señal entera: la de una sirena sale como una mancha ancha entre su nota más baja y la más alta, sin decir cuándo suena cada una. Si cada noria de Fourier gira a velocidad fija de principio a fin, ¿qué puede significar «la frecuencia ahora»?</p>
+    </aside>
+    <ul class="meta"><li>Unos 50 minutos</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>La idea en una imagen</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Una noria que acelera y frena. La altura de su cabina verde, apuntada instante a instante, dibuja la onda de la derecha: lo recién apuntado está junto a la noria, y lo de la derecha pasó hace hasta dos segundos. Cuando la noria va deprisa, las crestas se aprietan, y cuando va despacio, se estiran. Con los mandos eliges la velocidad media y cuánto acelera y frena.</figcaption>
+    </figure>
+    <p>En la <a href="e01.html">lección 1</a>, la noria giraba siempre a la misma velocidad, y esa velocidad era la frecuencia de la onda. Aquí la noria puede acelerar y frenar, como el sonido de una sirena, y la pregunta cambia: cuántas vueltas por segundo da <em>ahora</em>. Esa velocidad del momento es lo que, en esta lección, se llama frecuencia, y se puede ver en la imagen en lo apretadas que están las crestas justo a la derecha de la noria.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Paso a paso</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>Cronometrar una vuelta</h3>
+      <p>Lo más sencillo que se puede hacer con una noria que gira es cronometrar una vuelta. Cada vez que la cabina pasa por el mismo punto, por ejemplo por lo más alto, ha dado una vuelta entera, y el tiempo entre dos pasadas es lo que ha durado esa vuelta, el periodo de la lección 1. La frecuencia es su inversa: si una vuelta dura 1,25 s, la noria da 0,8 vueltas por segundo. En una señal, el punto de referencia más cómodo es el <b class="termino" data-termino="Cruce por cero">cruce por cero</b>, el instante en que la onda pasa por la altura del eje, y dos cruces hacia arriba seguidos encierran una vuelta.</p>
+      <p>Mientras la noria gire siempre igual, da lo mismo cuándo midas. Si cambia de velocidad, cada vuelta dura un poco distinto y cada medida te cuenta la velocidad de ese momento, no la de toda la señal.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Esta noria gira a una velocidad que no sabes. Pulsa «¡Arriba!» cada vez que la cabina verde pase por lo más alto, al menos cuatro veces, y averigua cuántas vueltas por segundo da.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="fila" id="r1-fila"></div>
+        <p class="nota-reto">También sirve la barra espaciadora o tocar la noria. «Otra noria» cambia la velocidad y borra tus marcas.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>El velocímetro de la noria</h3>
+      <p>Lo que ha hecho el cronómetro tiene nombre. La <b class="termino" data-termino="Fase (acumulada)">fase</b> de la noria es el ángulo total que ha recorrido la cabina, contando las vueltas completas, y hace de cuentakilómetros. La <b class="termino" data-termino="Frecuencia instantánea">frecuencia instantánea</b> es lo rápido que avanza esa fase en este momento, cuántas vueltas daría la noria en un segundo si siguiera al ritmo de ahora, y hace de velocímetro. Como en un coche, un instrumento es la pendiente del otro: donde la curva de la fase se empina, la noria gira deprisa, y donde se aplana, despacio.</p>
+      <p>Esto contesta a la pregunta de la cabecera. La frecuencia de la transformada de Fourier de la <a href="e04.html">lección 4</a> es la de norias que giran a velocidad fija de principio a fin, y por eso una sirena sale como una mancha ancha: para describir su subida con norias fijas hacen falta muchas. Con una sola noria que acelera y frena, en cambio, basta una frecuencia que cambia con el tiempo. El espectrograma de la <a href="e11.html">lección 11</a> también la dibuja como una línea, pero borrosa, por las baldosas de la <a href="e12.html">lección 12</a>: con una ventana corta la nota sale gorda, y con una larga la subida se emborrona.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Arriba ves cuántas vueltas ha dado una noria en cuatro segundos, su fase. Abajo, arrastra los cuatro puntos naranjas hasta la velocidad de la noria en cada momento.</p>
+        <div class="escena" id="r2-fase"></div>
+        <div class="escena" id="r2-escena"></div>
+        <div class="fila" id="r2-lecturas"></div>
+        <p class="nota-reto">Con el teclado, elige un punto con las flechas izquierda y derecha y muévelo con las de arriba y abajo.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>Chirps: la noria que acelera</h3>
+      <p>Una señal cuya frecuencia sube o baja con el tiempo es un <b class="termino" data-termino="Chirp">chirp</b>: el gorjeo de un pájaro, el barrido de un murciélago, una sirena. En el espectrograma deja una línea inclinada. Un <b class="termino" data-termino="Chirp lineal">chirp lineal</b> sube los mismos hercios cada segundo, y un <b class="termino" data-termino="Chirp exponencial">chirp exponencial</b> sube las mismas octavas cada segundo, es decir, dobla su frecuencia cada mismo tiempo. El oído cuenta octavas, no hercios, así que solo el segundo suena a subida uniforme. Escucha los dos, que suben de 200 a 3.200 Hz en dos segundos: el lineal parece correr al principio y cansarse al final.</p>
+      <div class="botones" id="p3-chirps"></div>
+      <p>Para fabricar un chirp con el ordenador hay una trampa clásica. La fase es lo acumulado, la suma de lo que ha girado la noria en cada instante, y no basta con poner la frecuencia de ahora dentro del seno: en un chirp lineal que empieza en f0 y sube k hercios por segundo, la fase crece con el cuadrado del tiempo, y el rincón matemático tiene la cuenta.</p>
+      <p>Los chirps están por todas partes. Un murciélago moreno que persigue una polilla grita en ultrasonidos, demasiado agudos para nosotros, y cada grito es un chirp: en dos a cinco milésimas de segundo, su nota baja de unos 65.000 a unos 25.000 hercios, y con el eco calcula a qué distancia está la presa con una precisión de centímetro y medio. Un silbato de émbolo, un tubo cerrado por un pistón, es el chirp más fácil de fabricar: cuanto más corto dejas el tubo, más aguda la nota, y si mueves el pistón mientras soplas, haces un chirp.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Debajo ves el espectrograma de un chirp de muestra. Fabrica uno igual: elige dónde empieza, dónde acaba y si es lineal o exponencial, hasta que tu línea naranja tape a la de la muestra.</p>
+        <div class="escena" id="r3-escena"></div>
+        <div class="mandos" id="r3-mandos"></div>
+        <div class="fila" id="r3-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>La sirena que pasa</h3>
+      <p>Cuando la sirena de una ambulancia se acerca, sus crestas te llegan apelotonadas, y suena más aguda de lo que es; cuando se aleja, te llegan estiradas, y suena más grave. A este cambio de frecuencia por el movimiento se le llama <b class="termino" data-termino="Efecto Doppler">efecto Doppler</b>, y lo propuso Christian Doppler en 1842. En 1845, el holandés Buys Ballot subió a un trompista a un tren entre Utrecht y Maarssen y puso a gente con buen oído en los andenes para comprobarlo.</p>
+      <p>La caída al pasar depende solo de la velocidad de la ambulancia: a 90 km/h, una sirena baja de golpe unos dos semitonos y medio, la nota que sea. La distancia a la que pasa decide otra cosa, lo brusco que es el cambio: pegado a la carretera, ocurre en una fracción de segundo, y desde lejos se reparte en varios. Una confusión corriente es creer que, mientras la ambulancia se acerca, la sirena va subiendo: se acerca a velocidad constante, suena más aguda que la real y fija, y lo que sube es el volumen.</p>
+      <p>Los animales también lo usan. El murciélago grande de herradura, que vive en la península ibérica, grita por la nariz una nota casi fija, de unos 83.000 hercios. Cuando vuela hacia algo, el eco le vuelve más agudo por el efecto Doppler, y entonces baja su nota lo justo para que el eco le llegue siempre a la misma frecuencia, la que mejor oye.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Consigue que la nota de la sirena caiga exactamente dos semitonos cuando la ambulancia pasa. La distancia a la carretera puede ser la que quieras.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="mandos" id="r4-mandos"></div>
+        <div class="fila" id="r4-lecturas"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>El mensaje, en el tamaño o en la velocidad</h3>
+      <p>La noria es también la manera de enviar un mensaje por radio. Se parte de una onda de fondo, de velocidad fija, la <b class="termino" data-termino="Portadora">portadora</b>, y el mensaje, la voz o la música, se le añade cambiando algo de la noria. En la <b class="termino" data-termino="Modulación de amplitud (AM)">modulación de amplitud</b>, la AM, la noria cambia de tamaño al ritmo del mensaje. En la <b class="termino" data-termino="Modulación de frecuencia (FM)">modulación de frecuencia</b>, la FM, cambia de velocidad: acelera y frena alrededor de la velocidad de la portadora, y lo que se aparta de ella, hacia arriba y hacia abajo, es la <b class="termino" data-termino="Desviación de frecuencia">desviación de frecuencia</b>.</p>
+      <p>Una emisora de FM gira a unos 100 millones de vueltas por segundo y, como mucho, acelera y frena 75.000 vueltas por segundo arriba y abajo, menos de una milésima, que es la desviación máxima en Europa Occidental y Estados Unidos. Edwin Armstrong patentó su sistema en 1933. Un vibrato de cantante es lo mismo, una FM muy lenta de la voz. Si la noria acelera y frena cientos de veces por segundo, el oído deja de oír una nota que sube y baja y oye un timbre nuevo.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Esta señal es una portadora de 800 Hz con un mensaje lento, de tres vueltas por segundo, metido en el tamaño. Consigue una FM pura, sin cambios de tamaño, que se desvíe 100 Hz arriba y abajo.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-lecturas"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>Leer un chirp de verdad</h3>
+      <p>El 14 de septiembre de 2015, los dos detectores LIGO, en Estados Unidos, registraron una vibración del propio espacio. Durante unas dos décimas de segundo, la señal subió de 35 a 250 Hz, cada vez más deprisa, en unos ocho ciclos: era el chirp de dos agujeros negros, de unas 36 y 29 masas solares, que giraban uno alrededor del otro hasta fundirse en uno. Tal cual, es grave y breve, y en el altavoz de un móvil casi no se oye. Por eso, para escucharla, se suele subir de tono, como quien pinta en falso color una foto del telescopio; GWOSC, el centro que publica los datos, la desplaza 400 Hz hacia arriba.</p>
+      <p>Para leer su frecuencia, los físicos de LIGO y Virgo hicieron lo mismo que tú con la noria del primer reto: cronometrar cuánto tarda cada media vuelta, entre dos cruces por cero seguidos, y de ahí sacaron 35 vueltas por segundo al principio y más de 150 poco antes del choque. La señal de la página no es lo que midió el detector tal cual, sino la forma de onda de relatividad numérica que mejor se ajusta a lo que midió el detector de Hanford, ya filtrada y sin ruido, tal como la publica GWOSC para la figura 1 del artículo del descubrimiento.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">Mide la frecuencia de la onda gravitacional al principio y cerca del final. Toca dos cruces por cero seguidos para medir una media vuelta, y haz una medida antes de 0,36 s y otra después de 0,40 s.</p>
+        <div class="escena" id="r6-resumen"></div>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-lecturas"></div>
+        <div class="lista-numeros" id="r6-lista"></div>
+        <p class="nota-reto" id="r6-atribucion">Datos: LIGO Scientific Collaboration y Virgo Collaboration, publicados por el <a href="https://gwosc.org/events/GW150914/">Gravitational Wave Open Science Center</a> con licencia <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> (doi:10.7935/K5MW2F23). Forma de onda de relatividad numérica proyectada sobre el detector de Hanford (figura 1 de Abbott et al., 2016, <i>Phys. Rev. Lett.</i> 116, 061102), señal filtrada entre 35 y 350 Hz. Cambios: recortada entre unos 0,29 y 0,46 s, con una muestra de cada cuatro; para el sonido, desplazada 400 Hz hacia arriba.</p>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>En tu voz</h2>
+    <p><b>Qué grabar.</b> Un silbido que sube y baja despacio, de unos 10 segundos: es el tramo 4 de la grabación de referencia de la serie. Graba con el micrófono si tu navegador lo deja; si no, sube un audio grabado con el móvil o prueba con los ejemplos sintéticos, que incluyen una sirena.</p>
+    <p><b>Qué mirar.</b> El laboratorio busca primero dónde está tu silbido en el espectrograma, filtra alrededor de él y cronometra las vueltas entre cruces por cero, ocho a ocho. La curva naranja que sale es tu frecuencia instantánea, y la verás sobre el espectrograma: una línea mucho más fina que la mancha borrosa de debajo. La noria gira al ritmo medido, a cámara lenta, y acelera y frena con tu boca. Si cantas en vez de silbar, los armónicos crean cruces de más y la curva sale desordenada o salta de armónico, y es justo lo que contará la <a href="e16.html">lección 16</a>.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>Lo que tienes que recordar</h2>
+    <ol class="tres">
+      <li>La fase es el ángulo que ha recorrido la noria, contando las vueltas completas, y la frecuencia instantánea es su ritmo de cambio: el velocímetro de la noria. Se puede medir cronometrando vueltas entre cruces por cero.</li>
+      <li>Un chirp es una noria que acelera. Se fabrica sumando lo que gira en cada instante, y el oído lo siente uniforme cuando sube las mismas octavas cada segundo, no los mismos hercios.</li>
+      <li>El efecto Doppler, la AM y la FM juegan con la noria: Doppler cambia la velocidad con que te llegan las crestas, la AM cambia su tamaño y la FM, su velocidad. La frecuencia instantánea solo tiene sentido con una noria sola que cambia despacio comparado con una vuelta.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Errores típicos</h2>
+    <ul class="errores">
+      <li><b>«La frecuencia instantánea es lo que marca el espectro en ese momento.»</b> El espectro de Fourier mira la señal entera, y el espectrograma, un trozo, y lo emborrona. La frecuencia instantánea es otra cosa: lo rápido que avanza el ángulo de la noria ahora mismo.</li>
+      <li><b>«Mientras la ambulancia se acerca, su sirena sube de tono.»</b> Mientras se acerca a velocidad constante y en línea recta hacia ti, suena más aguda que la real, pero fija, y al pasar cae de golpe. Si la carretera pasa a un lado, el cambio se reparte en los segundos de alrededor del paso, y es más brusco cuanto más cerca pasa. Lo que sí sube al acercarse es el volumen.</li>
+      <li><b>«Para fabricar un chirp lineal basta con poner la frecuencia de cada instante dentro del seno.»</b> La fase es lo acumulado. Si escribes seno de 2π·(f0 + k·t)·t, la frecuencia real sube el doble de deprisa, f0 + 2·k·t, y es un fallo clásico al programar chirps.</li>
+      <li><b>«Un chirp lineal suena como una subida uniforme.»</b> El oído cuenta octavas, y a un lineal de 200 a 3.200 Hz le caben más de tres octavas en el primer segundo y menos de una en el segundo, así que parece que frena. Suena uniforme el exponencial, que dobla su frecuencia cada mismo tiempo.</li>
+      <li><b>«La frecuencia instantánea existe siempre.»</b> Tiene sentido con una sola noria que cambia despacio comparado con una vuelta. Con dos notas a la vez, o con cambios tan rápidos como el giro, deja de significar «la nota que oyes», y de eso trata la <a href="e16.html">lección 16</a>.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Abrir</span>
+      <h2>Rincón matemático</h2>
+      <span class="resumen">Las fórmulas, para quien las quiera. Cada una va después de su lectura en palabras.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>Fase y frecuencia instantánea</h3>
+      <p>Una onda es una noria cuyo tamaño <span class="tex">A</span> y cuyo ángulo <span class="tex">\varphi</span> pueden cambiar con el tiempo:</p>
+      <div class="tex">x(t) = A(t)\,\cos\varphi(t)</div>
+      <p>La frecuencia instantánea es el ritmo de cambio del ángulo, contado en vueltas por segundo:</p>
+      <div class="tex">f_i(t) = \frac{1}{2\pi}\,\frac{d\varphi}{dt}</div>
+      <p>Y el ángulo es la suma acumulada de lo que ha girado la noria:</p>
+      <div class="tex">\varphi(t) = \varphi_0 + 2\pi \int_0^t f_i(\tau)\, d\tau</div>
+
+      <h3>Chirps</h3>
+      <p>Un chirp lineal empieza en <span class="tex">f_0</span> y sube <span class="tex">k</span> hercios cada segundo, y su fase crece con el cuadrado del tiempo:</p>
+      <div class="tex">f(t) = f_0 + k\,t, \qquad \varphi(t) = 2\pi\left(f_0\,t + \tfrac{k}{2}\,t^2\right)</div>
+      <p>Un chirp exponencial multiplica su frecuencia por lo mismo en cada tramo igual de tiempo, y en <span class="tex">T</span> segundos va de <span class="tex">f_0</span> a <span class="tex">f_1</span>:</p>
+      <div class="tex">f(t) = f_0 \left(\frac{f_1}{f_0}\right)^{t/T}, \qquad \varphi(t) = \frac{2\pi f_0 T}{\ln(f_1/f_0)}\left[\left(\frac{f_1}{f_0}\right)^{t/T} - 1\right]</div>
+
+      <h3>Cronometrar vueltas</h3>
+      <p>Cronometrando <span class="tex">N</span> vueltas entre dos cruces por cero hacia arriba, la frecuencia es <span class="tex">N</span> partido por lo que han tardado; entre dos cruces seguidos, hacia arriba y hacia abajo, cabe media vuelta:</p>
+      <div class="tex">\hat f \approx \frac{N}{t_{k+N} - t_k}, \qquad \hat f \approx \frac{1}{2\,(t_{k+1} - t_k)}</div>
+
+      <h3>AM y FM</h3>
+      <p>En AM, el mensaje <span class="tex">s</span> cambia el tamaño de la portadora; en FM, cambia su velocidad, y la frecuencia instantánea es la de la portadora más la desviación por el mensaje:</p>
+      <div class="tex">x_{AM}(t) = \left[1 + m\, s(t)\right]\cos(2\pi f_c t), \qquad x_{FM}(t) = \cos\!\left(2\pi f_c t + 2\pi\,\Delta f \int_0^t s(\tau)\,d\tau\right), \qquad f_i = f_c + \Delta f\, s(t)</div>
+      <p>La regla de Carson dice que una FM ocupa más o menos dos veces la suma de la desviación y la frecuencia del mensaje:</p>
+      <div class="tex">B \approx 2\,(\Delta f + f_m)</div>
+
+      <h3>Efecto Doppler</h3>
+      <p>Para una fuente que se mueve con velocidad <span class="tex">v</span> y un oyente quieto, siendo <span class="tex">\theta</span> el ángulo entre la velocidad y la línea que va de la fuente al oyente, y <span class="tex">c</span> la velocidad del sonido:</p>
+      <div class="tex">f_o = f_s\,\frac{c}{c - v\cos\theta}</div>
+      <p>Y la caída al pasar, en semitonos, solo depende de la velocidad:</p>
+      <div class="tex">\Delta_{\text{st}} = 12\,\log_2\frac{c + v}{c - v}</div>
+      <p>El eco que recibe un murciélago que vuela a <span class="tex">v</span> hacia algo quieto lleva el efecto dos veces, a la ida y a la vuelta:</p>
+      <div class="tex">f_{\text{eco}} = f\,\frac{c + v}{c - v}</div>
+
+      <h3>El silbato de émbolo</h3>
+      <p>La nota de un tubo cerrado por un lado es la velocidad del sonido entre cuatro veces la longitud, con la corrección del extremo abierto, que es de unas seis décimas del radio del tubo:</p>
+      <div class="tex">f \approx \frac{c}{4\,(L + 0{,}6\,r)}</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Para saber más</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Artículo abierto · inglés</span>Abbott, B. P. et al. (2016). <a href="https://arxiv.org/abs/1602.03837"><i>Observation of gravitational waves from a binary black hole merger</i></a>. El artículo del descubrimiento; la figura 1 enseña la señal y su espectrograma: el chirp en un vistazo.</li>
+      <li><span class="tipo">Artículo abierto · inglés</span>LIGO Scientific Collaboration y Virgo Collaboration (2017). <a href="https://arxiv.org/abs/1608.01940"><i>The basic physics of the binary black hole merger GW150914</i></a>. Cómo leer la masa de los agujeros negros cronometrando los cruces por cero, con física de bachillerato.</li>
+      <li><span class="tipo">Datos abiertos · inglés</span><a href="https://gwosc.org/events/GW150914/">GWOSC, la página de GW150914</a>. Los datos, con su licencia, y un tutorial que convierte la señal en sonido.</li>
+      <li><span class="tipo">Libro abierto · inglés</span>Downey, A. B., <a href="https://greenteapress.com/thinkdsp/html/thinkdsp004.html"><i>Think DSP</i>, cap. 3</a>. Chirps lineales y exponenciales, y cómo se fabrican sumando la fase.</li>
+      <li><span class="tipo">Libro abierto · inglés</span>OpenStax, <a href="https://openstax.org/books/university-physics-volume-1/pages/17-7-the-doppler-effect"><i>University Physics</i> vol. 1, § 17.7, el efecto Doppler</a>. Las fórmulas, con el ejemplo del tren y la ambulancia.</li>
+      <li><span class="tipo">Artículo abierto · inglés</span>Moss, C. F. y Surlykke, A. (2010). <a href="https://www.frontiersin.org/articles/10.3389/fnbeh.2010.00033/full"><i>Probing the natural scene by echolocation in bats</i></a>. Cómo cambian los chirps de un murciélago mientras persigue a una presa.</li>
+      <li><span class="tipo">Interactivo · inglés</span><a href="https://musiclab.chromeexperiments.com/Spectrogram/">Chrome Music Lab, Spectrogram</a>. Silba subiendo y bajando y mira tu chirp en directo.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>Términos nuevos</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Examen</h2>
+  </section>
+
+</main>
+
+<script src="comun/temario.js"></script>
+<script src="comun/graficas.js"></script>
+<script src="comun/senal.js"></script>
+<script src="comun/curso.js"></script>
+<script src="datos/e15.js"></script>
+<script>
+
+// Forma de onda de relatividad numérica de GW150914 proyectada sobre el detector de Hanford (figura 1 de Abbott et al., 2016),
+// publicada por GWOSC con licencia CC BY 4.0 (doi:10.7935/K5MW2F23). Cambios: recortada, una muestra de cada cuatro (4.096 Hz) y
+// redondeada a tres decimales. Unidades de 1e-21.
+var GW150914 = { t0: 0.289112, dt: 0.000244140625, y: [
+  -0.005,-0.004,-0.001,0.003,0.009,0.016,0.024,0.032,0.04,0.047,0.053,0.057,0.059,0.059,
+  0.057,0.053,0.047,0.039,0.03,0.02,0.01,0,-0.009,-0.019,-0.028,-0.036,-0.044,-0.051,
+  -0.057,-0.063,-0.069,-0.074,-0.078,-0.083,-0.088,-0.093,-0.098,-0.104,-0.109,-0.114,-0.119,-0.124,
+  -0.127,-0.129,-0.129,-0.127,-0.123,-0.118,-0.111,-0.103,-0.093,-0.084,-0.075,-0.066,-0.058,-0.051,
+  -0.046,-0.042,-0.039,-0.038,-0.037,-0.038,-0.039,-0.039,-0.04,-0.04,-0.039,-0.036,-0.032,-0.026,
+  -0.018,-0.008,0.004,0.018,0.033,0.048,0.064,0.079,0.093,0.105,0.115,0.123,0.128,0.132,
+  0.133,0.133,0.132,0.129,0.126,0.123,0.12,0.116,0.113,0.111,0.108,0.106,0.105,0.103,
+  0.102,0.101,0.1,0.099,0.097,0.095,0.091,0.087,0.082,0.076,0.07,0.065,0.059,0.055,
+  0.052,0.05,0.05,0.051,0.052,0.055,0.058,0.06,0.062,0.063,0.062,0.06,0.056,0.05,
+  0.042,0.033,0.022,0.009,-0.004,-0.019,-0.033,-0.047,-0.061,-0.073,-0.084,-0.092,-0.098,-0.102,
+  -0.104,-0.104,-0.102,-0.1,-0.097,-0.094,-0.093,-0.092,-0.093,-0.096,-0.1,-0.106,-0.113,-0.121,
+  -0.13,-0.139,-0.148,-0.157,-0.166,-0.173,-0.179,-0.184,-0.188,-0.19,-0.19,-0.189,-0.186,-0.182,
+  -0.178,-0.172,-0.166,-0.16,-0.154,-0.148,-0.142,-0.135,-0.128,-0.119,-0.109,-0.098,-0.085,-0.069,
+  -0.052,-0.033,-0.012,0.01,0.032,0.055,0.077,0.099,0.119,0.138,0.155,0.17,0.183,0.194,
+  0.202,0.209,0.213,0.216,0.218,0.219,0.22,0.222,0.224,0.227,0.232,0.238,0.245,0.253,
+  0.261,0.269,0.276,0.281,0.284,0.285,0.283,0.277,0.269,0.257,0.243,0.226,0.206,0.185,
+  0.163,0.139,0.114,0.089,0.064,0.039,0.014,-0.009,-0.032,-0.054,-0.075,-0.095,-0.114,-0.134,
+  -0.153,-0.172,-0.192,-0.211,-0.231,-0.25,-0.268,-0.284,-0.298,-0.311,-0.32,-0.326,-0.33,-0.33,
+  -0.328,-0.323,-0.317,-0.309,-0.3,-0.289,-0.278,-0.267,-0.256,-0.245,-0.235,-0.225,-0.215,-0.207,
+  -0.199,-0.19,-0.182,-0.172,-0.161,-0.147,-0.131,-0.112,-0.09,-0.065,-0.037,-0.007,0.024,0.056,
+  0.089,0.121,0.151,0.18,0.207,0.232,0.253,0.272,0.288,0.301,0.312,0.319,0.325,0.328,
+  0.329,0.329,0.328,0.326,0.324,0.321,0.318,0.315,0.311,0.305,0.299,0.29,0.279,0.266,
+  0.251,0.233,0.214,0.193,0.171,0.148,0.125,0.102,0.08,0.058,0.037,0.017,-0.003,-0.021,
+  -0.039,-0.057,-0.074,-0.091,-0.109,-0.128,-0.148,-0.169,-0.191,-0.215,-0.239,-0.265,-0.291,-0.316,
+  -0.341,-0.364,-0.385,-0.402,-0.416,-0.425,-0.43,-0.431,-0.427,-0.418,-0.405,-0.39,-0.371,-0.35,
+  -0.328,-0.304,-0.28,-0.256,-0.232,-0.209,-0.185,-0.162,-0.139,-0.117,-0.093,-0.07,-0.046,-0.021,
+  0.005,0.033,0.061,0.091,0.123,0.156,0.189,0.222,0.255,0.287,0.318,0.346,0.371,0.394,
+  0.415,0.432,0.448,0.461,0.472,0.482,0.491,0.498,0.504,0.508,0.51,0.51,0.507,0.501,
+  0.493,0.48,0.464,0.444,0.42,0.391,0.358,0.319,0.276,0.228,0.175,0.119,0.061,0.002,
+  -0.058,-0.117,-0.174,-0.228,-0.279,-0.326,-0.37,-0.41,-0.447,-0.481,-0.512,-0.54,-0.566,-0.589,
+  -0.609,-0.626,-0.642,-0.654,-0.665,-0.673,-0.678,-0.68,-0.679,-0.674,-0.665,-0.65,-0.63,-0.603,
+  -0.57,-0.53,-0.485,-0.434,-0.379,-0.319,-0.257,-0.192,-0.126,-0.059,0.009,0.077,0.144,0.212,
+  0.278,0.344,0.407,0.469,0.528,0.584,0.637,0.686,0.732,0.772,0.808,0.838,0.862,0.878,
+  0.886,0.886,0.875,0.855,0.824,0.783,0.732,0.671,0.602,0.525,0.443,0.355,0.263,0.17,
+  0.075,-0.019,-0.112,-0.202,-0.289,-0.37,-0.446,-0.515,-0.578,-0.634,-0.682,-0.723,-0.756,-0.78,
+  -0.797,-0.805,-0.804,-0.793,-0.773,-0.742,-0.7,-0.648,-0.586,-0.514,-0.432,-0.342,-0.244,-0.139,
+  -0.03,0.083,0.196,0.309,0.418,0.52,0.614,0.696,0.764,0.816,0.85,0.866,0.861,0.836,
+  0.791,0.727,0.642,0.54,0.421,0.286,0.14,-0.016,-0.179,-0.342,-0.503,-0.657,-0.796,-0.918,
+  -1.016,-1.086,-1.124,-1.127,-1.091,-1.016,-0.901,-0.748,-0.559,-0.34,-0.098,0.158,0.416,0.662,
+  0.881,1.059,1.18,1.233,1.211,1.111,0.936,0.697,0.411,0.1,-0.209,-0.489,-0.714,-0.863,
+  -0.92,-0.88,-0.749,-0.542,-0.282,0.003,0.279,0.516,0.69,0.782,0.785,0.704,0.551,0.35,
+  0.126,-0.092,-0.28,-0.418,-0.493,-0.502,-0.451,-0.353,-0.225,-0.086,0.043,0.147,0.215,0.242,
+  0.227,0.178,0.105,0.019,-0.067,-0.14,-0.191,-0.217,-0.214,-0.185,-0.137,-0.076,-0.01,0.051,
+  0.101,0.135,0.149,0.145,0.125,0.092,0.052,0.01,-0.028,-0.058,-0.077,-0.084,-0.079,-0.064,
+  -0.041,-0.013,0.016,0.045,0.069,0.088,0.101,0.108,0.109,0.105,0.099,0.09,0.081,0.072,
+  0.065,0.059,0.054,0.05,0.046,0.041,0.036,0.029,0.02,0.01,-0.001,-0.013,-0.025,-0.036,
+  -0.046,-0.054,-0.061,-0.066,-0.07,-0.074,-0.077,-0.08,-0.084,-0.088,-0.093,-0.097,-0.101,-0.105,
+  -0.106,-0.106,-0.104,-0.1,-0.094,-0.085,-0.075,-0.064,-0.051,-0.039,-0.028,-0.018,-0.01,-0.004,
+  -0.002,-0.002,-0.006,-0.011,-0.018,-0.026,-0.033,-0.039,-0.043,-0.045,-0.044,-0.04,-0.034,-0.025,
+  -0.014,-0.001,0.013,0.027,0.042,0.056,0.07,0.082,0.093,0.101,0.106,0.108,0.107,0.103
+
+] };
+
+// Lección 15 · cálculo propio de la página: cruces por cero, el efecto Doppler de una fuente que pasa, AM y FM, y fase de chirps.
+// Se prueba con Node y se incrusta en e15.html.
+var CALC = (function () {
+  'use strict';
+  const TAU = Math.PI * 2, C_SON = 343;
+
+  // Instantes (s) en que una señal muestreada pasa por cero, con interpolación lineal entre las dos muestras que lo rodean.
+  // → { t: [...], sube: [true | false, ...] }
+  function cruces(y, t0, dt) {
+    const t = [], sube = [];
+    for (let i = 1; i < y.length; i++) {
+      const a = y[i - 1], b = y[i];
+      if (a === 0 && b === 0) continue;
+      if ((a < 0 && b >= 0) || (a > 0 && b <= 0)) { t.push(t0 + (i - 1 + a / (a - b)) * dt); sube.push(b > a); }
+    }
+    return { t, sube };
+  }
+  // Mediana de una lista.
+  function mediana(v) {
+    const a = Array.from(v).sort((p, q) => p - q), n = a.length;
+    return n ? (n % 2 ? a[(n - 1) / 2] : (a[n / 2 - 1] + a[n / 2]) / 2) : NaN;
+  }
+
+  // ── Efecto Doppler de una fuente que pasa en línea recta a v m/s, a d metros del oyente ──────────────
+  // t: segundos desde que llega el sonido emitido en el punto más cercano (negativo antes, positivo después).
+  // Con el retardo exacto: el instante de emisión te cumple t + d/c = te + r(te)/c, con r = √((v·te)² + d²).
+  function emision(v, d, t) {
+    let te = t;
+    for (let i = 0; i < 8; i++) te = t + d / C_SON - Math.hypot(v * te, d) / C_SON;
+    return te;
+  }
+  // Frecuencia que oye el oyente (Hz) y distancia en el instante de emisión.
+  function doppler(fs0, v, d, t) {
+    const te = emision(v, d, t), r = Math.hypot(v * te, d), rp = v * v * te / r;   // rp: ritmo al que crece la distancia
+    return { f: fs0 / (1 + rp / C_SON), r, te };
+  }
+  // Caída, en semitonos, entre la frecuencia lejos, acercándose, y lejos, alejándose: solo depende de la velocidad.
+  function caidaSemitonos(v) { return 12 * Math.log2((C_SON + v) / (C_SON - v)); }
+  // Lo que dura el cambio: entre el 90 % y el 10 % de la caída (s).
+  function duracionCambio(v, d) {
+    const fmax = C_SON / (C_SON - v), fmin = C_SON / (C_SON + v);
+    let t90 = null, t10 = null;
+    for (let t = -80; t <= 80; t += 0.005) {
+      const g = (doppler(1, v, d, t).f - fmin) / (fmax - fmin);
+      if (t90 === null && g <= 0.9) t90 = t;
+      if (t90 !== null && g <= 0.1) { t10 = t; break; }
+    }
+    return t90 !== null && t10 !== null ? t10 - t90 : NaN;
+  }
+  // El sonido de una sirena de un solo tono que pasa (con el retardo y el volumen que baja con la distancia).
+  function sonidoDoppler(fs, fs0, v, d, dur) {
+    const n = Math.round(fs * dur), x = new Float64Array(n);
+    let fase = 0, fa = null;
+    for (let i = 0; i < n; i++) {
+      const t = -dur / 2 + i / fs, D = doppler(fs0, v, d, t);
+      if (fa !== null) fase += Math.PI * (fa + D.f) / fs;
+      fa = D.f;
+      x[i] = Math.cos(fase) * Math.min(1, 4 / D.r);
+    }
+    return x;
+  }
+
+  // ── Chirps ──────────────────────────────────────────────────────────────────────────────────────────
+  // Frecuencia (Hz) de un chirp de f0 a f1 en dur segundos, 'lineal' o 'exponencial'.
+  function leyChirp(f0, f1, dur, tipo) {
+    return t => (tipo === 'lineal' ? f0 + (f1 - f0) * t / dur : f0 * Math.pow(f1 / f0, t / dur));
+  }
+
+  // ── AM y FM ─────────────────────────────────────────────────────────────────────────────────────────
+  // Una portadora de fc Hz con un mensaje seno de fm Hz: profundidad de AM m (0 a 1) y desviación de FM df (Hz).
+  function modulada(fs, dur, fc, fm, m, df) {
+    const fi = t => fc + df * Math.sin(TAU * fm * t), amp = t => (1 + m * Math.sin(TAU * fm * t)) / (1 + m);
+    return Senal.modulada({ fs, dur, fi, amp });
+  }
+
+  // ── Onda gravitacional: subirla 400 Hz con la señal analítica y repetirla ────────────────────────────
+  function sonidoGravitacional(datos, fsSalida, subir) {
+    const fs0 = 1 / datos.dt, x = Float64Array.from(datos.y);
+    const z = Senal.hilbert(x), y = new Float64Array(x.length);
+    for (let i = 0; i < x.length; i++) {
+      const ph = TAU * subir * i / fs0;
+      y[i] = z.re[i] * Math.cos(ph) - z.im[i] * Math.sin(ph);
+    }
+    const w = Senal.remuestrear(y, fs0, fsSalida);
+    // Fundidos de 10 ms y tres repeticiones con 0,4 s de silencio entre medias.
+    const f = Math.round(0.01 * fsSalida), pausa = Math.round(0.4 * fsSalida), out = new Float64Array(3 * w.length + 2 * pausa);
+    for (let r = 0; r < 3; r++) {
+      for (let i = 0; i < w.length; i++) {
+        const g = Math.min(1, i / f, (w.length - 1 - i) / f);
+        out[r * (w.length + pausa) + i] = w[i] * Math.max(0, g);
+      }
+    }
+    return out;
+  }
+
+  return { cruces, mediana, doppler, emision, caidaSemitonos, duracionCambio, sonidoDoppler, leyChirp, modulada, sonidoGravitacional, C_SON };
+})();
+if (typeof module !== 'undefined' && module.exports) module.exports = CALC;
+
+// Lección 15 · ¿Qué frecuencia tiene una sirena?: la imagen ancla (la noria que acelera y frena), los seis retos y el
+// laboratorio «En tu voz». Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo; aquí solo va lo de esta lección.
+// Convenios: señal y noria en verde, frecuencia instantánea medida y lo que fabrica el lector en naranja, lo ya escrito y la
+// referencia en tinta, espectros en ámbar, tangentes y plantillas en púrpura, espectrogramas en magma con leyenda en dB. Los ángulos se miden
+// desde las tres en punto y crecen en sentido antihorario; la altura de una cabina es radio · sen(ángulo). El cálculo propio está en CALC.
+(function () {
+  'use strict';
+  const G = Graficas, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const altoDe = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); document.querySelector(contenedor).appendChild(f); return f; };
+  const hz = (v, d) => num(v, d) + ' Hz';
+
+  // ── La idea en una imagen: la noria que acelera y frena ─────────────────────────────────────────────
+  // f(t) = f̄ · (1 + a · sen(2πt/T)) vueltas por segundo; la fase es su integral, φ(t) = 2π · f̄ · (t − a·T/(2π)·cos(2πt/T)).
+  (function () {
+    const T = 4, e = { f: 0.7, a: 0.7, t: 0 };
+    const fase = t => TAU * e.f * (t - e.a * T / TAU * Math.cos(TAU * t / T)) + 0.4;
+    const fAhora = t => e.f * (1 + e.a * Math.sin(TAU * t / T));
+    const hist = G.historia({ segundos: 2, canales: 1 });
+    const rellenar = () => hist.llenar(e.t, tp => Math.sin(fase(tp)));
+    rellenar();
+    let lect = null, anim = null;
+    const L = G.lienzo('#ancla-escena', {
+      alto: w => G.altoNoria(w, { max: 340 }),
+      etiqueta: 'Una noria que acelera y frena y la onda que dibuja la altura de su cabina verde: las crestas se aprietan cuando va deprisa y se estiran cuando va despacio.',
+      dibujar: (ctx, w, h, C) => {
+        G.escenaNoria(ctx, w, h, { C, angulo: fase(e.t), radio: 0.85, cabinas: [{ desfase: 0, color: C.senal }], trazas: [{ puntos: hist.puntos(0), color: C.senal }], segundos: 2 });
+        if (lect) lect.fijar('f', num(fAhora(e.t), 2) + ' vueltas/s');
+      },
+    });
+    const mandos = document.getElementById('ancla-mandos');
+    const cambiar = () => { rellenar(); L.dibujar(); };
+    Curso.mando(mandos, { etiqueta: 'Velocidad media', min: 0.3, max: 1.2, paso: 0.05, valor: e.f, formato: v => num(v, 2) + ' vueltas/s', alCambiar: v => { e.f = v; cambiar(); } });
+    Curso.mando(mandos, { etiqueta: 'Cuánto acelera y frena', min: 0, max: 0.9, paso: 0.05, valor: e.a, formato: v => num(100 * v, 0) + ' %', alCambiar: v => { e.a = v; cambiar(); } });
+    const fila = crear('div', { class: 'botones' });
+    mandos.appendChild(fila);
+    lect = Curso.lecturas(mandos, [{ id: 'f', nombre: 'Velocidad ahora', clase: 'respuesta' }]);
+    anim = Curso.animar(L, (t, dt) => {
+      if (dt > 0) { e.t += dt; hist.anotar(e.t, Math.sin(fase(e.t))); }
+      L.dibujar();
+    }, { boton: fila });
+  })();
+
+  // ── Reto 1 · Cronometra la noria (tocar) ─────────────────────────────────────────────────────────────
+  (function () {
+    const azar = Curso.azar();
+    const SEG = 3;
+    const e = { f: 0, th0: 0, t: 0, taps: [], aviso: '' };
+    const nueva = () => { e.f = Math.round(azar.real(0.4, 1.2) * 100) / 100; e.th0 = azar.real(0, TAU); e.taps = []; e.aviso = ''; };
+    nueva();
+    const theta = t => e.th0 + TAU * e.f * t;
+    const hist = G.historia({ segundos: SEG });
+    const rellenar = () => hist.llenar(e.t, tp => Math.sin(theta(tp)));
+    rellenar();
+    let geo = null, anim = null, lect = null;
+    const L = G.lienzo('#r1-escena', {
+      alto: w => G.altoNoria(w, { max: 300 }), rol: 'button',
+      etiqueta: 'Una noria que gira a una velocidad desconocida y la traza de la altura de su cabina verde; cada pulsación deja una marca naranja',
+      dibujar: (ctx, w, h, C) => {
+        geo = G.escenaNoria(ctx, w, h, { C, angulo: theta(e.t), radio: 1, cabinas: [{ desfase: 0, color: C.senal }], trazas: [{ puntos: hist.puntos(0), color: C.senal }], segundos: SEG });
+        // Las pulsaciones, como muescas naranjas sobre la traza, a la altura que tenía la cabina entonces.
+        for (const tt of e.taps) {
+          const edad = e.t - tt;
+          if (edad < 0 || edad > SEG) continue;
+          const px = geo.escX(edad), py = geo.escY(Math.sin(theta(tt)));
+          ctx.save();
+          ctx.strokeStyle = C.respuesta; ctx.fillStyle = C.respuesta; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(px, geo.escY(1.18)); ctx.lineTo(px, geo.escY(-1.1)); ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]);
+          ctx.beginPath(); ctx.arc(px, py, 4.5, 0, TAU); ctx.fill();
+          ctx.restore();
+        }
+      },
+    });
+    const estimar = () => {
+      const n = e.taps.length;
+      if (n < 2) return { n, vuelta: NaN, f: NaN };
+      const vuelta = (e.taps[n - 1] - e.taps[0]) / (n - 1);
+      return { n, vuelta, f: 1 / vuelta };
+    };
+    const pintar = () => {
+      const s = estimar();
+      lect.fijar('n', s.n < 2 ? '0' : String(s.n - 1));
+      lect.fijar('vuelta', Number.isFinite(s.vuelta) ? num(s.vuelta, 2) + ' s' : '—');
+      lect.fijar('f', Number.isFinite(s.f) ? num(s.f, 2) + ' vueltas/s' : '—');
+      L.dibujar();
+    };
+    const fila = filaBotones('#r1-fila');
+    lect = Curso.lecturas('#r1-fila', [
+      { id: 'n', nombre: 'Vueltas cronometradas', clase: 'cuerpo' },
+      { id: 'vuelta', nombre: 'Una vuelta dura', clase: 'respuesta' },
+      { id: 'f', nombre: 'Tu estimación', clase: 'respuesta' },
+    ]);
+    const pulsar = () => {
+      if (!anim.corriendo) { e.aviso = 'La noria está en pausa: reanuda la animación y vuelve a pulsar.'; Curso.cambio('reto-1'); return; }
+      e.aviso = '';
+      e.taps.push(e.t);
+      if (e.taps.length > 12) e.taps.shift();
+      pintar(); Curso.cambio('reto-1');
+    };
+    Curso.botones(fila, [
+      { id: 'arriba', texto: '¡Arriba!', tipo: 'principal', alPulsar: pulsar },
+      { id: 'otra', texto: 'Otra noria', tipo: 'discreto', alPulsar: () => { nueva(); rellenar(); pintar(); Curso.cambio('reto-1'); } },
+    ]);
+    L.canvas.tabIndex = 0;
+    L.canvas.classList.add('tocable');
+    L.canvas.addEventListener('click', pulsar);
+    L.canvas.addEventListener('keydown', ev => { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); pulsar(); } });
+    anim = Curso.animar(L, (t, dt) => {
+      if (dt > 0) { e.t += dt; hist.anotar(e.t, Math.sin(theta(e.t))); }
+      L.dibujar();
+    }, { boton: fila });
+    pintar();
+    Curso.reto('reto-1', {
+      titulo: 'Cronometra la noria', nivel: 'fácil',
+      comprobar: () => {
+        const s = estimar();
+        if (e.aviso) return { ok: false, mensaje: e.aviso };
+        if (s.n < 4) return { ok: false, mensaje: s.n === 0 ? '' : 'Llevas ' + s.n + (s.n === 1 ? ' pulsación' : ' pulsaciones') + ': hacen falta al menos 4.' };
+        const err = Math.abs(s.f - e.f) / e.f;
+        if (err < 0.1) return { ok: true, mensaje: 'Tu estimación, ' + num(s.f, 2) + ' vueltas por segundo, está a menos de un 10 % de la velocidad real, que era ' + num(e.f, 2) + '.' };
+        return { ok: false, mensaje: 'Tu estimación es de ' + num(s.f, 2) + ' vueltas por segundo y no se acerca lo bastante. Mira si te has saltado alguna vuelta o si pulsas antes o después de que la cabina llegue a lo más alto. Si quieres empezar de cero, pulsa «Otra noria».' };
+      },
+      resolver: () => {
+        const tops = [];
+        for (let k = 0; k < 6; k++) tops.push((Math.PI / 2 - e.th0 + TAU * (k + Math.ceil((e.th0 - Math.PI / 2) / TAU))) / (TAU * e.f));
+        e.taps = tops;
+        e.aviso = '';
+        pintar();
+      },
+      pista: ['Mide el tiempo entre dos pasadas seguidas por arriba: eso es lo que dura una vuelta.', 'Si una vuelta dura 1,25 s, la noria da 1 / 1,25 = 0,8 vueltas por segundo.'],
+      exito: '<p>Has medido la frecuencia como lo haría un cronómetro: lo que dura una vuelta, al revés. Mientras la noria gira igual, todas las vueltas duran lo mismo. Si acelerara, cada vuelta duraría menos que la anterior, y el cronómetro te daría su velocidad en cada momento.</p>',
+    });
+  })();
+
+
+  // ── Reto 2 · El velocímetro de la noria (arrastrar puntos) ───────────────────────────────────────────
+  // La velocidad real es f(t) = 1,5 + 0,8·sen(2πt/4 + 0,6) vueltas por segundo; arriba se ve su fase (las vueltas dadas) y
+  // sobre ella, en púrpura, la recta con la pendiente que el lector pone abajo en cada punto: si es la buena, toca la curva.
+  (function () {
+    const TS = [0.5, 1.5, 2.5, 3.5], YMAX = 3;
+    const fReal = t => 1.5 + 0.8 * Math.sin(TAU * t / 4 + 0.6);
+    const faseReal = t => 1.5 * t - 0.8 * 4 / TAU * (Math.cos(TAU * t / 4 + 0.6) - Math.cos(0.6));
+    const REALES = TS.map(fReal);
+    const e = { v: [1, 1, 1, 1], sel: 0, listo: false };
+    let esc2 = null;
+    const Lf = G.lienzo('#r2-fase', {
+      alto: altoDe(190, 220),
+      etiqueta: 'La fase de una noria durante cuatro segundos, es decir, las vueltas que ha dado, en verde, con cuatro rectas púrpuras cuya pendiente es la velocidad que has puesto en cada punto',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { x: [0, 4], y: [0, 6.4], marcasX: [0, 1, 2, 3, 4], marcasY: [0, 2, 4, 6], etiquetaX: 'tiempo (s)', etiquetaY: 'vueltas dadas', margen: { izquierda: 46, derecha: 14, arriba: 24, abajo: 30 }, C });
+        G.curva(ctx, esc, faseReal, { color: C.senal, desde: 0, hasta: 4, n: 160, C });
+        TS.forEach((t, k) => {
+          const y0 = faseReal(t), s = e.v[k], d = 0.55, ok = Math.abs(e.v[k] - REALES[k]) < 0.25;
+          G.linea(ctx, esc, [t - d, t + d], [y0 - s * d, y0 + s * d], { color: C.plantilla, ancho: ok ? 3 : 2.2, halo: false, C });
+          G.puntos(ctx, esc, [t], [y0], { color: C.senal, radio: 4, C });
+        });
+      },
+    });
+    const Lv = G.lienzo('#r2-escena', {
+      alto: altoDe(210, 240), rol: 'slider',
+      etiqueta: 'Cuatro puntos naranjas, uno por cada medio segundo marcado, que se arrastran hacia arriba y hacia abajo para dar la velocidad de la noria en vueltas por segundo',
+      dibujar: (ctx, w, h, C) => {
+        esc2 = G.ejes(ctx, { x: [0, 4], y: [0, YMAX], marcasX: [0, 1, 2, 3, 4], marcasY: [0, 1, 2, 3], etiquetaX: 'tiempo (s)', etiquetaY: 'vueltas por segundo', margen: { izquierda: 46, derecha: 14, arriba: 24, abajo: 30 }, C });
+        if (e.listo) G.curva(ctx, esc2, fReal, { color: C.senal, desde: 0, hasta: 4, n: 160, guiones: [5, 4], alfa: 0.8, halo: false, C });
+        G.linea(ctx, esc2, TS, e.v, { color: G.alfa(C.respuesta, 0.5), ancho: 1.6, halo: false, C });
+        TS.forEach((t, k) => {
+          G.puntos(ctx, esc2, [t], [e.v[k]], { color: C.respuesta, radio: k === e.sel ? 8 : 6.5, C });
+          G.texto(ctx, esc2.x(t), esc2.y(e.v[k]) - 14, num(e.v[k], 2), { alinear: 'center', color: C.texto, tam: 11, peso: 600, C });
+        });
+      },
+    });
+    const lect = Curso.lecturas('#r2-lecturas', TS.map((t, k) => ({ id: 'p' + k, nombre: 'En ' + num(t, 1) + ' s', clase: 'respuesta' })));
+    const pintar = () => { TS.forEach((t, k) => lect.fijar('p' + k, num(e.v[k], 2) + ' vueltas/s')); Lf.dibujar(); Lv.dibujar(); };
+    const poner = (k, v) => {
+      e.sel = k; e.v[k] = limitar(Math.round(v * 20) / 20, 0, YMAX);
+      Lv.canvas.setAttribute('aria-valuenow', String(e.v[k]));
+      Lv.canvas.setAttribute('aria-valuetext', 'Punto ' + (k + 1) + ' en ' + num(e.v[k], 2) + ' vueltas por segundo');
+      pintar(); Curso.cambio('reto-2');
+    };
+    let activo = 0;
+    Curso.arrastre(Lv, {
+      alBajar: p => {
+        if (!esc2) return false;
+        let k = 0, dm = 1e9;
+        TS.forEach((t, i) => { const d = Math.abs(p.x - esc2.x(t)); if (d < dm) { dm = d; k = i; } });
+        activo = k; poner(k, esc2.yi(p.y));
+      },
+      alMover: p => poner(activo, esc2.yi(p.y)),
+    });
+    Lv.canvas.tabIndex = 0;
+    Lv.canvas.setAttribute('aria-valuemin', '0'); Lv.canvas.setAttribute('aria-valuemax', String(YMAX));
+    Lv.canvas.addEventListener('keydown', ev => {
+      if (ev.key === 'ArrowRight') { ev.preventDefault(); e.sel = Math.min(3, e.sel + 1); pintar(); }
+      else if (ev.key === 'ArrowLeft') { ev.preventDefault(); e.sel = Math.max(0, e.sel - 1); pintar(); }
+      else if (ev.key === 'ArrowUp') { ev.preventDefault(); poner(e.sel, e.v[e.sel] + 0.05); }
+      else if (ev.key === 'ArrowDown') { ev.preventDefault(); poner(e.sel, e.v[e.sel] - 0.05); }
+    });
+    pintar();
+    Curso.reto('reto-2', {
+      titulo: 'El velocímetro de la noria', nivel: 'medio',
+      comprobar: () => {
+        const bien = e.v.filter((v, k) => Math.abs(v - REALES[k]) < 0.25).length;
+        if (bien === 4) { if (!e.listo) { e.listo = true; Lv.dibujar(); } return { ok: true, mensaje: 'Las cuatro rectas tocan la curva de la fase sin cortarla, y los puntos caen sobre la velocidad real, la línea de trazos.' }; }
+        if (e.v.every(v => v === 1)) return { ok: false, mensaje: '' };
+        const k = e.v.findIndex((v, i) => Math.abs(v - REALES[i]) >= 0.25);
+        return { ok: false, mensaje: 'Van ' + bien + ' de 4. En ' + num(TS[k], 1) + ' s, la recta púrpura ' + (e.v[k] > REALES[k] ? 'sube más' : 'sube menos') + ' que la curva de la fase: ajusta ese punto hasta que la toque sin cortarla.' };
+      },
+      resolver: () => { e.v = REALES.map(v => Math.round(v * 20) / 20); pintar(); },
+      pista: ['Donde la curva de la fase sube empinada, la noria gira deprisa.', 'Haz que la recta púrpura toque la curva sin cortarla: su pendiente es la velocidad.'],
+      exito: '<p>La frecuencia instantánea es la pendiente de la fase: cuántas vueltas daría la noria en un segundo si siguiera al ritmo de ahora. Es la misma relación que hay entre el cuentakilómetros de un coche y su velocímetro.</p>',
+    });
+  })();
+
+  // ── Reto 3 · Copia el chirp (deslizadores y elegir, con espectrograma) ───────────────────────────────
+  (function () {
+    const FS = 8000, DUR = 1, azar = Curso.azar();
+    const objetivo = (() => {
+      const f0 = azar.entero(30, 80) * 10, minimoF1 = Math.max(100, Math.ceil(2.4 * f0 / 10));
+      const f1 = azar.entero(minimoF1, 200) * 10, tipo = azar.real() < 0.5 ? 'lineal' : 'exponencial';
+      return { f0, f1, tipo };
+    })();
+    const e = { f0: 500, f1: 1200, tipo: 'lineal', E: null, X: null };
+    const objetivoSuena = () => (e.X || (e.X = Senal.chirp({ f0: objetivo.f0, f1: objetivo.f1, fs: FS, dur: DUR, tipo: objetivo.tipo, amp: 0.8 })));
+    const tuyoSuena = () => Senal.chirp({ f0: e.f0, f1: e.f1, fs: FS, dur: DUR, tipo: e.tipo, amp: 0.8 });
+    // El mapa recortado a 0–2.500 Hz.
+    const recorte = E => {
+      const df = E.f[1] - E.f[0], k1 = Math.min(E.nF - 1, Math.ceil(2500 / df)), nF = k1 + 1, datos = new Float32Array(nF * E.nT);
+      datos.set(E.db.subarray(0, nF * E.nT));
+      return { datos, nF, nT: E.nT, t: E.t, f: E.f.subarray(0, nF), max: E.max };
+    };
+    const L = G.lienzo('#r3-escena', {
+      alto: altoDe(260, 310),
+      etiqueta: 'El espectrograma de un chirp de muestra, con una línea naranja que es el chirp que has fabricado; el tiempo va hacia la derecha y la frecuencia hacia arriba',
+      dibujar: (ctx, w, h, C) => {
+        const margen = { izquierda: 50, derecha: w < 380 ? 52 : 60, arriba: 16, abajo: 32 };
+        const esc = G.ejes(ctx, { x: [0, DUR], y: [0, 2500], marcasX: [0, 0.25, 0.5, 0.75, 1], marcasY: [0, 500, 1000, 1500, 2000, 2500], formatoX: v => num(v, 2), formatoY: v => num(v), rejilla: false, etiquetaX: 'tiempo (s)', etiquetaY: 'Hz', margen, C });
+        if (e.E) { G.mapa(ctx, esc, { datos: e.E.datos, nF: e.E.nF, nT: e.E.nT, t: e.E.t, f: e.E.f, rango: [e.E.max - 70, e.E.max] }); G.leyenda(ctx, { x: w - margen.derecha + 14, y: esc.caja.y + 6, ancho: 9, alto: esc.caja.h - 6, rango: [e.E.max - 70, e.E.max], etiqueta: 'dB', C }); }
+        else G.texto(ctx, esc.caja.x + esc.caja.w / 2, esc.caja.y + esc.caja.h / 2, 'Calculando el espectrograma…', { alinear: 'center', color: C.tenue, tam: 12, C });
+        ctx.save(); ctx.strokeStyle = C.eje; ctx.strokeRect(Math.round(esc.caja.x) + 0.5, Math.round(esc.caja.y) + 0.5, Math.round(esc.caja.w), Math.round(esc.caja.h)); ctx.restore();
+        G.curva(ctx, esc, CALC.leyChirp(e.f0, e.f1, DUR, e.tipo), { color: C.respuesta, ancho: 3, desde: 0, hasta: DUR, n: 120, halo: false, guiones: [7, 4], C });
+      },
+    });
+    const lect = Curso.lecturas('#r3-fila', [{ id: 'tuyo', nombre: 'Tu chirp', clase: 'respuesta' }]);
+    const pintar = () => { lect.fijar('tuyo', num(e.f0) + ' → ' + num(e.f1) + ' Hz, ' + e.tipo); L.dibujar(); };
+    const m0 = Curso.mando('#r3-mandos', { etiqueta: 'Empieza en', min: 200, max: 2000, paso: 10, valor: e.f0, unidad: 'Hz', decimales: 0, clase: 'respuesta', reto: 'reto-3', alCambiar: v => { e.f0 = v; pintar(); } });
+    const m1 = Curso.mando('#r3-mandos', { etiqueta: 'Acaba en', min: 200, max: 2000, paso: 10, valor: e.f1, unidad: 'Hz', decimales: 0, clase: 'respuesta', reto: 'reto-3', alCambiar: v => { e.f1 = v; pintar(); } });
+    const eleccion = Curso.eleccion('#r3-mandos', { etiqueta: 'Tipo', valor: e.tipo, reto: 'reto-3', opciones: [{ valor: 'lineal', texto: 'Lineal' }, { valor: 'exponencial', texto: 'Exponencial' }], alCambiar: v => { e.tipo = v; pintar(); } });
+    Curso.audio.boton('#r3-fila', () => ({ x: objetivoSuena(), fs: FS, volumen: 0.6 }), 'Escuchar la muestra');
+    Curso.audio.boton('#r3-fila', () => ({ x: tuyoSuena(), fs: FS, volumen: 0.6 }), 'Escuchar el tuyo');
+    Curso.alVerse(L.canvas, () => {
+      const x = objetivoSuena(), E = Senal.espectrograma(x, FS, { n: 256, salto: 16, ventana: 'hann', nfft: 512, suelo: -120 });
+      e.E = recorte(E); L.dibujar();
+    });
+    pintar();
+    Curso.reto('reto-3', {
+      titulo: 'Copia el chirp', nivel: 'medio',
+      comprobar: () => {
+        const d0 = e.f0 - objetivo.f0, d1 = e.f1 - objetivo.f1;
+        if (Math.abs(d0) <= 25 && Math.abs(d1) <= 50 && e.tipo === objetivo.tipo) return { ok: true, mensaje: 'Tu línea naranja tapa a la de la muestra: de ' + num(objetivo.f0) + ' a ' + num(objetivo.f1) + ' Hz, ' + objetivo.tipo + '.' };
+        const frases = [];
+        if (Math.abs(d0) > 25) frases.push('el principio está ' + (d0 > 0 ? 'demasiado alto' : 'demasiado bajo'));
+        if (Math.abs(d1) > 50) frases.push('el final está ' + (d1 > 0 ? 'demasiado alto' : 'demasiado bajo'));
+        if (e.tipo !== objetivo.tipo) frases.push('la forma de la línea no es la de la muestra: ' + (objetivo.tipo === 'lineal' ? 'la de la muestra es recta' : 'la de la muestra se curva hacia arriba'));
+        return { ok: false, mensaje: frases.join('; ').replace(/^./, c => c.toUpperCase()) + '.' };
+      },
+      resolver: () => { m0.fijar(objetivo.f0); m1.fijar(objetivo.f1); eleccion.fijar(objetivo.tipo); },
+      pista: ['Lee en el espectrograma dónde empieza y dónde acaba la línea clara.', 'Si la línea es recta, el chirp es lineal; si se curva hacia arriba, es exponencial.'],
+      exito: '<p>Un chirp es una noria que acelera. En el espectrograma deja una línea inclinada, y en el oído, una nota que sube. Para fabricarlo, el ordenador va sumando lo que gira la noria en cada instante, y la forma de la línea dice si sube los mismos hercios (recta) o las mismas octavas (curva hacia arriba) cada segundo.</p>',
+    });
+  })();
+
+
+  // ── Dos chirps para oír (paso 3) ─────────────────────────────────────────────────────────────────────
+  (function () {
+    const chirp = tipo => () => ({ x: Senal.chirp({ f0: 200, f1: 3200, fs: 16000, dur: 2, tipo, amp: 0.8 }), fs: 16000, volumen: 0.6 });
+    Curso.audio.boton('#p3-chirps', chirp('lineal'), 'Chirp lineal');
+    Curso.audio.boton('#p3-chirps', chirp('exponencial'), 'Chirp exponencial');
+  })();
+
+  // ── Reto 4 · La ambulancia que pasa (deslizadores) ───────────────────────────────────────────────────
+  // Una vista desde arriba (no a escala) y debajo la frecuencia que oye el oyente, con el retardo exacto del sonido.
+  // La sirena es sintética y de un solo tono, de 700 Hz, para ver solo el Doppler.
+  (function () {
+    const FS0 = 700, VENT = 3;
+    const e = { kmh: 90, d: 10, curva: null, s: 0 };
+    const vms = () => e.kmh / 3.6;
+    const recalcular = () => {
+      const v = vms(), t = [], f = [];
+      for (let i = 0; i <= 160; i++) { const tt = -VENT + 2 * VENT * i / 160; t.push(tt); f.push(CALC.doppler(FS0, v, e.d, tt).f); }
+      e.curva = { t, f, caida: CALC.caidaSemitonos(v), alto: FS0 * CALC.C_SON / (CALC.C_SON - v), bajo: FS0 * CALC.C_SON / (CALC.C_SON + v), dura: CALC.duracionCambio(v, e.d) };
+    };
+    recalcular();
+    let lect = null, anim = null;
+    const L = G.lienzo('#r4-escena', {
+      alto: altoDe(330, 360),
+      etiqueta: 'Arriba, una ambulancia que pasa por una carretera delante de una persona que la oye. Abajo, la frecuencia que oye esa persona, que baja en forma de S cuando la ambulancia pasa.',
+      dibujar: (ctx, w, h, C) => {
+        const v = vms(), mx = 12, altoMapa = 96;
+        // La carretera y el oyente (no a escala: 1 m de distancia son 1,1 píxeles).
+        const yC = 34, yO = yC + 18 + e.d * 0.9, xC = w / 2;
+        ctx.save();
+        ctx.strokeStyle = C.eje; ctx.lineWidth = 12; ctx.globalAlpha = 0.35; ctx.beginPath(); ctx.moveTo(mx, yC); ctx.lineTo(w - mx, yC); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.strokeStyle = C.eje; ctx.setLineDash([8, 7]); ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(mx, yC); ctx.lineTo(w - mx, yC); ctx.stroke(); ctx.restore();
+        // La posición de la ambulancia: ±75 m en la carretera.
+        const S = 75 / Math.max(v, 1), te = ((e.s % (2 * S)) + 2 * S) % (2 * S) - S, xA = xC + (v * te) / 75 * (w / 2 - 30);
+        // Las crestas que salen de la ambulancia, apelotonadas delante y estiradas detrás.
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.respuesta, 0.55); ctx.lineWidth = 1.4;
+        const cv = Math.min(0.55, v / CALC.C_SON * 6);
+        for (let k = 1; k <= 3; k++) { const r = 11 * k; ctx.beginPath(); ctx.ellipse(xA - cv * r, yC, r, r, 0, 0, TAU); ctx.stroke(); }
+        ctx.restore();
+        G.puntos(ctx, { x: x => x, y: y => y }, [xA], [yC], { color: C.respuesta, radio: 8, C });
+        G.texto(ctx, xA, yC - 14, 'ambulancia', { alinear: 'center', base: 'bottom', color: C.suave, tam: 10, C });
+        ctx.save(); ctx.fillStyle = C.cuerpo; ctx.beginPath(); ctx.arc(xC, yO, 7, 0, TAU); ctx.fill(); ctx.restore();
+        G.texto(ctx, xC + 12, yO, 'oyente, a ' + num(e.d) + ' m', { base: 'middle', color: C.suave, tam: 11, C });
+        // La frecuencia que oye.
+        const ye = 124, cj = { x: 52, y: ye + 8, w: w - 52 - 14, h: h - ye - 8 - 36 };
+        const esc = G.ejes(ctx, { caja: cj, x: [-VENT, VENT], y: [560, 840], marcasX: [-3, -2, -1, 0, 1, 2, 3], marcasY: [600, 700, 800], formatoX: v2 => num(v2), formatoY: v2 => num(v2), etiquetaX: 'tiempo respecto al paso (s)', etiquetaY: 'Hz', C });
+        G.linea(ctx, esc, [-VENT, VENT], [FS0, FS0], { color: C.cuerpo, guiones: [5, 4], alfa: 0.7, ancho: 1.4, halo: false, C });
+        G.texto(ctx, esc.x(-VENT) + 6, esc.y(FS0) - 6, 'la sirena suena a 700 Hz', { color: C.tenue, tam: 10, base: 'bottom', C });
+        G.linea(ctx, esc, e.curva.t, e.curva.f, { color: C.respuesta, ancho: 2.6, C });
+        // Lo que se oye en este momento de la animación.
+        if (Math.abs(te) <= VENT) {
+          const f = CALC.doppler(FS0, v, e.d, te).f;
+          G.puntos(ctx, esc, [te], [f], { color: C.respuesta, radio: 6, C });
+        }
+        if (lect) {
+          lect.fijar('alto', num(e.curva.alto, 0) + ' Hz');
+          lect.fijar('bajo', num(e.curva.bajo, 0) + ' Hz');
+          lect.fijar('caida', num(e.curva.caida, 2) + ' semitonos');
+          lect.fijar('dura', Number.isFinite(e.curva.dura) ? num(e.curva.dura, e.curva.dura < 1 ? 2 : 1) + ' s' : '—');
+        }
+      },
+    });
+    const refrescar = () => { recalcular(); L.dibujar(); };
+    const mV = Curso.mando('#r4-mandos', { etiqueta: 'Velocidad', min: 20, max: 150, paso: 0.5, valor: e.kmh, formato: v => num(v, 1) + ' km/h', reto: 'reto-4', alCambiar: v => { e.kmh = v; refrescar(); } });
+    Curso.mando('#r4-mandos', { etiqueta: 'Distancia a la carretera', min: 2, max: 50, paso: 1, valor: e.d, formato: v => num(v) + ' m', reto: 'reto-4', alCambiar: v => { e.d = v; refrescar(); } });
+    lect = Curso.lecturas('#r4-lecturas', [
+      { id: 'alto', nombre: 'Se acerca', clase: 'cuerpo' }, { id: 'bajo', nombre: 'Se aleja', clase: 'cuerpo' },
+      { id: 'caida', nombre: 'Caída', clase: 'respuesta' }, { id: 'dura', nombre: 'El cambio dura', clase: 'cuerpo' },
+    ]);
+    const fila = filaBotones('#r4-lecturas');
+    Curso.audio.boton(fila, () => ({ x: CALC.sonidoDoppler(8000, FS0, vms(), e.d, 6), fs: 8000, volumen: 0.6 }), 'Oírla pasar');
+    anim = Curso.animar(L, (t, dt) => { if (dt > 0) e.s += dt; L.dibujar(); }, { boton: fila });
+    L.dibujar();
+    Curso.reto('reto-4', {
+      titulo: 'La ambulancia que pasa', nivel: 'difícil',
+      comprobar: () => {
+        const c = CALC.caidaSemitonos(vms());
+        if (Math.abs(c - 2) <= 0.1) return { ok: true, mensaje: 'La sirena cae ' + num(c, 2) + ' semitonos, a ' + num(e.kmh, 1) + ' km/h.' };
+        return { ok: false, mensaje: 'Ahora cae ' + num(c, 2) + ' semitonos: ' + (c > 2 ? 'baja la velocidad' : 'sube la velocidad') + '. La distancia no cambia cuánto baja, solo lo brusco que es el cambio.' };
+      },
+      resolver: () => mV.fijar(71.5),
+      pista: ['La distancia cambia lo brusco del cambio, no cuánto baja.', 'A 90 km/h baja unos 2,5 semitonos: necesitas un poco menos.'],
+      exito: '<p>La caída solo depende de la velocidad: a unos 71 km/h son dos semitonos, sea cual sea la nota de la sirena. Si te pones al borde de la carretera, el cambio es brusco, y desde lejos se reparte en varios segundos. Prueba ahora a alejar al oyente y a oír cómo pasa.</p>',
+    });
+  })();
+
+  // ── Reto 5 · Fabrica una emisora de FM (deslizadores) ────────────────────────────────────────────────
+  // Una portadora de 800 Hz con un mensaje de 3 Hz. Arriba, dos trozos de 30 ms de la onda, uno con el mensaje en lo más alto y
+  // otro en lo más bajo; en medio, el tamaño de la noria; abajo, su velocidad.
+  (function () {
+    const FC = 800, FM = 3, VENTANA = 0.03;
+    const e = { am: 60, df: 0 };
+    let lect = null;
+    const L = G.lienzo('#r5-escena', {
+      alto: altoDe(385, 400),
+      etiqueta: 'Dos trozos de 30 milisegundos de una onda de 800 Hz con un mensaje de 3 Hz, uno con el mensaje arriba y otro abajo; debajo, el tamaño de la noria y su velocidad a lo largo de un segundo',
+      dibujar: (ctx, w, h, C) => {
+        const m = e.am / 100, df = e.df, mx = 12, mitad = (w - 2 * mx - 14) / 2;
+        // Los dos trozos.
+        [[1, 'mensaje arriba'], [-1, 'mensaje abajo']].forEach(([s, titulo], i) => {
+          const x0 = mx + i * (mitad + 14), f = FC + df * s, a = (1 + m * s) / (1 + m);
+          const esc = G.ejes(ctx, { caja: { x: x0, y: 22, w: mitad, h: 90 }, x: [0, VENTANA], y: [-1.25, 1.25], marcasX: false, marcasY: false, rejilla: false, cero: true, C });
+          G.curva(ctx, esc, t => a * Math.cos(TAU * f * t), { color: C.senal, ancho: 1.7, desde: 0, hasta: VENTANA, n: 360, C });
+          G.texto(ctx, x0 + mitad / 2, 11, titulo + ' · ' + num(f, 0) + ' Hz', { alinear: 'center', color: C.suave, tam: w < 420 ? 10 : 11, peso: 600, C });
+        });
+        G.texto(ctx, w / 2, 121, 'trozos de 30 ms de la onda', { alinear: 'center', color: C.tenue, tam: 10, C });
+        // El tamaño de la noria (AM) a lo largo de un segundo.
+        const e1 = G.ejes(ctx, { caja: { x: 52, y: 156, w: w - 52 - 14, h: 74 }, x: [0, 1], y: [0, 1.1], marcasX: false, marcasY: [0, 1], rejilla: false, etiquetaY: 'tamaño', C });
+        G.curva(ctx, e1, t => (1 + m * Math.sin(TAU * FM * t)) / (1 + m), { color: C.senal, ancho: 2.2, desde: 0, hasta: 1, n: 240, C });
+        // Su velocidad (FM).
+        const e2 = G.ejes(ctx, { caja: { x: 52, y: 258, w: w - 52 - 14, h: h - 258 - 36 }, x: [0, 1], y: [500, 1100], marcasX: [0, 0.25, 0.5, 0.75, 1], marcasY: [600, 800, 1000], formatoX: v => num(v, 2), formatoY: v => num(v), etiquetaX: 'tiempo (s)', etiquetaY: 'Hz', C });
+        G.linea(ctx, e2, [0, 1], [FC, FC], { color: C.cuerpo, guiones: [5, 4], alfa: 0.6, ancho: 1.3, halo: false, C });
+        G.curva(ctx, e2, t => FC + df * Math.sin(TAU * FM * t), { color: C.respuesta, ancho: 2.6, desde: 0, hasta: 1, n: 240, C });
+        G.texto(ctx, e2.x(0.98), e2.y(FC) - 5, 'portadora', { alinear: 'right', base: 'bottom', color: C.tenue, tam: 10, C });
+        if (lect) {
+          lect.fijar('am', num(e.am) + ' %');
+          lect.fijar('df', num(df) + ' Hz');
+          lect.fijar('rango', num(FC - df) + ' a ' + num(FC + df) + ' Hz');
+        }
+      },
+    });
+    const mAM = Curso.mando('#r5-mandos', { etiqueta: 'Cambios de tamaño (AM)', min: 0, max: 100, paso: 1, valor: e.am, formato: v => num(v) + ' %', reto: 'reto-5', alCambiar: v => { e.am = v; L.dibujar(); } });
+    const mFM = Curso.mando('#r5-mandos', { etiqueta: 'Desviación de la velocidad (FM)', min: 0, max: 200, paso: 1, valor: e.df, formato: v => '± ' + num(v) + ' Hz', clase: 'respuesta', reto: 'reto-5', alCambiar: v => { e.df = v; L.dibujar(); } });
+    lect = Curso.lecturas('#r5-lecturas', [{ id: 'am', nombre: 'Profundidad de AM', clase: 'senal' }, { id: 'df', nombre: 'Desviación de FM', clase: 'respuesta' }, { id: 'rango', nombre: 'La noria gira entre', clase: 'cuerpo' }]);
+    Curso.audio.boton('#r5-lecturas', () => ({ x: CALC.modulada(8000, 1.5, FC, FM, e.am / 100, e.df), fs: 8000, volumen: 0.6 }), 'Escucharla');
+    L.dibujar();
+    Curso.reto('reto-5', {
+      titulo: 'Fabrica una emisora de FM', nivel: 'difícil',
+      comprobar: () => {
+        if (e.am <= 5 && e.df >= 90 && e.df <= 110) return { ok: true, mensaje: 'Una FM pura: la noria mantiene su tamaño y gira entre ' + num(FC - e.df) + ' y ' + num(FC + e.df) + ' Hz, tres veces por segundo.' };
+        const f = [];
+        if (e.am > 5) f.push('la noria todavía cambia de tamaño, y en una FM pura el tamaño no cambia');
+        if (e.df < 90) f.push('la velocidad se desvía poco (' + num(e.df) + ' Hz): hacen falta unos 100');
+        if (e.df > 110) f.push('la velocidad se desvía demasiado (' + num(e.df) + ' Hz): bájala a unos 100');
+        return { ok: false, mensaje: f.join('; ').replace(/^./, c => c.toUpperCase()) + '.' };
+      },
+      resolver: () => { mAM.fijar(0); mFM.fijar(100); },
+      pista: ['En una FM pura, la noria no cambia de tamaño.', 'La desviación es cuánto se aleja la velocidad de los 800 Hz, hacia arriba y hacia abajo.'],
+      exito: '<p>En AM, el mensaje va en el tamaño de la noria, y en FM, en su velocidad. Has hecho una noria que gira entre 700 y 900 vueltas por segundo, tres veces por segundo: un vibrato exagerado. Una emisora de FM hace lo mismo a unos 100 millones de vueltas por segundo y se desvía como mucho 75.000.</p>',
+    });
+  })();
+
+
+  // ── Reto 6 · Lee la frecuencia de GW150914 (tocar cruces por cero) ───────────────────────────────────
+  // Forma de onda de relatividad numérica de la figura 1 de Abbott et al. (2016), publicada por GWOSC (CC BY 4.0), a 4.096 Hz.
+  // Se miden medias vueltas entre dos cruces por cero seguidos: f = 1 / (2 · Δt).
+  (function () {
+    const D = GW150914, T_MIN = 0.3, T_MAX = 0.445, VENT = 0.06;
+    const i0 = Math.ceil((T_MIN - D.t0) / D.dt), i1 = Math.floor((T_MAX - D.t0) / D.dt);
+    const datos = { t0: D.t0 + i0 * D.dt, dt: D.dt, y: D.y.slice(i0, i1 + 1) };
+    const cr = CALC.cruces(datos.y, datos.t0, datos.dt).t;
+    const e = { w0: 0.33, sel: -1, medidas: [], aviso: '' };
+    let ymax = 0;
+    for (const v of datos.y) ymax = Math.max(ymax, Math.abs(v));
+    const valorEn = t => { const i = limitar(Math.round((t - datos.t0) / datos.dt), 0, datos.y.length - 1); return datos.y[i]; };
+    let escRes = null;
+    const Lres = G.lienzo('#r6-resumen', {
+      alto: altoDe(86, 96), rol: 'slider',
+      etiqueta: 'Toda la señal, entre 0,30 y 0,445 segundos, con un recuadro púrpura que marca el trozo que ves ampliado debajo; arrastra el recuadro para cambiarlo',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { x: [T_MIN, T_MAX], y: [-1.3 * ymax, 1.3 * ymax], marcasX: [0.3, 0.35, 0.4, 0.445], formatoX: v => num(v, 2), marcasY: false, rejilla: false, margen: { izquierda: 12, derecha: 12, arriba: 6, abajo: 24 }, C });
+        G.linea(ctx, esc, null, datos.y, { t0: datos.t0, dt: datos.dt, color: C.senal, ancho: 1.5, C });
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.plantilla, 0.18); ctx.strokeStyle = C.plantilla; ctx.lineWidth = 1.8;
+        ctx.fillRect(esc.x(e.w0), esc.caja.y, esc.x(e.w0 + VENT) - esc.x(e.w0), esc.caja.h);
+        ctx.strokeRect(esc.x(e.w0) + 0.5, esc.caja.y + 0.5, esc.x(e.w0 + VENT) - esc.x(e.w0), esc.caja.h);
+        ctx.restore();
+        escRes = esc;
+      },
+    });
+    let esc = null, lect = null, mandoW = null;
+    const Lz = G.lienzo('#r6-escena', {
+      alto: altoDe(230, 260),
+      etiqueta: 'Un trozo ampliado de la forma de onda de GW150914 con los cruces por cero marcados; se tocan dos cruces seguidos para medir una media vuelta',
+      dibujar: (ctx, w, h, C) => {
+        esc = G.ejes(ctx, { x: [e.w0, e.w0 + VENT], y: [-1.35 * ymax, 1.35 * ymax], marcasX: false, marcasY: false, rejilla: false, etiquetaX: 'tiempo (s)', margen: { izquierda: 12, derecha: 12, arriba: 14, abajo: 34 }, C });
+        const marcas = []; for (let v = Math.ceil(e.w0 * 100) / 100; v <= e.w0 + VENT + 1e-9; v += 0.01) marcas.push(v);
+        ctx.save(); ctx.fillStyle = C.tenue; ctx.strokeStyle = C.eje; ctx.font = '11px "IBM Plex Mono", monospace'; ctx.textAlign = 'center';
+        for (const v of marcas) { const px = esc.x(v); ctx.beginPath(); ctx.moveTo(px, esc.caja.y + esc.caja.h); ctx.lineTo(px, esc.caja.y + esc.caja.h + 4); ctx.stroke(); ctx.fillText(num(v, 2), px, esc.caja.y + esc.caja.h + 16); }
+        ctx.restore();
+        G.linea(ctx, esc, null, datos.y, { t0: datos.t0, dt: datos.dt, color: C.senal, ancho: 2, C });
+        const y0 = esc.y(0);
+        // Las medidas hechas: un tramo naranja entre los dos cruces, con su frecuencia encima.
+        for (const m of e.medidas) {
+          if (m.t2 < e.w0 || m.t1 > e.w0 + VENT) continue;
+          ctx.save(); ctx.strokeStyle = C.respuesta; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(esc.x(m.t1), y0 + 12); ctx.lineTo(esc.x(m.t2), y0 + 12); ctx.stroke(); ctx.restore();
+          G.texto(ctx, esc.x((m.t1 + m.t2) / 2), y0 + 24, num(m.f, 0) + ' Hz', { alinear: 'center', base: 'top', color: C.respuesta, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.85), C });
+        }
+        // Los cruces por cero.
+        cr.forEach((t, i) => {
+          if (t < e.w0 - 0.002 || t > e.w0 + VENT + 0.002) return;
+          const px = esc.x(t), sel = i === e.sel;
+          ctx.save();
+          ctx.fillStyle = sel ? C.respuesta : C.pantalla; ctx.strokeStyle = sel ? C.respuesta : C.texto; ctx.lineWidth = sel ? 2.4 : 1.6;
+          ctx.beginPath(); ctx.arc(px, y0, sel ? 6.5 : 4.5, 0, TAU); ctx.fill(); ctx.stroke(); ctx.restore();
+        });
+        G.texto(ctx, esc.caja.x + 4, esc.caja.y + 2, e.aviso || 'Toca dos círculos seguidos', { base: 'top', color: e.aviso ? C.respuesta : C.tenue, tam: 11, C });
+      },
+    });
+    const pintarLista = () => {
+      const cont = document.getElementById('r6-lista');
+      cont.textContent = '';
+      e.medidas.slice().sort((a, b) => a.t - b.t).forEach((m, k, a) => cont.appendChild(crear('span', {}, num(m.t, 3) + ' s · ' + num(m.f, 0) + ' Hz')));
+      if (!e.medidas.length) cont.appendChild(crear('span', {}, 'Tus medidas saldrán aquí: instante · frecuencia'));
+      lect.fijar('n', String(e.medidas.length));
+      lect.fijar('ult', e.medidas.length ? num(e.medidas[e.medidas.length - 1].f, 0) + ' Hz' : '—');
+    };
+    const mover = w0 => { e.w0 = limitar(w0, T_MIN, T_MAX - VENT); Lres.dibujar(); Lz.dibujar(); };
+    mandoW = Curso.mando('#r6-mandos', { etiqueta: 'Dónde miras', min: T_MIN, max: T_MAX - VENT, paso: 0.001, valor: e.w0, formato: v => 'desde ' + num(v, 3) + ' s', alCambiar: v => mover(v) });
+    lect = Curso.lecturas('#r6-lecturas', [{ id: 'n', nombre: 'Medidas', clase: 'cuerpo' }, { id: 'ult', nombre: 'Última medida', clase: 'respuesta' }]);
+    Curso.audio.boton('#r6-lecturas', () => ({ x: CALC.sonidoGravitacional(datos, 16000, 400), fs: 16000, volumen: 0.7 }), 'Oírla, subida 400 Hz');
+    // Arrastrar el recuadro de la vista general.
+    Curso.arrastre(Lres, {
+      eje: 'x',
+      alBajar: p => { if (!escRes) return false; mandoW.fijar(limitar(escRes.xi(p.x) - VENT / 2, T_MIN, T_MAX - VENT)); },
+      alMover: p => mandoW.fijar(limitar(escRes.xi(p.x) - VENT / 2, T_MIN, T_MAX - VENT)),
+    });
+    // Tocar un cruce por cero.
+    Lz.canvas.classList.add('tocable');
+    Lz.canvas.addEventListener('click', ev => {
+      if (!esc) return;
+      const r = Lz.canvas.getBoundingClientRect(), px = ev.clientX - r.left, py = ev.clientY - r.top;
+      let mejor = -1, dm = 22;
+      cr.forEach((t, i) => { const d = Math.hypot(esc.x(t) - px, esc.y(0) - py); if (d < dm) { dm = d; mejor = i; } });
+      if (mejor < 0) return;
+      e.aviso = '';
+      if (e.sel < 0 || e.sel === mejor) e.sel = e.sel === mejor ? -1 : mejor;
+      else if (Math.abs(mejor - e.sel) === 1) {
+        const t1 = Math.min(cr[mejor], cr[e.sel]), t2 = Math.max(cr[mejor], cr[e.sel]);
+        e.medidas.push({ t1, t2, t: (t1 + t2) / 2, f: 1 / (2 * (t2 - t1)) });
+        e.sel = -1;
+      } else { e.aviso = 'Tienen que ser dos cruces seguidos, sin ninguno en medio.'; e.sel = mejor; }
+      pintarLista(); Lz.dibujar(); Curso.cambio('reto-6');
+    });
+    // Teclado: mover el trozo con las flechas del recuadro del deslizador; las medidas se hacen tocando.
+    pintarLista();
+    const medidaEn = (a, b) => cr.map((t, i) => (i ? { t1: cr[i - 1], t2: t, t: (cr[i - 1] + t) / 2, f: 1 / (2 * (t - cr[i - 1])) } : null)).filter(m => m && m.t >= a && m.t <= b);
+    Curso.reto('reto-6', {
+      titulo: 'Lee la frecuencia de GW150914', nivel: 'difícil',
+      comprobar: () => {
+        const ini = e.medidas.find(m => m.t < 0.36 && m.f >= 30 && m.f <= 55), fin = e.medidas.find(m => m.t > 0.4 && m.f >= 90 && m.f <= 200);
+        if (ini && fin) return { ok: true, mensaje: 'Al principio, ' + num(ini.f, 0) + ' Hz, y cerca del final, ' + num(fin.f, 0) + ' Hz: la frecuencia se ha multiplicado por ' + num(fin.f / ini.f, 1) + ' en una décima de segundo.' };
+        if (!e.medidas.length) return { ok: false, mensaje: '' };
+        if (!ini && !e.medidas.some(m => m.t < 0.36)) return { ok: false, mensaje: 'Falta una medida antes de 0,36 s, donde las ondas están más separadas.' };
+        if (!fin && !e.medidas.some(m => m.t > 0.4)) return { ok: false, mensaje: 'Falta una medida después de 0,40 s, donde las ondas se aprietan.' };
+        if (!fin) return { ok: false, mensaje: 'Tu medida de después de 0,40 s todavía es baja: busca un tramo más cerca del final, donde los cruces están más juntos.' };
+        return { ok: false, mensaje: 'Tu medida del principio no cae entre 30 y 55 Hz: usa dos cruces seguidos de un tramo antes de 0,36 s.' };
+      },
+      resolver: () => { e.medidas = medidaEn(0.34, 0.36).slice(0, 1).concat(medidaEn(0.4125, 0.43).slice(0, 1)); e.sel = -1; e.aviso = ''; pintarLista(); Lz.dibujar(); },
+      pista: ['Entre dos cruces por cero seguidos cabe media vuelta: la frecuencia es 1 / (2 · Δt).', 'Al final, las ondas se aprietan: los cruces están mucho más juntos. Mueve el recuadro hacia la derecha.'],
+      exito: '<p>Así lo hicieron los propios físicos de LIGO y Virgo en un artículo divulgativo: midieron el tiempo entre cruces por cero y vieron que la frecuencia subía cada vez más deprisa, de unas 35 a más de 150 vueltas por segundo en una décima de segundo. Es lo que hacen dos agujeros negros que se acercan girando cada vez más rápido.</p>',
+    });
+  })();
+
+  // ── En tu voz: la curva de frecuencia de tu silbido, cronometrando vueltas ──────────────────────────
+  (function () {
+    const FS = 16000;
+    const st = { x: null, R: null, t: 0, ang: 0 };
+    let lect = null, nota = null, anim = null;
+    const lab = Curso.voz('#voz-lab', {
+      ejemplos: ['silbidoQueSube', 'sirena'], fsAnalisis: FS, maxSegundos: 10,
+      alCargar: (x, fs) => { st.x = x; analizar(); },
+    });
+    const panel = lab.panel;
+    const nombreNota = f => { try { const n = Senal.nombreNota(f); return n.nombre; } catch (err) { return ''; } };
+    // El mapa con la curva medida encima.
+    const escena = crear('div', { class: 'escena' });
+    panel.appendChild(escena);
+    const FMAX = 6000;
+    const Lm = G.lienzo(escena, {
+      alto: altoDe(250, 300),
+      etiqueta: 'Espectrograma de tu audio, con la frecuencia que mide el cronometraje de vueltas dibujada encima en naranja; el tiempo va hacia la derecha y la frecuencia hacia arriba',
+      dibujar: (ctx, w, h, C) => {
+        const R = st.R, margen = { izquierda: 52, derecha: w < 380 ? 52 : 60, arriba: 14, abajo: 32 };
+        const esc = G.ejes(ctx, { x: [0, Math.max(0.1, R ? R.dur : 1)], y: [0, FMAX], marcasY: [0, 1000, 2000, 3000, 4000, 5000, 6000], formatoX: v => num(v, 1), formatoY: v => num(v), rejilla: false, etiquetaX: 'tiempo (s)', etiquetaY: 'Hz', margen, C });
+        if (R) {
+          G.mapa(ctx, esc, { datos: R.vista.datos, nF: R.vista.nF, nT: R.vista.nT, t: R.vista.t, f: R.vista.f, rango: R.rango });
+          G.leyenda(ctx, { x: w - margen.derecha + 14, y: esc.caja.y + 6, ancho: 9, alto: esc.caja.h - 6, rango: R.rango, etiqueta: 'dB', C });
+        } else G.texto(ctx, esc.caja.x + esc.caja.w / 2, esc.caja.y + esc.caja.h / 2, 'Graba, sube un audio o elige un ejemplo', { alinear: 'center', color: C.tenue, tam: 12, C });
+        ctx.save(); ctx.strokeStyle = C.eje; ctx.strokeRect(Math.round(esc.caja.x) + 0.5, Math.round(esc.caja.y) + 0.5, Math.round(esc.caja.w), Math.round(esc.caja.h)); ctx.restore();
+        if (R) {
+          ctx.save(); ctx.strokeStyle = C.respuesta; ctx.lineWidth = 2.6; ctx.lineJoin = 'round'; ctx.beginPath();
+          let abierto = false;
+          for (let i = 0; i < R.t.length; i++) {
+            const f = R.f[i];
+            if (!Number.isFinite(f) || f > FMAX) { abierto = false; continue; }
+            const px = esc.x(R.t[i]), py = esc.y(f);
+            if (abierto) ctx.lineTo(px, py); else { ctx.moveTo(px, py); abierto = true; }
+          }
+          ctx.stroke(); ctx.restore();
+          const tt = st.t % Math.max(0.1, R.dur);
+          ctx.save(); ctx.strokeStyle = G.alfa(C.texto, 0.6); ctx.lineWidth = 1.2; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(esc.x(tt), esc.caja.y); ctx.lineTo(esc.x(tt), esc.caja.y + esc.caja.h); ctx.stroke(); ctx.restore();
+        }
+      },
+    });
+    // La noria, a cámara lenta, que gira al ritmo que se ha medido.
+    const escN = crear('div', { class: 'escena' });
+    panel.appendChild(escN);
+    const Ln = G.lienzo(escN, {
+      alto: 150,
+      etiqueta: 'Una noria que gira a cámara lenta al ritmo medido en tu audio: una vuelta de la noria por cada 500 vueltas de tu onda',
+      dibujar: (ctx, w, h, C) => {
+        const r = Math.min(h / 2 - 14, 60);
+        G.noria(ctx, { cx: w / 2, cy: h / 2, r, angulo: st.ang, cabinas: [{ desfase: 0, color: C.senal }], radios: 8, C });
+        G.texto(ctx, 10, 12, 'a cámara lenta: 1 vuelta por cada 500 de tu onda', { color: C.tenue, tam: 10, base: 'middle', C });
+      },
+    });
+    lect = Curso.lecturas(panel, [
+      { id: 'ahora', nombre: 'Frecuencia ahora', clase: 'respuesta' }, { id: 'min', nombre: 'Mínima', clase: 'cuerpo' },
+      { id: 'max', nombre: 'Máxima', clase: 'cuerpo' }, { id: 'rango', nombre: 'Rango', clase: 'cuerpo' },
+    ]);
+    const filaV = crear('div', { class: 'botones' });
+    panel.appendChild(filaV);
+    Curso.audio.boton(filaV, () => (st.R ? { x: st.R.seno, fs: FS, volumen: 0.7 } : null), 'Un seno que sigue tu curva');
+    nota = crear('p', { class: 'nota-reto' }, 'Elige un audio o graba el tuyo para medir su frecuencia.');
+    panel.appendChild(nota);
+    anim = Curso.animar(Lm, (t, dt) => {
+      const R = st.R;
+      if (R && dt > 0) {
+        st.t += dt;
+        const tt = st.t % Math.max(0.1, R.dur), i = limitar(Math.round(tt / R.paso), 0, R.f.length - 1);
+        let f = R.f[i];
+        if (!Number.isFinite(f)) f = NaN;
+        if (Number.isFinite(f)) st.ang += TAU * f / 500 * dt;
+        lect.fijar('ahora', Number.isFinite(f) ? num(f, 0) + ' Hz · ' + nombreNota(f) : 'sin sonido');
+        Ln.dibujar();
+      }
+      Lm.dibujar();
+    }, { boton: filaV });
+
+    function analizar() {
+      const x = st.x;
+      if (!x || x.length < 800) { nota.textContent = 'Este audio es demasiado corto para analizarlo.'; return; }
+      const n = x.length, dur = n / FS;
+      // 1. Dónde está el silbido: el máximo de cada columna del espectrograma entre 300 y 5.000 Hz.
+      const E = Senal.espectrograma(x, FS, { n: 512, salto: 128, ventana: 'hann', nfft: 512, suelo: -120 });
+      const df = E.f[1] - E.f[0], k0 = Math.ceil(300 / df), k1 = Math.min(E.nF - 1, Math.floor(5000 / df));
+      const linea = [];
+      let picoMax = -Infinity;
+      for (let j = 0; j < E.nT; j++) { let km = k0, vm = -Infinity; for (let k = k0; k <= k1; k++) { const v = E.db[k * E.nT + j]; if (v > vm) { vm = v; km = k; } } linea.push({ f: E.f[km], db: vm }); picoMax = Math.max(picoMax, vm); }
+      const activas = linea.filter(p => p.db > picoMax - 30).map(p => p.f);
+      let lo = 300, hi = 5000;
+      if (activas.length > 3) { lo = Math.max(150, 0.6 * Math.min.apply(null, activas)); hi = Math.min(0.45 * FS, 1.4 * Math.max.apply(null, activas)); if (hi - lo < 200) { lo = Math.max(150, lo - 100); hi = Math.min(0.45 * FS, hi + 100); } }
+      // 2. Un paso banda alrededor de esa banda, de ida y vuelta para no retrasar.
+      let y;
+      try { y = Senal.filtfilt(Senal.butterworth(2, [lo, hi], FS, 'pasoBanda'), x); } catch (err) { y = Float64Array.from(x); }
+      // 3. Cruces por cero hacia arriba y, con ellos, la frecuencia de ocho en ocho vueltas.
+      const c = CALC.cruces(y, 0, 1 / FS), arriba = c.t.filter((t, i) => c.sube[i]);
+      const N = arriba.length > 40 ? 8 : 4, paso = 0.01, nt = Math.floor(dur / paso), fs_ = new Float64Array(nt).fill(NaN), tt = new Float64Array(nt);
+      for (let i = 0; i < nt; i++) tt[i] = i * paso;
+      const bruta = [];
+      for (let k = 0; k + N < arriba.length; k++) bruta.push({ t: (arriba[k] + arriba[k + N]) / 2, f: N / (arriba[k + N] - arriba[k]) });
+      // 4. La puerta de energía: donde suena 30 dB por debajo del máximo, no hay frecuencia.
+      const T20 = Math.round(0.02 * FS), nfr = Math.floor(n / T20), rms = [];
+      let rmsMax = 1e-12;
+      for (let f = 0; f < nfr; f++) { let s = 0; for (let i = f * T20; i < (f + 1) * T20; i++) s += y[i] * y[i]; rms.push(Math.sqrt(s / T20)); rmsMax = Math.max(rmsMax, rms[f]); }
+      const suena = t => { const f = Math.min(nfr - 1, Math.floor(t * FS / T20)); return f >= 0 && 20 * Math.log10(Math.max(1e-9, rms[f]) / rmsMax) > -30; };
+      let b = 0;
+      for (let i = 0; i < nt; i++) {
+        while (b + 1 < bruta.length && Math.abs(bruta[b + 1].t - tt[i]) <= Math.abs(bruta[b].t - tt[i])) b++;
+        if (bruta.length && Math.abs(bruta[b].t - tt[i]) < 0.03 && suena(tt[i])) fs_[i] = bruta[b].f;
+      }
+      // Mediana móvil de 5 valores.
+      const f = new Float64Array(nt).fill(NaN);
+      for (let i = 0; i < nt; i++) { const v = []; for (let k = i - 2; k <= i + 2; k++) if (k >= 0 && k < nt && Number.isFinite(fs_[k])) v.push(fs_[k]); if (v.length >= 3 && Number.isFinite(fs_[i])) f[i] = CALC.mediana(v); }
+      // 5. El seno que sigue la curva, para comparar de oído.
+      const ultima = { f: 800 };
+      const seno = Senal.modulada({
+        fs: FS, dur: Math.min(dur, 10),
+        fi: t => { const i = limitar(Math.round(t / paso), 0, nt - 1); if (Number.isFinite(f[i])) ultima.f = f[i]; return ultima.f; },
+        amp: t => { const i = limitar(Math.round(t / paso), 0, nt - 1); return Number.isFinite(f[i]) ? 0.6 : 0; },
+      });
+      const vista = recortarMapa(E, FMAX);
+      st.R = { dur, t: tt, f, paso, seno, vista, rango: [E.max - 70, E.max] };
+      st.t = 0;
+      const validas = Array.from(f).filter(Number.isFinite);
+      lect.fijar('min', validas.length ? num(Math.min.apply(null, validas), 0) + ' Hz' : '—');
+      lect.fijar('max', validas.length ? num(Math.max.apply(null, validas), 0) + ' Hz' : '—');
+      lect.fijar('rango', validas.length > 3 ? num(12 * Math.log2(Math.max.apply(null, validas) / Math.min.apply(null, validas)), 1) + ' semitonos' : '—');
+      let saturado = 0;
+      for (let i = 0; i < n; i++) if (Math.abs(x[i]) >= 0.99) saturado++;
+      const av = [];
+      if (validas.length < 5) av.push('No he encontrado una frecuencia clara: ¿hay un silbido o una nota sostenida? Con voz cantada o con varias notas a la vez la curva sale desordenada, y es justo lo que contará la lección 16.');
+      if (saturado / n > 0.001) av.push('La grabación está saturada: los recortes añaden armónicos, y el paso banda ayuda a quitarlos.');
+      if (dur < 1) av.push('El audio dura menos de un segundo, y la medida es poco fiable.');
+      nota.textContent = av.length ? av.join(' ') : 'He buscado tu silbido entre ' + num(lo, 0) + ' y ' + num(hi, 0) + ' Hz, he filtrado alrededor y he cronometrado vueltas de ocho en ocho. La curva naranja es tu frecuencia instantánea; el espectrograma de debajo es la misma información, más borrosa.';
+      Lm.dibujar(); Ln.dibujar();
+    }
+    // Recorta un mapa a 0–fmax para dibujarlo (convenio de Senal: índice k·nT + j).
+    function recortarMapa(E, fmax) {
+      const df = E.f[1] - E.f[0], k1 = Math.min(E.nF - 1, Math.ceil(fmax / df)), nF = k1 + 1, datos = new Float32Array(nF * E.nT);
+      datos.set(E.db.subarray(0, nF * E.nT));
+      return { datos, nF, nT: E.nT, t: E.t, f: E.f.subarray(0, nF) };
+    }
+  })();
+
+})();
+</script>
+</body></html>

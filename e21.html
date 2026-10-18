@@ -1,0 +1,1382 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La frontera · Señales</title>
+<meta name="description" content="Lección 21 del curso visual «Señales, de 0 a experto»: qué ha pasado con el sincrosqueezing desde 2011, por qué falla cuando la señal no cumple sus suposiciones, cómo lo arreglan el segundo orden, el de-shape, la chirplet y el promedio de ventanas, y qué sigue sin resolverse.">
+<link rel="stylesheet" href="comun/fuentes.css">
+<link rel="stylesheet" href="comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e21">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Nivel 5 · Lección 21</p>
+    <h1>La frontera: lo que todavía no sabemos</h1>
+    <aside class="pregunta">
+      <p>La teoría moderna del sincrosqueezing es de 2011, y desde entonces se han inventado muchas variantes. Todas intentan arreglar algo que el método original da por supuesto sobre la señal, y esa suposición falla de maneras muy corrientes: una noria que acelera deprisa, una que no es redonda, dos que se cruzan o una envuelta en ruido. ¿Qué ha pasado desde entonces, y qué sigue sin resolverse?</p>
+    </aside>
+    <ul class="meta"><li>Unos 55 minutos</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>La idea en una imagen</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Es la noria de la <a href="e01.html">lección 1</a>, con la altura de su cabina verde dibujada a la derecha. Mientras la noria sea redonda, gire a una velocidad que cambie despacio, vaya sola y no esté envuelta en ruido, el sincrosqueezing de la <a href="e19.html">lección 19</a> averigua su velocidad en cada instante. Cada opción estropea una de esas cuatro condiciones.</figcaption>
+    </figure>
+    <p>El método de la lección 19 le pregunta a cada trocito de energía a qué velocidad gira su noria y lo coloca en la fila de esa velocidad. Esa pregunta tiene una respuesta limpia solo con ciertas condiciones, y casi todo lo que se ha inventado desde 2011 es una forma más fina de averiguar a qué velocidad gira cada noria en cada instante cuando alguna de ellas falla.</p>
+    <p>Elige cómo se estropea la noria y fíjate en la traza: con la aceleración sube cada vez más deprisa, con la forma deja de ser una sinusoide, con el cruce aparecen dos velocidades que coinciden un instante y con la niebla se llena de ruido. En esta lección cada paso arregla una de las cuatro, y al final se vuelve a esta noria con una melodía.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Paso a paso</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>La promesa de 2011 y su letra pequeña</h3>
+      <p>La idea del sincrosqueezing es de 1996: Daubechies y Maes la tomaron de un modelo del nervio auditivo, y la teoría que la hizo un método matemático con garantías llegó en 2011, con las wavelets (Daubechies, Lu y Wu), y ese mismo año con la transformada de tiempo corto (Thakur y Wu). Las garantías valen para una señal que sea suma de norias cuyo tamaño y velocidad cambian despacio, y que además vayan bien separadas en frecuencia. Así lo resumen Pham y Meignen (2017): modulación de frecuencia débil y componentes separadas por al menos una distancia fija.</p>
+      <p>Desde entonces, casi todo lo nuevo intenta arreglar lo que pasa cuando esa suposición falla, y falla de cuatro maneras: la noria acelera deprisa, no es redonda, se cruza con otra o está envuelta en ruido. Los métodos de esta lección no rompen el muro de las baldosas de la <a href="e12.html">lección 12</a>, porque ninguna medida encoge su rectángulo de tiempo y frecuencia. Lo que hacen es sortearlo suponiendo algo más sobre la señal.</p>
+      <p>La primera suposición rota es la más fácil de ver. El sincrosqueezing da por hecho que la noria no cambia de velocidad mientras dura la ventana. Si dentro de la ventana la frecuencia cambia más de lo que mide la anchura de la baldosa, la línea se ensancha. Con una ventana gaussiana de 8 ms, eso empieza a pasar con unos pocos miles de hercios por segundo, y en el reto lo medirás tú.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Un silbido sintético sube cada vez más deprisa. Encuentra la aceleración a partir de la cual la línea del sincrosqueezing deja de ser fina y se ensancha a tres filas o más.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="mandos" id="r1-mandos"></div>
+        <div class="fila" id="r1-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>¿Una noria o dos?</h3>
+      <p>La segunda suposición es que las norias van separadas. Dos tonos de la misma altura y casi la misma frecuencia suman lo mismo que un solo tono cuya altura late: la suma de dos cosenos de igual tamaño es un coseno de frecuencia media multiplicado por otro, muy lento, que sube y baja. En el oído, eso es un «ua-ua» que se acelera al separarse los tonos hasta que de pronto se oyen dos notas.</p>
+      <p>Para el mapa, «dos norias» y «una noria que late» son la misma señal escrita de dos maneras, y elegir una es una decisión de modelo. Rilling y Flandrin (2008) lo estudiaron con la descomposición modal empírica de la <a href="e17.html">lección 17</a>: su respuesta depende de la razón entre las frecuencias y de la razón entre los tamaños. Por eso el sincrosqueezing exige, por hipótesis, una separación mínima entre componentes, y ningún método más fino la hace desaparecer.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Separa los dos tonos lo justo para que el espectro de una ventana de 64 ms vea dos picos en vez de uno.</p>
+        <div class="escena" id="r2-escena"></div>
+        <div class="mandos" id="r2-mandos"></div>
+        <div class="fila" id="r2-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>Cuando la noria acelera deprisa</h3>
+      <p>La forma más directa de arreglar la aceleración es preguntar por ella. El sincrosqueezing de <b class="termino">segundo orden</b> (Oberlin, Meignen y Perrier, 2015) estima, además de la velocidad de cada trocito, cuánto está acelerando, y corrige la velocidad con esa aceleración. Para un chirp lineal con envolvente gaussiana la línea sale exacta, y como solo mueve la energía en vertical, la señal se puede seguir reconstruyendo. A cambio, necesita cinco transformadas de tiempo corto, con la ventana y con otras cuatro funciones derivadas de ella, en lugar de una.</p>
+      <p>El de <b class="termino">orden superior</b> (Pham y Meignen, 2017) sigue por el mismo camino con más términos, y se probó con la primera onda gravitacional detectada: un chirp que acelera cada vez más deprisa hasta el choque de dos agujeros negros. Con una versión de cuarto orden, la línea siguió mejor el final del choque, y la onda reconstruida se pareció más a la que sale de la relatividad numérica.</p>
+      <p>Hay otras dos vías, nacidas en la ingeniería industrial. El <b class="termino">synchroextracting</b> (Yu, Yu y Xu, 2017) no mueve la energía: se queda solo con los coeficientes que ya están en la fila de su frecuencia estimada y descarta el resto. Sale una línea finísima, pero se tira información, y con modulaciones fuertes la línea puede desviarse de la frecuencia real, según una revisión en abierto de You y sus colaboradores (2020), que lo aplican a rodamientos. El <b class="termino">multisynchrosqueezing</b> (Yu, Wang y Zhao, 2019) repite varias veces el empujón del sincrosqueezing para concentrar la energía poco a poco, sin perder la capacidad de reconstruir, según su resumen.</p>
+      <p>En el reto compararás el espectrograma, el sincrosqueezing, el synchroextracting, el de segundo orden y la reasignación de la <a href="e18.html">lección 18</a> sobre un chirp muy rápido. El sincrosqueezing, el synchroextracting y el de segundo orden del reto son versiones sencillas escritas para esta lección y están rotulados como tales; la reasignación es la de la biblioteca del curso.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">El silbido sube ahora a 8.000 Hz por segundo. Elige el método y la ventana que dejan la línea fina, de una fila y media o menos, y que además permiten reconstruir la señal con un error menor del 10 %.</p>
+        <div class="escena" id="r3-escena"></div>
+        <div class="mandos" id="r3-mandos"></div>
+        <div class="fila" id="r3-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>Cuando la noria no es redonda</h3>
+      <p>Una vocal, un violín o un latido no dibujan una sinusoide: repiten un dibujo más complicado, y en el mapa cada fuente deja una pila de líneas, una por armónico, como los epiciclos de la <a href="e03.html">lección 3</a>. Dos fuentes pueden solaparse, y entonces es difícil saber qué línea es la nota y cuáles son sus armónicos.</p>
+      <p>El <b class="termino">de-shape</b> (Lin, Su y Wu, 2018) usa el <b class="termino">cepstrum</b>, una medida del ritmo con que se repiten las líneas de un espectro, para encender solo la fundamental de cada familia. En su artículo lo prueban con un fragmento de la sonata para violín en mi menor K.304 de Mozart, en el que un si3 del piano (246,9 Hz) suena a la vez que un si4 del violín (493,88 Hz), justo el doble: todos los armónicos del violín caen sobre armónicos del piano. En un espectrograma parece una sola nota con un timbre raro, y el de-shape las separa, y deja ver el vibrato del violín.</p>
+      <p>Tiene límites que los propios autores señalan: una obra de música puede tener muchas más componentes, más de diez en una sinfonía, y los patrones de múltiplos se complican. Y como multiplica por el mapa original, no puede encender una línea donde no hay energía, así que no inventa una fundamental que falte del todo. El reto usa una versión sencilla del de-shape, escrita para esta lección, con dos notas sintéticas.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Suenan dos notas a la vez: un si3 de piano y un si4 de violín, sintéticos. Toca el mapa para marcar la frecuencia de cada nota, no la de sus armónicos. Si te pierdes, pulsa «De-shape».</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="fila" id="r4-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>Cuando dos norias se cruzan</h3>
+      <p>En el instante en que dos silbidos se cruzan, suenan a la misma altura: en el plano de tiempo y frecuencia ocupan el mismo punto, y ninguna imagen, por fina que sea, puede separarlos. Pero uno sube y el otro baja. Si al mapa se le añade un tercer eje, cuánto acelera cada noria, las dos líneas pasan una por encima de la otra sin tocarse.</p>
+      <p>Es la idea de la <b class="termino">transformada chirplet</b> (Mann y Haykin, 1995): la ventana también acelera, a un ritmo que se elige, y cuando coincide con el de una componente, esa componente se vuelve una nota fija dentro de la ventana y su línea se afina. El resultado es una <b class="termino" data-termino="Representación tiempo-frecuencia-aceleración">representación de tres ejes</b>: tiempo, frecuencia y <b class="termino">tasa de chirp</b>, que es cuántos hercios sube o baja la frecuencia en cada segundo. La chirplet emborrona en ese tercer eje, y por eso Chen y Wu (2023) proponen un sincrosqueezing sobre ella, con el que separan componentes cuyas frecuencias se cruzan.</p>
+      <p>En el reto hay dos silbidos sintéticos, uno que sube a 600 Hz por segundo y otro que baja a la misma velocidad, y una ventana gaussiana de 40 ms que acelera al ritmo que tú elijas.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Encuentra las dos aceleraciones de la ventana que dejan nítido, una cada vez, cada silbido. Mueve el deslizador y pulsa «Fijar esta aceleración» cuando uno se vea brillante y fino; hacen falta dos.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>Cuando hay mucho ruido, y cuando no hay modelo</h3>
+      <p>Con poca relación entre la señal y el ruido, el sincrosqueezing fabrica concentraciones falsas: manchas brillantes donde no hay nada. <b class="termino">ConceFT</b> (Daubechies, Wang y Wu, 2016) repite el cálculo con muchas ventanas distintas, combinaciones al azar de varias funciones de Hermite, y promedia. Las líneas de verdad salen siempre en el mismo sitio, y las manchas del ruido cambian de sitio cada vez, de modo que se diluyen. Es el promedio de la <a href="e10.html">lección 10</a>, aplicado al sincrosqueezing. Otras vías abiertas son la estadística, que permite decidir si una línea es real (Sourisseau, Wu y Zhou, 2022), y mirar los ceros del espectrograma en lugar de sus crestas: los del ruido blanco se reparten de forma regular y no se amontonan (Bardenet, Flamant y Chainais, 2020).</p>
+      <p>Todo lo anterior supone un modelo de señal. Cuando no se quiere suponer ninguno, queda aprender de ejemplos. CREPE (Kim y sus colaboradores, 2018) es una red neuronal que recibe unos 64 milisegundos de audio y devuelve la nota, sin calcular ningún espectrograma: entran 1.024 muestras a 16 kHz y salen 360 casillas de 20 cents. En sus pruebas acertó más que pYIN y que SWIPE, y fue más robusta al ruido en la mayoría de los casos. Pero falló con una flauta china, la dizi, porque en la parte de la prueba no había ninguna entre sus ejemplos de entrenamiento, y estima cada trozo por separado, sin el camino de la <a href="e20.html">lección 20</a>. Aprender de ejemplos funciona muy bien con lo que se parece a los ejemplos.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">Más redes</span>
+        <p>SPICE aprende la altura sin etiquetas, aprovechando que transponer una nota es desplazarla en un mapa de octavas. PESTO es otra red sin etiquetas, con menos de 30.000 parámetros. Basic Pitch transcribe varias notas a la vez, y LEAF aprende sus propias baldosas en lugar de usar las de un ingeniero.</p>
+      </aside>
+      <p>En el reto, la señal son dos componentes con ruido blanco de la misma potencia que ellas: es decir, a 0 dB. Cada «ventana al azar» es una combinación distinta de las funciones de Hermite, y la lectura de las burbujas mide lo que brilla fuera de las líneas, comparado con lo que brillan las líneas.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">Baja las burbujas falsas por debajo de 0,26, sin borrar las líneas, promediando ventanas al azar. Con una sola ventana gaussiana valen 0,30.</p>
+        <div class="columnas-2" id="r6-mapas"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>En tu voz</h2>
+    <p><b>Qué grabar.</b> Los dos silbidos que se cruzan, el tramo 8 de la grabación de referencia de la serie, en el que una persona sube mientras la otra baja, y la melodía del tramo 7, cantada o silbada. Graba con el micrófono si tu navegador lo deja; si no, sube un audio grabado con el móvil o prueba con los ejemplos sintéticos. Si solo tienes un silbidor, el ejemplo sintético de los dos silbidos sirve igual.</p>
+    <p><b>Qué mirar.</b> Verás cinco imágenes de los mismos cuatro segundos, con la misma escala de color y sin ninguna puntuación: no es una comparación, sino una galería de lo que gana y lo que paga cada método. El de-shape apenas cambia un silbido, que es casi una noria redonda, pero con una «aaa» deja una sola línea donde el espectrograma tenía una pila. Con el deslizador de la chirplet puedes mirar el cruce de los dos silbidos con una ventana que acelera. Más abajo, un resumen de lo que se puede medir de forma fiable en unos segundos de audio, y botones para oír cada línea reconstruida por separado con el segundo orden.</p>
+    <p>El sincrosqueezing ensucia sus mapas con burbujas cuando hay soplido de silbido, y la reverberación deja colas que parecen componentes extra. Si los silbidos cruzan despacio, pasan mucho tiempo dentro de la misma baldosa y ningún método los separa bien en ese tramo. Todo el cálculo se hace en tu navegador y el audio no sale de él.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>Lo que tienes que recordar</h2>
+    <ol class="tres">
+      <li>El sincrosqueezing supone una señal de norias que cambian despacio y van separadas. Los métodos posteriores a 2011 arreglan una suposición rota cada uno, y ninguno rompe el muro de la incertidumbre: lo sortean suponiendo algo más.</li>
+      <li>Cada método paga un precio. El segundo orden, más cálculo; el synchroextracting, energía que tira; el de-shape y la chirplet, más parámetros; el promedio de ventanas, más tiempo; y las redes, dependencia de los ejemplos con que aprendieron.</li>
+      <li>Algunas preguntas no tienen una respuesta única, como si dos tonos muy cercanos son una noria o dos. Siguen abiertos los cruces, el ruido fuerte, las señales con muchas componentes, la elección de parámetros y la garantía de que una red funcione con lo que nunca ha visto.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Errores típicos</h2>
+    <ul class="errores">
+      <li><b>«El sincrosqueezing, o el método más nuevo, rompe el principio de incertidumbre.»</b> Ninguno lo rompe. Todos suponen algo sobre la señal, que tiene pocas norias, que cambian despacio y van separadas, y usan esa suposición para afinar. Si la señal no la cumple, la imagen nítida puede ser falsa.</li>
+      <li><b>«El mapa más nítido es el más fiable.»</b> El synchroextracting da líneas finísimas tirando energía, y con modulaciones fuertes su línea puede desviarse. Una línea fina y desplazada es peor que una franja ancha en su sitio.</li>
+      <li><b>«La inteligencia artificial ya lo ha resuelto.»</b> CREPE acierta mucho con lo que se parece a sus ejemplos, y falló con una flauta que no conocía. Además decide cada trozo por separado y no permite reconstruir la señal.</li>
+      <li><b>«Cada línea del mapa es una fuente distinta.»</b> Una voz o un violín dejan una pila de líneas, una por armónico, y dos notas a una octava comparten muchas. Contar fuentes exige saber qué líneas son familia, y eso hace el de-shape.</li>
+      <li><b>«Si dos componentes se cruzan, basta con una imagen más fina.»</b> En el cruce ocupan el mismo instante y la misma frecuencia. Hace falta otra pista, como cuánto acelera cada una, que es un tercer eje, o su timbre.</li>
+      <li><b>«Hay un método que es el mejor.»</b> Cada uno arregla una suposición rota y paga un precio. Se elige según lo que le pase a la señal.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Abrir</span>
+      <h2>Rincón matemático</h2>
+      <span class="resumen">Las fórmulas, para quien las quiera. Cada una va después de su lectura en palabras.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>El modelo de la serie</h3>
+      <p>La señal es una suma de norias cuyo tamaño y velocidad cambian despacio, y que van separadas por al menos una distancia fija:</p>
+      <div class="tex">f(t) = \sum_{k=1}^{K} A_k(t)\,\cos\bigl(2\pi\phi_k(t)\bigr), \qquad |A_k'(t)| \le \varepsilon,\quad |\phi_k''(t)| \le \varepsilon,\quad \phi_{k+1}'(t) - \phi_k'(t) \ge 2\Delta</div>
+
+      <h3>La transformada de tiempo corto</h3>
+      <p>Se compara la señal, vista a través de una ventana <span class="tex">g</span> centrada en <span class="tex">t</span>, con una noria de frecuencia <span class="tex">\eta</span>:</p>
+      <div class="tex">V_f^{g}(t,\eta) = \int f(\tau)\,g(\tau - t)\,e^{-i2\pi\eta(\tau - t)}\,d\tau</div>
+
+      <h3>La velocidad que dice la fase</h3>
+      <p>La frecuencia de cada trocito es la de su fila corregida por cómo cambia su fase, y se calcula con una segunda transformada hecha con la derivada de la ventana:</p>
+      <div class="tex">\hat\omega_f(t,\eta) = \operatorname{Re}\Bigl\{\eta - \frac{1}{i2\pi}\,\frac{V_f^{g'}(t,\eta)}{V_f^{g}(t,\eta)}\Bigr\}</div>
+
+      <h3>El sincrosqueezing y la reconstrucción</h3>
+      <p>Cada coeficiente se mueve, solo en vertical, a la fila de su velocidad. Sumando una franja alrededor de una línea, con <span class="tex">\varphi_k</span> su frecuencia y <span class="tex">d</span> el ancho de la franja, se recupera su componente:</p>
+      <div class="tex">T_f(t,\omega) = \frac{1}{g(0)}\int_{\{|V_f^{g}|&gt;\gamma\}} V_f^{g}(t,\eta)\,\delta\bigl(\omega - \hat\omega_f(t,\eta)\bigr)\,d\eta, \qquad f_k(t) \approx \int_{|\omega - \varphi_k(t)| &lt; d} T_f(t,\omega)\,d\omega</div>
+
+      <h3>El segundo orden</h3>
+      <p>Se estima también el instante de cada trocito y cuánto acelera su frecuencia, y se corrige la velocidad con esa aceleración. Todo sale de cinco transformadas, con las ventanas <span class="tex">g</span>, <span class="tex">g'</span>, <span class="tex">t\,g</span>, <span class="tex">g''</span> y <span class="tex">t\,g'</span>:</p>
+      <div class="tex">\tilde\tau_f = t + \frac{V_f^{tg}}{V_f^{g}}, \qquad \tilde q_f = \frac{1}{i2\pi}\,\frac{V_f^{g''}V_f^{g} - \bigl(V_f^{g'}\bigr)^2}{V_f^{tg}V_f^{g'} - V_f^{tg'}V_f^{g}}, \qquad \hat\omega^{[2]}_f = \operatorname{Re}\Bigl\{\tilde\omega_f + \tilde q_f\,\bigl(t - \tilde\tau_f\bigr)\Bigr\}</div>
+      <p>Para un chirp lineal con envolvente gaussiana, la parte real de <span class="tex">\tilde q_f</span> es justo su aceleración. Así está calculado el segundo orden de esta lección.</p>
+
+      <h3>Cuándo se emborrona el primer orden</h3>
+      <p>Un chirp de aceleración <span class="tex">c</span> se sale de la suposición cuando lo que cambia su frecuencia dentro de la ventana se acerca a la anchura de la baldosa. Con una ventana gaussiana de anchura <span class="tex">\sigma</span>, es una regla de andar por casa, coherente con las medidas de esta lección, y no sale de un artículo:</p>
+      <div class="tex">|c|\,\sigma \gtrsim \frac{1}{2\pi\sigma} \quad\Longleftrightarrow\quad |c| \gtrsim \frac{1}{2\pi\sigma^2}</div>
+
+      <h3>El synchroextracting</h3>
+      <p>Según la descripción de You y sus colaboradores (2020), se conserva un coeficiente solo si su frecuencia estimada cae en su propia fila, y no se mueve nada. En discreto, con <span class="tex">\Delta\omega</span> el ancho de una fila:</p>
+      <div class="tex">Te_f(t,\omega) = V_f^{g}(t,\omega)\,\delta\bigl(\omega - \hat\omega_f(t,\omega)\bigr) \qquad (|\omega - \hat\omega_f(t,\omega)| &lt; \Delta\omega/2)</div>
+
+      <h3>El de-shape</h3>
+      <p>Para cada instante se mide con qué ritmo se repiten las líneas del espectro, el cepstrum generalizado; ese ritmo se convierte otra vez en frecuencia y se multiplica por el mapa original. Con <span class="tex">\gamma = 2</span>, el primer paso sería la autocorrelación, y en las pruebas del artículo se usa <span class="tex">\gamma = 0{,}3</span>:</p>
+      <div class="tex">C_f(t,q) = \int \bigl|V_f(t,\xi)\bigr|^{\gamma} e^{-i2\pi q\xi}\,d\xi, \qquad U_f(t,\xi) = C_f\bigl(t,1/\xi\bigr), \qquad W_f(t,\xi) = V_f(t,\xi)\,U_f(t,\xi)</div>
+
+      <h3>La chirplet</h3>
+      <p>La ventana también acelera, a ritmo <span class="tex">c</span>. Cuando <span class="tex">c</span> coincide con el de una componente, esta se vuelve una nota fija dentro de la ventana y su línea se afina:</p>
+      <div class="tex">V_f^{(g,c)}(t,\eta) = \int f(\tau)\,g(\tau - t)\,e^{-i\pi c(\tau - t)^2}\,e^{-i2\pi\eta(\tau - t)}\,d\tau</div>
+
+      <h3>ConceFT</h3>
+      <p>Se promedian los módulos de sincrosqueezings hechos con ventanas que son mezclas al azar de varias ventanas ortonormales <span class="tex">h_j</span>, con pesos de norma uno:</p>
+      <div class="tex">C_f(t,\omega) = \frac{1}{N}\sum_{n=1}^{N} \bigl|T_f^{(h_n)}(t,\omega)\bigr|, \qquad h_n = \sum_{j=1}^{J} r_{n,j}\,h_j, \qquad \sum_{j} r_{n,j}^2 = 1</div>
+
+      <h3>¿Una noria o dos?</h3>
+      <p>Dos norias de igual tamaño son exactamente una noria de velocidad media cuyo tamaño late:</p>
+      <div class="tex">\cos(2\pi f_1 t) + \cos(2\pi f_2 t) = 2\cos\bigl(\pi(f_1 - f_2)t\bigr)\,\cos\bigl(\pi(f_1 + f_2)t\bigr)</div>
+
+      <h3>La salida de CREPE</h3>
+      <p>La nota es la media de las casillas ponderada por la activación <span class="tex">\hat y_i</span> de la red, pasada de cents a hercios, con una frecuencia de referencia de 10 Hz:</p>
+      <div class="tex">c(f) = 1200\log_2\frac{f}{f_{\text{ref}}}, \qquad \hat c = \frac{\sum_{i=1}^{360}\hat y_i\,c_i}{\sum_{i=1}^{360}\hat y_i}, \qquad \hat f = f_{\text{ref}}\,2^{\hat c/1200}, \qquad f_{\text{ref}} = 10\ \text{Hz}</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Para saber más</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Artículos · inglés</span>Oberlin, T., Meignen, S. y Perrier, V. (2015). <a href="https://hal.science/hal-00994883"><i>Second-order synchrosqueezing transform or invertible reassignment?</i></a> El segundo orden y su relación con la reasignación. Y Pham, D.-H. y Meignen, S. (2017), <a href="https://arxiv.org/abs/2004.09399"><i>High-order synchrosqueezing transform for multicomponent signals analysis</i></a>, con la onda gravitacional GW150914.</li>
+      <li><span class="tipo">Artículo · inglés</span>Lin, C.-Y., Su, L. y Wu, H.-T. (2018). <a href="https://arxiv.org/abs/1605.01805"><i>Wave-shape function analysis: when cepstrum meets time-frequency analysis</i></a>. El de-shape, con la sonata de Mozart, un coro y aullidos de lobo.</li>
+      <li><span class="tipo">Artículo · inglés</span>Daubechies, I., Wang, Y. G. y Wu, H.-T. (2016). <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4792403/"><i>ConceFT: concentration of frequency and time via a multitapered synchrosqueezed transform</i></a>. Cómo promediar ventanas limpia el ruido del sincrosqueezing.</li>
+      <li><span class="tipo">Artículo · inglés</span>Chen, Z. y Wu, H.-T. (2023). <a href="https://arxiv.org/abs/2112.01857"><i>Disentangling modes with crossover instantaneous frequencies by synchrosqueezed chirplet transforms</i></a>. Los cruces, resueltos en tres dimensiones.</li>
+      <li><span class="tipo">Artículo y código · inglés</span>Kim, J. W., Salamon, J., Li, P. y Bello, J. P. (2018). <a href="https://arxiv.org/abs/1802.06182"><i>CREPE: a convolutional representation for pitch estimation</i></a>, y su <a href="https://github.com/marl/crepe">código abierto</a>. Una red que escucha notas, con sus límites contados por los propios autores.</li>
+      <li><span class="tipo">Artículo y datos · inglés</span>Abbott, B. P. y colaboradores (2016). <a href="https://arxiv.org/abs/1602.03837"><i>Observation of gravitational waves from a binary black hole merger</i></a>, y los datos abiertos del <a href="https://gwosc.org">Gravitational Wave Open Science Center</a>: licencia CC BY 4.0, con un agradecimiento obligatorio al usarlos, que explican en su página de reconocimientos. La noria más extrema de la serie.</li>
+    </ul>
+  </section>
+
+  <section id="cierre">
+    <h2>Vuelta a la noria</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="cierre-escena"></div>
+        <div class="mandos" id="cierre-mandos"></div>
+      </div>
+      <figcaption>La noria de la lección 1 gira a cámara muy lenta: una vuelta por segundo equivale a 880 Hz. Su velocidad sigue la nota de una melodía silbada, que es sintética, y a la derecha queda dibujada su curva de tono. Si cargas un audio en «En tu voz», la noria sigue el tuyo.</figcaption>
+    </figure>
+    <p>Este es el recorrido de todo el curso: una señal es una suma de norias, y casi todo lo que se hace con ella consiste en averiguar el tamaño y la velocidad de cada una, en cada instante. La transformada de Fourier lo hace para norias que no cambian, las baldosas lo hacen cuando cambian despacio, y los métodos de las últimas lecciones lo hacen cuando cambian más deprisa, se cruzan o se esconden entre el ruido. La curva de tono de una melodía es la velocidad de la noria de la voz, dibujada a lo largo del tiempo.</p>
+    <p>Los mismos mapas se usan en muchos sitios. En voz y música, para transcribir notas y separar voces. En el quirófano, un equipo del Hospital General de Massachusetts siguió con espectrogramas el electroencefalograma de varias personas mientras se dormían con propofol y al despertar: al perder la consciencia aparecen ondas muy lentas y unas ondas alfa en la frente, y todo se invierte al volver (<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3607036/">Purdon y colaboradores, 2013</a>). El sincrosqueezing también ha entrado en el quirófano, pero leyendo el corazón, no el cerebro: Hau-Tieng Wu y sus colegas lo usaron para sacar la respiración de un electrocardiograma, con un resultado preliminar sobre su relación con la profundidad anestésica. Todo eso es investigación, y no se presenta como práctica clínica.</p>
+    <p>En una fábrica, un rodamiento que empieza a romperse deja una huella que cambia con la velocidad del motor, y leerla con nitidez es una de las aplicaciones de estos métodos. Y el 14 de septiembre de 2015, los detectores LIGO captaron una onda que en dos décimas de segundo subió de 35 a 150 hercios, cada vez más deprisa: la noria más extrema de la serie, dos agujeros negros que giran uno alrededor del otro hasta chocar. Su prueba visual, en el artículo del descubrimiento, es un mapa de tiempo y frecuencia con baldosas como las de las wavelets, donde la señal dibuja una línea que sube.</p>
+    <p>Quedan cosas abiertas, y conviene decirlas con honestidad. Ningún método de esta lección rompe el muro de la incertidumbre: todos lo sortean suponiendo algo sobre la señal, y cuando la suposición falla, fallan. Hay preguntas que la señal sola no puede responder, como si dos notas muy cercanas son dos norias o una que late. Los cruces siguen siendo difíciles, el ruido fuerte sigue abierto, las señales con muchas componentes complican los métodos y elegir los parámetros sigue siendo un oficio. Y una red neuronal sabe lo que ha visto, no lo que no ha visto.</p>
+    <p>Si quieres repasar, el <a href="index.html">mapa del curso</a> enseña tu progreso, el <a href="examenes.html#final">examen final</a> junta una pregunta de cada lección y el <a href="glosario.html">glosario</a> tiene todos los términos. Con la noria de la lección 1 se puede entender casi todo lo demás, y volver a ella, a su velocidad y a su tamaño, es una buena manera de empezar de nuevo.</p>
+  </section>
+
+  <section id="terminos">
+    <h2>Términos nuevos</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Examen</h2>
+  </section>
+
+</main>
+
+<script src="comun/temario.js"></script>
+<script src="comun/graficas.js"></script>
+<script src="comun/senal.js"></script>
+<script src="comun/curso.js"></script>
+<script src="datos/e21.js"></script>
+<script>
+(function () {
+'use strict';
+
+// ── Cálculo de la lección 21: versiones sencillas, escritas para esta lección, de métodos que no están en Senal ─────
+// Todo son funciones puras sobre Float64Array. Las ventanas son gaussianas (o de Hermite) y se usan sus derivadas
+// analíticas; la fase de cada trama se mide desde el centro de la ventana, como en Senal.stft.
+const NUM = (() => {
+  const TAU = 2 * Math.PI;
+  const FS = 8000;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+
+  // ── Ventanas ──
+  // Gaussiana de desviación sigma (s), muestreada a fs, de n = 2h + 1 muestras (h = 4σ). Trae g, g′, g″, t·g y t·g′ (u en s).
+  function gauss(fs, sigma, hMax = Infinity) {
+    const h = Math.min(hMax, Math.round(4 * sigma * fs)), n = 2 * h + 1, g = new Float64Array(n), g1 = new Float64Array(n), g2 = new Float64Array(n), tg = new Float64Array(n), tg1 = new Float64Array(n);
+    const s2 = sigma * sigma;
+    for (let i = 0; i < n; i++) {
+      const u = (i - h) / fs, e = Math.exp(-u * u / (2 * s2));
+      g[i] = e; g1[i] = -u / s2 * e; g2[i] = (u * u / (s2 * s2) - 1 / s2) * e; tg[i] = u * e; tg1[i] = u * g1[i];
+    }
+    return { n, h, fs, sigma, g, g1, g2, tg, tg1 };
+  }
+  // Las J primeras funciones de Hermite (ortogonales entre sí) con anchura sigma (s) y sus derivadas. Cada una, con energía 1.
+  function hermite(fs, sigma, J) {
+    const h = Math.round(5 * sigma * fs), n = 2 * h + 1, base = [];
+    for (let j = 0; j < J; j++) base.push(new Float64Array(n));
+    for (let i = 0; i < n; i++) {
+      const x = (i - h) / fs / sigma, e = Math.exp(-x * x / 2);
+      let Hm = 1, H = 2 * x;                       // polinomios de Hermite (físicos): H0 = 1, H1 = 2x, H(j+1) = 2x·Hj − 2j·H(j−1)
+      for (let j = 0; j < J; j++) {
+        base[j][i] = (j === 0 ? 1 : H) * e;
+        if (j >= 1) { const nx = 2 * x * H - 2 * j * Hm; Hm = H; H = nx; }
+      }
+    }
+    return base.map(w => {
+      let en = 0; for (let i = 0; i < n; i++) en += w[i] * w[i];
+      const k = 1 / Math.sqrt(en), g = new Float64Array(n), g1 = new Float64Array(n);
+      for (let i = 0; i < n; i++) g[i] = w[i] * k;
+      for (let i = 1; i < n - 1; i++) g1[i] = (g[i + 1] - g[i - 1]) * fs / 2;
+      return { n, h, fs, sigma, g, g1 };
+    });
+  }
+
+  // ── Transformada de tiempo corto con varias ventanas a la vez ──
+  // wins: lista de Float64Array de la misma longitud impar. → { V: [{ re, im }, …] (Float32Array nF·nT), t, f, nT, nF, df, salto, nfft }
+  function stft(x, fs, wins, { salto = 16, nfft = 512 } = {}) {
+    const n = wins[0].length, h = (n - 1) / 2, L = x.length, nT = Math.floor(L / salto) + 1, nF = nfft / 2 + 1, df = fs / nfft;
+    const V = wins.map(() => ({ re: new Float32Array(nF * nT), im: new Float32Array(nF * nT) }));
+    const bre = new Float64Array(nfft), bim = new Float64Array(nfft);
+    for (let j = 0; j < nT; j++) {
+      const c = j * salto;
+      for (let q = 0; q < wins.length; q++) {
+        const w = wins[q];
+        bre.fill(0); bim.fill(0);
+        for (let i = 0; i < n; i++) { const s = c + i - h; if (s < 0 || s >= L) continue; const o = i - h; bre[o >= 0 ? o : nfft + o] = x[s] * w[i]; }
+        Senal.fft(bre, bim);
+        const Vq = V[q];
+        for (let k = 0; k < nF; k++) { Vq.re[k * nT + j] = bre[k]; Vq.im[k * nT + j] = bim[k]; }
+      }
+    }
+    const t = new Float64Array(nT), f = new Float64Array(nF);
+    for (let j = 0; j < nT; j++) t[j] = j * salto / fs;
+    for (let k = 0; k < nF; k++) f[k] = k * df;
+    return { V, t, f, nT, nF, df, salto, nfft, fs, n, h, L };
+  }
+  // Transformada chirplet: la ventana también acelera a c Hz/s. → { re, im } como una de las V de stft.
+  function chirplet(x, fs, ven, c, { salto = 16, nfft = 512 } = {}) {
+    const { n, h, g } = ven, L = x.length, nT = Math.floor(L / salto) + 1, nF = nfft / 2 + 1;
+    const re = new Float32Array(nF * nT), im = new Float32Array(nF * nT), bre = new Float64Array(nfft), bim = new Float64Array(nfft);
+    const mr = new Float64Array(n), mi = new Float64Array(n);
+    for (let i = 0; i < n; i++) { const u = (i - h) / fs, a = -Math.PI * c * u * u; mr[i] = g[i] * Math.cos(a); mi[i] = g[i] * Math.sin(a); }
+    for (let j = 0; j < nT; j++) {
+      const cc = j * salto;
+      bre.fill(0); bim.fill(0);
+      for (let i = 0; i < n; i++) { const s = cc + i - h; if (s < 0 || s >= L) continue; const o = i - h, k = o >= 0 ? o : nfft + o; bre[k] = x[s] * mr[i]; bim[k] = x[s] * mi[i]; }
+      Senal.fft(bre, bim);
+      for (let k = 0; k < nF; k++) { re[k * nT + j] = bre[k]; im[k * nT + j] = bim[k]; }
+    }
+    return { re, im, nT, nF };
+  }
+  // Espectrograma: módulo al cuadrado normalizado para que un seno de amplitud A dé A² (V sin dividir por la suma de la ventana).
+  function potencia(V, win, nT, nF) {
+    let sg = 0; for (let i = 0; i < win.length; i++) sg += win[i];
+    const k = Math.pow(2 / sg, 2), P = new Float32Array(nF * nT);
+    for (let i = 0; i < P.length; i++) P[i] = k * (V.re[i] * V.re[i] + V.im[i] * V.im[i]);
+    return P;
+  }
+  const aDb = (P, rango) => {
+    let m = 0; for (let i = 0; i < P.length; i++) if (P[i] > m) m = P[i];
+    const db = new Float32Array(P.length), mdb = m > 0 ? 10 * Math.log10(m) : -120;
+    for (let i = 0; i < P.length; i++) { const v = P[i] > 0 ? 10 * Math.log10(P[i]) : -120; db[i] = Math.max(v, mdb - (rango || 120)); }
+    return { db, max: mdb };
+  };
+
+  // ── Reasignaciones: el sincrosqueezing de primer y de segundo orden y el synchroextracting ──
+  // Datos de entrada: M = resultado de stft con las ventanas, en este orden: [g, g′] (primer orden) o [g, g′, g″, t·g, t·g′] (segundo).
+  // Todos devuelven { re, im } (Float32Array nF·nT) con la escala de Senal.sst: la suma de una columna reconstruye la señal.
+  function pasoSst(M, kInicio) { return M; }
+  function reasignar(M, estimar, gamma, escala) {
+    const { nT, nF, df, nfft } = M, re = new Float32Array(nF * nT), im = new Float32Array(nF * nT);
+    const V = M.V[0], cMed = 2 / (nfft * escala), cExt = 1 / (nfft * escala);
+    let pico = 0; for (let i = 0; i < V.re.length; i++) { const m = V.re[i] * V.re[i] + V.im[i] * V.im[i]; if (m > pico) pico = m; }
+    const umbral2 = pico * gamma * gamma;
+    for (let j = 0; j < nT; j++) for (let k = 0; k < nF; k++) {
+      const p = k * nT + j, a = V.re[p], b = V.im[p];
+      if (a * a + b * b <= umbral2) continue;
+      const fh = estimar(M, p, k, df);
+      if (fh == null) continue;
+      const kk = Math.round(fh / df);
+      if (kk < 0 || kk >= nF) continue;
+      const c = k === 0 || k === nF - 1 ? cExt : cMed, q = kk * nT + j;
+      re[q] += c * a; im[q] += c * b;
+    }
+    return { re, im, nT, nF };
+  }
+  // Frecuencia de primer orden: f̂ = f − Im(V_g′ / V_g) / 2π.
+  const estimar1 = (M, p, k, df) => {
+    const a = M.V[0].re[p], b = M.V[0].im[p], c = M.V[1].re[p], d = M.V[1].im[p], m2 = a * a + b * b;
+    const imR = (d * a - c * b) / m2;
+    return k * df - imR / TAU;
+  };
+  // Segundo orden (Oberlin, Meignen y Perrier, 2015): f̂ = Re{ ω̃ + q̃·(t − τ̃) }, con
+  //   ω̃ = η − V_g′ / (i2π V_g),  τ̃ − t = V_tg / V_g,  q̃ = (V_g″·V_g − V_g′²) / (i2π (V_tg·V_g′ − V_tg′·V_g)).
+  const estimar2 = (M, p, k, df) => {
+    const g = [M.V[0].re[p], M.V[0].im[p]], g1 = [M.V[1].re[p], M.V[1].im[p]], g2 = [M.V[2].re[p], M.V[2].im[p]], tg = [M.V[3].re[p], M.V[3].im[p]], tg1 = [M.V[4].re[p], M.V[4].im[p]];
+    const mul = (u, v) => [u[0] * v[0] - u[1] * v[1], u[0] * v[1] + u[1] * v[0]];
+    const div = (u, v) => { const d = v[0] * v[0] + v[1] * v[1]; return [(u[0] * v[0] + u[1] * v[1]) / d, (u[1] * v[0] - u[0] * v[1]) / d]; };
+    const mg = g[0] * g[0] + g[1] * g[1];
+    const R = div(g1, g);                                     // V_g′ / V_g
+    const wt = [k * df - R[1] / TAU, R[0] / TAU];             // ω̃ = η − R/(i2π) = η + i·R/(2π) → parte real η − Im(R)/2π, parte imaginaria Re(R)/2π
+    const num = [mul(g2, g)[0] - mul(g1, g1)[0], mul(g2, g)[1] - mul(g1, g1)[1]];
+    const den = [mul(tg, g1)[0] - mul(tg1, g)[0], mul(tg, g1)[1] - mul(tg1, g)[1]];
+    const dm = den[0] * den[0] + den[1] * den[1];
+    if (!(dm > 1e-12 * mg * mg)) return estimar1(M, p, k, df);
+    const q = div(num, [-TAU * den[1], TAU * den[0]]);        // dividir por i2π·den
+    const dt = div(tg, g);                                    // τ̃ − t
+    const corr = mul(q, [-dt[0], -dt[1]]);                    // q̃·(t − τ̃)
+    const f = wt[0] + corr[0];
+    return Number.isFinite(f) ? f : estimar1(M, p, k, df);
+  };
+  const sst1 = (M, gamma = 1e-3, esc = 1) => reasignar(M, estimar1, gamma, esc);
+  const sst2 = (M, gamma = 1e-3, esc = 1) => reasignar(M, estimar2, gamma, esc);
+  // Synchroextracting: se queda con las casillas cuya frecuencia estimada cae en su propia fila (|f̂ − f| < Δf/2) y no mueve nada.
+  function extraer(M, gamma = 1e-3, esc = 1) {
+    const { nT, nF, df, nfft } = M, re = new Float32Array(nF * nT), im = new Float32Array(nF * nT), V = M.V[0], cMed = 2 / (nfft * esc);
+    let pico = 0; for (let i = 0; i < V.re.length; i++) { const m = V.re[i] * V.re[i] + V.im[i] * V.im[i]; if (m > pico) pico = m; }
+    const umbral2 = pico * gamma * gamma;
+    for (let j = 0; j < nT; j++) for (let k = 0; k < nF; k++) {
+      const p = k * nT + j, a = V.re[p], b = V.im[p];
+      if (a * a + b * b <= umbral2) continue;
+      if (Math.abs(estimar1(M, p, k, df) - k * df) < df / 2) { re[p] = cMed * a; im[p] = cMed * b; }
+    }
+    return { re, im, nT, nF };
+  }
+  // El de-shape (Lin, Su y Wu, 2018), en su forma sencilla: el cepstrum generalizado de cada columna (|V|^γ, γ = 0,3) lleva cada
+  // fila de frecuencia ξ a la «quefrencia» 1/ξ y se multiplica por el mapa. → Float32Array de módulos (nF·nT).
+  function deshape(M, gamma = 0.3) {
+    const { nT, nF, nfft, fs } = M, V = M.V[0], out = new Float32Array(nF * nT), re = new Float64Array(nfft), im = new Float64Array(nfft);
+    const mag = new Float64Array(nF), C = new Float64Array(nfft / 2 + 1);
+    for (let j = 0; j < nT; j++) {
+      for (let k = 0; k < nF; k++) { const a = V.re[k * nT + j], b = V.im[k * nT + j]; mag[k] = Math.pow(Math.sqrt(a * a + b * b), gamma); }
+      re.fill(0); im.fill(0);
+      for (let k = 0; k < nF; k++) { re[k] = mag[k]; if (k > 0 && k < nF - 1) re[nfft - k] = mag[k]; }
+      Senal.fft(re, im);
+      for (let m = 0; m <= nfft / 2; m++) C[m] = Math.max(0, re[m]);
+      for (let k = 2; k < nF; k++) {
+        const m = nfft / k;                                   // la quefrencia, en muestras, que corresponde al periodo 1/ξ
+        if (m > nfft / 2 - 1) continue;
+        const m0 = Math.floor(m), w = m - m0, c = C[m0] * (1 - w) + C[m0 + 1] * w;
+        out[k * nT + j] = Math.sqrt(Math.pow(V.re[k * nT + j], 2) + Math.pow(V.im[k * nT + j], 2)) * c;
+      }
+    }
+    return out;
+  }
+  // Suma de una banda de ±ancho filas alrededor de una cresta (filas por columna): la componente reconstruida.
+  function reconstruir(T, cresta, ancho = 3) {
+    const y = new Float64Array(T.nT);
+    for (let j = 0; j < T.nT; j++) { let s = 0; for (let k = Math.max(0, cresta[j] - ancho); k <= Math.min(T.nF - 1, cresta[j] + ancho); k++) s += T.re[k * T.nT + j]; y[j] = s; }
+    return y;
+  }
+
+  // ── Medidas ──
+  // Cuántas filas contienen el 80 % de la energía de una columna (las más brillantes primero).
+  function anchoLinea(P, nF, nT, j) {
+    const v = []; let tot = 0;
+    for (let k = 0; k < nF; k++) { const e = P[k * nT + j]; v.push(e); tot += e; }
+    v.sort((a, b) => b - a);
+    let s = 0, n = 0; while (n < v.length && s < 0.8 * tot) s += v[n++];
+    return n;
+  }
+  const modulo2 = T => { const P = new Float32Array(T.re.length); for (let i = 0; i < P.length; i++) P[i] = T.re[i] * T.re[i] + T.im[i] * T.im[i]; return P; };
+
+  // ── Señales sintéticas ──
+  // Chirp lineal de amplitud 1 con la frecuencia c (Hz/s) de aceleración y f0 (Hz) en el centro.
+  function chirpLineal({ f0 = 1500, c = 0, dur = 1, fs = FS, env = 0.1 } = {}) {
+    const n = Math.round(dur * fs), x = new Float64Array(n);
+    for (let i = 0; i < n; i++) { const t = i / fs - dur / 2; x[i] = Math.exp(-t * t / (2 * env * env)) * Math.cos(TAU * (f0 * t + c * t * t / 2)); }
+    return x;
+  }
+  // Dos silbidos que se cruzan: A sube de 1.000 a 1.900 Hz y se apaga; B baja y se enciende (como en la lección 20).
+  function cruce({ dur = 1.5, fs = FS, semilla = 5 } = {}) {
+    const az = Senal.azar(semilla), n = Math.round(dur * fs), x = new Float64Array(n), fA = t => 1000 + 600 * t, fB = t => 1900 - 600 * t;
+    let pa = az.real(0, TAU), pb = az.real(0, TAU);
+    for (let i = 0; i < n; i++) {
+      const t = i / fs; pa += TAU * fA(t) / fs; pb += TAU * fB(t) / fs;
+      x[i] = (1 - 0.6 * t / dur) * Math.cos(pa) + (0.4 + 0.6 * t / dur) * Math.cos(pb) + 0.01 * az.normal();
+    }
+    return { x, fs, dur, fA, fB, tCruce: 0.75, fCruce: 1450 };
+  }
+  // Un si3 de «piano» (246,94 Hz, armónicos que decaen) y un si4 de «violín» (493,88 Hz, vibrato de 5,5 Hz y ±30 cents), a la vez.
+  function pianoViolin({ dur = 2, fs = FS, semilla = 3 } = {}) {
+    const az = Senal.azar(semilla), n = Math.round(dur * fs), x = new Float64Array(n), fp = 246.94, fv = 493.88, ap = [], av = [];
+    for (let k = 1; k * fp < fs / 2 - 100; k++) ap.push({ k, a: 1 / Math.pow(k, 1.2), ph: az.real(0, TAU) });
+    for (let k = 1; k * fv < fs / 2 - 100; k++) av.push({ k, a: 0.9 / Math.pow(k, 0.8), ph: az.real(0, TAU) });
+    let pv = 0;
+    for (let i = 0; i < n; i++) {
+      const t = i / fs, fi = fv * Math.pow(2, 30 / 1200 * Math.sin(TAU * 5.5 * t)), env = Math.exp(-0.6 * t);
+      pv += TAU * fi / fs;
+      let v = 0;
+      for (const h of ap) v += env * h.a * Math.cos(TAU * h.k * fp * t + h.ph);
+      for (const h of av) v += h.a * Math.cos(h.k * pv + h.ph);
+      x[i] = v;
+    }
+    const sd = Senal.rms(x); for (let i = 0; i < n; i++) x[i] = x[i] / sd * 0.3 + 0.001 * az.normal();
+    return { x, fs, dur, fp, fv };
+  }
+  // Dos tonos de igual amplitud: 1.000 Hz y 1.000 + delta.
+  function dosTonos(delta, { dur = 2, fs = FS } = {}) {
+    const n = Math.round(dur * fs), x = new Float64Array(n);
+    for (let i = 0; i < n; i++) { const t = i / fs; x[i] = 0.5 * Math.cos(TAU * 1000 * t) + 0.5 * Math.cos(TAU * (1000 + delta) * t); }
+    return x;
+  }
+  // Dos componentes (900 Hz fija y un chirp de 1.200 a 1.950 Hz) con ruido blanco a 0 dB (misma potencia que la señal).
+  function conRuido({ dur = 1.5, fs = FS, semilla = 4 } = {}) {
+    const az = Senal.azar(semilla), n = Math.round(dur * fs), x = new Float64Array(n), fi = t => 1200 + 750 * t / dur;
+    let ph = 0;
+    for (let i = 0; i < n; i++) { const t = i / fs; ph += TAU * fi(t) / fs; x[i] = Math.cos(TAU * 900 * t) + Math.cos(ph); }
+    const sp = Senal.rms(x); for (let i = 0; i < n; i++) x[i] += sp * az.normal();
+    return { x, fs, dur, fA: () => 900, fB: fi };
+  }
+
+  // ── ConceFT sencillo (Daubechies, Wang y Wu, 2016): sincrosqueezings con mezclas al azar de varias funciones de Hermite, promediados ──
+  // Una vez por señal: las transformadas de las J funciones de Hermite y de sus derivadas.
+  function conceBase(x, fs, J, sigma = 0.006, { salto = 16, nfft = 512 } = {}) {
+    const base = hermite(fs, sigma, J), wins = base.map(b => b.g).concat(base.map(b => b.g1));
+    const M = stft(x, fs, wins, { salto, nfft }); M.J = J;
+    return M;
+  }
+  // Una ventana al azar (combinación de norma 1 de las J): el módulo de su sincrosqueezing. → Float32Array nF·nT
+  function conceUna(M, azar) {
+    const J = M.J, r = Array.from({ length: J }, () => azar.normal()), nr = Math.sqrt(r.reduce((a, b) => a + b * b, 0)), N = M.nF * M.nT;
+    const mezcla = off => { const re = new Float32Array(N), im = new Float32Array(N); for (let q = 0; q < J; q++) { const V = M.V[off + q], c = r[q] / nr; for (let i = 0; i < N; i++) { re[i] += c * V.re[i]; im[i] += c * V.im[i]; } } return { re, im }; };
+    const P = modulo2(sst1({ nT: M.nT, nF: M.nF, df: M.df, nfft: M.nfft, V: [mezcla(0), mezcla(J)] }, 1e-3, 1));
+    for (let i = 0; i < N; i++) P[i] = Math.sqrt(P[i]);
+    return P;
+  }
+  // Burbujas: el percentil 99,9 de lo que queda fuera de ±banda filas de las líneas verdaderas, entre la altura típica (mediana) de las líneas.
+  function burbujas(A, M, lineas, banda = 4) {
+    const nT = M.nT, nF = M.nF, fuera = [], linea = [];
+    for (let j = 10; j < nT - 10; j++) {
+      const ks = lineas.map(f => Math.round(f(j * M.salto / M.fs) / M.df));
+      let m = 0;
+      for (const k0 of ks) for (let k = k0 - banda; k <= k0 + banda; k++) m = Math.max(m, A[k * nT + j]);
+      linea.push(m);
+      for (let k = 2; k < nF - 2; k++) if (!ks.some(k0 => Math.abs(k - k0) <= banda)) fuera.push(A[k * nT + j]);
+    }
+    fuera.sort((a, b) => a - b); linea.sort((a, b) => a - b);
+    return fuera[Math.floor(0.999 * fuera.length)] / linea[linea.length >> 1];
+  }
+  // ¿Una noria o dos? Cuántos picos ve el espectro (ventana de Hann de 64 ms) de dos tonos de 1.000 Hz y 1.000 + delta Hz.
+  function picosDeDosTonos(delta, fs = FS, fase = null) {
+    const n = 512, fases = fase == null ? [0, 1, 2, 3].map(k => k * Math.PI / 2) : [fase];
+    let minimo = Infinity, vista = null;
+    for (const ph of fases) {
+      const x = new Float64Array(n);
+      for (let i = 0; i < n; i++) { const t = i / fs; x[i] = 0.5 * Math.cos(TAU * 1000 * t) + 0.5 * Math.cos(TAU * (1000 + delta) * t + ph); }
+      const E = Senal.espectro(x, fs, { ventana: 'hann', nfft: 8192, escala: 'amplitud' });
+      let m = 0, picos = 0; for (let i = 0; i < E.mag.length; i++) m = Math.max(m, E.mag[i]);
+      for (let i = 1; i < E.mag.length - 1; i++) if (E.f[i] > 800 && E.f[i] < 1300 && E.mag[i] > E.mag[i - 1] && E.mag[i] >= E.mag[i + 1] && E.mag[i] > 0.5 * m) picos++;
+      if (picos < minimo) { minimo = picos; vista = E; }
+    }
+    return { picos: minimo, f: vista.f, mag: vista.mag };
+  }
+  let memoDelta = null;
+  const deltaMinimo = () => { if (memoDelta == null) { memoDelta = 100; for (let d = 1; d <= 100; d++) if (picosDeDosTonos(d).picos >= 2) { memoDelta = d; break; } } return memoDelta; };
+
+  return { TAU, FS, limitar, gauss, hermite, stft, chirplet, potencia, aDb, sst1, sst2, extraer, deshape, reconstruir, anchoLinea, modulo2,
+    chirpLineal, cruce, pianoViolin, dosTonos, conRuido, estimar1, estimar2, conceBase, conceUna, burbujas, picosDeDosTonos, deltaMinimo };
+})();
+// ── Piezas comunes de dibujo ─────────────────────────────────────────────────────────────────────────────────
+const G = Graficas, TAU = NUM.TAU, num = Curso.num, crear = Curso.crear;
+const { limitar } = NUM;
+const altoDe = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); (typeof contenedor === 'string' ? document.querySelector(contenedor) : contenedor).appendChild(f); return f; };
+const rotulo = (ctx, C, x, y, txt, o = {}) => G.texto(ctx, x, y, txt, Object.assign({ color: C.suave, tam: 11, fondo: G.alfa(C.pantalla, 0.82), C }, o));
+const ms = s => num(s * 1000, s * 1000 < 10 ? 1 : 0) + ' ms';
+
+// Un trozo de un mapa tiempo-frecuencia (filas desde fLo hasta fHi, columnas desde t0 hasta t1), listo para dibujar.
+// P: energía (nF·nT) o db ya hecho si es db = true. → { datos (dB), nF, nT, f, t, fLo, fHi, t0, t1, max }
+function vistaMapa(P, nF, nT, f, t, { fLo, fHi, t0, t1, db = false, ref = null, rango = 40 }) {
+  let k0 = 0; while (k0 < nF - 1 && f[k0] < fLo) k0++;
+  let k1 = nF - 1; while (k1 > 0 && f[k1] > fHi) k1--;
+  let j0 = 0; while (j0 < nT - 1 && t[j0] < t0) j0++;
+  let j1 = nT - 1; while (j1 > 0 && t[j1] > t1) j1--;
+  const nf = k1 - k0 + 1, nt = j1 - j0 + 1, datos = new Float32Array(nf * nt);
+  let m = ref;
+  if (m == null) { m = 0; for (let k = k0; k <= k1; k++) for (let j = j0; j <= j1; j++) m = Math.max(m, P[k * nT + j]); }
+  const mdb = db ? m : (m > 0 ? 10 * Math.log10(m) : -120);
+  for (let k = 0; k < nf; k++) for (let j = 0; j < nt; j++) {
+    const v = P[(k0 + k) * nT + j0 + j], d = db ? v : (v > 0 ? 10 * Math.log10(v) : -120);
+    datos[k * nt + j] = Math.max(d, mdb - rango);
+  }
+  return { datos, nF: nf, nT: nt, f: Float64Array.from(f.subarray ? f.subarray(k0, k1 + 1) : f.slice(k0, k1 + 1)), t: Float64Array.from(t.subarray ? t.subarray(j0, j1 + 1) : t.slice(j0, j1 + 1)), fLo: f[k0], fHi: f[k1], t0: t[j0], t1: t[j1], max: mdb, rango };
+}
+// El mapa con sus ejes y su leyenda en dB. → la escala de los ejes.
+function pintarMapa(ctx, w, h, C, V, o = {}) {
+  const m = Object.assign({ izquierda: 50, derecha: o.leyenda === false ? 10 : 58, arriba: 24, abajo: 30 }, o.margen);
+  const caja = { x: m.izquierda, y: m.arriba, w: Math.max(40, w - m.izquierda - m.derecha), h: Math.max(40, h - m.arriba - m.abajo) };
+  const marcas = o.marcasY || G.marcasBonitas(V.fLo, V.fHi, Math.max(2, Math.round(caja.h / 46)));
+  const esc = G.ejes(ctx, {
+    caja, x: [V.t0, V.t1], y: [V.fLo, V.fHi], marcasX: Math.max(2, Math.round(caja.w / 62)), marcasY: marcas,
+    formatoX: v => num(v, 1), formatoY: v => num(v), etiquetaX: 'tiempo (s)', etiquetaY: o.etiquetaY || 'frecuencia (Hz)', rejilla: false, C,
+  });
+  const rango = [V.max - V.rango, V.max];
+  G.mapa(ctx, esc, { datos: V.datos, nF: V.nF, nT: V.nT, t: V.t, f: V.f, rango });
+  ctx.save();
+  ctx.beginPath(); ctx.rect(caja.x, caja.y, caja.w, caja.h); ctx.clip();
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 1; ctx.setLineDash([2, 4]); ctx.beginPath();
+  for (const v of marcas) { const py = Math.round(esc.y(v)) + 0.5; ctx.moveTo(caja.x, py); ctx.lineTo(caja.x + caja.w, py); }
+  ctx.stroke();
+  ctx.restore();
+  ctx.save(); ctx.strokeStyle = C.eje; ctx.lineWidth = 1; ctx.strokeRect(caja.x + 0.5, caja.y + 0.5, caja.w - 1, caja.h - 1); ctx.restore();
+  if (o.leyenda !== false) G.leyenda(ctx, { x: caja.x + caja.w + 12, y: caja.y + 16, alto: Math.max(40, caja.h - 16), rango, etiqueta: 'dB', C });
+  return esc;
+}
+// Un trazo oscuro debajo para que una curva se lea sobre cualquier color del magma.
+function trazoMapa(ctx, esc, xs, ys, color, { ancho = 2.2, guiones = null, borde = true, alfa = 1 } = {}) {
+  const c = esc.caja, p = new Path2D();
+  let abierto = false;
+  for (let i = 0; i < xs.length; i++) {
+    if (!Number.isFinite(ys[i])) { abierto = false; continue; }
+    const px = esc.x(xs[i]), py = esc.y(ys[i]);
+    if (abierto) p.lineTo(px, py); else { p.moveTo(px, py); abierto = true; }
+  }
+  ctx.save();
+  ctx.beginPath(); ctx.rect(c.x - 2, c.y - 2, c.w + 4, c.h + 4); ctx.clip();
+  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  if (borde) { ctx.setLineDash([]); ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.lineWidth = ancho + 2.8; ctx.stroke(p); }
+  ctx.setLineDash(guiones || []); ctx.strokeStyle = alfa < 1 ? G.alfa(color, alfa) : color; ctx.lineWidth = ancho; ctx.stroke(p);
+  ctx.restore();
+}
+// La melodía que sigue la noria del cierre: la de ejemplo, o la del audio que cargues en «En tu voz» (la rellena el laboratorio).
+const CIERRE = { curva: null, avisar: null };
+// ── La idea en una imagen: la noria de la lección 1, estropeada de cuatro maneras ─────────────────────────────
+// La traza se apunta de verdad, fotograma a fotograma. Cada modo rompe una de las cuatro suposiciones del sincrosqueezing.
+(function () {
+  const A = 0.85, CICLO = 6, SEG = 3;
+  const frac = x => x - Math.floor(x);
+  const ruidoDe = t => 0.5 * (2 * frac(Math.sin(t * 1234.567) * 43758.5453) - 1);
+  // Cada modo da, en función del tiempo, la fase de la cabina verde (en vueltas) y las alturas de las dos trazas.
+  const MODOS = {
+    limpia: {
+      texto: 'Una noria redonda, a velocidad casi constante, sola y a la vista: justo lo que pide el sincrosqueezing de la lección 19.',
+      fase: t => 0.8 * t, vel: t => 0.8,
+      y: (t, th) => [A * Math.sin(th), NaN],
+    },
+    acelera: {
+      texto: 'La noria acelera tanto que su velocidad cambia dentro de la ventana de análisis, y el método se emborrona. Lo arregla el sincrosqueezing de segundo orden, que también estima la aceleración (paso 3).',
+      fase: t => { const u = t % CICLO; return 0.4 * u + 0.175 * u * u; }, vel: t => 0.4 + 0.35 * (t % CICLO),
+      y: (t, th) => [A * Math.sin(th), NaN],
+    },
+    forma: {
+      texto: 'La traza naranja es lo que se mide: la noria verde más dos armónicos. En el mapa deja una pila de líneas, no una sola. Lo arregla el de-shape, que enciende solo la fundamental de cada familia (paso 4).',
+      fase: t => 0.8 * t, vel: t => 0.8,
+      y: (t, th) => [A * Math.sin(th), A * 0.62 * (Math.sin(th) + 0.55 * Math.sin(2 * th + 0.6) + 0.35 * Math.sin(3 * th + 1.2))],
+    },
+    cruce: {
+      texto: 'Dos norias, una que acelera y otra que frena, coinciden en velocidad en el centro. En el mapa de tiempo y frecuencia ocupan el mismo punto. Lo arregla un tercer eje, la aceleración, con la chirplet (paso 5).',
+      fase: t => { const u = t % CICLO; return 0.5 * u + 0.125 * u * u; }, vel: t => 0.5 + 0.25 * (t % CICLO),
+      y: (t, th) => { const u = t % CICLO; return [A * Math.sin(th), A * Math.sin(TAU * (2 * u - 0.125 * u * u) + 1)]; },
+    },
+    ruido: {
+      texto: 'La traza coral es lo que se mide: la misma noria con mucho ruido. El método fabrica manchas brillantes donde no hay nada. Se diluyen promediando ventanas distintas, con ConceFT (paso 6).',
+      fase: t => 0.8 * t, vel: t => 0.8,
+      y: (t, th) => [A * Math.sin(th), A * Math.sin(th) + ruidoDe(t)],
+    },
+  };
+  const e = { modo: 'limpia', t: 0 };
+  const th = t => TAU * MODOS[e.modo].fase(t) + 0.75;
+  const valores = t => MODOS[e.modo].y(t, th(t));
+  const hist = G.historia({ segundos: SEG, canales: 2 });
+  const rellenar = () => hist.llenar(e.t, tp => valores(tp));
+  rellenar();
+  const L = G.lienzo('#ancla-escena', {
+    alto: w => G.altoNoria(w, { max: 320 }),
+    etiqueta: 'La noria de la lección 1 con la historia de la altura de su cabina verde a la derecha. Se puede estropear de cuatro maneras: que acelere deprisa, que su altura no sea una sinusoide, que se cruce con otra noria o que haya ruido.',
+    dibujar: (ctx, w, h, C) => {
+      const trazas = [];
+      if (e.modo === 'forma') trazas.push({ puntos: hist.puntos(1), color: C.respuesta });
+      else if (e.modo === 'cruce') trazas.push({ puntos: hist.puntos(1), color: C.respuesta });
+      else if (e.modo === 'ruido') trazas.push({ puntos: hist.puntos(1), color: C.ruido });
+      trazas.push({ puntos: hist.puntos(0), color: C.senal });
+      G.escenaNoria(ctx, w, h, { C, angulo: th(e.t), radio: A, cabinas: [{ desfase: 0, color: C.senal }], trazas, segundos: SEG });
+    },
+  });
+  const mandos = document.getElementById('ancla-mandos');
+  let anim = null;
+  const nota = crear('p', { class: 'nota-reto' }, MODOS.limpia.texto);
+  const cambiar = () => { if (!anim || !anim.corriendo) rellenar(); lect.fijar('vel', num(MODOS[e.modo].vel(e.t), 2) + ' vueltas/s'); nota.textContent = MODOS[e.modo].texto; L.dibujar(); };
+  Curso.eleccion(mandos, {
+    etiqueta: 'Qué le pasa a la noria', valor: e.modo,
+    opciones: [{ valor: 'limpia', texto: 'Nada' }, { valor: 'acelera', texto: 'Acelera deprisa' }, { valor: 'forma', texto: 'No es redonda' }, { valor: 'cruce', texto: 'Se cruza con otra' }, { valor: 'ruido', texto: 'Hay ruido' }],
+    alCambiar: v => { e.modo = v; cambiar(); },
+  });
+  const fila = crear('div', { class: 'botones' });
+  mandos.appendChild(fila);
+  const lect = Curso.lecturas(mandos, [{ id: 'vel', nombre: 'Velocidad de la noria verde', clase: 'senal' }]);
+  nota.style.gridColumn = '1 / -1';
+  mandos.appendChild(nota);
+  lect.fijar('vel', num(MODOS.limpia.vel(0), 2) + ' vueltas/s');
+  anim = Curso.animar(L, (t, dt) => {
+    if (dt > 0) { e.t += dt; hist.anotar(e.t, ...valores(e.t)); lect.fijar('vel', num(MODOS[e.modo].vel(e.t), 2) + ' vueltas/s'); }
+    L.dibujar();
+  }, { boton: fila });
+})();
+// ── Reto 1 · Acelera la noria hasta romper el sincrosqueezing (un deslizador) ─────────────────────────────────
+(function () {
+  const FS = NUM.FS, SIG = 0.008, W = NUM.gauss(FS, SIG, 255);
+  const e = { c: 0, R: null };
+  const sst = x => { const M = NUM.stft(x, FS, [W.g, W.g1], { salto: 16, nfft: 512 }); return { M, P: NUM.modulo2(NUM.sst1(M, 1e-3, 1)) }; };
+  // Anchura de la línea en el centro del chirp, con un chirp corto (lo que se ve en la columna central es lo mismo).
+  const anchoCorto = c => { const x = NUM.chirpLineal({ f0: 1500, c, dur: 0.4 }), { M, P } = sst(x); return NUM.anchoLinea(P, M.nF, M.nT, Math.round(0.2 * FS / 16)); };
+  let memo = null;
+  const limite = () => { if (memo == null) { memo = 8000; for (let c = 0; c <= 8000; c += 250) if (anchoCorto(c) >= 3) { memo = c; break; } } return memo; };
+  function calcular() {
+    const x = NUM.chirpLineal({ f0: 1500, c: e.c, dur: 1 }), { M, P } = sst(x);
+    e.R = { x, ancho: NUM.anchoLinea(P, M.nF, M.nT, Math.round(0.5 * FS / 16)), vista: vistaMapa(P, M.nF, M.nT, M.f, M.t, { fLo: 0, fHi: 4000, t0: 0.25, t1: 0.75, rango: 40 }) };
+  }
+  calcular();
+  const L = G.lienzo('#r1-escena', {
+    alto: altoDe(240, 290),
+    etiqueta: 'Sincrosqueezing de un silbido sintético que sube cada vez más deprisa, con una ventana de 8 milisegundos. Cuanto más rápido sube, más ancha se vuelve su línea.',
+    dibujar: (ctx, w, h, C) => {
+      const esc = pintarMapa(ctx, w, h, C, e.R.vista, {});
+      rotulo(ctx, C, esc.caja.x + 6, esc.caja.y + esc.caja.h - 8, 'sincrosqueezing · ventana de 8 ms', { color: C.texto });
+    },
+  });
+  const mando = Curso.mando('#r1-mandos', {
+    etiqueta: 'Aceleración del silbido', clase: 'respuesta', min: 0, max: 8000, paso: 250, valor: 0, formato: v => num(v, 0) + ' Hz/s', reto: 'reto-1',
+    alCambiar: v => { e.c = v; calcular(); estado(); L.dibujar(); },
+  });
+  const lect = Curso.lecturas('#r1-fila', [{ id: 'ac', nombre: 'Aceleración', clase: 'respuesta' }, { id: 'an', nombre: 'Anchura de la línea' }]);
+  const estado = () => { lect.fijar('ac', num(e.c, 0) + ' Hz/s'); lect.fijar('an', e.R.ancho + (e.R.ancho === 1 ? ' fila' : ' filas')); };
+  estado();
+  const bt = filaBotones('#r1-fila');
+  Curso.audio.boton(bt, () => ({ x: e.R.x, fs: FS, volumen: 0.5 }), 'Oír el silbido', { clase: 'peque' });
+  Curso.reto('reto-1', {
+    titulo: 'Acelera hasta romper el método', nivel: 'fácil',
+    comprobar: () => {
+      const lim = limite();
+      if (e.R.ancho >= 3 && e.c <= lim + 500) return { ok: true, mensaje: 'A partir de unos ' + num(lim, 0) + ' Hz/s la línea ya ocupa tres filas: el método ha dejado de ser fino.' };
+      if (e.R.ancho >= 3) return { ok: false, mensaje: 'La línea ya está ancha, pero buscas el primer punto donde se ensancha: baja la aceleración.' };
+      return { ok: false, mensaje: e.c > 0 ? 'La línea sigue ocupando ' + e.R.ancho + (e.R.ancho === 1 ? ' fila' : ' filas') + '. Sigue subiendo la aceleración.' : '' };
+    },
+    resolver: () => mando.fijar(limite()),
+    pista: [
+      'Sube la aceleración y mira la lectura de anchura, no solo el dibujo: cuenta cuántas filas contienen la mayor parte de la energía.',
+      'Con una ventana de 8 ms, el límite está en unos pocos miles de hercios por segundo: prueba entre 2.000 y 4.000.',
+    ],
+    exito: '<p>El sincrosqueezing da por hecho que la noria no cambia de velocidad mientras dura la ventana. Si dentro de la ventana la frecuencia cambia más de lo que mide la anchura de la baldosa, la suposición falla y la línea se ensancha. Con una ventana de 8 ms, el límite está en unos pocos miles de hercios por segundo.</p>',
+  });
+})();
+
+// ── Reto 2 · ¿Una noria o dos? (un deslizador) ───────────────────────────────────────────────────────────
+(function () {
+  const FS = NUM.FS, e = { d: 8, r: null };
+  const calcular = () => { e.r = NUM.picosDeDosTonos(e.d); };
+  calcular();
+  const dMin = () => NUM.deltaMinimo();
+  const L = G.lienzo('#r2-escena', {
+    alto: altoDe(330, 360),
+    etiqueta: 'Arriba, la suma de dos tonos de igual tamaño: una onda cuya altura late. Abajo, el espectro de una ventana de 64 milisegundos, que enseña uno o dos picos según lo separados que estén los tonos.',
+    dibujar: (ctx, w, h, C) => {
+      const m = { izquierda: 50, derecha: 14 }, mitad = Math.round(h * 0.4);
+      // La onda y su envolvente.
+      const a = { x: m.izquierda, y: 20, w: w - m.izquierda - m.derecha, h: mitad - 44 };
+      const esc1 = G.ejes(ctx, { caja: a, x: [0, 0.25], y: [-1.1, 1.1], marcasY: false, marcasX: [0, 0.05, 0.1, 0.15, 0.2, 0.25], formatoX: v => num(v, 2), etiquetaX: 'tiempo (s)', etiquetaY: 'suma de los dos tonos', C });
+      const N = 1600, ts = new Float64Array(N), ys = new Float64Array(N), env = new Float64Array(N), en2 = new Float64Array(N);
+      for (let i = 0; i < N; i++) { const t = i / (N - 1) * 0.25; ts[i] = t; ys[i] = 0.5 * Math.cos(TAU * 1000 * t) + 0.5 * Math.cos(TAU * (1000 + e.d) * t); env[i] = Math.abs(Math.cos(Math.PI * e.d * t)); en2[i] = -env[i]; }
+      G.linea(ctx, esc1, ts, ys, { color: C.senal, ancho: 1.2, halo: false, C });
+      G.linea(ctx, esc1, ts, env, { color: C.respuesta, ancho: 1.6, guiones: [5, 4], halo: false, C });
+      G.linea(ctx, esc1, ts, en2, { color: C.respuesta, ancho: 1.6, guiones: [5, 4], halo: false, C });
+      // El espectro.
+      const b = { x: m.izquierda, y: mitad + 30, w: a.w, h: h - mitad - 30 - 36 };
+      const f = [], v = [];
+      for (let i = 0; i < e.r.f.length; i++) if (e.r.f[i] >= 900 && e.r.f[i] <= 1200) { f.push(e.r.f[i]); v.push(e.r.mag[i]); }
+      const esc2 = G.ejes(ctx, { caja: b, x: [900, 1200], y: [0, 1.1], marcasY: false, marcasX: [900, 950, 1000, 1050, 1100, 1150, 1200], formatoX: v2 => num(v2), etiquetaX: 'frecuencia (Hz)', etiquetaY: 'espectro', C });
+      G.linea(ctx, esc2, f, v, { color: C.espectro, ancho: 2, C });
+      const pc = e.r.picos;
+      rotulo(ctx, C, b.x + b.w - 6, b.y + 12, pc >= 2 ? 'dos picos: dos norias' : 'un solo pico: una noria que late', { alinear: 'right', color: pc >= 2 ? C.texto : C.suave });
+    },
+  });
+  const mando = Curso.mando('#r2-mandos', {
+    etiqueta: 'Separación entre los dos tonos', clase: 'respuesta', min: 1, max: 100, paso: 1, valor: e.d, formato: v => num(v, 0) + ' Hz', reto: 'reto-2',
+    alCambiar: v => { e.d = v; calcular(); estado(); L.dibujar(); },
+  });
+  const lect = Curso.lecturas('#r2-fila', [{ id: 'sep', nombre: 'Separación', clase: 'respuesta' }, { id: 'pic', nombre: 'Picos que ve el espectro' }, { id: 'lat', nombre: 'Latidos por segundo' }]);
+  const estado = () => { lect.fijar('sep', num(e.d, 0) + ' Hz'); lect.fijar('pic', String(e.r.picos >= 2 ? 2 : 1)); lect.fijar('lat', num(e.d, 0)); };
+  estado();
+  const bt = filaBotones('#r2-fila');
+  Curso.audio.boton(bt, () => ({ x: NUM.dosTonos(e.d, { dur: 2 }), fs: FS, volumen: 0.4 }), 'Oír los dos tonos', { clase: 'peque' });
+  Curso.reto('reto-2', {
+    titulo: '¿Una noria o dos?', nivel: 'fácil',
+    comprobar: () => {
+      const dm = dMin();
+      if (e.r.picos >= 2 && e.d <= dm + 4) return { ok: true, mensaje: 'Con ' + num(e.d, 0) + ' Hz de separación el espectro ve dos picos; por debajo de unos ' + num(dm, 0) + ' Hz, no.' };
+      if (e.r.picos >= 2) return { ok: false, mensaje: 'Ya se ven dos picos, pero busca la separación más pequeña con la que se ven: prueba con menos.' };
+      return { ok: false, mensaje: e.d > 1 ? 'El espectro ve una sola noria que se hace grande y pequeña. Separa más los tonos.' : '' };
+    },
+    resolver: () => mando.fijar(dMin()),
+    pista: [
+      'Mira el número de picos del espectro y no el oído: por debajo del umbral, el mapa ve una sola noria que se hace grande y pequeña.',
+      'Para una ventana de 64 ms, cada fila del espectro mide unos 16 Hz, y para ver dos picos hace falta separarlos casi dos filas: entre 25 y 30 Hz.',
+    ],
+    exito: '<p>Por debajo de esa separación, «dos norias» y «una noria que late» son la misma señal escrita de dos maneras, y elegir una es una decisión de modelo. Por eso el sincrosqueezing exige, por hipótesis, que las componentes estén separadas, y es uno de los límites que no se arreglan con más ingenio. Con una ventana el doble de larga, la separación necesaria baja a la mitad.</p>',
+  });
+})();
+
+// ── Reto 3 · Un método para un chirp muy rápido (elegir y un deslizador) ───────────────────────────────────
+(function () {
+  const FS = NUM.FS, C0 = 8000, x = NUM.chirpLineal({ f0: 1500, c: C0, dur: 1 });
+  const e = { metodo: 'sst', sg: 0.008, memoV: new Map(), R: null };
+  const NOMBRES = { esp: 'espectrograma', sst: 'sincrosqueezing', set: 'synchroextracting', sst2: 'segundo orden', reas: 'reasignación' };
+  const base = sg => {
+    const clave = Math.round(sg * 10000);
+    if (!e.memoV.has(clave)) { const W = NUM.gauss(FS, sg, 255); e.memoV.set(clave, { W, M: NUM.stft(x, FS, [W.g, W.g1, W.g2, W.tg, W.tg1], { salto: 16, nfft: 512 }) }); if (e.memoV.size > 6) e.memoV.delete(e.memoV.keys().next().value); }
+    return e.memoV.get(clave);
+  };
+  function calcular() {
+    const { M } = base(e.sg), nT = M.nT, nF = M.nF, jc = Math.round(0.5 * FS / 16), cMed = 2 / 512;
+    let P, T = null, nTv = nT, tv = M.t;
+    if (e.metodo === 'reas') {
+      const R = Senal.reasignacion(x, FS, { n: 511, salto: 16, nfft: 512, ventana: 'gauss', sigma: e.sg * FS });
+      P = R.reasignada; nTv = R.nT; tv = R.t;
+    } else if (e.metodo === 'esp') {
+      T = { re: M.V[0].re.map(v => v * cMed), im: M.V[0].im.map(v => v * cMed), nT, nF }; P = NUM.modulo2(T);
+    } else if (e.metodo === 'sst') { T = NUM.sst1({ ...M, V: M.V.slice(0, 2) }); P = NUM.modulo2(T); }
+    else if (e.metodo === 'set') { T = NUM.extraer({ ...M, V: M.V.slice(0, 2) }); P = NUM.modulo2(T); }
+    else { T = NUM.sst2(M); P = NUM.modulo2(T); }
+    const ancho = NUM.anchoLinea(P, nF, nTv, jc);
+    let err = null;
+    if (T) {
+      const cr = new Int32Array(nT); for (let j = 0; j < nT; j++) cr[j] = Math.round((1500 + C0 * (j * 16 / FS - 0.5)) / M.df);
+      const y = NUM.reconstruir(T, cr, 3); let s = 0, n = 0;
+      for (let j = Math.round(0.3 * FS / 16); j < Math.round(0.7 * FS / 16); j++) { const v = x[j * 16]; s += (y[j] - v) ** 2; n += v * v; }
+      err = Math.sqrt(s / n);
+    }
+    e.R = { ancho, err, vista: vistaMapa(P, nF, nTv, M.f, tv, { fLo: 0, fHi: 4000, t0: 0.25, t1: 0.75, rango: 40 }) };
+  }
+  calcular();
+  const L = G.lienzo('#r3-escena', {
+    alto: altoDe(250, 300),
+    etiqueta: 'Mapa de un silbido sintético que sube a 8.000 hercios por segundo, calculado con el método y la ventana elegidos. Una línea punteada marca la frecuencia verdadera.',
+    dibujar: (ctx, w, h, C) => {
+      const esc = pintarMapa(ctx, w, h, C, e.R.vista, {});
+      const ts = [0.25, 0.75];
+      trazoMapa(ctx, esc, ts, ts.map(t => 1500 + C0 * (t - 0.5)), 'rgba(255,255,255,0.9)', { ancho: 1.2, guiones: [2, 4], borde: false });
+      rotulo(ctx, C, esc.caja.x + 6, esc.caja.y + esc.caja.h - 8, NOMBRES[e.metodo] + ' · ventana de ' + num(e.sg * 1000, 0) + ' ms', { color: C.texto });
+    },
+  });
+  const eleccion = Curso.eleccion('#r3-mandos', {
+    etiqueta: 'Método', valor: e.metodo,
+    opciones: Object.keys(NOMBRES).map(k => ({ valor: k, texto: NOMBRES[k][0].toUpperCase() + NOMBRES[k].slice(1) })),
+    alCambiar: v => { e.metodo = v; actualizar(); },
+  });
+  Curso.mando('#r3-mandos', {
+    etiqueta: 'Duración de la ventana (σ)', min: 4, max: 12, paso: 1, valor: 8, formato: v => num(v, 0) + ' ms', reto: 'reto-3',
+    alCambiar: v => { e.sg = v / 1000; actualizar(); },
+  });
+  const lect = Curso.lecturas('#r3-fila', [{ id: 'an', nombre: 'Anchura de la línea' }, { id: 'er', nombre: 'Error al reconstruir', clase: 'respuesta' }]);
+  function mostrar() {
+    lect.fijar('an', e.R.ancho + (e.R.ancho === 1 ? ' fila' : ' filas'));
+    lect.fijar('er', e.R.err == null ? 'no se puede reconstruir' : num(100 * e.R.err, 0) + ' %');
+  }
+  function actualizar() { calcular(); mostrar(); L.dibujar(); Curso.cambio('reto-3'); }
+  mostrar();
+  const bt = filaBotones('#r3-fila');
+  Curso.audio.boton(bt, () => ({ x, fs: FS, volumen: 0.5 }), 'Oír el silbido', { clase: 'peque' });
+  Curso.reto('reto-3', {
+    titulo: 'Un método para un chirp rápido', nivel: 'medio',
+    comprobar: () => {
+      const r = e.R, fino = r.ancho <= 1.5;
+      if (fino && r.err != null && r.err < 0.1) return { ok: true, mensaje: 'Una fila de ancho y un error de reconstrucción del ' + num(100 * r.err, 0) + ' %: la línea es fina y la señal se puede recuperar.' };
+      if (e.metodo === 'reas') return { ok: false, mensaje: 'La reasignación concentra bien la energía, pero no guarda la fase y no hay camino de vuelta: no se puede reconstruir. Busca otro método.' };
+      if (!fino) return { ok: false, mensaje: 'La línea ocupa ' + r.ancho + ' filas: sigue demasiado ancha. El método tiene que corregir también la aceleración.' };
+      return { ok: false, mensaje: e.metodo === 'set' ? 'El synchroextracting afina la línea porque tira los coeficientes que no están en su fila, y por eso la reconstrucción se estropea (' + num(100 * r.err, 0) + ' % de error).' : 'La línea es fina, pero el error de reconstrucción es del ' + num(100 * r.err, 0) + ' %.' };
+    },
+    resolver: () => { eleccion.fijar('sst2'); },
+    pista: [
+      'La reasignación es nítida, pero ¿puede devolverte la señal? Mira la lectura de error. Y acuérdate de lo que da por supuesto el sincrosqueezing de primer orden con un chirp tan rápido.',
+      'Necesitas un método que, además de la velocidad de cada trocito, estime cuánto acelera: el de segundo orden.',
+    ],
+    exito: '<p>El segundo orden pregunta también cuánto acelera cada noria y corrige su velocidad. Para un chirp lineal con envolvente gaussiana acierta exactamente, y como solo mueve la energía en vertical, la señal se puede reconstruir. Cuesta cinco transformadas en lugar de una. Con una ventana más corta, el primer orden también mejora, pero a costa de ver peor la frecuencia.</p>',
+  });
+})();
+// ── Reto 4 · Quédate solo con las notas: el de-shape (tocar para colocar) ─────────────────────────────────────
+(function () {
+  const FS = NUM.FS, d = NUM.pianoViolin(), W = NUM.gauss(FS, 0.03, 1000);
+  const NOTAS = [d.fp, d.fv];
+  const M = NUM.stft(d.x, FS, [W.g], { salto: 64, nfft: 2048 });
+  const P = NUM.potencia(M.V[0], W.g, M.nT, M.nF), D = NUM.deshape(M, 0.3), D2 = new Float32Array(D.length);
+  for (let i = 0; i < D.length; i++) D2[i] = D[i] * D[i];
+  const vistas = {
+    esp: vistaMapa(P, M.nF, M.nT, M.f, M.t, { fLo: 0, fHi: 2000, t0: 0, t1: d.dur, rango: 50 }),
+    des: vistaMapa(D2, M.nF, M.nT, M.f, M.t, { fLo: 0, fHi: 2000, t0: 0, t1: d.dur, rango: 40 }),
+  };
+  const e = { marcas: [], deshape: false, cursor: 400, enfocado: false };
+  let esc = null;
+  const L = G.lienzo('#r4-escena', {
+    alto: altoDe(260, 320), rol: 'slider',
+    etiqueta: 'Espectrograma de dos notas a la vez, un si3 de piano y un si4 de violín, sintéticas, con sus armónicos. Se toca el mapa para marcar la frecuencia de cada nota, y con el botón de-shape el mapa deja solo las fundamentales.',
+    dibujar: (ctx, w, h, C) => {
+      esc = pintarMapa(ctx, w, h, C, e.deshape ? vistas.des : vistas.esp, { marcasY: [0, 250, 500, 750, 1000, 1250, 1500, 1750, 2000] });
+      const c = esc.caja;
+      rotulo(ctx, C, c.x + 6, c.y + c.h - 8, e.deshape ? 'de-shape (versión sencilla)' : 'espectrograma · ventana de 30 ms', { color: C.texto });
+      ctx.save();
+      ctx.beginPath(); ctx.rect(c.x, c.y, c.w, c.h); ctx.clip();
+      e.marcas.forEach(f => {
+        const y = esc.y(f);
+        ctx.setLineDash([5, 4]); ctx.strokeStyle = 'rgba(255,255,255,0.95)'; ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.moveTo(c.x, y); ctx.lineTo(c.x + c.w, y); ctx.stroke();
+      });
+      if (e.enfocado) {
+        ctx.setLineDash([1, 4]); ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1;
+        const y = esc.y(e.cursor); ctx.beginPath(); ctx.moveTo(c.x, y); ctx.lineTo(c.x + c.w, y); ctx.stroke();
+      }
+      ctx.restore();
+      e.marcas.forEach(f => rotulo(ctx, C, c.x + c.w - 6, esc.y(f) - 9, num(f, 0) + ' Hz', { alinear: 'right', color: C.texto }));
+    },
+  });
+  L.canvas.classList.add('tocable');
+  const lect = Curso.lecturas('#r4-fila', [{ id: 'marcas', nombre: 'Marcas puestas' }, { id: 'notas', nombre: 'Notas encontradas', clase: 'respuesta' }]);
+  const cerca = (f, g) => Math.abs(12 * Math.log2(f / g)) <= 1;
+  const halladas = () => NOTAS.filter(g => e.marcas.some(f => cerca(f, g))).length;
+  function estado() {
+    lect.fijar('marcas', e.marcas.length ? e.marcas.map(f => num(f, 0) + ' Hz').join(' · ') : 'ninguna');
+    lect.fijar('notas', halladas() + ' de 2');
+    L.canvas.setAttribute('aria-valuenow', String(Math.round(e.cursor)));
+    L.canvas.setAttribute('aria-valuetext', 'Cursor en ' + num(Math.round(e.cursor)) + ' hercios; ' + e.marcas.length + ' marcas puestas');
+  }
+  const cambio = () => { estado(); L.dibujar(); Curso.cambio('reto-4'); };
+  function alternar(f, tol) {
+    const i = e.marcas.findIndex(m => Math.abs(m - f) <= tol);
+    if (i >= 0) e.marcas.splice(i, 1); else if (e.marcas.length < 4) { e.marcas.push(f); e.marcas.sort((a, b) => a - b); }
+    cambio();
+  }
+  L.canvas.addEventListener('click', ev => {
+    if (!esc) return;
+    const r = L.canvas.getBoundingClientRect(), px = ev.clientX - r.left, py = ev.clientY - r.top, c = esc.caja;
+    if (px < c.x || px > c.x + c.w || py < c.y || py > c.y + c.h) return;
+    e.cursor = limitar(esc.yi(py), 0, 2000);
+    alternar(e.cursor, Math.abs(esc.yi(c.y + 10) - esc.yi(c.y)));
+  });
+  L.canvas.tabIndex = 0;
+  L.canvas.setAttribute('aria-valuemin', '0'); L.canvas.setAttribute('aria-valuemax', '2000');
+  L.canvas.addEventListener('focus', () => { e.enfocado = true; L.dibujar(); });
+  L.canvas.addEventListener('blur', () => { e.enfocado = false; L.dibujar(); });
+  L.canvas.addEventListener('keydown', ev => {
+    if (ev.key === 'ArrowUp' || ev.key === 'ArrowDown') { e.cursor = limitar(e.cursor + (ev.key === 'ArrowUp' ? 10 : -10), 0, 2000); estado(); L.dibujar(); }
+    else if (ev.key === 'Enter' || ev.key === ' ') alternar(e.cursor, 8);
+    else return;
+    ev.preventDefault();
+  });
+  const bt = filaBotones('#r4-fila');
+  Curso.audio.boton(bt, () => ({ x: d.x, fs: FS, volumen: 0.5 }), 'Oír las dos notas', { clase: 'peque' });
+  Curso.botones(bt, [
+    { id: 'des', texto: 'De-shape', tipo: 'principal', peque: true, pulsado: false, alPulsar: on => { e.deshape = on; L.dibujar(); } },
+    { id: 'quitar', texto: 'Quitar marcas', tipo: 'discreto', peque: true, alPulsar: () => { e.marcas = []; cambio(); } },
+  ]);
+  estado();
+  Curso.reto('reto-4', {
+    titulo: 'Quédate solo con las notas', nivel: 'medio',
+    comprobar: () => {
+      if (!e.marcas.length) return { ok: false };
+      const h = halladas();
+      if (h === 2 && e.marcas.length === 2) return { ok: true, mensaje: 'Las dos notas: un si3 de ' + num(d.fp, 1) + ' Hz y un si4 de ' + num(d.fv, 1) + ' Hz, a una octava.' };
+      const armonico = e.marcas.find(f => !NOTAS.some(g => cerca(f, g)) && NOTAS.some(g => { const k = Math.round(f / g); return k >= 2 && Math.abs(f / (k * g) - 1) < 0.04; }));
+      if (armonico) return { ok: false, mensaje: 'La marca de ' + num(armonico, 0) + ' Hz es un armónico de una de las notas, no una nota. Quítala, o pulsa «De-shape» para ver solo las fundamentales.' };
+      if (e.marcas.length > 2) return { ok: false, mensaje: 'Sobran marcas: solo suenan dos notas.' };
+      return { ok: false, mensaje: 'Llevas ' + h + ' de 2 notas. Marca la línea de más abajo de cada pila, la fundamental, con un semitono de margen.' };
+    },
+    resolver: () => { e.marcas = NOTAS.slice(); cambio(); },
+    pista: [
+      'En el espectrograma hay muchas líneas, pero son pilas de armónicos: cada nota deja una línea de abajo, la fundamental, y otras a distancias iguales por encima. Las líneas pares son más fuertes de lo normal, porque el violín cae sobre ellas.',
+      'Pulsa «De-shape»: deja encendida solo la fundamental de cada familia. Son dos líneas, y la de arriba tiene el doble de frecuencia que la de abajo.',
+    ],
+    exito: '<p>Has resuelto el problema de la sonata K.304 de Mozart que usaron Lin, Su y Wu: el violín toca una octava por encima del piano, y todos sus armónicos caen sobre armónicos del piano. El de-shape mide el ritmo con que se repiten las líneas de cada familia y enciende solo la de abajo. Como multiplica por el mapa original, no puede encender una línea donde no hay energía.</p>',
+  });
+})();
+
+// ── Reto 5 · Separa los silbidos con una plantilla que acelera (un deslizador y fijar) ────────────────────────
+(function () {
+  const FS = NUM.FS, d = NUM.cruce(), W = NUM.gauss(FS, 0.04, 1280), SALTO = 64, NFFT = 4096;
+  const e = { c: 0, fijadas: [], R: null };
+  const j0 = Math.round(0.3 * FS / SALTO);
+  const brillo = (P, nF, nT, f) => { let m = 0; const k0 = Math.round(f / (FS / NFFT)); for (let k = k0 - 3; k <= k0 + 3; k++) m = Math.max(m, P[k * nT + j0]); return m; };
+  function calcular(c) {
+    const V = NUM.chirplet(d.x, FS, W, c, { salto: SALTO, nfft: NFFT }), nF = V.nF, nT = V.nT, df = FS / NFFT;
+    const f = new Float64Array(nF), t = new Float64Array(nT);
+    for (let k = 0; k < nF; k++) f[k] = k * df;
+    for (let j = 0; j < nT; j++) t[j] = j * SALTO / FS;
+    const P = NUM.potencia(V, W.g, nT, nF);
+    return { P, nF, nT, f, t, a: brillo(P, nF, nT, d.fA(0.3)), b: brillo(P, nF, nT, d.fB(0.3)) };
+  }
+  const ref = calcular(0);
+  let max = 0; for (let i = 0; i < ref.P.length; i++) if (ref.P[i] > max) max = ref.P[i];
+  function actualizar() {
+    const r = calcular(e.c);
+    e.R = { a: r.a / ref.a, b: r.b / ref.b, vista: vistaMapa(r.P, r.nF, r.nT, r.f, r.t, { fLo: 700, fHi: 2200, t0: 0, t1: d.dur, rango: 30, ref: max }) };
+  }
+  actualizar();
+  const L = G.lienzo('#r5-escena', {
+    alto: altoDe(250, 310),
+    etiqueta: 'Mapa de dos silbidos que se cruzan, uno que sube y otro que baja, hecho con una ventana gaussiana de 40 milisegundos que también acelera. Las líneas punteadas marcan los dos silbidos verdaderos.',
+    dibujar: (ctx, w, h, C) => {
+      const esc = pintarMapa(ctx, w, h, C, e.R.vista, {});
+      const ts = [0, d.dur];
+      trazoMapa(ctx, esc, ts, ts.map(d.fA), 'rgba(255,255,255,0.9)', { ancho: 1.1, guiones: [2, 4], borde: false });
+      trazoMapa(ctx, esc, ts, ts.map(d.fB), 'rgba(255,255,255,0.9)', { ancho: 1.1, guiones: [2, 4], borde: false });
+      rotulo(ctx, C, esc.caja.x + 6, esc.caja.y + esc.caja.h - 8, 'ventana de 40 ms que acelera ' + num(e.c, 0) + ' Hz/s', { color: C.texto });
+    },
+  });
+  const mando = Curso.mando('#r5-mandos', {
+    etiqueta: 'Aceleración de la ventana', clase: 'respuesta', min: -1500, max: 1500, paso: 25, valor: 0, formato: v => num(v, 0) + ' Hz/s', reto: 'reto-5',
+    alCambiar: v => { e.c = v; actualizar(); estado(); L.dibujar(); },
+  });
+  const lect = Curso.lecturas('#r5-fila', [
+    { id: 'a', nombre: 'Brillo del que sube', clase: 'senal' }, { id: 'b', nombre: 'Brillo del que baja', clase: 'respuesta' }, { id: 'f', nombre: 'Fijadas' },
+  ]);
+  const estado = () => {
+    lect.fijar('a', '×' + num(e.R.a, 1)); lect.fijar('b', '×' + num(e.R.b, 1));
+    lect.fijar('f', e.fijadas.length ? e.fijadas.map(v => num(v, 0)).join(' · ') + ' Hz/s' : 'ninguna');
+  };
+  estado();
+  const bt = filaBotones('#r5-fila');
+  Curso.audio.boton(bt, () => ({ x: d.x, fs: FS, volumen: 0.5 }), 'Oír los dos silbidos', { clase: 'peque' });
+  Curso.botones(bt, [
+    { id: 'fijar', texto: 'Fijar esta aceleración', peque: true, tipo: 'principal', alPulsar: () => { if (e.fijadas.length < 2) e.fijadas.push(e.c); estado(); Curso.cambio('reto-5'); } },
+    { id: 'quitar', texto: 'Quitar las fijadas', peque: true, tipo: 'discreto', alPulsar: () => { e.fijadas = []; estado(); Curso.cambio('reto-5'); } },
+  ]);
+  const cerca = (v, objetivo) => Math.abs(v - objetivo) <= 0.1 * Math.abs(objetivo);
+  Curso.reto('reto-5', {
+    titulo: 'Una plantilla que acelera', nivel: 'difícil',
+    comprobar: () => {
+      if (!e.fijadas.length) return { ok: false };
+      const sube = e.fijadas.some(v => cerca(v, 600)), baja = e.fijadas.some(v => cerca(v, -600));
+      if (sube && baja) return { ok: true, mensaje: 'Las dos aceleraciones: +600 Hz/s para el silbido que sube y −600 Hz/s para el que baja.' };
+      if (e.fijadas.length < 2) return { ok: false, mensaje: 'Llevas una aceleración fijada. Busca otra para el otro silbido, y fíjala también.' };
+      return { ok: false, mensaje: 'Las dos fijadas no coinciden con las aceleraciones de los silbidos' + (sube ? ': una sí, la del silbido que sube.' : baja ? ': una sí, la del silbido que baja.' : '.') + ' Quita las fijadas y busca dónde cada silbido se pone más brillante y fino.' };
+    },
+    resolver: () => { e.c = 600; mando.fijar(600, false); actualizar(); e.fijadas = [600, -600]; estado(); L.dibujar(); },
+    pista: [
+      'Cuando la plantilla acelera igual que un silbido, ese silbido se vuelve una línea fina y brillante, y el otro se emborrona. Mira las lecturas de brillo: la del que sube crece con aceleraciones positivas.',
+      'Los dos silbidos suben y bajan a la misma velocidad, 600 Hz por segundo, uno hacia arriba y el otro hacia abajo. Prueba con +600 y con −600.',
+    ],
+    exito: '<p>En el cruce, los dos silbidos están en el mismo punto del plano de tiempo y frecuencia, y lo que los distingue es cuánto acelera cada uno. Añadir ese tercer eje es la idea de la transformada chirplet y del sincrosqueezing sobre ella (Chen y Wu, 2023): en tres dimensiones, las líneas que se cruzan pasan una por encima de la otra.</p>',
+  });
+})();
+
+// ── Reto 6 · Borra las burbujas del ruido: ConceFT (botones) ──────────────────────────────────────────────
+(function () {
+  const FS = NUM.FS, d = NUM.conRuido();
+  const e = { J: 4, n: 0, acum: null, azar: null, bub: NaN, vista: null };
+  const bases = new Map();
+  const base = J => { if (!bases.has(J)) bases.set(J, NUM.conceBase(d.x, FS, J)); return bases.get(J); };
+  // Referencia: el sincrosqueezing con una sola ventana gaussiana.
+  const Wg = NUM.gauss(FS, 0.008, 255), Mg = NUM.stft(d.x, FS, [Wg.g, Wg.g1], { salto: 16, nfft: 512 }); Mg.fs = FS; Mg.salto = 16;
+  const A0 = NUM.modulo2(NUM.sst1(Mg)); for (let i = 0; i < A0.length; i++) A0[i] = Math.sqrt(A0[i]);
+  const lineas = [d.fA, d.fB], bub0 = NUM.burbujas(A0, Mg, lineas);
+  const cuadrado = A => { const P = new Float32Array(A.length); for (let i = 0; i < A.length; i++) P[i] = A[i] * A[i]; return P; };
+  const dibuja = (A, M) => vistaMapa(cuadrado(A), M.nF, M.nT, M.f, M.t, { fLo: 500, fHi: 2500, t0: 0, t1: d.dur, rango: 30 });
+  const vista0 = dibuja(A0, Mg);
+  function reiniciar(J) {
+    if (J) e.J = J;
+    const M = base(e.J);
+    e.n = 0; e.acum = new Float32Array(M.nF * M.nT); e.azar = Senal.azar(11 + e.J); e.bub = NaN; e.vista = null;
+  }
+  function anadir(k) {
+    const M = base(e.J); M.fs = FS;
+    for (let q = 0; q < k; q++) { const A = NUM.conceUna(M, e.azar); for (let i = 0; i < e.acum.length; i++) e.acum[i] += A[i]; e.n++; }
+    const media = new Float32Array(e.acum.length); for (let i = 0; i < media.length; i++) media[i] = e.acum[i] / e.n;
+    e.bub = NUM.burbujas(media, M, lineas); e.vista = dibuja(media, M);
+  }
+  reiniciar();
+  const cont = document.getElementById('r6-mapas');
+  const paneles = ['una', 'prom'].map(clave => {
+    const panel = crear('div', { class: 'panel-mini' });
+    panel.appendChild(crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, clave === 'una' ? 'Una ventana gaussiana' : 'Promedio de ventanas al azar')));
+    const escena = crear('div', { class: 'escena' });
+    panel.appendChild(escena); cont.appendChild(panel);
+    return G.lienzo(escena, {
+      alto: altoDe(230, 270),
+      etiqueta: clave === 'una' ? 'Sincrosqueezing de dos componentes con ruido, con una sola ventana gaussiana: se ven burbujas brillantes fuera de las líneas.' : 'Promedio de sincrosqueezings hechos con ventanas al azar: las líneas se mantienen y las burbujas se diluyen.',
+      dibujar: (ctx, w, h, C) => {
+        const V = clave === 'una' ? vista0 : e.vista;
+        if (!V) { G.texto(ctx, w / 2, h / 2, 'Pulsa «Otra ventana al azar»', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+        pintarMapa(ctx, w, h, C, V, { margen: { izquierda: 50, derecha: 52 } });
+      },
+    });
+  });
+  const mandos = document.getElementById('r6-mandos');
+  const eleccion = Curso.eleccion(mandos, {
+    etiqueta: 'Ventanas base (funciones de Hermite)', valor: 4, reto: 'reto-6',
+    opciones: [{ valor: 2, texto: '2' }, { valor: 4, texto: '4' }, { valor: 6, texto: '6' }],
+    alCambiar: v => { reiniciar(Number(v)); mostrar(); },
+  });
+  const lect = Curso.lecturas('#r6-fila', [{ id: 'n', nombre: 'Ventanas promediadas' }, { id: 'ref', nombre: 'Burbujas con una ventana' }, { id: 'b', nombre: 'Burbujas ahora', clase: 'respuesta' }]);
+  function mostrar() {
+    lect.fijar('n', String(e.n)); lect.fijar('ref', num(bub0, 2)); lect.fijar('b', e.n ? num(e.bub, 2) : '—');
+    paneles.forEach(p => p.dibujar());
+    Curso.cambio('reto-6');
+  }
+  const bt = filaBotones('#r6-fila');
+  Curso.botones(bt, [
+    { id: 'una', texto: 'Otra ventana al azar', tipo: 'principal', peque: true, alPulsar: () => { anadir(1); mostrar(); } },
+    { id: 'diez', texto: 'Diez más', peque: true, alPulsar: () => { anadir(10); mostrar(); } },
+    { id: 'reiniciar', texto: 'Empezar de nuevo', tipo: 'discreto', peque: true, alPulsar: () => { reiniciar(); mostrar(); } },
+  ]);
+  mostrar();
+  Curso.reto('reto-6', {
+    titulo: 'Borra las burbujas del ruido', nivel: 'difícil',
+    comprobar: () => {
+      if (!e.n) return { ok: false };
+      if (e.bub <= 0.26) return { ok: true, mensaje: 'Con ' + e.n + ' ventanas las burbujas valen ' + num(e.bub, 2) + ', frente a ' + num(bub0, 2) + ' con una sola, y las líneas siguen en su sitio.' };
+      if (e.J === 2 && e.n >= 10) return { ok: false, mensaje: 'Con solo dos ventanas base no hay variedad suficiente: las burbujas se repiten y el promedio apenas mejora (' + num(e.bub, 2) + '). Prueba con más funciones de Hermite.' };
+      if (e.n < 20) return { ok: false, mensaje: 'Burbujas: ' + num(e.bub, 2) + '. Sigue añadiendo ventanas; el promedio mejora poco a poco.' };
+      return { ok: false, mensaje: 'Burbujas: ' + num(e.bub, 2) + ' con ' + e.n + ' ventanas. Más ventanas base dan más variedad a las combinaciones al azar.' };
+    },
+    resolver: () => { eleccion.fijar(6, false); reiniciar(6); for (let i = 0; i < 80 && !(e.n && e.bub <= 0.26); i += 5) anadir(5); mostrar(); },
+    pista: [
+      'Cada ventana al azar da un mapa con las burbujas en sitios distintos y las líneas en el mismo. Promediar muchos mapas diluye lo que cambia de sitio.',
+      'Con dos ventanas base casi no hay variedad. Elige seis y pulsa «Diez más» un par de veces.',
+    ],
+    exito: '<p>Las líneas de verdad salen en el mismo sitio con cualquier ventana, y las burbujas del ruido, cada vez en uno distinto. Al promediar, las primeras se quedan y las segundas se diluyen, como en la <a href="e10.html">lección 10</a>. Es la idea de ConceFT (Daubechies, Wang y Wu, 2016), con una versión sencilla escrita para esta lección: la mejora es real, pero con ruido fuerte no desaparece del todo.</p>',
+  });
+})();
+// ── En tu voz · una galería de imágenes y lo que se puede medir de forma fiable ───────────────────────────────
+// Cinco imágenes de los mismos cuatro segundos, con la misma escala de color y sin puntuación, y una sexta con la chirplet. Debajo,
+// un resumen de lo que se puede medir de tu audio: la curva de tono, la nota más grave y la más aguda, la afinación, el vibrato,
+// los armónicos y el volumen.
+(function () {
+  const FS = NUM.FS, SEG = 4;
+  const st = { x: null, seg: null, im: null, c: 0, chirp: null, tono: null };
+  const lab = Curso.voz('#voz-lab', {
+    ejemplos: ['dosSilbidos', 'melodia', 'aaa'],
+    fsAnalisis: FS,
+    alCargar: (x, fs, nombre, info) => { st.x = x; st.propio = !(info && info.sintetico) || /melod/i.test(nombre || ''); analizar(); },
+  });
+
+  // ── Cálculo ──
+  // Los cuatro segundos con más sonido.
+  function tramo(x) {
+    const n = Math.min(x.length, SEG * FS), paso = Math.round(0.25 * FS), nb = Math.floor(x.length / paso);
+    if (x.length <= n || nb < 2) return { x: x.slice(0, n), inicio: 0 };
+    const e = new Float64Array(nb); for (let b = 0; b < nb; b++) for (let i = b * paso; i < (b + 1) * paso; i++) e[b] += x[i] * x[i];
+    const k = Math.round(n / paso); let mejor = -1, ini = 0, acc = 0;
+    for (let b = 0; b < nb; b++) { acc += e[b]; if (b >= k) acc -= e[b - k]; if (b >= k - 1 && acc > mejor) { mejor = acc; ini = b - k + 1; } }
+    return { x: x.slice(ini * paso, ini * paso + n), inicio: ini * paso / FS };
+  }
+  function analizar() {
+    const { x } = tramo(st.x);
+    st.seg = x;
+    st.chirp = null;
+    if (x.length < 2048 || Senal.rms(x) < 1e-5) { st.im = null; st.res = null; actualizar(); return; }
+    const W = NUM.gauss(FS, 0.008, 255), W30 = NUM.gauss(FS, 0.03, 1000);
+    const M = NUM.stft(x, FS, [W.g, W.g1, W.g2, W.tg, W.tg1], { salto: 32, nfft: 512 });
+    const M2 = { ...M, V: M.V.slice(0, 2) }, nT = M.nT, nF = M.nF, cMed = 2 / 512;
+    const P = { esp: NUM.potencia(M.V[0], W.g, nT, nF), sst: NUM.modulo2(NUM.sst1(M2)), sst2: null, set: NUM.modulo2(NUM.extraer(M2)) };
+    const T2 = NUM.sst2(M); P.sst2 = NUM.modulo2(T2);
+    const M30 = NUM.stft(x, FS, [W30.g], { salto: 128, nfft: 2048 });
+    const D = NUM.deshape(M30, 0.3), D2 = new Float32Array(D.length); for (let i = 0; i < D.length; i++) D2[i] = D[i] * D[i];
+    // El tope de frecuencia de lo que se ve: la fila más alta con energía a menos de 40 dB del máximo.
+    let mx = 0; for (let i = 0; i < P.esp.length; i++) if (P.esp[i] > mx) mx = P.esp[i];
+    let kTop = 0; for (let k = 0; k < nF; k++) { let m = 0; for (let j = 0; j < nT; j++) m = Math.max(m, P.esp[k * nT + j]); if (m > mx * 1e-4) kTop = k; }
+    const fHi = limitar(M.f[kTop] * 1.25, 1000, 4000), dur = x.length / FS;
+    const v = (A, nFa, nTa, f, t, rango, ref = null) => vistaMapa(A, nFa, nTa, f, t, { fLo: 0, fHi, t0: 0, t1: dur, rango, ref });
+    st.im = {
+      dur, fHi,
+      esp: v(P.esp, nF, nT, M.f, M.t, 50, mx), sst: v(P.sst, nF, nT, M.f, M.t, 50, mx), sst2: v(P.sst2, nF, nT, M.f, M.t, 50, mx), set: v(P.set, nF, nT, M.f, M.t, 50, mx),
+      des: v(D2, M30.nF, M30.nT, M30.f, M30.t, 40),
+      ref: mx,
+    };
+    // Las dos líneas más brillantes del segundo orden, en hercios, para oírlas.
+    const lin = Senal.crestas(P.sst2, nF, nT, { penalizacion: 1 }, 2, 6);
+    st.lineas = lin.map(c => ({ t: Array.from(M.t), f: NUM_curvaHz(M.f, c) }));
+    st.res = medir(x);
+    actualizar();
+  }
+  const NUM_curvaHz = (f, filas) => { const o = new Float64Array(filas.length); for (let j = 0; j < o.length; j++) o[j] = f[filas[j]]; return o; };
+  // La chirplet, aparte porque depende del deslizador.
+  function chirplet() {
+    if (!st.seg || !st.im) return;
+    const W = NUM.gauss(FS, 0.04, 1280), V = NUM.chirplet(st.seg, FS, W, st.c, { salto: 64, nfft: 4096 }), nF = V.nF, nT = V.nT, f = new Float64Array(nF), t = new Float64Array(nT);
+    for (let k = 0; k < nF; k++) f[k] = k * FS / 4096;
+    for (let j = 0; j < nT; j++) t[j] = j * 64 / FS;
+    st.chirp = vistaMapa(NUM.potencia(V, W.g, nT, nF), nF, nT, f, t, { fLo: 0, fHi: st.im.fHi, t0: 0, t1: st.im.dur, rango: 50, ref: st.im.ref });
+  }
+
+  // Lo que se puede medir de forma fiable: la curva de tono con YIN, el volumen y los armónicos de la nota más fuerte.
+  function medir(x) {
+    // ¿Voz o silbido? En un silbido domina un solo pico por encima de unos 600 Hz.
+    const n = Math.min(x.length, 4096), E = Senal.espectro(x.slice(0, n), FS, { ventana: 'hann', nfft: 4096 });
+    let k1 = 0; for (let i = 0; i < E.f.length; i++) if (E.f[i] > 100 && (k1 === 0 || E.mag[i] > E.mag[k1])) k1 = i;
+    const silbido = E.f[k1] > 600;
+    const fmin = silbido ? 400 : 70, fmax = silbido ? 3500 : 800;
+    const y = Senal.yin(x, FS, { fmin, fmax, umbral: 0.15 });
+    const nF = y.t.length, vol = new Float64Array(nF), f = new Float64Array(nF);
+    let vmax = 1e-12;
+    for (let j = 0; j < nF; j++) {
+      const c = Math.round(y.t[j] * FS), a = Math.max(0, c - 80), b = Math.min(x.length, c + 80);
+      let s = 0; for (let i = a; i < b; i++) s += x[i] * x[i];
+      vol[j] = Math.sqrt(s / Math.max(1, b - a)); if (vol[j] > vmax) vmax = vol[j];
+    }
+    for (let j = 0; j < nF; j++) f[j] = Number.isFinite(y.f0[j]) && vol[j] > vmax * 0.01 ? y.f0[j] : NaN;
+    const vals = Array.from(f).filter(Number.isFinite).sort((a, b) => a - b), nv = vals.length;
+    if (nv < 5) return { vacio: true, t: Array.from(y.t), f, vol: Array.from(vol, v => 20 * Math.log10(v / vmax + 1e-6)), silbido };
+    const q = p => vals[Math.min(nv - 1, Math.floor(p * nv))];
+    let desv = 0; for (const v of vals) desv += Math.abs(Senal.nombreNota(v).cents); desv /= nv;
+    // Vibrato: en el tramo seguido de nota más largo, lo que queda de restar la tendencia (media de 0,25 s).
+    const dt = y.t[1] - y.t[0], paso = Math.max(1, Math.round(0.25 / dt)), tramos = []; let ini = -1;
+    for (let j = 0; j <= nF; j++) { const ok = j < nF && Number.isFinite(f[j]); if (ok && ini < 0) ini = j; if (!ok && ini >= 0) { tramos.push([ini, j - 1]); ini = -1; } }
+    let vib = null;
+    const largo = tramos.filter(([a, b]) => (b - a) * dt >= 0.5).sort((p, r) => (r[1] - r[0]) - (p[1] - p[0]))[0];
+    if (largo) {
+      const [a, b] = largo, c = [], tend = [];
+      for (let j = a; j <= b; j++) c.push(1200 * Math.log2(f[j]));
+      for (let j = 0; j < c.length; j++) { let s = 0, m = 0; for (let i = Math.max(0, j - paso); i <= Math.min(c.length - 1, j + paso); i++) { s += c[i]; m++; } tend.push(c[j] - s / m); }
+      let cruces = 0; for (let j = 1; j < tend.length; j++) if (tend[j - 1] * tend[j] < 0) cruces++;
+      const s = tend.slice().sort((p, r) => p - r), amp = (s[Math.floor(0.95 * s.length)] - s[Math.floor(0.05 * s.length)]) / 2, ritmo = cruces / 2 / (tend.length * dt);
+      if (ritmo >= 3 && ritmo <= 9 && amp >= 10) vib = { ritmo, amp };
+    }
+    // Armónicos de la nota en el instante más fuerte con nota.
+    let jm = -1; for (let j = 0; j < nF; j++) if (Number.isFinite(f[j]) && (jm < 0 || vol[j] > vol[jm])) jm = j;
+    const f0 = f[jm], c = Math.round(y.t[jm] * FS), ini2 = Math.max(0, Math.min(x.length - 1600, c - 800)), Es = Senal.espectro(x.slice(ini2, ini2 + 1600), FS, { ventana: 'hann', nfft: 8192 });
+    const arm = []; let amax = 1e-12;
+    for (let kk = 1; kk <= 8 && kk * f0 < FS / 2 - 100; kk++) {
+      let m = 0; for (let i = 0; i < Es.f.length; i++) if (Math.abs(Es.f[i] - kk * f0) < 0.03 * kk * f0 + 4) m = Math.max(m, Es.mag[i]);
+      arm.push(m); amax = Math.max(amax, m);
+    }
+    return { vacio: false, silbido, t: Array.from(y.t), f, vol: Array.from(vol, v => 20 * Math.log10(v / vmax + 1e-6)), grave: q(0.03), aguda: q(0.97), mediana: q(0.5), desvio: desv, vibrato: vib, f0, arm: arm.map(m => 20 * Math.log10(m / amax + 1e-6)), con: nv / nF, dur: x.length / FS };
+  }
+
+  // ── Vista ──
+  const rejilla = crear('div', { class: 'columnas-2' });
+  lab.panel.appendChild(rejilla);
+  const PANELES = [
+    ['esp', 'Espectrograma', 'borroso, pero fiel'], ['sst', 'Sincrosqueezing', 'fino, y se puede reconstruir'], ['sst2', 'Segundo orden', 'más fino con chirps rápidos, a cambio de cinco transformadas'],
+    ['set', 'Synchroextracting', 'finísimo, pero tira energía'], ['des', 'De-shape', 'solo fundamentales, útil si hay armónicos'], ['chirp', 'Chirplet', 'un tercer eje: con la aceleración de una componente, su línea se afina'],
+  ];
+  const lienzos = PANELES.map(([clave, titulo, lema]) => {
+    const panel = crear('div', { class: 'panel-mini' });
+    panel.appendChild(crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, titulo)));
+    const escena = crear('div', { class: 'escena' });
+    panel.appendChild(escena);
+    panel.appendChild(crear('p', { class: 'nota-reto' }, lema));
+    rejilla.appendChild(panel);
+    const L = G.lienzo(escena, {
+      alto: altoDe(200, 240),
+      etiqueta: titulo + ' de los cuatro segundos de audio cargados, con la misma escala de color que los demás.',
+      dibujar: (ctx, w, h, C) => {
+        const V = st.im ? (clave === 'chirp' ? st.chirp : st.im[clave]) : null;
+        if (!V) { G.texto(ctx, w / 2, h / 2, st.im ? 'Mueve la aceleración de la chirplet' : 'Graba, sube un audio o elige un ejemplo', { alinear: 'center', color: C.tenue, tam: 11, C }); return; }
+        pintarMapa(ctx, w, h, C, V, { margen: { izquierda: 46, derecha: 50, arriba: 14, abajo: 28 } });
+      },
+    });
+    return { clave, L, panel };
+  });
+  const cp = lienzos.find(p => p.clave === 'chirp').panel;
+  Curso.mando(cp, {
+    etiqueta: 'Aceleración de la ventana', clase: 'respuesta', min: -1500, max: 1500, paso: 25, valor: 0, formato: v => num(v, 0) + ' Hz/s',
+    alCambiar: v => { st.c = v; chirplet(); lienzos.find(p => p.clave === 'chirp').L.dibujar(); },
+  });
+  const fila = crear('div', { class: 'botones' });
+  lab.panel.appendChild(fila);
+  const audio = () => st.seg ? { x: st.seg, fs: FS, volumen: 0.5 } : null;
+  Curso.audio.boton(fila, audio, 'Oír el original', { clase: 'peque' });
+  const linea = i => () => (st.lineas && st.lineas[i] ? { x: NUM_tono(st.lineas[i].t, st.lineas[i].f, FS, st.seg.length / FS), fs: FS, volumen: 0.5 } : null);
+  Curso.audio.boton(fila, linea(0), 'Oír la línea 1', { clase: 'peque' });
+  Curso.audio.boton(fila, linea(1), 'Oír la línea 2', { clase: 'peque' });
+  // Un tono que sigue una línea (como en la lección 20).
+  function NUM_tono(ts, f, fsOut, dur) {
+    const n = Math.max(1, Math.round(dur * fsOut)), y = new Float64Array(n), dt = ts.length > 1 ? ts[1] - ts[0] : dur, a = Math.exp(-1 / (0.006 * fsOut));
+    let ph = 0, amp = 0, fAct = 440;
+    const val = j => f[limitar(j, 0, f.length - 1)];
+    for (let i = 0; i < n; i++) {
+      const u = (i / fsOut - ts[0]) / dt, j0 = Math.floor(u), w = u - j0, fa = val(j0), fb = val(j0 + 1);
+      const fi = Number.isFinite(fa) && Number.isFinite(fb) ? fa + (fb - fa) * w : NaN;
+      if (Number.isFinite(fi)) fAct = fi;
+      amp = a * amp + (1 - a) * (Number.isFinite(fi) ? 1 : 0);
+      ph += TAU * fAct / fsOut; y[i] = 0.9 * amp * Math.sin(ph);
+    }
+    return y;
+  }
+
+  // El resumen de lo que se puede medir.
+  const titulo = crear('h3', {}, 'Lo que una máquina puede saber de tu audio');
+  lab.panel.appendChild(titulo);
+  const eMedidas = crear('div', { class: 'escena' });
+  lab.panel.appendChild(eMedidas);
+  const Lt = G.lienzo(eMedidas, {
+    alto: altoDe(210, 250),
+    etiqueta: 'La curva de tono del audio cargado: la nota en cada instante, con las notas rotuladas.',
+    dibujar: (ctx, w, h, C) => {
+      const R = st.res;
+      if (!R) { G.texto(ctx, w / 2, h / 2, 'Graba, sube un audio o elige un ejemplo', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+      if (R.vacio) { G.texto(ctx, w / 2, h / 2, 'No hay una nota que seguir en este audio', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+      const lo = R.grave * 0.85, hi = R.aguda * 1.15, marcas = [];
+      for (let f = 27.5; f <= hi * 1.001; f *= 2) if (f >= lo * 0.999) marcas.push(f);
+      const esc = G.ejes(ctx, { margen: { izquierda: 74, derecha: 14, arriba: 26, abajo: 30 }, x: [0, R.dur], y: [lo, hi], logY: true, marcasY: marcas.length ? marcas : [R.mediana], marcasX: Math.max(2, Math.round(w / 90)),
+        formatoX: v => num(v, 0), formatoY: v => Senal.nombreNota(v).nombre + ' · ' + num(Math.round(v)), etiquetaX: 'tiempo (s)', etiquetaY: 'nota y frecuencia (Hz)', C });
+      G.linea(ctx, esc, R.t, Array.from(R.f), { color: C.senal, ancho: 2.4, C });
+    },
+  });
+  const columnas = crear('div', { class: 'columnas-2' });
+  lab.panel.appendChild(columnas);
+  const hacer = (rotuloTxt, etiqueta, dibujar) => {
+    const panel = crear('div', { class: 'panel-mini' });
+    panel.appendChild(crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, rotuloTxt)));
+    const es = crear('div', { class: 'escena' });
+    panel.appendChild(es); columnas.appendChild(panel);
+    return G.lienzo(es, { alto: altoDe(170, 200), etiqueta, dibujar });
+  };
+  const La = hacer('Tu timbre: los armónicos de tu nota', 'La fuerza relativa de los armónicos del 1 al 8 de la nota más fuerte del audio, en decibelios.', (ctx, w, h, C) => {
+    const R = st.res;
+    if (!R || R.vacio) { G.texto(ctx, w / 2, h / 2, '—', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+    const n = R.arm.length, esc = G.ejes(ctx, { margen: { izquierda: 40, derecha: 10, arriba: 14, abajo: 30 }, x: [0.4, n + 0.6], y: [-60, 0], marcasX: Array.from({ length: n }, (_, i) => i + 1), marcasY: [-60, -40, -20, 0], formatoX: v => String(v), formatoY: v => num(v, 0), etiquetaX: 'armónico', etiquetaY: 'dB', rejilla: true, C });
+    G.barras(ctx, esc, Array.from({ length: n }, (_, i) => i + 1), R.arm.map(v => Math.max(-60, v)), { color: C.espectro, ancho: 0.6, base: -60, C });
+  });
+  const Lv = hacer('Tu volumen a lo largo del tiempo', 'El volumen del audio cada 20 milisegundos, en decibelios respecto al más fuerte.', (ctx, w, h, C) => {
+    const R = st.res;
+    if (!R) { G.texto(ctx, w / 2, h / 2, '—', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+    const esc = G.ejes(ctx, { margen: { izquierda: 40, derecha: 10, arriba: 14, abajo: 30 }, x: [0, st.seg.length / FS], y: [-60, 0], marcasX: Math.max(2, Math.round(w / 90)), marcasY: [-60, -40, -20, 0], formatoX: v => num(v, 0), formatoY: v => num(v, 0), etiquetaX: 'tiempo (s)', etiquetaY: 'dB', C });
+    G.linea(ctx, esc, R.t, R.vol.map(v => Math.max(-60, v)), { color: C.respuesta, ancho: 2, C });
+  });
+  const lect = Curso.lecturas(lab.panel, [
+    { id: 'tipo', nombre: 'Lo que he oído' }, { id: 'grave', nombre: 'Nota más grave', clase: 'senal' }, { id: 'aguda', nombre: 'Nota más aguda', clase: 'senal' },
+    { id: 'desvio', nombre: 'Te desvías de la nota más cercana', clase: 'respuesta' }, { id: 'vib', nombre: 'Vibrato' },
+  ]);
+  const nota = crear('p', { class: 'nota-reto' }, 'Estas son las cosas que se pueden medir de forma fiable en unos segundos de audio. El laboratorio no intenta adivinar nada más.');
+  lab.panel.appendChild(nota);
+  const nombre = f => Senal.nombreNota(f).nombre + ' · ' + num(Math.round(f)) + ' Hz';
+
+  function actualizar() {
+    if (st.im && !st.chirp) chirplet();
+    lienzos.forEach(p => p.L.dibujar());
+    Lt.dibujar(); La.dibujar(); Lv.dibujar();
+    const R = st.res;
+    CIERRE.curva = st.propio && R && !R.vacio ? { t: R.t, f: R.f, dur: R.dur } : null;
+    if (CIERRE.avisar) CIERRE.avisar();
+    if (!R) { ['tipo', 'grave', 'aguda', 'desvio', 'vib'].forEach(k => lect.fijar(k, '—')); return; }
+    lect.fijar('tipo', R.silbido ? 'un silbido' : 'una voz');
+    if (R.vacio) { ['grave', 'aguda', 'desvio', 'vib'].forEach(k => lect.fijar(k, '—')); return; }
+    lect.fijar('grave', nombre(R.grave)); lect.fijar('aguda', nombre(R.aguda));
+    lect.fijar('desvio', num(R.desvio, 0) + ' cents');
+    lect.fijar('vib', R.vibrato ? num(R.vibrato.ritmo, 1) + ' Hz · ±' + num(R.vibrato.amp, 0) + ' cents' : 'no hay vibrato claro');
+  }
+})();
+// ── Vuelta a la noria: la noria de la lección 1, girando al ritmo de una melodía ────────────────────────────────
+// La noria da una vuelta por segundo cuando la nota vale 880 Hz. A la derecha, la curva de tono: la historia de la velocidad.
+(function () {
+  const A = 0.85, SEG = 3, REF = 880;
+  // La melodía de ejemplo, de Senal.ejemplos (sintética), con su frecuencia verdadera cada 10 ms.
+  const mel = Senal.ejemplos.melodia(16000), fi = mel.verdad.fi[0], porDefecto = { t: [], f: [], dur: mel.length / 16000 };
+  for (let i = 0; i < fi.length; i += 160) { porDefecto.t.push(i / 16000); porDefecto.f.push(fi[i]); }
+  const e = { t: SEG + 1.5, theta: 0.75, curva: porDefecto, ref: 1000, rango: 7 };
+  function preparar() {
+    e.curva = CIERRE.curva || porDefecto;
+    const v = Array.from(e.curva.f).filter(Number.isFinite).sort((a, b) => a - b);
+    if (v.length) { e.ref = v[v.length >> 1]; e.rango = Math.max(4, 6 * Math.log2(v[Math.floor(0.97 * (v.length - 1))] / v[Math.floor(0.03 * (v.length - 1))]) * 1.15); }
+  }
+  preparar();
+  const frecuencia = t => {
+    const c = e.curva, dt = c.t.length > 1 ? c.t[1] - c.t[0] : 0.01, tt = ((t % c.dur) + c.dur) % c.dur, j = Math.max(0, Math.min(c.f.length - 1, Math.round(tt / dt)));
+    return c.f[j];
+  };
+  const altura = f => (Number.isFinite(f) ? limitar(0.85 * 12 * Math.log2(f / e.ref) / e.rango, -0.95, 0.95) : NaN);
+  const hist = G.historia({ segundos: SEG, canales: 1 });
+  const rellenar = () => hist.llenar(e.t, tp => altura(frecuencia(tp)));
+  rellenar();
+  const L = G.lienzo('#cierre-escena', {
+    alto: w => G.altoNoria(w, { max: 320 }),
+    etiqueta: 'La noria de la lección 1 gira a cámara muy lenta, a una velocidad que sigue la nota de una melodía, y a la derecha queda dibujada la curva de tono de los últimos tres segundos.',
+    dibujar: (ctx, w, h, C) => {
+      G.escenaNoria(ctx, w, h, { C, angulo: e.theta, radio: A, cabinas: [{ desfase: 0, color: C.senal }], trazas: [{ puntos: hist.puntos(0), color: C.senal }], segundos: SEG });
+    },
+  });
+  const mandos = document.getElementById('cierre-mandos');
+  const fila = crear('div', { class: 'botones' });
+  mandos.appendChild(fila);
+  const lect = Curso.lecturas(mandos, [{ id: 'nota', nombre: 'Nota ahora', clase: 'senal' }, { id: 'vel', nombre: 'Velocidad de la noria' }, { id: 'real', nombre: 'Velocidad real' }]);
+  const leer = () => {
+    const f = frecuencia(e.t);
+    lect.fijar('nota', Number.isFinite(f) ? Senal.nombreNota(f).nombre : 'silencio');
+    lect.fijar('vel', Number.isFinite(f) ? num(f / REF, 2) + ' vueltas/s' : 'parada');
+    lect.fijar('real', Number.isFinite(f) ? num(f, 0) + ' Hz' : '—');
+  };
+  leer();
+  let anim = null;
+  CIERRE.avisar = () => { preparar(); if (!anim || !anim.corriendo) rellenar(); leer(); L.dibujar(); };
+  anim = Curso.animar(L, (t, dt) => {
+    if (dt > 0) {
+      e.t += dt;
+      const f = frecuencia(e.t);
+      if (Number.isFinite(f)) e.theta += TAU * f / REF * dt;
+      hist.anotar(e.t, altura(f));
+      leer();
+    }
+    L.dibujar();
+  }, { boton: fila });
+})();
+})();
+</script>
+</body>
+</html>

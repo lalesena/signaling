@@ -1,0 +1,1365 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>El filtro que se vuelve loco · Señales</title>
+<meta name="description" content="Lección 8 del curso visual «Señales, de 0 a experto»: por qué pita un micrófono, qué diferencia a los filtros FIR de los IIR, cuándo un filtro se dispara, por qué todo filtro llega tarde y cómo se quita ese retraso, con seis retos y tu propia voz.">
+<link rel="stylesheet" href="comun/fuentes.css">
+<link rel="stylesheet" href="comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+<style>
+  /* Piezas propias de la lección 8 (retos 2, 3 y 6): tarjetas de recetas y paneles apilados. */
+  .apilados { display: grid; gap: 0.6rem; align-content: start; }
+  .panel-mini.bien { border-color: var(--ok); box-shadow: 0 0 0 3px var(--ok-suave); }
+  .panel-mini.mal { border-color: var(--mal); box-shadow: 0 0 0 3px var(--mal-suave); }
+  .receta { margin: 0; font-size: var(--t-3); line-height: 1.4; font-weight: 500; }
+  .eleccion-dos { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .eleccion-dos .boton { flex: 1 1 8.5rem; }
+</style>
+</head>
+<body data-leccion="e08">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Nivel 3 · Lección 8</p>
+    <h1>El filtro que se vuelve loco</h1>
+    <aside class="pregunta">
+      <p>En una boda, alguien da un discurso y, al acercarse sin querer el micrófono al altavoz, todo el salón oye un pitido agudo que no estaba en la voz de nadie. El pitido crece en un instante hasta que dan ganas de taparse los oídos, y basta con apartar el micrófono un palmo para que se calle. Nadie ha tocado una nota ni hay nada grabado sonando, así que el sonido tiene que nacer de la propia instalación. ¿Cómo se fabrica un sonido de la nada, y por qué se apaga con tan poco?</p>
+    </aside>
+    <ul class="meta"><li>Unos 50 minutos</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>La idea en una imagen</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Una voz entra por el micrófono, pasa por el amplificador, sale por el altavoz, cruza el aire de la sala y vuelve a entrar por el micrófono. En cada vuelta regresa multiplicada por el mismo número, y a la derecha se apunta cómo queda tras cada una: en verde lo que entra y en naranja lo que vuelve.</figcaption>
+    </figure>
+    <p>Un micrófono conectado a un altavoz es un eco que se alimenta de sí mismo: lo que sale por el altavoz vuelve a entrar un instante después, y lo que entra vuelve a salir. Lo único que decide cómo acaba la historia es cuánto regresa en cada vuelta, y por eso el mando de la imagen va del 0 al 120 %.</p>
+    <p>Por debajo del 100 % los ecos se hacen cada vez más pequeños hasta desaparecer. Por encima, cada eco supera al anterior y todos crecen sin parar hasta chocar con el tope del amplificador, que es lo que se oye como un pitido. Justo en el 100 % ni se apagan ni crecen, y esa frontera es lo que busca el primer reto.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Paso a paso</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>El pitido es un eco que vuelve</h3>
+      <p>Un micrófono, un amplificador, un altavoz y el aire de la sala forman un círculo cerrado: lo que entra por el micrófono sale por el altavoz, cruza la sala y vuelve a entrar un instante después. Cuando un sistema usa así lo que él mismo acaba de producir, se habla de <b class="termino">realimentación</b>, y el pitido que aparece cuando se descontrola se llama <b class="termino">acople</b>.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">Un nombre propio</span>
+        <p>En muchos países al acople se le llama efecto Larsen, por el físico danés Søren Absalon Larsen, uno de los primeros en describirlo. La misma realimentación hace pitar a un audífono con el volumen demasiado alto.</p>
+      </aside>
+      <p>En cada vuelta, el sonido regresa multiplicado por un número que depende de todo lo que hay en el círculo: lo sensible que es el micrófono, lo alto que está el volumen, hacia dónde apunta el altavoz, la distancia entre los dos y lo que reflejan las paredes. Ese número es la <b class="termino">ganancia del lazo</b>, y es el mando de la imagen de arriba. Además, no todas las frecuencias vuelven igual: la sala refuerza unas y apaga otras, y cada una llega con la onda en un punto distinto de su vuelta, la fase de la <a href="e01.html">lección 1</a>.</p>
+      <p>Para que algo pite hacen falta las dos cosas a la vez: que en alguna frecuencia el sonido vuelva igual de fuerte o más, y que llegue a tiempo, con la onda en el mismo punto de su vuelta, de modo que se sume a sí mismo en lugar de restarse. Entonces cada vuelta multiplica el sonido por un número mayor que uno, el crecimiento es exponencial y en un instante el pitido llega a lo máximo que da el amplificador, y ahí se queda. Lo que oyes es el pico de la sala que mejor encaja, y por eso pita una frecuencia concreta y no todas.</p>
+      <p>La misma historia se puede contar con números, sin altavoces. Un filtro que suma a su salida una fracción de lo que salió un rato antes es un eco que se alimenta de sí mismo. Si la fracción es menor que uno, cada eco es más pequeño que el anterior; si es uno, todos son iguales, y si es mayor, cada uno supera al anterior. En el reto, el eco tarda un cuarto de segundo en volver y la fracción es el mando.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Encuentra el valor del mando en el que el eco ni se apaga ni crece. Escucha cómo suena una palmada al pasar por el eco y, cuando creas haberlo encontrado, pulsa «Comprobar».</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="mandos" id="r1-mandos"></div>
+        <div class="fila" id="r1-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>Recordar o escuchar</h3>
+      <p>En la <a href="e07.html">lección 7</a> filtrar era estampar sellos: cada muestra que entra deja una copia de la respuesta del filtro, y la salida es la suma de todos los sellos. Si el sello es de longitud finita, el filtro solo necesita recordar las últimas muestras que han entrado: multiplica cada una por un peso y suma. Es un <b class="termino">filtro FIR</b>, y su respuesta a una palmada termina cuando se acaban los pesos, por larga que sea la receta.</p>
+      <p>Hay otra familia que, además de lo que entra, usa lo que ella misma ha sacado antes. Es el eco que se alimenta del reto anterior, y se llama <b class="termino">filtro IIR</b>, o recursivo. Como cada salida depende de salidas anteriores, que dependen de otras anteriores, su respuesta a una palmada no termina nunca: está hecha de exponenciales que se apagan, y de ahí su nombre en inglés, <i>infinite impulse response</i>, respuesta infinita al impulso.</p>
+      <p>El IIR más sencillo es la media que olvida: cada salida mezcla un poco de la entrada nueva con mucho de la salida anterior, y un único número, cuánto se conserva de una muestra a la siguiente, decide cuánto tarda en olvidarse. Con una memoria de 0,99, a 16.000 muestras por segundo, su respuesta cae a la mitad en unos 4 milisegundos; con 0,999, en unos 43. Esa memoria tiene que ser menor que uno: con 1,01 la salida se duplica cada 70 muestras, y en una décima de segundo se multiplica por unos ocho millones.</p>
+      <p>Esa memoria sale muy barata. Para un paso bajo que deje pasar hasta 1 kHz con una caída de 1 dB como mucho y que quite al menos 40 dB desde 2 kHz, con muestreo a 16 kHz, un IIR de tipo Butterworth de orden 8 necesita unas 20 multiplicaciones por muestra, y un FIR de ventana de Hamming, 51. Con plantillas más exigentes la diferencia crece: Steven Smith, en su libro abierto, estima que un FIR es del orden de diez veces más lento que un IIR comparable. A cambio, el FIR es siempre estable y puede tener una fase lineal exacta, y el IIR puede volverse inestable.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Cada tarjeta describe un filtro con una receta, un diagrama de cajas y su respuesta a una palmada. Decide en cada una si solo recuerda lo que ha entrado (FIR) o si también escucha su propia salida (IIR), y pulsa «Comprobar».</p>
+        <div class="columnas-2" id="r2-cartas"></div>
+        <p class="nota-reto">Dos pistas para decidir: en el diagrama de un IIR hay una flecha naranja que vuelve de la salida a la suma, y su respuesta a una palmada se va apagando sin llegar a cero del todo.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>Postes y lona</h3>
+      <p>Para saber de antemano si un IIR se va a volver loco no hace falta probarlo: basta mirar dónde están sus polos. La respuesta en frecuencia de la <a href="e06.html">lección 6</a>, la curva que dice cuánto se queda cada nota al pasar por el filtro, puede imaginarse como la altura de una lona tendida sobre un plano. En ese plano hay unos puntos que levantan la lona como postes, los <b class="termino">polos</b>, y otros que la clavan al suelo como chinchetas, los <b class="termino">ceros</b>.</p>
+      <p>Recorrer las frecuencias es caminar por el borde de un círculo pintado en el plano: se empieza a la derecha, en 0 Hz, y a media vuelta, a la izquierda, se llega a la mitad de la frecuencia de muestreo. Lo que el filtro deja pasar en cada frecuencia es la altura de la lona en ese punto del borde. Un poste cerca del borde levanta mucho la lona justo ahí, y el filtro resuena con un pico alto y estrecho en la frecuencia que marca su ángulo. Cuanto más cerca del borde está el poste, más estrecho es el pico y más tiempo suena la respuesta a una palmada.</p>
+      <p>Un poste dentro del círculo se apaga solo; uno justo en el borde da un tono que no se apaga nunca, y uno fuera hace que la respuesta a una palmada crezca sin freno, que es lo que significa volverse loco. Un filtro es <b class="termino" data-termino="Estabilidad">estable</b> cuando todos sus polos están dentro del círculo. Es la misma frontera del primer reto: en el eco que se alimenta, los polos están a una distancia del centro que cruza el 1 justo cuando la fracción que vuelve cruza el 100 %.</p>
+      <p>Por eso los filtros IIR de orden alto no se escriben en un solo bloque: con coeficientes redondeados, los polos pueden salirse del círculo sin que nadie lo note, y lo habitual es programarlos como una cascada de secciones pequeñas de dos polos, que se controlan por separado.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Haz que el filtro resuene a 1.000 Hz con un pico de menos de 52 Hz de ancho, sin que se vuelva loco. Arrastra el poste por el plano y afina su frecuencia y su distancia al borde con los mandos.</p>
+        <div class="columnas-2">
+          <div class="escena" id="r3-plano"></div>
+          <div class="apilados">
+            <div class="escena" id="r3-respuesta"></div>
+            <div class="escena" id="r3-palmada"></div>
+          </div>
+        </div>
+        <div class="fila" id="r3-lecturas"></div>
+        <div class="mandos" id="r3-mandos"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>Todo filtro llega tarde</h3>
+      <p>Un filtro que trabaja en directo solo puede usar el pasado: no sabe lo que va a llegar después, y por eso se llama <b class="termino" data-termino="Filtro causal">causal</b>. Para producir cada muestra de salida tiene que esperar a tener las muestras que la forman, y eso retrasa la salida. Cuánto la retrasa depende de la frecuencia, y esa medida es el <b class="termino">retraso de grupo</b>: lo que tarda en salir del filtro la envolvente de un grupo de frecuencias cercanas.</p>
+      <p>Retrasar una noria un tiempo fijo equivale a girar su punto de partida, y cuanto más deprisa gira la noria, más ángulo es ese giro. Un filtro que retrasa todas las frecuencias el mismo tiempo gira cada noria un ángulo proporcional a su velocidad, y la forma de la onda llega intacta, pero tarde. Es lo que hace un FIR simétrico, con los pesos iguales a ambos lados del centro, y retrasa todo la mitad de su longitud: es la <b class="termino">fase lineal</b>. Un FIR de 641 coeficientes a 16.000 muestras por segundo llega 320 muestras tarde, que son 20 milisegundos. Un IIR, en cambio, retrasa más unas frecuencias que otras, sobre todo cerca de su corte, y por eso deforma los golpes: el borde de subida y el de bajada salen distintos.</p>
+      <p>Los filtros finos llegan más tarde, y es la misma ley del afinador de la <a href="e05.html">lección 5</a>: para distinguir dos frecuencias muy cercanas hay que escuchar durante bastante tiempo. En un FIR de ventana, la longitud es inversamente proporcional a la anchura de la banda de transición, y el retraso es la mitad de la longitud: unos 2 milisegundos si la transición mide 1.000 Hz, 20 si mide 100 Hz y 200 si mide 10 Hz.</p>
+      <p>Cada aplicación tiene su presupuesto de retraso. En televisión, según las pruebas con espectadores de la recomendación UIT-R BT.1359-1, el desfase entre sonido e imagen empieza a notarse, de media, cuando el sonido va unos 125 ms por detrás o unos 45 ms por delante. Son medias de pruebas subjetivas, y la televisión digital pide tolerancias más estrictas. En un audífono, según una revisión divulgativa de la investigación de Stone y Moore, no conviene pasar de unos 15 ms para la propia voz. Y en unos auriculares con cancelación de ruido el margen se cuenta en microsegundos: en un modelo sencillo de un solo tono, un desajuste de una décima de milisegundo deja sin cancelar el 6 % de un tono de 100 Hz y el 62 % de uno de 1.000 Hz. Lo contamos en el Vídeo 11 del canal, <i>Entiende la cancelación de ruido antes de comprar auriculares</i>.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Esta palmada pasa por un filtro FIR simétrico de 641 coeficientes, con muestreo a 16.000 muestras por segundo. Arrastra la traza naranja hacia la izquierda hasta que encaje con la verde y comprueba qué pasa si cambias a un IIR.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="mandos" id="r4-mandos"></div>
+        <div class="fila" id="r4-fila"></div>
+        <p class="nota-reto" id="r4-nota">Con el teclado: pulsa la gráfica con el tabulador y usa las flechas, de 0,1 ms en 0,1 ms (con Mayús, de 1 en 1).</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>Hacia delante y hacia atrás</h3>
+      <p>Si la grabación ya está hecha, hay un truco para quitar el retraso: se filtra la señal, se le da la vuelta en el tiempo, se filtra otra vez y se vuelve a girar. Lo que el primer paso retrasa, el segundo, que trabaja con la señal del revés, lo adelanta, y los dos giros de fase se cancelan. Es el <b class="termino">filtrado de fase cero</b>: el resultado queda en su sitio, con la magnitud elevada al cuadrado, es decir, con el doble de decibelios de atenuación.</p>
+      <p>El precio tiene tres partes. Cuesta el doble de cálculo; en los extremos de la señal aparecen transitorios, que se suavizan prolongándola con su reflejo; y, sobre todo, necesita la grabación entera, porque para darle la vuelta hay que saber cómo acaba. En directo, el final todavía no existe.</p>
+      <p>Por eso un audífono, unos auriculares con cancelación de ruido o el ecualizador de un concierto en directo tienen que convivir con su retraso, mientras que un electrocardiograma ya grabado, del que se quiere medir el instante exacto de cada latido, o un pódcast al que se le quiere quitar un zumbido pueden filtrarse de ida y vuelta.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Consigue que el latido salga filtrado, del derecho y sin retraso, usando solo las operaciones «Filtrar» y «Dar la vuelta». Después prueba qué pasa en directo.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="fila" id="r5-lecturas"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <p class="nota-reto" id="r5-nota"></p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>Vuelta al micrófono</h3>
+      <p>Con todo esto, la boda se entiende mejor. Un sonido que da una vuelta al círculo tarda lo que tarda en recorrer el camino de vuelta, y solo las frecuencias a las que cabe un número entero de ondas en ese tiempo llegan en fase. Con el micrófono a 3 metros, el sonido tarda unos 9 milisegundos y esas frecuencias candidatas están separadas unos 114 Hz. La que pita es la candidata que además cae sobre un pico de la sala. Alejar o girar el micrófono cambia el trayecto, las candidatas y cuánto vuelve, y por eso basta con moverlo para que se calle.</p>
+      <p>Los técnicos de sonido lo aprovechan antes de un concierto: suben el volumen hasta que algo empieza a pitar, buscan esa frecuencia y la recortan con un ecualizador como el de la <a href="e06.html">lección 6</a>. Así ganan unos decibelios, hasta que empieza a pitar la siguiente, y repiten. El volumen más alto antes de que el lazo empiece a pitar es la <b class="termino">ganancia máxima estable</b>. Según la revisión de van Waterschoot y Moonen, los métodos manuales, que incluyen colocar bien micrófonos y altavoces, poner filtros de muesca en los modos de la sala y ecualizar, la suben unos 5 a 8 dB. Y siempre se deja un margen de 2 o 3 dB por debajo, porque justo antes de pitar el sistema ya «timbra»: un sonido que tarda en apagarse, como el de un poste pegado al borde del círculo.</p>
+      <p>Hay otras formas de bajar la ganancia del lazo: alejar el micrófono o girarlo para que no apunte al altavoz, bajar el volumen o desplazar toda la señal unos 5 Hz, un truco que Schroeder describió en los años sesenta y que llegó a ganar 14 dB en las medidas, aunque sin que se oigan batidos solo son aceptables unos 6 dB. También existen filtros que se reajustan solos.</p>
+      <p>El reto usa un modelo simplificado: la sala y el altavoz solo cambian el volumen de cada frecuencia, con picos en 630, 1.250 y 2.600 Hz, y el camino solo añade retraso. En una sala de verdad, el recorte también cambia la fase y puede crear frecuencias de pitido nuevas a su lado: en una simulación más completa, con la fase incluida, los recortes ganaron solo uno o dos decibelios y alguno empeoró las cosas.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">Con el micrófono a 3 metros, sube el volumen al menos 4 dB por encima del máximo que aguantaba el sistema, sin que pite. Busca la frecuencia que pita y mueve el recorte hasta ella.</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+        <p class="nota-reto">Modelo simplificado. Arrastra sobre la gráfica para mover el recorte, o usa las flechas del teclado (10 Hz por pulsación).</p>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>En tu voz</h2>
+    <p><b>Qué grabar.</b> Tres palmadas, o una frase hablada, de unos cinco segundos: son los tramos 6 y 5 de la grabación de referencia de la serie. Graba con el micrófono si tu navegador lo deja; si no, sube un audio grabado con el móvil o prueba con los ejemplos sintéticos.</p>
+    <p><b>Qué mirar.</b> El laboratorio pasa tu voz por un filtro paso bajo que suena como si hablaras al otro lado de una pared, una vez en directo y otra de ida y vuelta, y mide cuánto se retrasa la versión en directo respecto de la de ida y vuelta, que se queda en su sitio. Con el IIR deberían salir unos tres o cuatro milisegundos, y con el FIR muy fino, 50, que al mezclarlos con tu voz se oyen como un eco corto que desaparece con la versión de ida y vuelta. Más abajo puedes meter tu voz en un eco que se alimenta y oír cómo se alarga al subir la realimentación.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>Lo que tienes que recordar</h2>
+    <ol class="tres">
+      <li>Un filtro que escucha su propia salida, un IIR, consigue con unos pocos números una respuesta que no termina nunca, y por eso sale barato, pero solo es estable mientras cada vuelta devuelva menos de lo que recibe, es decir, mientras todos sus polos estén dentro del círculo. Un FIR no tiene salida que escuchar y no puede dispararse. El pitido de un micrófono es el mismo fenómeno: la ganancia del lazo llega a 1 en una frecuencia que vuelve en fase.</li>
+      <li>Todo filtro que trabaja en directo llega tarde. Un FIR simétrico retrasa todas las frecuencias la mitad de su longitud, así que la forma llega intacta; un IIR retrasa más unas que otras y la deforma. Cuanto más fino es el filtro, más tarde llega.</li>
+      <li>Si la grabación ya está hecha, filtrar hacia delante y hacia atrás deja el resultado en su sitio y duplica la atenuación, al precio de doblar el cálculo y de necesitar la señal entera. En directo no se puede, y cada aplicación tiene que vivir con su presupuesto de retraso.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Errores típicos</h2>
+    <ul class="errores">
+      <li><b>«Pita porque el volumen está demasiado alto.»</b> El volumen es solo un factor de la ganancia del lazo, junto con la distancia, hacia dónde apuntan el micrófono y el altavoz y la sala. Además hace falta que la fase encaje, y por eso pita una frecuencia concreta y no todas. Con el mismo volumen, alejando o girando el micrófono, deja de pitar.</li>
+      <li><b>«Un filtro solo cambia las frecuencias, no el tiempo.»</b> Todo filtro en directo llega tarde. Un FIR simétrico retrasa todo por igual, la mitad de su longitud, y un IIR retrasa más unas frecuencias que otras y deforma la onda.</li>
+      <li><b>«Los IIR son peores que los FIR.»</b> Son otro compromiso. Un IIR hace lo mismo con muchas menos cuentas, del orden de diez veces menos, y suele retrasar menos, pero no tiene fase lineal y puede volverse inestable. Un FIR es siempre estable y puede tener fase lineal exacta, a cambio de más cálculo y, si es fino, de más retraso.</li>
+      <li><b>«Filtrar hacia delante y hacia atrás sale gratis.»</b> Cuesta el doble, da problemas en los bordes de la señal y, sobre todo, necesita la grabación entera, así que no vale en directo. Tampoco es lo que hacen los auriculares con cancelación de ruido: ese truco necesita el futuro.</li>
+      <li><b>«Un FIR también se puede volver loco.»</b> Sin realimentación, su respuesta a una palmada termina. Puede amplificar mucho una frecuencia, pero no puede crecer sin freno.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Abrir</span>
+      <h2>Rincón matemático</h2>
+      <span class="resumen">Las fórmulas, para quien las quiera. Cada una va después de su lectura en palabras.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>La receta general</h3>
+      <p>Cada muestra de salida es una suma de las entradas recientes, cada una con su peso, menos una suma de las salidas recientes, también con sus pesos. Si en la receta no hay salidas, el filtro es un FIR; si las hay, es un IIR:</p>
+      <div class="tex">y[n] = \sum_{k=0}^{M} b_k\,x[n-k] \;-\; \sum_{k=1}^{N} a_k\,y[n-k]</div>
+
+      <h3>Un FIR es una convolución con un sello finito</h3>
+      <p>Sin salidas en la receta, los pesos son la respuesta a una palmada, el sello de la <a href="e07.html">lección 7</a>, y la salida es la convolución de la entrada con él:</p>
+      <div class="tex">y[n] = \sum_{k=0}^{M} h[k]\,x[n-k], \qquad h[k] = b_k</div>
+
+      <h3>La media que olvida</h3>
+      <p>La salida mezcla la entrada nueva con la salida anterior. Su respuesta a una palmada es una exponencial que no termina nunca, es estable si la memoria <span class="tex">a</span> vale menos de 1 en valor absoluto, y su semivida son <span class="tex">\ln(1/2)/\ln a</span> muestras:</p>
+      <div class="tex">y[n] = (1-a)\,x[n] + a\,y[n-1], \qquad h[n] = (1-a)\,a^{n}\quad (n \ge 0), \qquad n_{1/2} = \frac{\ln\tfrac{1}{2}}{\ln a}</div>
+
+      <h3>Función de transferencia, polos y ceros</h3>
+      <p>El filtro entero es un cociente de dos polinomios. Los ceros anulan el numerador, las chinchetas, y los polos anulan el denominador, los postes. Un filtro causal es estable si y solo si todos sus polos cumplen <span class="tex">|p| &lt; 1</span>:</p>
+      <div class="tex">H(z) = \frac{\sum_{k=0}^{M} b_k\,z^{-k}}{1 + \sum_{k=1}^{N} a_k\,z^{-k}}</div>
+
+      <h3>La lona en el borde</h3>
+      <p>La respuesta en frecuencia es la altura de la lona sobre el círculo de radio 1, en un ángulo que crece con la frecuencia:</p>
+      <div class="tex">H\!\left(e^{i\omega}\right), \qquad \omega = 2\pi\,\frac{f}{f_s}</div>
+
+      <h3>Un resonador de dos polos</h3>
+      <p>Con los polos a una distancia <span class="tex">r</span> del centro y con ángulos <span class="tex">\pm\theta</span>, el filtro resuena cerca de <span class="tex">\theta f_s/2\pi</span>, y su pico se estrecha al acercar <span class="tex">r</span> a 1:</p>
+      <div class="tex">y[n] = x[n] + 2r\cos\theta\;y[n-1] - r^{2}\,y[n-2], \qquad f_0 \approx \frac{\theta\,f_s}{2\pi}, \qquad B_{-3\,\mathrm{dB}} \approx \frac{(1-r)\,f_s}{\pi}</div>
+
+      <h3>El eco que se alimenta</h3>
+      <p>Un eco de retraso <span class="tex">D</span> muestras que devuelve una fracción <span class="tex">g</span> de su salida tiene picos cada <span class="tex">f_s/D</span> hercios, de altura <span class="tex">1/(1-g)</span>, y es estable si <span class="tex">|g| &lt; 1</span>:</p>
+      <div class="tex">y[n] = x[n] + g\,y[n-D] \;\Longrightarrow\; H(z) = \frac{1}{1 - g\,z^{-D}}, \qquad f_k = k\,\frac{f_s}{D}, \qquad |H|_{\max} = \frac{1}{1-g}</div>
+
+      <h3>El lazo del micrófono</h3>
+      <p>Si <span class="tex">G</span> es el camino del micrófono al altavoz y <span class="tex">F</span>, el camino acústico de vuelta, lo que sale del altavoz por cada unidad de sonido que entra es</p>
+      <div class="tex">\frac{U(\omega)}{V(\omega)} = \frac{G(\omega)}{1 - G(\omega)\,F(\omega)}</div>
+      <p>Hay acople cuando el denominador puede anularse: en alguna frecuencia la ganancia del lazo llega a 1 y su fase es un número entero de vueltas. Es el criterio de estabilidad de Nyquist (1932), definido para sistemas lineales e invariantes; en acústica se aplica suponiendo que todo cambia despacio:</p>
+      <div class="tex">\left|G(\omega)\,F(\omega)\right| \ge 1 \quad \text{y} \quad \angle\,G(\omega)\,F(\omega) = 2\pi n, \quad n \in \mathbb{Z}</div>
+
+      <h3>Retraso de fase y retraso de grupo</h3>
+      <p>El retraso de fase dice cuánto se retrasa cada noria por separado, y el de grupo, cuánto se retrasa la envolvente de las frecuencias cercanas:</p>
+      <div class="tex">\tau_\phi(\omega) = -\frac{\phi(\omega)}{\omega}, \qquad \tau_g(\omega) = -\frac{d\phi(\omega)}{d\omega}</div>
+
+      <h3>Fase lineal</h3>
+      <p>Un FIR simétrico de <span class="tex">M+1</span> coeficientes retrasa todas las frecuencias <span class="tex">M/2</span> muestras:</p>
+      <div class="tex">h[k] = h[M-k] \;\Longrightarrow\; H\!\left(e^{i\omega}\right) = A(\omega)\,e^{-i\omega M/2}, \qquad \tau_g = \frac{M}{2}</div>
+
+      <h3>Hacia delante y hacia atrás</h3>
+      <p>La ida multiplica la señal por <span class="tex">H</span> y la vuelta, por su conjugado, de modo que queda la magnitud al cuadrado y una fase igual a cero:</p>
+      <div class="tex">H_{\text{ida y vuelta}}\!\left(e^{i\omega}\right) = H\!\left(e^{i\omega}\right)\,\overline{H\!\left(e^{i\omega}\right)} = \left|H\!\left(e^{i\omega}\right)\right|^{2}</div>
+
+      <h3>Lo fino cuesta tiempo</h3>
+      <p>En un FIR de ventana, la longitud es inversamente proporcional a la anchura de la transición, medida como fracción de la frecuencia de muestreo, y el retraso es la mitad de esa longitud:</p>
+      <div class="tex">M \approx \frac{4}{\mathrm{BW}}, \qquad \tau \approx \frac{M}{2 f_s} = \frac{2}{\Delta f}</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Para saber más</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Libro abierto · inglés</span>Smith, <i>The Scientist and Engineer's Guide to Digital Signal Processing</i>, <a href="https://www.dspguide.com/ch19.htm">capítulo 19, «Recursive Filters»</a>. Los IIR desde cero, el filtro de un polo, la fase y el filtrado en las dos direcciones, con figuras claras.</li>
+      <li><span class="tipo">Libro abierto · inglés</span>Smith, <a href="https://www.dspguide.com/ch21.htm">capítulo 21, «Filter Comparison»</a>. El combate entre FIR e IIR: rendimiento, velocidad y respuesta al escalón.</li>
+      <li><span class="tipo">Libro abierto · inglés</span>Smith III, <i>Introduction to Digital Filters</i>, <a href="https://ccrma.stanford.edu/~jos/filters/Phase_Group_Delay.html">«Phase and Group Delay»</a>. Qué son los retrasos de fase y de grupo, con ejemplos de audio.</li>
+      <li><span class="tipo">Libro abierto · inglés</span>Smith III, <i>Physical Audio Signal Processing</i>, <a href="https://ccrma.stanford.edu/~jos/pasp/Feedback_Comb_Filters.html">«Feedback Comb Filters»</a>. El eco que se alimenta, como filtro y como efecto de audio.</li>
+      <li><span class="tipo">Artículo abierto · inglés · avanzado</span>van Waterschoot, T. y Moonen, M. (2011). <i>Fifty years of acoustic feedback control: state of the art and future challenges</i>. Proceedings of the IEEE, 99(2), 288-327. <a href="https://ftp.esat.kuleuven.be/pub/sista/vanwaterschoot/reports/08-13.pdf">Versión abierta, un informe de la KU Leuven</a>. La revisión de referencia sobre el acople: su condición, su historia y los métodos para domarlo.</li>
+      <li><span class="tipo">Del canal</span>Vídeo 11 de Ena en Curso, <i>Entiende la cancelación de ruido antes de comprar auriculares</i>. El retraso como enemigo de la cancelación de ruido, para ver después.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>Términos nuevos</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Examen</h2>
+  </section>
+
+</main>
+
+<script src="comun/temario.js"></script>
+<script src="comun/graficas.js"></script>
+<script src="comun/senal.js"></script>
+<script src="comun/curso.js"></script>
+<script src="datos/e08.js"></script>
+<script>
+// Lección 8 · El filtro que se vuelve loco: la imagen ancla, los seis retos y el laboratorio «En tu voz».
+// Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo; aquí solo va lo de esta lección.
+// Todo el cálculo es de Senal y todo el dibujo, de Graficas. Los sonidos solo suenan al pulsar un botón.
+// Los retos son independientes entre sí; cada uno vive en su función autoejecutable.
+(function () {
+  'use strict';
+  const G = Graficas, S = Senal, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const FS = 16000;                                    // frecuencia de muestreo de los retos y del laboratorio
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const pico = x => { let m = 0; for (let i = 0; i < x.length; i++) { const v = Math.abs(x[i]); if (v > m) m = v; } return m; };
+  const delta = n => { const d = new Float64Array(n); d[0] = 1; return d; };
+  const altoEscena = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  // Una fila de botones dentro de un contenedor (para el botón de pausa de las animaciones).
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); (typeof contenedor === 'string' ? document.querySelector(contenedor) : contenedor).appendChild(f); return f; };
+  const conSigno = (v, d) => (v > 0 ? '+' : '') + num(v, d);
+  // Una bolita con brillo (en oscuro, la luz se suma, como las cabinas de la noria).
+  function bola(ctx, x, y, r, color, C) {
+    if (C.oscuro) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r * 2.6);
+      g.addColorStop(0, G.alfa(color, 0.5)); g.addColorStop(0.45, G.alfa(color, 0.16)); g.addColorStop(1, G.alfa(color, 0));
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(x, y, r * 2.6, 0, TAU); ctx.fill();
+      ctx.restore();
+    }
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+    if (!C.oscuro) { ctx.strokeStyle = G.alfa(C.cuerpo, 0.55); ctx.lineWidth = 1; ctx.stroke(); }
+  }
+  // Una palmada seca sintética de 30 ms: ruido con ataque rápido y caída de unos 4 ms (para los retos 1 y 4).
+  function palmada(fs, azar) {
+    const n = Math.round(0.03 * fs), w = S.ruido('blanco', n, azar), x = new Float64Array(n);
+    for (let i = 0; i < n; i++) { const t = i / fs; x[i] = w[i] * (1 - Math.exp(-t / 0.0005)) * Math.exp(-t / 0.004); }
+    return S.normalizar(S.filtrar(S.biquad('pasoBanda', 1500, fs, { Q: 0.8 }), x), 1);
+  }
+
+  // ── La idea en una imagen: un eco que se alimenta de sí mismo ───────────────────────────────────────
+  // Un pulso da vueltas al círculo micro → amplificador → altavoz → aire. En cada vuelta se multiplica por g, y a la
+  // derecha se apunta su altura al volver al micrófono: g^k, con un tope (el amplificador no da más). Parada, la
+  // imagen enseña las ocho vueltas enteras.
+  (function () {
+    const N = 8, TOPE = 1.7, VEL = 0.85;               // vueltas que se ven, tope del amplificador y vueltas por segundo
+    const e = { g: 0.8, p: N };
+    const amp = p => Math.min(TOPE, Math.pow(e.g, p));
+    const estado = () => (e.g < 0.995 ? 'los ecos se apagan' : e.g <= 1.005 ? 'los ecos no se apagan' : 'los ecos crecen y saturan');
+
+    function iconoNodo(ctx, tipo, x, y, C) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.fillStyle = C.superficie; ctx.strokeStyle = C.cuerpo; ctx.lineWidth = 1.5; ctx.lineJoin = 'round';
+      ctx.beginPath();
+      if (tipo === 'micro') { ctx.arc(0, 0, 6.5, 0, TAU); ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-3.2, 1.5); ctx.lineTo(3.2, 1.5); ctx.moveTo(-3.2, -1.5); ctx.lineTo(3.2, -1.5); ctx.stroke(); }
+      else if (tipo === 'amp') { ctx.moveTo(-6, -7); ctx.lineTo(-6, 7); ctx.lineTo(8, 0); ctx.closePath(); ctx.fill(); ctx.stroke(); }
+      else if (tipo === 'altavoz') { ctx.moveTo(-7, -3); ctx.lineTo(-2, -3); ctx.lineTo(6, -8); ctx.lineTo(6, 8); ctx.lineTo(-2, 3); ctx.lineTo(-7, 3); ctx.closePath(); ctx.fill(); ctx.stroke(); }
+      else { ctx.arc(0, 0, 6.5, 0, TAU); ctx.fillStyle = C.superficie; ctx.fill(); ctx.setLineDash([2, 3]); ctx.stroke(); ctx.setLineDash([]); ctx.beginPath(); ctx.moveTo(-4, 0); ctx.quadraticCurveTo(-2, -3, 0, 0); ctx.quadraticCurveTo(2, 3, 4, 0); ctx.stroke(); }
+      ctx.restore();
+    }
+
+    function dibujarAro(ctx, a, C) {
+      const cx = a.x + a.w / 2, cy = a.y + a.h / 2 + 8;
+      const R = Math.max(28, Math.min(a.w / 2 - 66, a.h / 2 - 40));
+      const pos = th => [cx + R * Math.cos(th), cy - R * Math.sin(th)];
+      ctx.save();
+      ctx.strokeStyle = G.alfa(C.eje, 0.85); ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.stroke();
+      // Flechas del sentido de giro, a mitad de cada tramo.
+      ctx.fillStyle = G.alfa(C.eje, 0.95);
+      for (const p of [0.125, 0.375, 0.625, 0.875]) {
+        const th = Math.PI - TAU * p, [x, y] = pos(th), tx = Math.sin(th), ty = Math.cos(th);
+        ctx.beginPath();
+        ctx.moveTo(x + tx * 6, y + ty * 6);
+        ctx.lineTo(x - tx * 4 - ty * 4.5, y - ty * 4 + tx * 4.5);
+        ctx.lineTo(x - tx * 4 + ty * 4.5, y - ty * 4 - tx * 4.5);
+        ctx.closePath(); ctx.fill();
+      }
+      ctx.restore();
+      const nodos = [['micro', 'micro', Math.PI, 'right', -14, 4], ['amp', 'amplificador', Math.PI / 2, 'center', 0, -15], ['altavoz', 'altavoz', 0, 'left', 14, 4], ['aire', 'aire de la sala', -Math.PI / 2, 'center', 0, 21]];
+      for (const [tipo, nombre, th, alin, dx, dy] of nodos) {
+        const [x, y] = pos(th);
+        iconoNodo(ctx, tipo, x, y, C);
+        G.texto(ctx, x + dx, y + dy, nombre, { alinear: alin, color: C.suave, tam: 11, C });
+      }
+      // Lo que hay dentro del círculo: la fracción que vuelve y qué pasa con los ecos.
+      G.texto(ctx, cx, cy + 2, num(100 * e.g, 0) + ' %', { alinear: 'center', tam: 21, peso: 600, color: e.g > 1.005 ? C.mal : C.texto, C });
+      G.texto(ctx, cx, cy + 20, estado(), { alinear: 'center', tam: 10, color: e.g > 1.005 ? C.mal : C.tenue, C });
+      // El pulso: verde mientras es la voz que entra y naranja cuando ya es lo que vuelve.
+      const pp = Math.min(e.p, N), th = Math.PI - TAU * (pp - Math.floor(pp)), [px, py] = pos(th);
+      bola(ctx, px, py, 3.5 + 7.5 * amp(pp) / TOPE, pp < 1 ? C.senal : C.respuesta, C);
+    }
+
+    function dibujarEcos(ctx, t, C) {
+      const caja = { x: t.x + 38, y: t.y + 40, w: t.w - 38 - 16, h: t.h - 40 - 36 };
+      const esc = G.ejes(ctx, { caja, x: [-0.45, N + 0.45], y: [0, 1.95], marcasX: [0, 1, 2, 3, 4, 5, 6, 7, 8], marcasY: false, rejilla: false, etiquetaX: 'vueltas', C });
+      G.texto(ctx, caja.x, t.y + 22, 'lo que se oye en cada vuelta', { color: C.tenue, tam: 11, C });
+      // El tope del amplificador.
+      ctx.save();
+      ctx.strokeStyle = G.alfa(C.mal, 0.75); ctx.lineWidth = 1; ctx.setLineDash([5, 4]);
+      ctx.beginPath(); ctx.moveTo(caja.x, Math.round(esc.y(TOPE)) + 0.5); ctx.lineTo(caja.x + caja.w, Math.round(esc.y(TOPE)) + 0.5); ctx.stroke();
+      ctx.restore();
+      G.texto(ctx, caja.x + caja.w, esc.y(TOPE) - 5, 'tope del amplificador', { alinear: 'right', color: C.mal, tam: 10, C });
+      const pp = Math.min(e.p, N), ks = [], vs = [];
+      for (let k = 0; k <= Math.floor(pp); k++) { ks.push(k); vs.push(amp(k)); }
+      if (ks.length) G.tallos(ctx, esc, ks.slice(0, 1), vs.slice(0, 1), { color: C.senal, radio: 4.2, ancho: 2, C });
+      if (ks.length > 1) G.tallos(ctx, esc, ks.slice(1), vs.slice(1), { color: C.respuesta, radio: 4.2, ancho: 2, C });
+      // Una pista de lectura: qué es cada color.
+      if (ks.length) G.texto(ctx, esc.x(0), esc.y(vs[0]) - 9, 'entra', { alinear: 'center', color: C.senal, tam: 10, peso: 600, C });
+      if (ks.length > 1) G.texto(ctx, esc.x(1), esc.y(vs[1]) - 9, 'vuelve', { alinear: 'center', color: C.respuesta, tam: 10, peso: 600, C });
+      // El cursor de lo que acaba de pasar.
+      if (e.p < N) {
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.eje, 0.8); ctx.setLineDash([2, 4]);
+        const x = Math.round(esc.x(pp)) + 0.5;
+        ctx.beginPath(); ctx.moveTo(x, caja.y); ctx.lineTo(x, caja.y + caja.h); ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    const L = G.lienzo('#ancla-escena', {
+      alto: w => (w < 600 ? 372 : 262),
+      etiqueta: 'Un pulso da vueltas al círculo micrófono, amplificador, altavoz y aire; a la derecha se apunta su altura en cada vuelta.',
+      dibujar: (ctx, w, h, C) => {
+        const ancho = w >= 600, hAro = ancho ? h : 196;
+        const aro = { x: 0, y: 0, w: ancho ? Math.round(w * 0.4) : w, h: hAro };
+        dibujarAro(ctx, aro, C);
+        dibujarEcos(ctx, ancho ? { x: aro.w, y: 0, w: w - aro.w, h } : { x: 0, y: hAro, w, h: h - hAro }, C);
+      },
+    });
+    const mandos = document.getElementById('ancla-mandos');
+    let anim = null;
+    const cambiar = () => {
+      e.p = anim && anim.corriendo ? 0 : N;            // en marcha, vuelve a empezar; parada, enseña todas las vueltas
+      L.etiquetar('Un pulso da vueltas al círculo micrófono, amplificador, altavoz y aire. Con el mando al ' + num(100 * e.g, 0) + ' %, ' + estado() + '.');
+      L.dibujar();
+    };
+    Curso.mando(mandos, { etiqueta: 'Lo que vuelve en cada vuelta', clase: 'respuesta', min: 0, max: 1.2, paso: 0.01, valor: e.g, formato: v => num(100 * v, 0) + ' %', alCambiar: v => { e.g = v; cambiar(); } });
+    const fila = filaBotones(mandos);
+    Curso.botones(fila, [{ id: 'otra', texto: 'Desde el principio', icono: 'otra', tipo: 'discreto', alPulsar: () => { e.p = 0; if (anim && !anim.corriendo) anim.reanudar(); L.dibujar(); } }]);
+    anim = Curso.animar(L, (t, dt) => {
+      if (dt > 0) { e.p += dt * VEL; if (e.p > N + 1.4) e.p = 0; }
+      L.dibujar();
+    }, { boton: fila });
+  })();
+
+  // ── Reto 1 · La frontera del eco (deslizador y escuchar) ────────────────────────────────────────────
+  // Una palmada pasa por Senal.eco con un retraso de 0,25 s y la fracción g como realimentación. Los ecos valen
+  // g, g², g³… de la palmada. El amplificador satura a ±2 (tanh), como uno de verdad.
+  (function () {
+    const D = 4000, DUR = 4, T = 2, NS = FS * DUR;
+    const x = new Float64Array(NS);
+    x.set(palmada(FS, S.azar(3)), Math.round(0.05 * FS));
+    const e = { g: 0.7, cache: null };
+    function salida() {
+      if (e.cache && e.cache.g === e.g) return e.cache.y;
+      const y = S.eco(x, D, e.g, e.g);
+      for (let i = 0; i < NS; i++) y[i] = T * Math.tanh(y[i] / T);
+      e.cache = { g: e.g, y };
+      return y;
+    }
+    const L = G.lienzo('#r1-escena', {
+      alto: altoEscena(190, 230),
+      etiqueta: 'La salida del eco durante cuatro segundos: una palmada y sus ecos, uno cada cuarto de segundo',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { x: [0, DUR], y: [-T * 1.14, T * 1.14], marcasX: w < 500 ? [0, 1, 2, 3, 4] : [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4], marcasY: false, rejilla: false, formatoX: v => num(v, 1), etiquetaX: 'tiempo (s)', margen: { izquierda: 14, derecha: 14, arriba: 16, abajo: 36 }, C });
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.mal, 0.7); ctx.lineWidth = 1; ctx.setLineDash([5, 4]);
+        for (const s of [1, -1]) { const y = Math.round(esc.y(s * T)) + 0.5; ctx.moveTo(esc.caja.x, y); ctx.lineTo(esc.caja.x + esc.caja.w, y); }
+        ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, esc.caja.x + esc.caja.w, esc.y(T) + 13, 'tope del amplificador', { alinear: 'right', color: C.mal, tam: 10, C });
+        const y = salida();
+        G.linea(ctx, esc, null, y, { t0: 0, dt: 1 / FS, color: C.respuesta, ancho: 1.4, C });
+        G.linea(ctx, esc, null, y.subarray(0, Math.round(0.24 * FS)), { t0: 0, dt: 1 / FS, color: C.senal, ancho: 1.6, C });
+        G.texto(ctx, esc.x(0.05), esc.y(1) - 12, 'palmada', { color: C.senal, tam: 10, peso: 600, C });
+        G.texto(ctx, esc.x(0.3) + 4, esc.y(Math.min(T, e.g)) - 8, 'primer eco', { color: C.respuesta, tam: 10, peso: 600, C });
+      },
+    });
+    const lect = Curso.lecturas('#r1-fila', [
+      { id: 'vuelta', nombre: 'Cada vuelta devuelve', clase: 'respuesta' },
+      { id: 'eco10', nombre: 'El eco nº 10 vale' },
+    ]);
+    const estado = () => {
+      lect.fijar('vuelta', num(100 * e.g, 0) + ' %');
+      const v = 100 * Math.pow(e.g, 10);
+      lect.fijar('eco10', v >= 10000 ? 'más de 10.000 % de la palmada' : num(v, v < 10 ? 1 : 0) + ' % de la palmada');
+    };
+    const mando = Curso.mando('#r1-mandos', { etiqueta: 'Lo que devuelve cada vuelta', clase: 'respuesta', min: 0, max: 1.2, paso: 0.01, valor: e.g, formato: v => num(100 * v, 0) + ' %', alCambiar: v => { e.g = v; estado(); L.dibujar(); } });
+    Curso.audio.boton('#r1-fila', () => ({ x: salida(), fs: FS, volumen: 0.4 }), 'Oír la palmada y sus ecos');
+    estado();
+    Curso.reto('reto-1', {
+      titulo: 'La frontera del eco', nivel: 'fácil', auto: false,
+      comprobar: () => {
+        const d = e.g - 1;
+        if (Math.abs(d) <= 0.0105) return { ok: true, mensaje: 'Ahí está: cada eco vale lo mismo que el anterior y la palmada no se apaga nunca.' };
+        if (e.g < 0.9) return { ok: false, mensaje: 'Todavía se apaga deprisa: cada eco es mucho más pequeño que el anterior. Sube el mando.' };
+        if (d < 0) return { ok: false, mensaje: 'Se apaga despacio, pero se apaga: cada eco sigue siendo algo más pequeño que el anterior.' };
+        if (d <= 0.1) return { ok: false, mensaje: 'Ya crece, aunque poco a poco: cada eco es algo más grande que el anterior. Baja el mando.' };
+        return { ok: false, mensaje: 'Crece deprisa y acaba chocando con el tope del amplificador. Baja el mando.' };
+      },
+      resolver: () => mando.fijar(1),
+      pista: [
+        'Fíjate en dos ecos seguidos: ¿el segundo es más pequeño, igual o más grande que el primero? Compruébalo moviendo el mando y escuchando.',
+        'Si cada eco vale justo lo mismo que el anterior, es que vuelve todo lo que había: el 100 %.',
+      ],
+      exito: '<p>Si cada vuelta devuelve menos de lo que recibe, el eco se apaga; si devuelve justo lo mismo, suena para siempre, y si devuelve más, crece sin freno hasta que el amplificador no da más. Es la misma frontera que hace pitar un micrófono: que el lazo devuelva todo lo que recibe.</p>',
+    });
+  })();
+
+  // ── Reto 2 · ¿Recuerda o escucha? (elegir entre dos cajas en cinco tarjetas) ────────────────────────
+  // Cada tarjeta enseña una receta, su diagrama de cajas (el IIR lleva una flecha naranja que vuelve de la salida) y
+  // su respuesta a una palmada, calculada con Senal: la del FIR termina; la del IIR se apaga sin acabar.
+  (function () {
+    const N = 100;
+    const pesos = new Float64Array(N);
+    pesos.set(S.firVentana(1500, FS, 51, 'pasoBajo', 'hamming'));
+    const RECETAS = [
+      { id: 'media', texto: 'La media de las 9 últimas muestras.', tipo: 'fir', diag: 'lineas', y: S.filtrar({ b: new Float64Array(9).fill(1 / 9) }, delta(N)) },
+      { id: 'eco', texto: 'La entrada más la mitad de lo que entró hace 20 muestras.', tipo: 'fir', diag: 'eco-fir', y: S.eco(delta(N), 20, 0.5, 0) },
+      { id: 'peine', texto: 'La entrada más la mitad de lo que salió hace 20 muestras.', tipo: 'iir', diag: 'eco-iir', y: S.eco(delta(N), 20, 0.5, 0.5) },
+      { id: 'olvida', texto: 'Un poco de la entrada nueva y mucho de la salida anterior.', tipo: 'iir', diag: 'olvida', y: S.filtrar({ b: [0.1], a: [1, -0.9] }, delta(N)) },
+      { id: 'pesos', texto: 'Unos pesos simétricos sobre las 51 últimas muestras.', tipo: 'fir', diag: 'lineas', y: pesos },
+    ];
+    const elegido = {};
+    const tarjetas = {};
+
+    // Piezas del diagrama de cajas.
+    function linea(ctx, pts, color, flecha) {
+      ctx.save();
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 1.5; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      ctx.beginPath();
+      pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+      ctx.stroke();
+      if (flecha) {
+        const [xa, ya] = pts[pts.length - 2], [xb, yb] = pts[pts.length - 1], a = Math.atan2(yb - ya, xb - xa);
+        ctx.beginPath();
+        ctx.moveTo(xb, yb);
+        ctx.lineTo(xb - 6.5 * Math.cos(a - 0.42), yb - 6.5 * Math.sin(a - 0.42));
+        ctx.lineTo(xb - 6.5 * Math.cos(a + 0.42), yb - 6.5 * Math.sin(a + 0.42));
+        ctx.closePath(); ctx.fill();
+      }
+      ctx.restore();
+    }
+    function caja(ctx, x, y, ancho, texto, C) {
+      ctx.save();
+      ctx.fillStyle = C.superficie; ctx.strokeStyle = G.alfa(C.cuerpo, 0.8); ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(x - ancho / 2, y - 10, ancho, 20, 4); else ctx.rect(x - ancho / 2, y - 10, ancho, 20);
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
+      G.texto(ctx, x, y + 3.5, texto, { alinear: 'center', tam: 10, color: C.suave, C });
+    }
+    function sumador(ctx, x, y, C) {
+      ctx.save();
+      ctx.fillStyle = C.superficie; ctx.strokeStyle = G.alfa(C.cuerpo, 0.8); ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(x, y, 7.5, 0, TAU); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x - 3.6, y); ctx.lineTo(x + 3.6, y); ctx.moveTo(x, y - 3.6); ctx.lineTo(x, y + 3.6); ctx.stroke();
+      ctx.restore();
+    }
+    function diagrama(ctx, x0, y0, W, tipo, C) {
+      const s = C.suave, R = C.respuesta, cy = y0 + 18, yb = y0 + 50;
+      const xin = x0 + 16, xout = x0 + W - 10;
+      const punto = (x, y, color) => { ctx.save(); ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, 2.4, 0, TAU); ctx.fill(); ctx.restore(); };
+      G.texto(ctx, x0 + 2, cy + 4, 'x', { color: C.texto, tam: 11, peso: 600, C });
+      G.texto(ctx, xout + 1, cy + 4, 'y', { color: C.texto, tam: 11, peso: 600, C });
+      if (tipo === 'lineas') {
+        // Línea de retardos: una toma por cada muestra recordada, y todas van a un sumador.
+        const t = [x0 + 38, x0 + 108, x0 + 178], xs = x0 + W - 36;
+        linea(ctx, [[xin, cy], [t[0], cy], [t[0] + 13, cy]], s);
+        caja(ctx, t[0] + 36, cy, 46, 'retardo', C);
+        linea(ctx, [[t[0] + 59, cy], [t[1], cy], [t[1] + 13, cy]], s);
+        caja(ctx, t[1] + 36, cy, 46, 'retardo', C);
+        linea(ctx, [[t[1] + 59, cy], [t[2], cy]], s);
+        G.texto(ctx, t[2] + 14, cy + 4, '…', { alinear: 'center', color: s, tam: 12, C });
+        for (const tx of t) { linea(ctx, [[tx, cy], [tx, yb]], s); punto(tx, cy, s); }
+        linea(ctx, [[t[0], yb], [xs - 8, yb]], s, true);
+        G.texto(ctx, (t[0] + t[2]) / 2, yb + 13, 'cada toma, con su peso', { alinear: 'center', color: C.tenue, tam: 9, C });
+        sumador(ctx, xs, yb, C);
+        linea(ctx, [[xs + 8, yb], [xout - 2, yb]], s, true);
+        return;
+      }
+      const iir = tipo !== 'eco-fir';
+      const xsum = x0 + W * (tipo === 'eco-fir' ? 0.66 : 0.4), xt = x0 + W * 0.9;
+      sumador(ctx, xsum, cy, C);
+      if (tipo === 'olvida') {
+        linea(ctx, [[xin, cy], [x0 + W * 0.2 - 20, cy]], s);
+        caja(ctx, x0 + W * 0.2, cy, 40, '× 0,1', C);
+        linea(ctx, [[x0 + W * 0.2 + 20, cy], [xsum - 8, cy]], s, true);
+      } else {
+        linea(ctx, [[xin, cy], [xsum - 8, cy]], s, true);
+      }
+      linea(ctx, [[xsum + 8, cy], [xout - 2, cy]], s, true);
+      if (!iir) {
+        // Una copia de la entrada, retrasada y a media altura, que se suma.
+        const xa = x0 + W * 0.12, x1 = x0 + W * 0.3, x2 = x0 + W * 0.5;
+        punto(xa, cy, s);
+        linea(ctx, [[xa, cy], [xa, yb], [x1 - 23, yb]], s);
+        caja(ctx, x1, yb, 46, 'retardo', C);
+        linea(ctx, [[x1 + 23, yb], [x2 - 16, yb]], s);
+        caja(ctx, x2, yb, 32, '× ½', C);
+        linea(ctx, [[x2 + 16, yb], [xsum, yb], [xsum, cy + 8]], s, true);
+      } else {
+        // La salida vuelve, retrasada y multiplicada, a la suma: la flecha naranja que vuelve.
+        const x1 = (xsum + xt) / 2 + 14, x2 = x1 - 56, ganancia = tipo === 'olvida' ? '× 0,9' : '× ½';
+        punto(xt, cy, R);
+        linea(ctx, [[xt, cy], [xt, yb], [x1 + 23, yb]], R);
+        caja(ctx, x1, yb, 46, 'retardo', C);
+        linea(ctx, [[x1 - 23, yb], [x2 + 18, yb]], R);
+        caja(ctx, x2, yb, 36, ganancia, C);
+        linea(ctx, [[x2 - 18, yb], [xsum, yb], [xsum, cy + 8]], R, true);
+      }
+    }
+    function dibujarTarjeta(ctx, w, h, C, r) {
+      diagrama(ctx, 6, 4, w - 12, r.diag, C);
+      G.texto(ctx, 10, 90, 'respuesta a una palmada (muestras)', { color: C.tenue, tam: 10, C });
+      let mx = 0, mn = 0;
+      for (const v of r.y) { if (v > mx) mx = v; if (v < mn) mn = v; }
+      const caja = { x: 10, y: 98, w: w - 22, h: 36 };
+      const esc = G.ejes(ctx, { caja, x: [-3, 103], y: [mn * 1.2 - 0.04 * mx, mx * 1.25], marcasX: [0, 50, 100], marcasY: false, rejilla: false, formatoX: v => String(v), C });
+      const ks = [], vs = [];
+      for (let k = 0; k < r.y.length; k++) if (Math.abs(r.y[k]) > 1e-9) { ks.push(k); vs.push(r.y[k]); }
+      G.tallos(ctx, esc, ks, vs, { color: C.respuesta, radio: ks.length > 14 ? 1.6 : 3.2, ancho: 1.3, C });
+    }
+
+    const cont = document.getElementById('r2-cartas');
+    const pintar = () => {
+      for (const r of RECETAS) {
+        const t = tarjetas[r.id];
+        t.botones.fir.setAttribute('aria-pressed', String(elegido[r.id] === 'fir'));
+        t.botones.iir.setAttribute('aria-pressed', String(elegido[r.id] === 'iir'));
+        t.panel.classList.remove('bien', 'mal');
+      }
+    };
+    for (const r of RECETAS) {
+      const panel = crear('div', { class: 'panel-mini' });
+      panel.appendChild(crear('p', { class: 'receta' }, r.texto));
+      const escena = crear('div', { class: 'escena' });
+      panel.appendChild(escena);
+      G.lienzo(escena, { alto: 152, etiqueta: 'Receta «' + r.texto + '»: diagrama de cajas y respuesta a una palmada', dibujar: (ctx, w, h, C) => dibujarTarjeta(ctx, w, h, C, r) });
+      const fila = crear('div', { class: 'eleccion-dos' });
+      const botones = {};
+      for (const [tipo, texto] of [['fir', 'Solo la entrada · FIR'], ['iir', 'También su salida · IIR']]) {
+        const b = crear('button', { type: 'button', class: 'boton peque', 'aria-pressed': 'false' }, texto);
+        b.addEventListener('click', () => { elegido[r.id] = elegido[r.id] === tipo ? null : tipo; pintar(); });
+        botones[tipo] = b;
+        fila.appendChild(b);
+      }
+      panel.appendChild(fila);
+      cont.appendChild(panel);
+      tarjetas[r.id] = { panel, botones };
+    }
+    Curso.reto('reto-2', {
+      titulo: '¿Recuerda o escucha?', nivel: 'fácil', auto: false,
+      comprobar: () => {
+        const sin = RECETAS.filter(r => !elegido[r.id]);
+        if (sin.length) return { ok: false, mensaje: 'Elige una caja en cada receta' + (sin.length < RECETAS.length ? ': te ' + (sin.length === 1 ? 'falta 1' : 'faltan ' + sin.length) + '.' : '.') };
+        const mal = RECETAS.filter(r => elegido[r.id] !== r.tipo);
+        for (const r of RECETAS) { tarjetas[r.id].panel.classList.remove('bien', 'mal'); tarjetas[r.id].panel.classList.add(elegido[r.id] === r.tipo ? 'bien' : 'mal'); }
+        if (!mal.length) return { ok: true, mensaje: 'Las cinco bien.' };
+        return { ok: false, mensaje: (mal.length === 1 ? 'Casi: hay 1 mal.' : 'Hay ' + mal.length + ' mal.') + ' Busca en el diagrama una flecha naranja que vuelva de la salida y mira si la respuesta a la palmada se acaba.' };
+      },
+      resolver: () => { for (const r of RECETAS) elegido[r.id] = r.tipo; pintar(); },
+      pista: [
+        'Mira el diagrama: si hay una flecha que vuelve de la salida a la suma, el filtro escucha lo que él mismo ha producido.',
+        'Y mira la respuesta a la palmada: en un FIR se acaba, tras tantas muestras como pesos tiene la receta; en un IIR se va apagando sin llegar a terminar.',
+      ],
+      exito: '<p>Si la receta usa lo que salió antes, la respuesta a una palmada no se acaba nunca: es un IIR. Si solo usa lo que entró, termina cuando se acaban los pesos: es un FIR. Los dos gemelos del medio son la prueba: «lo que entró» es un FIR de dos ecos, y «lo que salió» es el eco que se alimenta del primer reto.</p>',
+    });
+  })();
+
+  // ── Reto 3 · Coloca el polo (arrastrar sobre el plano, dos mandos y escuchar) ───────────────────────
+  // Un resonador de dos polos a distancia r del centro y ángulo θ (y sus gemelos reflejados), con dos ceros en el
+  // centro. La lona es la altura de la respuesta en cada punto del plano (sombreado ámbar); al lado, la respuesta en
+  // frecuencia que dibuja el borde del círculo y la respuesta a una palmada. Todo sale de Senal.respuesta y filtrar.
+  (function () {
+    const th2f = th => th * FS / TAU, f2th = f => f * TAU / FS;
+    const e = { r: 0.9, th: f2th(2700) };
+    const filtro = () => ({ b: [1], a: [1, -2 * e.r * Math.cos(e.th), e.r * e.r] });
+    const rDe = v => 1 - 0.3 * Math.pow(0.0005 / 0.3, v);          // cercanía al borde, en escala logarítmica
+    const vDe = r => (r >= 1 ? 1 : limitar(Math.log((1 - r) / 0.3) / Math.log(0.0005 / 0.3), 0, 1));
+    const t60 = () => (e.r >= 1 ? Infinity : 6.9078 / (-Math.log(e.r)) / FS);   // lo que tarda en caer 60 dB (s)
+
+    // Frecuencia del pico y ancho a −3 dB, medidos sobre una rejilla fina alrededor del polo.
+    function medir() {
+      const f0 = th2f(e.th);
+      if (e.r >= 1) return { estable: false, f0 };
+      const w0 = (1 - e.r) * FS / Math.PI, span = limitar(6 * w0, 24, 3000);
+      const fa = Math.max(0, f0 - span), fb = Math.min(FS / 2, f0 + span), n = 1500, fr = new Float64Array(n);
+      for (let i = 0; i < n; i++) fr[i] = fa + (fb - fa) * i / (n - 1);
+      const R = S.respuesta(filtro(), FS, fr);
+      let ip = 0;
+      for (let i = 1; i < n; i++) if (R.mag[i] > R.mag[ip]) ip = i;
+      const lim = R.mag[ip] / Math.SQRT2;
+      let i0 = ip, i1 = ip;
+      while (i0 > 0 && R.mag[i0] > lim) i0--;
+      while (i1 < n - 1 && R.mag[i1] > lim) i1++;
+      const cruce = (a, b) => (R.mag[a] > lim && R.mag[b] > lim ? fr[a] : fr[a] + (lim - R.mag[a]) / (R.mag[b] - R.mag[a]) * (fr[b] - fr[a]));
+      const fL = i0 === 0 && R.mag[0] > lim ? fr[0] : cruce(i0, i0 + 1);
+      const fU = i1 === n - 1 && R.mag[n - 1] > lim ? fr[n - 1] : cruce(i1, i1 - 1);
+      return { estable: true, f0: fr[ip], pico: 20 * Math.log10(R.mag[ip]), fL, fU, ancho: fU - fL };
+    }
+
+    const geo = (w, h) => ({ cx: w / 2, cy: h / 2, k: (Math.min(w, h) / 2 - 24) / 1.3 });
+    const plano = G.lienzo('#r3-plano', {
+      alto: w => limitar(Math.round(w * 0.95), 250, 390), rol: 'slider',
+      etiqueta: 'El plano de polos y ceros: el círculo de radio 1, un poste que puedes arrastrar con su gemelo reflejado y dos ceros en el centro',
+      dibujar: (ctx, w, h, C) => {
+        const { cx, cy, k } = geo(w, h);
+        const px = re => cx + k * re, py = im => cy - k * im;
+        const p1 = [e.r * Math.cos(e.th), e.r * Math.sin(e.th)], p2 = [p1[0], -p1[1]];
+        // La lona: sombreado ámbar con la altura |H(z)| en cada punto del plano.
+        const celda = 8;
+        for (let y = 0; y < h; y += celda) {
+          for (let x = 0; x < w; x += celda) {
+            const re = (x + celda / 2 - cx) / k, im = (cy - y - celda / 2) / k;
+            const d1 = Math.hypot(re - p1[0], im - p1[1]), d2 = Math.hypot(re - p2[0], im - p2[1]);
+            const alt = 20 * Math.log10((re * re + im * im + 1e-6) / Math.max(1e-4, d1 * d2));
+            const a = Math.pow(limitar((alt + 4) / 46, 0, 1), 1.3);
+            if (a > 0.015) { ctx.fillStyle = G.alfa(C.espectro, 0.62 * a); ctx.fillRect(x, y, celda, celda); }
+          }
+        }
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.eje, 0.7); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(0, Math.round(cy) + 0.5); ctx.lineTo(w, Math.round(cy) + 0.5); ctx.moveTo(Math.round(cx) + 0.5, 0); ctx.lineTo(Math.round(cx) + 0.5, h); ctx.stroke();
+        // El círculo de radio 1 y, resaltado, el trozo de borde que ya has recorrido: la frecuencia del poste.
+        ctx.strokeStyle = C.cuerpo; ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.arc(cx, cy, k, 0, TAU); ctx.stroke();
+        ctx.strokeStyle = C.espectro; ctx.lineWidth = 4; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.arc(cx, cy, k, -e.th, 0); ctx.stroke();
+        ctx.setLineDash([3, 4]); ctx.strokeStyle = G.alfa(C.respuesta, 0.8); ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px(p1[0]), py(p1[1])); ctx.stroke();
+        ctx.restore();
+        for (const [ang, txt] of [[0, '0'], [Math.PI / 4, '2 kHz'], [Math.PI / 2, '4 kHz'], [3 * Math.PI / 4, '6 kHz'], [Math.PI, '8 kHz']]) {
+          const x = cx + (k + 8) * Math.cos(ang), y = cy - (k + 8) * Math.sin(ang);
+          G.texto(ctx, x, y + (ang === Math.PI / 2 ? -2 : ang === 0 || ang === Math.PI ? 4 : -2), txt, { alinear: ang < 0.1 ? 'left' : ang > 3.1 ? 'right' : ang > 1.6 ? 'right' : ang > 1.5 ? 'center' : 'left', color: C.tenue, tam: 10, C });
+        }
+        // Los dos ceros del centro: chinchetas.
+        ctx.save();
+        ctx.strokeStyle = C.cuerpo; ctx.lineWidth = 1.6; ctx.fillStyle = C.superficie;
+        ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, TAU); ctx.fill(); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, cx + 9, cy + 15, 'dos ceros', { color: C.tenue, tam: 10, C });
+        // El poste y su gemelo reflejado.
+        const cruz = (x, y, a, grande) => {
+          ctx.save();
+          ctx.strokeStyle = G.alfa(C.respuesta, a); ctx.lineWidth = grande ? 2.6 : 1.8; ctx.lineCap = 'round';
+          const d = grande ? 6.5 : 5;
+          ctx.beginPath(); ctx.moveTo(x - d, y - d); ctx.lineTo(x + d, y + d); ctx.moveTo(x - d, y + d); ctx.lineTo(x + d, y - d); ctx.stroke();
+          if (grande) { ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, 12, 0, TAU); ctx.stroke(); }
+          ctx.restore();
+        };
+        cruz(px(p2[0]), py(p2[1]), 0.5, false);
+        cruz(px(p1[0]), py(p1[1]), 1, true);
+        G.texto(ctx, px(p1[0]) + 16, py(p1[1]) - 14, 'poste', { color: C.respuesta, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.7), C });
+        if (e.r >= 1) G.texto(ctx, cx, h - 8, e.r === 1 ? 'en el borde: no se apaga' : 'fuera: se vuelve loco', { alinear: 'center', color: C.mal, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.85), C });
+      },
+    });
+
+    const resp = G.lienzo('#r3-respuesta', {
+      alto: 178,
+      etiqueta: 'La respuesta en frecuencia del filtro, en decibelios: un pico en la frecuencia del poste',
+      dibujar: (ctx, w, h, C) => {
+        const f0 = th2f(e.th), xmax = f0 < 1800 ? 2000 : 8000;
+        const esc = G.ejes(ctx, { x: [0, xmax], y: [-30, 72], marcasX: xmax === 2000 ? [0, 500, 1000, 1500, 2000] : [0, 2000, 4000, 6000, 8000], marcasY: [0, 20, 40, 60], formatoX: v => num(v), etiquetaX: 'frecuencia (Hz)', etiquetaY: 'respuesta (dB)', margen: { izquierda: 40, derecha: 12, arriba: 26, abajo: 36 }, C });
+        if (e.r >= 1) { G.texto(ctx, esc.caja.x + esc.caja.w / 2, esc.caja.y + esc.caja.h / 2, 'con el poste en el borde o fuera, no hay respuesta estable', { alinear: 'center', color: C.mal, tam: 11, C }); return; }
+        const m = medir(), fino = [];
+        const w0 = (1 - e.r) * FS / Math.PI, span = Math.min(60, 6 * w0);
+        for (let i = 0; i <= 600; i++) fino.push(xmax * i / 600);
+        for (let i = -60; i <= 60; i++) { const f = f0 + span * i / 60; if (f > 0 && f < xmax) fino.push(f); }
+        fino.sort((a, b) => a - b);
+        const R = S.respuesta(filtro(), FS, fino);
+        G.linea(ctx, esc, fino, R.magDb, { color: C.espectro, ancho: 2, C });
+        const yb = m.pico - 3;
+        G.linea(ctx, esc, [m.fL, m.fU], [yb, yb], { color: C.respuesta, ancho: 3, halo: false, C });
+        if (m.f0 <= xmax) G.texto(ctx, esc.x(m.f0) + (esc.x(m.f0) > esc.caja.x + esc.caja.w - 90 ? -8 : 8), esc.y(Math.min(m.pico, 66)) + 4, num(m.f0, 0) + ' Hz', { alinear: esc.x(m.f0) > esc.caja.x + esc.caja.w - 90 ? 'right' : 'left', color: C.espectro, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.75), C });
+      },
+    });
+
+    const pal = G.lienzo('#r3-palmada', {
+      alto: 132,
+      etiqueta: 'La respuesta del filtro a una palmada durante sesenta milisegundos: se apaga, no se apaga o crece, según dónde esté el poste',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { x: [0, 60], y: [-3, 3], marcasX: [0, 20, 40, 60], marcasY: false, rejilla: false, etiquetaX: 'tiempo (ms)', formatoX: v => num(v), etiquetaY: 'respuesta a una palmada', margen: { izquierda: 14, derecha: 12, arriba: 26, abajo: 36 }, C });
+        const y = S.filtrar(filtro(), delta(Math.round(0.06 * FS)));
+        G.linea(ctx, esc, null, y, { t0: 0, dt: 1000 / FS, color: C.respuesta, ancho: 1.5, C });
+        const txt = e.r >= 1 ? (e.r === 1 ? 'no se apaga nunca' : 'crece sin freno') : null;
+        if (txt) G.texto(ctx, esc.caja.x + esc.caja.w, esc.caja.y + 12, txt, { alinear: 'right', color: C.mal, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+      },
+    });
+
+    const lect = Curso.lecturas('#r3-lecturas', [
+      { id: 'f', nombre: 'Frecuencia del pico', clase: 'respuesta' },
+      { id: 'ancho', nombre: 'Ancho del pico (−3 dB)' },
+      { id: 'r', nombre: 'Distancia al centro' },
+      { id: 'apaga', nombre: 'Tarda en apagarse' },
+    ]);
+    function estado() {
+      const m = medir(), t = t60();
+      lect.fijar('f', num(m.f0, 0) + ' Hz');
+      lect.fijar('ancho', m.estable ? num(m.ancho, m.ancho < 10 ? 1 : 0) + ' Hz' : '—');
+      lect.fijar('r', num(e.r, 3));
+      lect.fijar('apaga', e.r < 1 ? (t < 0.1 ? num(t * 1000, t < 0.01 ? 1 : 0) + ' ms' : num(t, 2) + ' s') + ' (−60 dB)' : e.r === 1 ? 'nunca' : 'se dispara');
+      plano.canvas.setAttribute('aria-valuenow', String(Math.round(m.f0)));
+      plano.canvas.setAttribute('aria-valuetext', 'Poste a ' + num(m.f0, 0) + ' Hz, a ' + num(e.r, 3) + ' del centro' + (e.r >= 1 ? ', fuera de lo estable' : ''));
+    }
+    const mandos = document.getElementById('r3-mandos');
+    let mF = null, mC = null;
+    const sincronizar = () => { mF.fijar(limitar(Math.round(th2f(e.th) / 10) * 10, 10, 7990), false); mC.fijar(vDe(e.r), false); };
+    const cambio = () => { estado(); plano.dibujar(); resp.dibujar(); pal.dibujar(); Curso.cambio('reto-3'); };
+    mF = Curso.mando(mandos, { etiqueta: 'Frecuencia del poste', clase: 'respuesta', min: 10, max: 7990, paso: 10, valor: 2700, unidad: 'Hz', decimales: 0, alCambiar: v => { e.th = f2th(v); estado(); plano.dibujar(); resp.dibujar(); pal.dibujar(); Curso.cambio('reto-3'); } });
+    mC = Curso.mando(mandos, { etiqueta: 'Cerca del borde', clase: 'respuesta', min: 0, max: 1, paso: 0.005, valor: vDe(e.r), formato: v => 'a ' + num(1 - rDe(v), 4) + ' del borde', alCambiar: v => { e.r = rDe(v); estado(); plano.dibujar(); resp.dibujar(); pal.dibujar(); Curso.cambio('reto-3'); } });
+    const poner = p => {
+      const { cx, cy, k } = geo(plano.w, plano.h), re = (p.x - cx) / k, im = (cy - p.y) / k;
+      e.r = limitar(Math.round(Math.hypot(re, im) * 1000) / 1000, 0.05, 1.25);
+      e.th = f2th(limitar(Math.round(th2f(Math.abs(Math.atan2(im, re))) / 10) * 10, 10, 7990));
+      sincronizar(); cambio();
+    };
+    Curso.arrastre(plano, { alBajar: p => { poner(p); }, alMover: p => poner(p) });
+    plano.canvas.tabIndex = 0;
+    plano.canvas.setAttribute('aria-valuemin', '10');
+    plano.canvas.setAttribute('aria-valuemax', '7990');
+    plano.canvas.addEventListener('keydown', ev => {
+      // Derecha y arriba suben la frecuencia del poste; izquierda y abajo la bajan (con Mayús, de 100 en 100 Hz).
+      const s = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[ev.key];
+      if (!s) return;
+      ev.preventDefault();
+      e.th = f2th(limitar(Math.round(th2f(e.th) / 10) * 10 + s * (ev.shiftKey ? 100 : 10), 10, 7990));
+      sincronizar(); cambio();
+    });
+    Curso.audio.boton('#r3-lecturas', () => {
+      const y = S.filtrar(filtro(), delta(Math.round(FS * 1.2)));
+      for (let i = 0; i < y.length; i++) y[i] = 4 * Math.tanh(y[i] / 4);
+      return { x: y, fs: FS, volumen: 0.5 };
+    }, 'Oír la palmada');
+    estado();
+    Curso.reto('reto-3', {
+      titulo: 'Coloca el polo', nivel: 'medio',
+      comprobar: () => {
+        if (e.r >= 1) return { ok: false, mensaje: e.r === 1 ? 'El poste está justo en el borde: el tono no se apagaría nunca. Mételo un poco.' : 'El poste se ha salido del círculo: el filtro se vuelve loco. Mételo otra vez.' };
+        const m = medir(), fOk = Math.abs(m.f0 - 1000) <= 40, aOk = m.ancho <= 52;
+        if (!fOk && !aOk) return { ok: false, mensaje: 'Empieza por la frecuencia: el pico está en ' + num(m.f0, 0) + ' Hz y tiene que estar en 1.000. Después, estrecha el pico.' };
+        if (!fOk) return { ok: false, mensaje: 'El ancho ya vale, pero el pico está en ' + num(m.f0, 0) + ' Hz, ' + (m.f0 > 1000 ? 'por encima' : 'por debajo') + ' de 1.000. Recorre el borde del círculo.' };
+        if (!aOk) return { ok: false, mensaje: 'La frecuencia ya está, pero el pico mide ' + num(m.ancho, 0) + ' Hz de ancho. Acerca el poste al borde sin tocarlo.' };
+        return { ok: true, mensaje: 'Pico a ' + num(m.f0, 0) + ' Hz, de ' + num(m.ancho, 0) + ' Hz de ancho, con el poste dentro del círculo: estable.' };
+      },
+      resolver: () => { e.r = 0.995; e.th = f2th(1000); sincronizar(); cambio(); },
+      pista: [
+        'La frecuencia es el ángulo del poste: media vuelta de círculo, desde el 0 de la derecha hasta el otro lado, son 8.000 Hz. Un cuarto de vuelta son 4.000 Hz, y 1.000 Hz es una octava parte de media vuelta.',
+        'Para estrechar el pico hay que acercar el poste al borde sin tocarlo. Con el dedo es difícil afinar tanto, así que usa el mando «Cerca del borde».',
+      ],
+      exito: '<p>Cuanto más cerca del borde pones el poste, más alto y estrecho es el pico, y más tiempo suena la respuesta a una palmada. Justo en el borde ya no se apaga, y fuera crece sin freno: un filtro es estable si todos sus polos están dentro del círculo.</p>',
+    });
+  })();
+
+  // ── Reto 4 · ¿Cuánto llega tarde? (arrastrar la traza sobre el lienzo y escuchar) ───────────────────
+  // Una palmada grave (verde) pasa por un FIR simétrico de 641 coeficientes (retraso: 320 muestras, 20 ms) o por un
+  // Butterworth de orden 8 a 300 Hz. La traza filtrada (naranja, escalada al pico de la original) se arrastra a mano.
+  (function () {
+    const DUR = 120, NS = Math.round(DUR / 1000 * FS), INI = Math.round(0.03 * FS);
+    const w = S.ruido('blanco', 480, S.azar(5)), bruta = new Float64Array(NS);
+    for (let i = 0; i < 480; i++) { const t = i / FS; bruta[INI + i] = w[i] * (1 - Math.exp(-t / 0.0005)) * Math.exp(-t / 0.004); }
+    const orig = S.normalizar(S.filtfilt(S.butterworth(4, 700, FS, 'pasoBajo'), bruta), 1);
+    const fir = S.firVentana(2000, FS, 641, 'pasoBajo', 'hamming'), iir = S.butterworth(8, 300, FS, 'pasoBajo');
+    const cruda = { fir: S.filtrar({ b: fir }, orig), iir: S.filtrarSecciones(iir, orig) };
+    const fil = {}, corr = {}, cima = {};
+    const argmax = y => { let k = 0; for (let i = 1; i < y.length; i++) if (Math.abs(y[i]) > Math.abs(y[k])) k = i; return k; };
+    for (const t of ['fir', 'iir']) {
+      fil[t] = S.escalar(cruda[t], pico(orig) / pico(cruda[t]));
+      corr[t] = S.correlacion(cruda[t], orig, { normalizada: true });
+      cima[t] = argmax(fil[t]) * 1000 / FS;
+    }
+    const cimaOrig = argmax(orig) * 1000 / FS;
+    const retardo = S.respuesta(iir, FS, [20, 300]).retrasoGrupo;             // del IIR: en los graves y en el corte
+    const e = { tipo: 'fir', mov: 0 };
+    const encaje = () => {
+      const lag = Math.round(-e.mov / 1000 * FS), c = corr[e.tipo], i = lag - c.retrasos[0];
+      return i >= 0 && i < c.valores.length ? Math.max(0, c.valores[i]) : 0;
+    };
+    let esc = null;
+    const L = G.lienzo('#r4-escena', {
+      alto: altoEscena(210, 250), rol: 'slider',
+      etiqueta: 'Una palmada en verde y la misma palmada filtrada, en naranja, que puedes arrastrar hacia la izquierda hasta que encajen',
+      dibujar: (ctx, w, h, C) => {
+        esc = G.ejes(ctx, { x: [0, DUR], y: [-1.4, 1.4], marcasX: w < 500 ? [0, 40, 80, 120] : [0, 20, 40, 60, 80, 100, 120], marcasY: false, formatoX: v => num(v), etiquetaX: 'tiempo (ms)', margen: { izquierda: 14, derecha: 14, arriba: 30, abajo: 36 }, C });
+        // La marca del pico de la palmada original.
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.senal, 0.55); ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+        const xo = Math.round(esc.x(cimaOrig)) + 0.5;
+        ctx.beginPath(); ctx.moveTo(xo, esc.caja.y); ctx.lineTo(xo, esc.caja.y + esc.caja.h); ctx.stroke();
+        ctx.restore();
+        G.linea(ctx, esc, null, fil[e.tipo], { t0: e.mov, dt: 1000 / FS, color: C.respuesta, ancho: 2.1, C });
+        G.linea(ctx, esc, null, orig, { t0: 0, dt: 1000 / FS, color: C.senal, ancho: 2.1, C });
+        // Un triángulo naranja bajo el pico de la traza que arrastras.
+        const xf = esc.x(cima[e.tipo] + e.mov), yb = esc.caja.y + esc.caja.h;
+        if (xf > esc.caja.x && xf < esc.caja.x + esc.caja.w) {
+          ctx.save(); ctx.fillStyle = C.respuesta; ctx.beginPath(); ctx.moveTo(xf, yb - 1); ctx.lineTo(xf - 5.5, yb - 11); ctx.lineTo(xf + 5.5, yb - 11); ctx.closePath(); ctx.fill(); ctx.restore();
+        }
+        bola(ctx, esc.caja.x + 8, 12, 4, C.senal, C);
+        G.texto(ctx, esc.caja.x + 18, 16, 'palmada original', { color: C.suave, tam: 11, C });
+        bola(ctx, esc.caja.x + 142, 12, 4, C.respuesta, C);
+        G.texto(ctx, esc.caja.x + 152, 16, w < 420 ? 'filtrada' : 'filtrada (escalada)', { color: C.suave, tam: 11, C });
+      },
+    });
+    const fila = document.getElementById('r4-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'mov', nombre: 'Has movido la traza', clase: 'respuesta' },
+      { id: 'picos', nombre: 'Entre los picos' },
+      { id: 'encaje', nombre: 'Encaje' },
+    ]);
+    const nota = document.getElementById('r4-nota'), notaBase = nota.textContent;
+    function estado() {
+      lect.fijar('mov', e.mov === 0 ? 'nada' : num(-e.mov, 1) + ' ms a la izquierda');
+      lect.fijar('picos', num(Math.abs(cima[e.tipo] + e.mov - cimaOrig), 1) + ' ms');
+      lect.fijar('encaje', num(Math.round(100 * encaje())) + ' %');
+      nota.textContent = e.tipo === 'iir'
+        ? 'Con el IIR ningún desplazamiento lo deja encajado del todo: los graves salen unos ' + num(retardo[0] * 1000, 1) + ' ms tarde y las frecuencias cerca del corte, unos ' + num(retardo[1] * 1000, 1) + ' ms. Fíjate en que el encaje no llega al 100 %. ' + notaBase
+        : notaBase;
+      L.canvas.setAttribute('aria-valuenow', String(-e.mov));
+      L.canvas.setAttribute('aria-valuetext', 'Traza desplazada ' + num(-e.mov, 1) + ' milisegundos a la izquierda; encaje del ' + Math.round(100 * encaje()) + ' por ciento');
+    }
+    const mover = v => { e.mov = limitar(Math.round(v * 10) / 10, -60, 20); estado(); L.dibujar(); Curso.cambio('reto-4'); };
+    let ancla = null;
+    Curso.arrastre(L, {
+      eje: 'x',
+      alBajar: p => { if (!esc) return false; ancla = { x: esc.xi(p.x), mov: e.mov }; },
+      alMover: p => mover(ancla.mov + esc.xi(p.x) - ancla.x),
+    });
+    L.canvas.tabIndex = 0;
+    L.canvas.setAttribute('aria-valuemin', '-20');
+    L.canvas.setAttribute('aria-valuemax', '60');
+    L.canvas.addEventListener('keydown', ev => {
+      const s = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[ev.key];
+      if (!s) return;
+      ev.preventDefault();
+      mover(e.mov + s * (ev.shiftKey ? 1 : 0.1));
+    });
+    const sel = Curso.eleccion('#r4-mandos', {
+      etiqueta: 'Filtro', valor: 'fir',
+      opciones: [{ valor: 'fir', texto: 'FIR simétrico, 641 coeficientes' }, { valor: 'iir', texto: 'IIR Butterworth, orden 8' }],
+      alCambiar: v => { e.tipo = v; estado(); L.dibujar(); Curso.cambio('reto-4'); },
+    });
+    // Las dos palmadas a la vez, tal como las ves ahora: alineadas suenan como una sola; si no, como un redoble.
+    Curso.audio.boton(fila, () => {
+      const rep = 3, sep = Math.round(0.4 * FS), s = Math.round(e.mov / 1000 * FS), y = fil[e.tipo], salida = new Float64Array(rep * sep + NS);
+      for (let r = 0; r < rep; r++) {
+        for (let i = 0; i < NS; i++) {
+          salida[r * sep + i] += orig[i];
+          const j = i + s;
+          if (j >= 0 && j < NS) salida[r * sep + j] += y[i];
+        }
+      }
+      return { x: salida, fs: FS, volumen: 0.5 };
+    }, 'Oír las dos a la vez');
+    estado();
+    Curso.reto('reto-4', {
+      titulo: '¿Cuánto llega tarde?', nivel: 'medio',
+      comprobar: () => {
+        if (e.tipo !== 'fir') return { ok: false, mensaje: 'El reto se resuelve con el FIR simétrico. Vuelve a elegirlo; con el IIR, mira cómo el encaje no llega al 100 %.' };
+        const s = -e.mov, err = s - 20;
+        if (Math.abs(err) <= 1) return { ok: true, mensaje: 'Encajan. El filtro retrasa todas las frecuencias lo mismo: 320 muestras, que a 16.000 muestras por segundo son 20 ms.' };
+        if (s < 1) return { ok: false, mensaje: '' };
+        if (err < -8) return { ok: false, mensaje: 'La naranja sigue bastante a la derecha de la verde: arrástrala más hacia la izquierda.' };
+        if (err > 8) return { ok: false, mensaje: 'Te has pasado: la naranja ha quedado a la izquierda de la verde.' };
+        return { ok: false, mensaje: err < 0 ? 'Casi: la naranja todavía va un poco a la derecha.' : 'Casi: te has pasado un poco hacia la izquierda.' };
+      },
+      resolver: () => { sel.fijar('fir', false); e.tipo = 'fir'; mover(-20); },
+      pista: [
+        'Fíjate en el pico más alto de cada traza. La línea punteada marca el de la verde, y el triángulo naranja de abajo, el de la traza que arrastras: lleva el triángulo hasta la línea.',
+        'El filtro es simétrico: su centro está en la mitad de sus 641 coeficientes, o sea, a 320 muestras. Con 16.000 muestras por segundo, cada una dura 62,5 microsegundos.',
+      ],
+      exito: '<p>Un FIR simétrico retrasa todas las frecuencias lo mismo, la mitad de su longitud: la forma llega intacta, pero tarde. Un IIR, en cambio, retrasa más unas frecuencias que otras, y por eso no hay ningún desplazamiento que lo deje encajado del todo.</p>',
+    });
+  })();
+
+  // ── Reto 5 · Hacia delante y hacia atrás (tocar operaciones y ver el resultado) ──────────────────────
+  // Un latido sintético con ruido pasa por un Butterworth de orden 4 a 25 Hz. Cada operación («Filtrar» o «Dar la
+  // vuelta») añade una fila. Filtrar retrasa el latido; con la señal del revés, lo adelanta. En directo no se puede
+  // dar la vuelta, porque el final de la señal todavía no existe.
+  (function () {
+    const F5 = 1000, N5 = 800, MAX = 4;                       // 1.000 muestras por segundo; hasta cuatro operaciones
+    const g = (t, a, mu, s) => a * Math.exp(-0.5 * Math.pow((t - mu) / s, 2));
+    const ruido = S.ruido('blanco', N5, S.azar(11)), lat = new Float64Array(N5);
+    for (let i = 0; i < N5; i++) { const t = i / F5; lat[i] = g(t, 0.12, 0.22, 0.025) + g(t, -0.1, 0.325, 0.008) + g(t, 1, 0.36, 0.011) + g(t, -0.25, 0.395, 0.01) + g(t, 0.3, 0.58, 0.045) + 0.035 * ruido[i]; }
+    const H = S.butterworth(4, 25, F5, 'pasoBajo');
+    const invertir = y => Float64Array.from(y).reverse();
+    const cima = y => { const s = S.mediaMovil(y, 15, { centrada: true }); let k = 0; for (let i = 1; i < s.length; i++) if (s[i] > s[k]) k = i; return k; };
+    const R0 = cima(lat);                                     // dónde está el latido en la grabación
+    const fila0 = () => ({ y: lat, rev: false, op: null, idx: R0, ret: 0 });
+    function nueva(u, op) {
+      const y = op === 'F' ? S.filtrarSecciones(H, u.y) : invertir(u.y), rev = op === 'R' ? !u.rev : u.rev, idx = cima(y);
+      return { y, rev, op, idx, ret: (rev ? N5 - 1 - idx : idx) - R0 };
+    }
+    const e = { modo: 'grabado', filas: [fila0()] };
+    const ultima = () => e.filas[e.filas.length - 1];
+
+    const L = G.lienzo('#r5-escena', {
+      alto: altoEscena(340, 372),
+      etiqueta: 'Cinco filas con el latido de un electrocardiograma sintético: la grabación y lo que queda tras cada operación que aplicas',
+      dibujar: (ctx, w, h, C) => {
+        const x0 = 14, ancho = w - 28, pie = 38, rh = (h - 8 - pie) / (MAX + 1);
+        for (let k = 0; k <= MAX; k++) {
+          const f = e.filas[k], caja = { x: x0, y: 8 + k * rh + 3, w: ancho, h: rh - 6 };
+          const esc = G.ejes(ctx, { caja, x: [0, N5], y: [-0.5, 1.15], soloEscala: true, C });
+          ctx.fillStyle = G.alfa(C.cuerpo, C.oscuro ? 0.04 : 0.035);
+          ctx.fillRect(caja.x, caja.y, caja.w, caja.h);
+          ctx.save();
+          ctx.strokeStyle = G.alfa(C.eje, 0.6); ctx.lineWidth = 1; ctx.setLineDash([2, 4]);
+          const y0 = Math.round(esc.y(0)) + 0.5;
+          ctx.beginPath(); ctx.moveTo(caja.x, y0); ctx.lineTo(caja.x + caja.w, y0); ctx.stroke();
+          ctx.restore();
+          if (!f) { G.texto(ctx, caja.x + 6, caja.y + 13, 'operación ' + k + ' · sin usar', { color: C.tenue, tam: 10, C }); continue; }
+          // Dónde estaría el latido sin retraso, mirando la señal en el sentido en que está.
+          const ref = f.rev ? N5 - 1 - R0 : R0;
+          ctx.save();
+          ctx.strokeStyle = G.alfa(C.senal, 0.6); ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+          const xr = Math.round(esc.x(ref)) + 0.5;
+          ctx.beginPath(); ctx.moveTo(xr, caja.y); ctx.lineTo(xr, caja.y + caja.h); ctx.stroke();
+          ctx.restore();
+          const color = k === 0 ? C.senal : C.respuesta;
+          G.linea(ctx, esc, null, f.y, { t0: 0, dt: 1000 / F5, color, ancho: 1.7, C });
+          const xp = esc.x(f.idx), yb = caja.y + caja.h;
+          ctx.save(); ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(xp, yb - 1); ctx.lineTo(xp - 4.5, yb - 8.5); ctx.lineTo(xp + 4.5, yb - 8.5); ctx.closePath(); ctx.fill(); ctx.restore();
+          const nombre = k === 0 ? 'señal grabada' : (f.op === 'F' ? 'filtrar' : 'dar la vuelta') + (f.rev ? ' · del revés' : '');
+          G.texto(ctx, caja.x + 6, caja.y + 13, (k + 1) + ' · ' + nombre, { color: C.suave, tam: 10, fondo: G.alfa(C.pantalla, 0.8), C });
+          if (k > 0) G.texto(ctx, caja.x + caja.w - 6, caja.y + 13, f.rev ? 'va del revés' : 'retraso ' + conSigno(Math.round(f.ret)) + ' ms', { alinear: 'right', color: f.rev ? C.tenue : (Math.abs(f.ret) <= 3 ? C.senal : C.respuesta), tam: 10, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+        }
+        G.ejes(ctx, { caja: { x: x0, y: 8 + (MAX + 1) * rh + 2, w: ancho, h: 3 }, x: [0, N5], y: [0, 1], marcasX: [0, 200, 400, 600, 800], marcasY: false, rejilla: false, formatoX: v => num(v), etiquetaX: 'tiempo (ms)', C });
+      },
+    });
+
+    const lect = Curso.lecturas('#r5-lecturas', [
+      { id: 'ops', nombre: 'Operaciones' },
+      { id: 'ret', nombre: 'Retraso del latido', clase: 'respuesta' },
+      { id: 'lado', nombre: 'La señal va' },
+    ]);
+    const nota = document.getElementById('r5-nota');
+    const NOTA_GRABADO = 'Cada operación añade una fila nueva. Con cuatro operaciones se acaba el espacio: si no te sale, empieza de nuevo.';
+    const NOTA_DIRECTO = 'En directo solo existe lo que ya ha pasado: el final de la señal todavía no ha llegado, así que no se le puede dar la vuelta. Filtra todo lo que quieras y mira cuánto se retrasa el latido.';
+    let botones = null, modo = null;
+    function estado() {
+      const u = ultima();
+      lect.fijar('ops', (e.filas.length - 1) + ' de ' + MAX);
+      lect.fijar('ret', u.rev ? 'va del revés' : conSigno(Math.round(u.ret)) + ' ms');
+      lect.fijar('lado', u.rev ? 'del revés' : 'del derecho');
+      nota.textContent = e.modo === 'directo' ? NOTA_DIRECTO : NOTA_GRABADO;
+      botones.F.disabled = e.filas.length > MAX;
+      botones.R.disabled = e.modo === 'directo' || e.filas.length > MAX;
+      L.etiquetar('Cinco filas con el latido: ' + (e.filas.length - 1) + ' operaciones aplicadas; el latido va ' + (u.rev ? 'del revés' : 'del derecho con un retraso de ' + Math.round(u.ret) + ' milisegundos') + '.');
+    }
+    const cambio = () => { estado(); L.dibujar(); Curso.cambio('reto-5'); };
+    const aplicar = op => { if (e.filas.length > MAX || (op === 'R' && e.modo === 'directo')) return; e.filas.push(nueva(ultima(), op)); cambio(); };
+    const reiniciar = () => { e.filas = [fila0()]; cambio(); };
+    modo = Curso.eleccion('#r5-mandos', {
+      etiqueta: 'Situación', valor: 'grabado',
+      opciones: [{ valor: 'grabado', texto: 'Grabación ya hecha' }, { valor: 'directo', texto: 'En directo' }],
+      alCambiar: v => { e.modo = v; reiniciar(); },
+    });
+    botones = Curso.botones('#r5-mandos', [
+      { id: 'F', texto: 'Filtrar', tipo: 'principal', alPulsar: () => aplicar('F') },
+      { id: 'R', texto: 'Dar la vuelta', alPulsar: () => aplicar('R') },
+      { id: 'otra', texto: 'Empezar de nuevo', icono: 'otra', tipo: 'discreto', alPulsar: reiniciar },
+    ]);
+    estado();
+    Curso.reto('reto-5', {
+      titulo: 'El truco de ida y vuelta', nivel: 'medio',
+      comprobar: () => {
+        const u = ultima(), nF = e.filas.filter(f => f.op === 'F').length;
+        if (e.modo === 'directo') return { ok: false, mensaje: e.filas.length > 1 ? 'En directo no se puede dar la vuelta a la señal, y sin eso el retraso se queda. Cambia a «Grabación ya hecha».' : '' };
+        if (e.filas.length === 1) return { ok: false, mensaje: '' };
+        const agotado = e.filas.length > MAX ? ' Se han acabado las operaciones: pulsa «Empezar de nuevo».' : '';
+        if (u.rev) return { ok: false, mensaje: 'La señal va del revés: tiene que acabar del derecho.' + agotado };
+        if (!nF) return { ok: false, mensaje: 'Solo has dado la vuelta: el latido sigue sin filtrar.' + agotado };
+        if (Math.abs(u.ret) > 3) return { ok: false, mensaje: 'Está filtrado, pero el latido va ' + num(Math.abs(Math.round(u.ret))) + ' ms ' + (u.ret > 0 ? 'tarde' : 'adelantado') + '. Lo que un filtrado retrasa, otro lo puede adelantar si la señal va del revés.' + agotado };
+        return { ok: true, mensaje: 'Filtrado ' + (nF === 1 ? 'una vez' : nF + ' veces') + ' y en su sitio: sin retraso.' };
+      },
+      resolver: () => { modo.fijar('grabado', false); e.modo = 'grabado'; e.filas = [fila0()]; for (const op of ['F', 'R', 'F', 'R']) e.filas.push(nueva(ultima(), op)); cambio(); },
+      pista: [
+        'Filtrar retrasa el latido unos milisegundos. Mira qué le pasa a la fila siguiente si le das la vuelta y la filtras otra vez.',
+        'Prueba esta secuencia: filtrar, dar la vuelta, filtrar y dar la vuelta otra vez. Lo que el primer filtrado retrasa, el segundo, con la señal del revés, lo adelanta.',
+      ],
+      exito: '<p>Lo que el primer filtrado retrasa, el segundo, que trabaja con la señal del revés, lo adelanta, y el resultado queda en su sitio y filtrado dos veces: es el filtrado de fase cero. Solo se puede hacer con la grabación entera, porque dar la vuelta a la señal exige conocer su final. En directo, el retraso hay que aceptarlo.</p>',
+    });
+  })();
+
+  // ── Reto 6 · Doma el acople (arrastrar el recorte, dos mandos y escuchar) ────────────────────────────
+  // MODELO SIMPLIFICADO: la sala y el altavoz solo cambian el volumen de cada frecuencia (tres picos y una banda de
+  // 150 Hz a 5 kHz), y el camino de vuelta solo añade un retraso d/343 s y un nivel que cae como 1/d. Pita en la
+  // primera frecuencia que llega en fase (k/τ) cuya ganancia de lazo llega a 1 (0 dB). El recorte es un filtro «pico»
+  // de Q 8 con ganancia negativa. En una sala real el recorte también cambia la fase y gana mucho menos.
+  (function () {
+    const D = 3, TAU_C = D / 343, FMAX = 3500, QR = 8;
+    const sala = [S.biquad('pico', 630, FS, { Q: 4, ganancia: 2 }), S.biquad('pico', 1250, FS, { Q: 8, ganancia: 9 }), S.biquad('pico', 2600, FS, { Q: 6, ganancia: 4 }), S.biquad('pasoAlto', 150, FS), S.biquad('pasoBajo', 5000, FS)];
+    const cand = [];
+    for (let k = 1; k / TAU_C < FMAX + 1000; k++) cand.push(k / TAU_C);
+    const rej = []; for (let f = 0; f <= FMAX; f += 10) rej.push(f);
+    rej[0] = 5;
+    const distancia = -20 * Math.log10(D);                               // dB que se pierden en el camino de vuelta
+    const salaRej = S.respuesta(sala, FS, rej).magDb, salaCand = S.respuesta(sala, FS, cand).magDb;
+    const e = { vol: 0, f: 1000, prof: -9, cache: null };
+    function modelo() {
+      const c = e.cache;
+      if (c && c.f === e.f && c.prof === e.prof) return c;
+      const rec = S.biquad('pico', e.f, FS, { Q: QR, ganancia: e.prof });
+      const recRej = S.respuesta(rec, FS, rej).magDb, recCand = S.respuesta(rec, FS, cand).magDb;
+      let mejor = -1e9, kb = 0;
+      for (let i = 0; i < cand.length; i++) { const v = salaCand[i] + recCand[i] + distancia; if (v > mejor) { mejor = v; kb = i; } }
+      e.cache = { f: e.f, prof: e.prof, recRej, recCand, aguanta: -mejor, fpita: cand[kb] };
+      return e.cache;
+    }
+    const base = (() => { const sinRecorte = { aguanta: 0 }; let mejor = -1e9; for (let i = 0; i < cand.length; i++) mejor = Math.max(mejor, salaCand[i] + distancia); sinRecorte.aguanta = -mejor; return sinRecorte.aguanta; })();
+    const META = base + 4;
+    const pita = () => e.vol > modelo().aguanta;
+    const dbTxt = v => conSigno(v, 1) + ' dB';
+
+    let escA = null, escB = null;
+    const L = G.lienzo('#r6-escena', {
+      alto: altoEscena(330, 370), rol: 'slider',
+      etiqueta: 'Modelo simplificado del acople con el micrófono a 3 metros: arriba, la ganancia del lazo a cada frecuencia y los puntos que llegan en fase; abajo, el recorte que puedes arrastrar',
+      dibujar: (ctx, w, h, C) => {
+        const m = modelo(), izq = 48, ancho = w - izq - 14;
+        const hA = Math.round((h - 70) * 0.66), yB = 22 + hA + 30, hB = h - yB - 34;
+        escA = G.ejes(ctx, { caja: { x: izq, y: 22, w: ancho, h: hA }, x: [0, FMAX], y: [-26, 12], marcasX: [0, 500, 1000, 1500, 2000, 2500, 3000, 3500], marcasY: [-20, -10, 0, 10], formatoX: v => (w < 500 ? num(v / 1000, 1) : num(v)), formatoY: v => num(v), C });
+        G.texto(ctx, izq - 6, 14, 'ganancia del lazo (dB)', { alinear: 'left', color: C.tenue, tam: 10, C });
+        // La línea de 1 (0 dB): por encima, pita.
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.mal, 0.85); ctx.lineWidth = 1.2; ctx.setLineDash([6, 4]);
+        const y0 = Math.round(escA.y(0)) + 0.5;
+        ctx.beginPath(); ctx.moveTo(izq, y0); ctx.lineTo(izq + ancho, y0); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, izq + ancho - 4, y0 - 5, 'por encima de esta línea, pita', { alinear: 'right', color: C.mal, tam: 10, C });
+        const ys = rej.map((f, i) => Math.max(-26, salaRej[i] + m.recRej[i] + distancia + e.vol));
+        G.linea(ctx, escA, rej, ys, { color: C.espectro, ancho: 2, C });
+        // Las frecuencias que llegan en fase, cada 114 Hz: las que superan la línea se tiñen de coral.
+        const cx = [], cy = [], rx = [], ry = [];
+        for (let i = 0; i < cand.length; i++) {
+          if (cand[i] > FMAX) break;
+          const v = salaCand[i] + m.recCand[i] + distancia + e.vol;
+          (v > 0 ? rx : cx).push(cand[i]); (v > 0 ? ry : cy).push(Math.max(-26, v));
+        }
+        G.puntos(ctx, escA, cx, cy, { color: C.cuerpo, radio: 2.6, C });
+        G.puntos(ctx, escA, rx, ry, { color: C.ruido, radio: 5, C });
+        if (pita()) G.texto(ctx, izq + 8, 36, '¡Pita a ' + num(Math.round(m.fpita), 0) + ' Hz!', { color: C.mal, tam: 13, peso: 600, fondo: G.alfa(C.pantalla, 0.85), C });
+        // La tira del recorte.
+        escB = G.ejes(ctx, { caja: { x: izq, y: yB, w: ancho, h: hB }, x: [0, FMAX], y: [-13, 1.5], marcasX: [0, 500, 1000, 1500, 2000, 2500, 3000, 3500], marcasY: [-12, -6, 0], formatoX: v => (w < 500 ? num(v / 1000, 1) : num(v)), formatoY: v => num(v), etiquetaX: w < 500 ? 'frecuencia (kHz)' : 'frecuencia (Hz)', C });
+        G.texto(ctx, izq - 6, yB - 8, 'recorte (dB)', { alinear: 'left', color: C.tenue, tam: 10, C });
+        G.linea(ctx, escB, rej, m.recRej, { color: C.plantilla, ancho: 2, C });
+        bola(ctx, escB.x(e.f), escB.y(e.prof), 6, C.plantilla, C);
+        // Una marca discreta del pico de la sala que más tira.
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.eje, 0.7); ctx.setLineDash([2, 4]);
+        const xf = Math.round(escB.x(e.f)) + 0.5;
+        ctx.beginPath(); ctx.moveTo(xf, 22); ctx.lineTo(xf, yB + hB); ctx.stroke();
+        ctx.restore();
+      },
+    });
+    const lect = Curso.lecturas('#r6-fila', [
+      { id: 'vol', nombre: 'Volumen', clase: 'respuesta' },
+      { id: 'aguanta', nombre: 'Aguanta hasta' },
+      { id: 'pita', nombre: 'Estado' },
+    ]);
+    function estado() {
+      const m = modelo();
+      lect.fijar('vol', dbTxt(e.vol));
+      lect.fijar('aguanta', dbTxt(m.aguanta) + ' (meta ' + dbTxt(META) + ')');
+      lect.fijar('pita', pita() ? 'pita a ' + num(Math.round(m.fpita), 0) + ' Hz' : 'margen de ' + num(m.aguanta - e.vol, 1) + ' dB');
+      L.canvas.setAttribute('aria-valuenow', String(Math.round(e.f)));
+      L.canvas.setAttribute('aria-valuetext', 'Recorte en ' + num(Math.round(e.f), 0) + ' hercios, de ' + num(-e.prof, 1) + ' decibelios; ' + (pita() ? 'el sistema pita a ' + num(Math.round(m.fpita), 0) + ' hercios' : 'el sistema no pita'));
+    }
+    const frecuencia = Curso.mando('#r6-mandos', { etiqueta: 'Frecuencia del recorte', clase: 'respuesta', min: 200, max: 3400, paso: 5, valor: e.f, unidad: 'Hz', decimales: 0, reto: 'reto-6', alCambiar: v => { e.f = v; estado(); L.dibujar(); } });
+    const profundidad = Curso.mando('#r6-mandos', { etiqueta: 'Profundidad del recorte', clase: 'respuesta', min: -12, max: 0, paso: 0.5, valor: e.prof, unidad: 'dB', decimales: 1, reto: 'reto-6', alCambiar: v => { e.prof = v; estado(); L.dibujar(); } });
+    const volumen = Curso.mando('#r6-mandos', { etiqueta: 'Volumen', clase: 'senal', min: -10, max: 10, paso: 0.1, valor: e.vol, unidad: 'dB', decimales: 1, formato: v => conSigno(v, 1) + ' dB', reto: 'reto-6', alCambiar: v => { e.vol = v; estado(); L.dibujar(); } });
+    // El pitido, o el «timbre» que lo precede: un tono a la frecuencia crítica que crece vuelta a vuelta si el lazo
+    // devuelve más de lo que recibe y se apaga si devuelve menos. Siempre a volumen moderado.
+    Curso.audio.boton('#r6-fila', () => {
+      const m = modelo(), g = Math.pow(10, (e.vol - m.aguanta) / 20), n = Math.round(1.6 * FS), x = new Float64Array(n);
+      for (let i = 0; i < n; i++) {
+        const t = i / FS, crecim = Math.pow(g, t / TAU_C);
+        const env = g >= 1 ? Math.min(1, 0.01 * crecim) : Math.min(1, crecim);
+        x[i] = Math.tanh(2 * env) * Math.sin(TAU * m.fpita * t);
+      }
+      return { x, fs: FS, volumen: 0.22, normalizar: false };
+    }, 'Oír el pitido (o su timbre)');
+    // Arrastre horizontal: la frecuencia del recorte. La profundidad se mueve con el mando o con las flechas de arriba y abajo.
+    Curso.arrastre(L, {
+      eje: 'x',
+      alBajar: p => { if (!escA) return false; frecuencia.fijar(limitar(Math.round(escA.xi(p.x) / 5) * 5, 200, 3400)); },
+      alMover: p => frecuencia.fijar(limitar(Math.round(escA.xi(p.x) / 5) * 5, 200, 3400)),
+    });
+    L.canvas.tabIndex = 0;
+    L.canvas.setAttribute('aria-valuemin', '200');
+    L.canvas.setAttribute('aria-valuemax', '3400');
+    L.canvas.addEventListener('keydown', ev => {
+      const df = { ArrowRight: 10, ArrowLeft: -10 }[ev.key], dp = { ArrowUp: 0.5, ArrowDown: -0.5 }[ev.key];
+      if (!df && !dp) return;
+      ev.preventDefault();
+      if (df) frecuencia.fijar(limitar(e.f + df * (ev.shiftKey ? 10 : 1), 200, 3400));
+      if (dp) profundidad.fijar(limitar(e.prof + dp, -12, 0));
+    });
+    estado();
+    Curso.reto('reto-6', {
+      titulo: 'Doma el acople', nivel: 'difícil',
+      comprobar: () => {
+        const m = modelo();
+        if (e.vol >= META && !pita()) return { ok: true, mensaje: 'Ganas ' + num(e.vol - base, 1) + ' dB sobre lo que aguantaba el sistema y no pita: el recorte está en el pico que mandaba.' };
+        if (pita()) {
+          return { ok: false, mensaje: 'Pita a ' + num(Math.round(m.fpita), 0) + ' Hz. ' + (e.vol >= META ? 'Ya tienes el volumen, pero el lazo devuelve más de lo que recibe a esa frecuencia: pon el recorte justo ahí, o baja el volumen.' : 'Baja el volumen hasta que se calle y busca qué frecuencia es la que manda.') };
+        }
+        if (m.aguanta < META) return { ok: false, mensaje: 'Con este recorte el sistema solo aguanta hasta ' + dbTxt(m.aguanta) + ', y la meta está en ' + dbTxt(META) + '. Sube el volumen hasta que pite, mira a qué frecuencia lo hace y recorta justo ahí.' };
+        return { ok: false, mensaje: 'Ya aguanta hasta ' + dbTxt(m.aguanta) + ': sube el volumen hasta ' + dbTxt(META) + ' como mínimo, sin pasarte.' };
+      },
+      resolver: () => {
+        frecuencia.fijar(1250, false); profundidad.fijar(-9, false);
+        e.f = 1250; e.prof = -9;
+        const m = modelo();
+        volumen.fijar(Math.round(((base + 4 + m.aguanta) / 2) * 10) / 10, false);
+        e.vol = volumen.valor;
+        estado(); L.dibujar();
+      },
+      pista: [
+        'Sube el volumen hasta que pite y fíjate en la frecuencia que dice el mensaje rojo. El punto coral que se pasa de la línea es el culpable.',
+        'Recorta justo ahí, no al lado: el recorte tiene que cubrir el pico de la sala, y a su alrededor se queda estrecho. Cuando el sistema aguante más, vuelve a subir el volumen hasta que pite otra frecuencia.',
+      ],
+      exito: '<p>El pitido nace donde el lazo devuelve más y además llega en fase. Al recortar ese pico ganas unos 5 dB, hasta que empieza a pitar la siguiente frecuencia. Así «afinan» la sala los técnicos de sonido: con estos métodos se ganan de 5 a 8 dB, y luego se dejan 2 o 3 de margen. Recuerda que esto es un modelo simplificado, y que en una sala de verdad el recorte también mueve la fase y puede ganar bastante menos.</p>',
+    });
+  })();
+
+  // ── En tu voz: el mismo filtro en directo y de ida y vuelta, y tu voz en un eco que se alimenta ─────
+  // Se filtra tu audio (a 16 kHz) con un paso bajo: un Butterworth de orden 8 a 300 Hz («tu voz tras una pared») o un
+  // FIR de fase lineal de 1.601 coeficientes a 400 Hz (retrasa 50 ms). Se compara la envolvente de la original con la
+  // de la filtrada en directo y la de ida y vuelta, y el retraso se mide con la correlación de las envolventes.
+  (function () {
+    const VENT = 0.01, DEC = 4, FSE = FS / DEC;                  // envolvente suavizada 10 ms y bajada a 4 kHz
+    const FILTROS = {
+      iir: { nombre: 'Butterworth de orden 8, corte a 300 Hz', corte: 300, crear: () => S.butterworth(8, 300, FS, 'pasoBajo') },
+      fir: { nombre: 'FIR de fase lineal, 1.601 coeficientes, corte a 400 Hz', corte: 400, crear: () => S.firVentana(400, FS, 1601, 'pasoBajo', 'hamming') },
+    };
+    const st = { x: null, tipo: 'iir', memoria: new Map(), orig: null, g: 0.6 };
+
+    // Ida y vuelta con un FIR: se filtra, se da la vuelta, se filtra y se vuelve a girar; los bordes se rellenan con su reflejo.
+    function idaYVueltaFir(b, x) {
+      const L = x.length, p = Math.min(b.length, L - 1), e = new Float64Array(L + 2 * p);
+      for (let i = 0; i < p; i++) { e[i] = 2 * x[0] - x[p - i]; e[p + L + i] = 2 * x[L - 1] - x[L - 2 - i]; }
+      e.set(x, p);
+      const a = S.filtrar({ b }, e), r = Float64Array.from(a).reverse(), c = Float64Array.from(S.filtrar({ b }, r)).reverse();
+      return c.slice(p, p + L);
+    }
+    function envolvente(x) {
+      const env = S.mediaMovil(S.envolvente(x), Math.round(VENT * FS), { centrada: true }), n = Math.floor(env.length / DEC), o = new Float64Array(n);
+      for (let i = 0; i < n; i++) o[i] = env[i * DEC];
+      return o;
+    }
+    const maximo = a => { let m = 0; for (let i = 0; i < a.length; i++) if (a[i] > m) m = a[i]; return m; };
+    // Retraso de b respecto de a (ms), por el pico de su correlación; NaN si no hay un pico claro.
+    function retraso(a, b) {
+      if (a.length < 40 || maximo(a) < 1e-9 || maximo(b) < 1e-12) return NaN;
+      const c = S.correlacion(b, a, { normalizada: true, maxRetraso: Math.round(0.1 * FSE) });
+      if (!c.mejor || !(c.mejor.valor > 0.5)) return NaN;
+      const i = c.retrasos.indexOf(c.mejor.retraso), fino = i > 0 && i < c.valores.length - 1 ? S.interpolarPico(c.valores, i) : null;
+      const pos = fino && Number.isFinite(fino.x) ? c.retrasos[0] + fino.x : c.mejor.retraso;
+      return 1000 * pos / FSE;
+    }
+    function version(tipo) {
+      if (st.memoria.has(tipo)) return st.memoria.get(tipo);
+      const f = FILTROS[tipo].crear(), x = st.x;
+      const directo = tipo === 'iir' ? S.filtrarSecciones(f, x) : S.filtrar({ b: f }, x).slice(0, x.length);
+      const ida = tipo === 'iir' ? S.filtfilt(f, x) : idaYVueltaFir(f, x);
+      const v = { directo, ida, env: { directo: envolvente(directo), ida: envolvente(ida) } };
+      v.retDirecto = retraso(v.env.ida, v.env.directo);   // respecto de la de ida y vuelta, que no se mueve
+      v.nivel = S.rms(directo) / Math.max(S.rms(x), 1e-12);
+      st.memoria.set(tipo, v);
+      return v;
+    }
+
+    const hueco = (ctx, w, h, C, texto) => G.texto(ctx, w / 2, h / 2, texto, { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C });
+    const leyenda = (ctx, C, x, y, items) => {
+      let cx = x;
+      for (const [color, texto] of items) { bola(ctx, cx + 4, y, 4, color, C); G.texto(ctx, cx + 13, y + 4, texto, { color: C.suave, tam: 11, C }); cx += 22 + texto.length * 6.6; }
+    };
+    const ms = v => (Number.isFinite(v) ? num(Math.round(v * 10) / 10, 1) + ' ms' : 'sin un comienzo nítido');
+
+    const lab = Curso.voz('#voz-lab', { ejemplos: ['frase', 'palmadas'], fsAnalisis: FS, fsEjemplos: FS, alCargar: cargar });
+    const mandos = crear('div', { class: 'mandos' });
+    lab.panel.appendChild(mandos);
+    Curso.eleccion(mandos, {
+      etiqueta: 'Filtro paso bajo', valor: st.tipo,
+      opciones: [{ valor: 'iir', texto: 'IIR · Butterworth de orden 8 a 300 Hz' }, { valor: 'fir', texto: 'FIR muy fino · 1.601 coeficientes a 400 Hz' }],
+      alCambiar: v => { st.tipo = v; refrescar(); },
+    });
+    const filaA = crear('div', { class: 'botones' });
+    lab.panel.appendChild(filaA);
+    const ver = () => (st.x ? version(st.tipo) : null);
+    // Dos señales sumadas, con la segunda a la altura de la primera (el paso bajo la deja muy flojita).
+    const mezcla = (a, b) => {
+      const k = Math.min(4, S.rms(a) / Math.max(S.rms(b), 1e-12)), m = new Float64Array(a.length);
+      for (let i = 0; i < a.length; i++) m[i] = a[i] + k * b[i];
+      return m;
+    };
+    Curso.audio.boton(filaA, () => (st.x ? { x: st.x, fs: FS, volumen: 0.8 } : null), 'Tu audio');
+    Curso.audio.boton(filaA, () => (st.x ? { x: ver().directo, fs: FS, volumen: 0.8 } : null), 'Filtrado en directo');
+    Curso.audio.boton(filaA, () => (st.x ? { x: ver().ida, fs: FS, volumen: 0.8 } : null), 'Filtrado de ida y vuelta');
+    const filaB = crear('div', { class: 'botones' });
+    lab.panel.appendChild(filaB);
+    Curso.audio.boton(filaB, () => (st.x ? { x: mezcla(st.x, ver().directo), fs: FS, volumen: 0.7 } : null), 'Tu audio + el filtrado en directo');
+    Curso.audio.boton(filaB, () => (st.x ? { x: mezcla(st.x, ver().ida), fs: FS, volumen: 0.7 } : null), 'Tu audio + el de ida y vuelta');
+    const lect = Curso.lecturas(lab.panel, [
+      { id: 'directo', nombre: 'En directo llega tarde', clase: 'respuesta' },
+      { id: 'nivel', nombre: 'Lo que queda de tu audio' },
+    ]);
+    const escena = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena);
+    const vista = G.lienzo(escena, {
+      alto: altoEscena(190, 210),
+      etiqueta: 'La envolvente de tu audio, la del filtrado en directo y la del filtrado de ida y vuelta, cada una a su altura máxima',
+      dibujar: (ctx, w, h, C) => dibujarGeneral(ctx, w, h, C),
+    });
+    const escena2 = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena2);
+    const lupa = G.lienzo(escena2, {
+      alto: altoEscena(210, 230),
+      etiqueta: 'Una lupa de 100 milisegundos sobre el primer comienzo de tu audio: la versión en directo llega más tarde y la de ida y vuelta, a la vez',
+      dibujar: (ctx, w, h, C) => dibujarLupa(ctx, w, h, C),
+    });
+    const nota = crear('p', { class: 'nota-reto' }, '');
+    lab.panel.appendChild(nota);
+
+    function dibujarGeneral(ctx, w, h, C) {
+      if (!st.x) return hueco(ctx, w, h, C, 'Graba, sube un audio o elige un ejemplo');
+      const v = version(st.tipo), dur = st.x.length / FS;
+      leyenda(ctx, C, 10, 12, [[C.cuerpo, 'tu audio'], [C.respuesta, 'en directo'], [C.senal, 'de ida y vuelta']]);
+      const esc = G.ejes(ctx, { x: [0, dur], y: [0, 1.1], marcasY: false, formatoX: val => num(val, 1), etiquetaX: 'tiempo (s)', margen: { izquierda: 14, derecha: 14, arriba: 28, abajo: 34 }, C });
+      for (const [env, color] of [[st.env, C.cuerpo], [v.env.directo, C.respuesta], [v.env.ida, C.senal]]) {
+        const m = Math.max(maximo(env), 1e-12);
+        G.linea(ctx, esc, null, env.map(a => a / m), { t0: 0, dt: 1 / FSE, color, ancho: 1.6, C });
+      }
+    }
+    // Primer comienzo de la envolvente de tu audio: el primer momento en que pasa del 30 % de su máximo.
+    function comienzo() {
+      const m = maximo(st.env);
+      if (m < 1e-6) return -1;
+      for (let i = 0; i < st.env.length; i++) if (st.env[i] > 0.3 * m) return i / FSE;
+      return -1;
+    }
+    function dibujarLupa(ctx, w, h, C) {
+      if (!st.x) return hueco(ctx, w, h, C, 'Graba, sube un audio o elige un ejemplo');
+      const t0 = comienzo();
+      if (t0 < 0) return hueco(ctx, w, h, C, 'No hay un comienzo nítido que ampliar');
+      const v = version(st.tipo), a = Math.max(0, t0 - 0.02), b = a + 0.1;
+      leyenda(ctx, C, 10, 12, [[C.cuerpo, 'tu audio'], [C.respuesta, 'en directo'], [C.senal, 'de ida y vuelta']]);
+      const esc = G.ejes(ctx, { x: [0, 100], y: [0, 1.1], marcasX: [0, 20, 40, 60, 80, 100], marcasY: false, formatoX: val => num(val), etiquetaX: 'milisegundos desde el principio de la lupa', margen: { izquierda: 14, derecha: 14, arriba: 28, abajo: 34 }, C });
+      const i0 = Math.round(a * FSE), i1 = Math.min(st.env.length, Math.round(b * FSE));
+      for (const [env, color] of [[st.env, C.cuerpo], [v.env.directo, C.respuesta], [v.env.ida, C.senal]]) {
+        const tr = env.slice(i0, i1), m = Math.max(maximo(tr), 1e-12);
+        G.linea(ctx, esc, null, tr.map(q => q / m), { t0: 0, dt: 1000 / FSE, color, ancho: 2, C });
+      }
+    }
+    function refrescar() {
+      if (!st.x) return;
+      const v = version(st.tipo);
+      lect.fijar('directo', ms(v.retDirecto));
+      lect.fijar('nivel', num(Math.min(100, 100 * v.nivel), v.nivel < 0.1 ? 1 : 0) + ' %');
+      const avisos = [];
+      if (v.nivel < 0.03) avisos.push('Tu audio casi no tiene nada por debajo de ' + FILTROS[st.tipo].corte + ' Hz, como un silbido, y el paso bajo lo deja en casi nada. Prueba con la frase, las palmadas o tu voz hablando.');
+      else if (!Number.isFinite(v.retDirecto)) avisos.push('No encuentro un comienzo nítido: con silencio o con una voz continua sin golpes, las envolventes no tienen un pico claro que comparar. Prueba con palmadas o con una frase con pausas.');
+      else avisos.push(st.tipo === 'iir'
+        ? 'El IIR retrasa unos milisegundos, y no todas las frecuencias lo mismo, por eso la medida es aproximada. La versión de ida y vuelta es la que se queda en su sitio: la medida es lo que se retrasa la de en directo respecto de ella.'
+        : 'El FIR simétrico retrasa todo la mitad de su longitud: 800 muestras, que a 16.000 por segundo son 50 ms. Pulsa «Tu audio + el filtrado en directo» y oirás un eco corto; con el de ida y vuelta, desaparece.');
+      nota.textContent = avisos[0] + ' Cada curva está a su propia altura máxima, para poder comparar cuándo empiezan.';
+      vista.dibujar();
+      lupa.dibujar();
+    }
+    function cargar(x) {
+      st.x = x;
+      st.memoria.clear();
+      st.env = envolvente(x);
+      refrescar();
+    }
+
+    // El eco que se alimenta con tu voz: 80 ms de retraso y una realimentación que no pasa de 0,95.
+    const D = Math.round(0.08 * FS);
+    const caja = crear('div', { class: 'mandos' });
+    lab.panel.appendChild(crear('p', { class: 'nota-reto' }, 'Y ahora tu audio dentro de un eco que se alimenta, con un retraso de 80 ms. Sube la realimentación y verás cómo el eco se alarga, hasta que con 1 no se apagaría nunca; por eso el mando se para en 0,95.'));
+    lab.panel.appendChild(caja);
+    const filaE = crear('div', { class: 'fila' });
+    lab.panel.appendChild(filaE);
+    const lectE = Curso.lecturas(filaE, [{ id: 'cae', nombre: 'Tarda en caer 60 dB', clase: 'respuesta' }]);
+    const estadoEco = () => {
+      lectE.fijar('cae', st.g < 0.01 ? 'no hay eco' : num(0.08 * 60 / (-20 * Math.log10(st.g)), 1) + ' s');
+    };
+    Curso.mando(caja, { etiqueta: 'Realimentación del eco', clase: 'respuesta', min: 0, max: 0.95, paso: 0.01, valor: st.g, formato: v => num(v, 2), alCambiar: v => { st.g = v; estadoEco(); } });
+    Curso.audio.boton(filaE, () => {
+      if (!st.x) return null;
+      const largo = new Float64Array(st.x.length + Math.round(3 * FS));
+      largo.set(st.x);
+      return { x: S.eco(largo, D, 1, st.g), fs: FS, volumen: 0.7 };
+    }, 'Oír tu audio en el eco');
+    estadoEco();
+  })();
+
+})();
+</script>
+</body>
+</html>

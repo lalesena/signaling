@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Por qué tu afinador necesita tiempo · Señales</title>
+<meta name="description" content="Lección 5 del curso visual «Señales, de 0 a experto»: por qué separar dos notas cercanas exige escuchar más tiempo, y qué son la DFT, la FFT, la fuga espectral, las ventanas y los decibelios, con seis retos y tu propia voz.">
+<link rel="stylesheet" href="comun/fuentes.css">
+<link rel="stylesheet" href="comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e05">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Nivel 2 · Lección 5</p>
+    <h1>Por qué tu afinador necesita tiempo</h1>
+    <aside class="pregunta">
+      <p>La aplicación de afinar tarda un instante en decidir la nota que estás tocando, y no es que el móvil sea lento: calcular el espectro de unos miles de muestras le lleva unas milésimas de segundo, o menos. La espera viene de otra parte, y no hay programa que se la pueda saltar. ¿Qué ley hay detrás?</p>
+    </aside>
+    <ul class="meta"><li>Unos 50 minutos</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>La idea en una imagen</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Dos cuerdas suenan a la vez: la verde, a 440 Hz, y la naranja, un poco más aguda. A la izquierda, las dos cabinas vistas desde la verde: la naranja se va adelantando a su ritmo, y el arco morado marca lo que se ha separado durante el trozo que miras. A la derecha, arriba, la suma de las dos ondas con el trozo analizado en púrpura; debajo, el espectro de ese trozo. Con un trozo corto, las dos notas son una sola montaña.</figcaption>
+    </figure>
+    <p>Dos cuerdas a 440 y 442 Hz suenan juntas con un vaivén de volumen, un ua-ua-ua que se repite dos veces por segundo: es un <b class="termino">batido</b>, y lo produce que las dos norias, que arrancan a la par, se van separando a razón de dos vueltas por segundo. Mientras no se hayan separado una vuelta entera, no hay manera de distinguir dos norias de una sola.</p>
+    <p>Esa es la ley de la lección: para ver dos notas que se llevan unos hercios hay que mirar, como poco, el tiempo que tardan en sacarse una vuelta, que es uno dividido entre esos hercios. Con una décima de segundo, la diferencia mínima es de unos 10 Hz, y con dos segundos, de medio hercio. Mueve la diferencia entre las dos notas y la duración del trozo, y fíjate en el momento en que la montaña se parte en dos.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Paso a paso</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>El batido: dos cuerdas casi afinadas</h3>
+      <p>Cuando dos notas casi iguales suenan a la vez, el volumen sube y baja con un vaivén que se oye como un ua-ua-ua. Late tantas veces por segundo como hercios se llevan las dos notas: 440 y 442 Hz dan dos latidos por segundo. Los afinadores de pianos lo aprovechan, porque cuando el vaivén desaparece las dos cuerdas están afinadas.</p>
+      <p>La noria lo explica bien. Las dos cabinas empiezan juntas y suman sus alturas, así que al principio el sonido es fuerte. Como una gira un poco más deprisa, se va adelantando hasta quedar en el lado contrario, y entonces las dos se compensan y el sonido casi se apaga. Cuando le ha sacado una vuelta entera, vuelven a coincidir. Un latido es una vuelta de diferencia, y el tiempo entre latidos es lo que tardan en sacarse esa vuelta.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Consigue que desaparezca el ua-ua: gira la clavija para afinar la segunda cuerda con la primera, que suena a 440 Hz.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="fila" id="r1-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>Una fila de norias de prueba</h3>
+      <p>La noria de prueba de la <a href="e04.html">lección 4</a> se enfrentaba a todas las velocidades posibles, y un ordenador solo puede probar una fila finita. Con un trozo de T segundos, las norias de prueba de la <b class="termino" data-termino="Transformada discreta de Fourier (DFT)">transformada discreta de Fourier</b>, la DFT, son las que dan un número entero de vueltas dentro del trozo: cero vueltas, una, dos, tres y así hasta la mitad de la frecuencia de muestreo de la <a href="e02.html">lección 2</a>. Esa fila las deja separadas por uno dividido entre T: de 2 en 2 hercios con medio segundo de trozo, y de 0,5 en 0,5 con dos segundos.</p>
+      <p>De ahí sale la ley del afinador. Dos notas que se llevan menos que esa separación caen en la misma montaña, y la <b class="termino" data-termino="Resolución en frecuencia">resolución en frecuencia</b> no puede distinguirlas: con una décima de segundo es de unos 10 Hz y con dos segundos, de medio hercio. Separarlas con limpieza cuesta algo más, según la ventana que uses y cómo estén colocadas las dos notas; con la ventana de Hann, que verás en el paso 4, hace falta alrededor de dos veces y media ese tiempo. La frecuencia de muestreo no cambia nada de esto: solo fija el techo de las frecuencias, que es su mitad.</p>
+      <p>Un semitono es un 6 % de la frecuencia. En el Mi grave de la guitarra, de 82,41 Hz, el semitono siguiente está a unos 5 Hz, y separarlos exige del orden de 0,2 s o más; en el Mi agudo, de 329,63 Hz, está a unos 20 Hz y bastan del orden de 0,05 s. Un afinador no tarda en calcular: tarda en reunir señal suficiente, y algo más con las notas graves.</p>
+      <p>Calcular la DFT con su definición exige un número de operaciones que crece como el cuadrado de las muestras. La <b class="termino" data-termino="Transformada rápida de Fourier (FFT)">transformada rápida de Fourier</b>, la FFT, calcula exactamente la misma DFT partiendo el trabajo en mitades que luego se recombinan, y con un millón de muestras pasa de un billón de operaciones a unos veinte millones. No es otra transformada ni una aproximación, sino la misma cuenta ordenada de otra manera.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">Una historia más larga</span>
+        <p>Hacia 1805, según los historiadores, Carl Friedrich Gauss dio con el mismo atajo calculando la órbita de unos asteroides a partir de pocas observaciones. No lo publicó, y apareció en latín en sus obras completas, en 1866. En 1965, James Cooley y John Tukey publicaron el método en un artículo de cinco páginas pensado para ordenadores. Un motivo de aquellos años, entre varios, fue una reunión de 1963 de asesores científicos del presidente Kennedy en la que se discutía cómo detectar pruebas nucleares soviéticas escuchando la Tierra con sismómetros; el artículo de 1965 ni lo menciona, y el propio Cooley contaría que los ordenadores de la época no daban para procesar todas aquellas señales.</p>
+      </aside>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Elige una pareja de notas y busca el trozo más corto que las separa en dos picos. Consigue las tres parejas.</p>
+        <div class="escena" id="r2-escena"></div>
+        <div class="mandos" id="r2-mandos"></div>
+        <div class="fila" id="r2-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>La costura del trozo</h3>
+      <p>La DFT esconde un supuesto: trata el trozo como si se repitiera sin fin, una copia pegada detrás de otra. Si la noria da un número entero de vueltas en el trozo, el final empalma con el principio y todo cuadra, y el área aparece solo en una barra. Si no, al pegar las copias queda un salto en la costura, y dibujar un salto exige muchas norias distintas: la energía de la noria se derrama por las barras vecinas. A ese reparto se lo llama <b class="termino" data-termino="Fuga espectral">fuga espectral</b>.</p>
+      <p>Con una voz real casi nunca cuadran las vueltas, porque nadie canta una nota justo en la frecuencia de una barra de la DFT, así que la fuga es lo normal. También es normal que el pico de una nota se reparta entre dos barras vecinas: la nota cae entre dos norias de prueba, y eso no significa que haya dos notas ni que la medida esté mal.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Consigue que toda la energía caiga en una sola barra: ajusta la frecuencia hasta que el trozo dé un número entero de vueltas.</p>
+        <div class="escena" id="r3-escena"></div>
+        <div class="mandos" id="r3-mandos"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>Suavizar los bordes</h3>
+      <p>Para que la costura no tenga salto se multiplica el trozo por una campana que empieza y acaba en cero, una <b class="termino" data-termino="Ventana (de Hann)">ventana</b>. La más usada lleva el nombre del meteorólogo austriaco Julius von Hann, y muchos programas la llaman «hanning», un nombre que se quedó por costumbre. Con ella, el final y el principio valen cero y empalman sin salto, y la falda del pico baja muchísimo.</p>
+      <p>A cambio, la montaña se ensancha un poco: es un compromiso entre la anchura del pico y la altura de la fuga. La ventana no quita el ruido ni aumenta la resolución. Para separar dos tonos iguales muy juntos, la rectangular, que es no poner ventana, separa antes; para ver una nota débil junto a una fuerte, gana la de Hann, o la de Blackman, que baja la falda todavía más.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Junto a una nota fuerte hay otra unas trescientas veces más débil. Encuentra su pico: prueba las ventanas y toca el espectro donde la veas.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="mandos" id="r4-mandos"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>Los ceros no hacen milagros</h3>
+      <p>Hay un truco para que un espectro salga más suave: añadir ceros al final del trozo antes de calcular la DFT, el <b class="termino">relleno con ceros</b>. Con más ceros salen más barras, más juntas, y la montaña se dibuja con más puntos y queda más lisa. Pero los ceros no son señal: la montaña es la misma, con la misma anchura, solo que mejor dibujada.</p>
+      <p>Sirve para otra cosa. Con una nota sola, limpia y quieta, el relleno ayuda a localizar el centro de la montaña con más finura que la rejilla de la DFT, interpolando entre barras. Eso es precisión, y es distinto de la resolución: puedes decir con exactitud dónde está una nota, pero no separar dos que están dentro de la misma montaña. Para eso hace falta más señal, no más ceros.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Dos notas de 440 y 450 Hz suenan juntas, pero ves un solo pico. Consigue ver dos.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="mandos" id="r5-mandos"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>Mirar lo grande y lo pequeño a la vez</h3>
+      <p>Un espectro suele mirarse en decibelios, porque en una escala lineal lo pequeño se aplasta contra el suelo. Los <b class="termino" data-termino="Decibelio (dB)">decibelios</b> cuentan cuántas veces cabe un factor diez: con amplitudes, cada 20 dB la amplitud se divide por diez, así que un armónico a −40 dB es cien veces más pequeño que el pico, y uno a −60 dB, mil veces. El decibelio es la décima parte del belio, que lleva el nombre de Alexander Graham Bell.</p>
+      <p>Hay una trampa frecuente: −3 dB es la mitad de potencia, mientras que −6 dB es la mitad de amplitud, que es un cuarto de la potencia.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">El espectro de una «aaa» sintética tiene muchos armónicos, cada vez más pequeños. ¿Cuántos asoman por encima de −60 dB?</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>En tu voz</h2>
+    <p><b>Qué grabar.</b> Un silbido sostenido de unos segundos o una «aaa» larga: son los tramos 2 y 3 de la grabación de referencia de la serie. Intenta mantener la nota lo más quieta que puedas. Graba con el micrófono si tu navegador lo deja; si no, sube un audio grabado con el móvil o prueba con los ejemplos sintéticos.</p>
+    <p><b>Qué mirar.</b> El laboratorio se queda con el trozo de tu grabación donde hay más sonido y calcula su espectro dos veces, con uno corto, de una décima de segundo, y con uno largo, que puedes alargar hasta dos segundos. Con la ventana de Hann, la anchura del pico es de unos 20 Hz con la décima de segundo y de 1 Hz con los dos segundos. Pero una nota humana no es una noria perfecta: varía unos cents, y por eso el pico del trozo largo suele salir más ancho que la teoría, o con dos jorobas, y escuchar más tiempo solo afina la lectura si la nota se queda quieta. Con la «aaa» verás la fila de armónicos de la <a href="e04.html">lección 4</a>, cada uno más fino con el trozo largo.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>Lo que tienes que recordar</h2>
+    <ol class="tres">
+      <li>La DFT prueba solo las norias que dan un número entero de vueltas en el trozo, separadas uno dividido entre su duración. Dos notas más juntas que eso se funden en una montaña, y para separarlas hay que escuchar más tiempo, no subir la frecuencia de muestreo ni rellenar con ceros.</li>
+      <li>Si la noria no da vueltas completas, la costura del trozo tiene un salto y la energía se derrama por las barras vecinas: es la fuga espectral. Una ventana la reduce a cambio de ensanchar un poco el pico.</li>
+      <li>La FFT es la misma DFT calculada mucho más deprisa, y los decibelios permiten ver lo pequeño junto a lo grande: cada 20 dB, la amplitud se divide por diez.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Errores típicos</h2>
+    <ul class="errores">
+      <li><b>«La FFT es otra transformada, más aproximada que la DFT.»</b> Es un algoritmo para calcular exactamente la misma DFT, solo que con muchas menos operaciones.</li>
+      <li><b>«Con más ceros, o más barras, veo más detalle.»</b> El relleno interpola: la montaña es la misma. El detalle, la resolución, solo lo da escuchar más tiempo.</li>
+      <li><b>«Si subo la frecuencia de muestreo, separo mejor dos notas cercanas.»</b> La resolución depende de la duración y no de la frecuencia de muestreo, que solo amplía el techo de frecuencias. Con el mismo número de muestras, subirla acorta el trozo y la resolución empeora.</li>
+      <li><b>«La ventana de Hann quita el ruido y siempre es mejor.»</b> Reduce la fuga, no el ruido, y ensancha el pico. Para separar dos tonos iguales muy juntos, la rectangular separa antes.</li>
+      <li><b>«−6 dB es la mitad de potencia.»</b> La mitad de potencia son −3 dB. Con −6 dB, la amplitud se reduce a la mitad y la potencia, a la cuarta parte.</li>
+    </ul>
+  </section>
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Abrir</span>
+      <h2>Rincón matemático</h2>
+      <span class="resumen">Las fórmulas, para quien las quiera. Cada una va después de su lectura en palabras.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>La DFT</h3>
+      <p>El coeficiente número <span class="tex">k</span> de la DFT es el área del producto de la señal por la noria de prueba número <span class="tex">k</span>, con <span class="tex">N</span> muestras:</p>
+      <div class="tex">X[k] = \sum_{n=0}^{N-1} x[n]\,e^{-i 2\pi k n / N}, \qquad k = 0, 1, \dots, N-1</div>
+
+      <h3>La rejilla de frecuencias</h3>
+      <p>La noria de prueba número <span class="tex">k</span> da <span class="tex">k</span> vueltas en el trozo; su frecuencia es <span class="tex">k</span> veces la frecuencia de muestreo dividida entre <span class="tex">N</span>, y las barras están separadas uno dividido entre la duración <span class="tex">T</span> del trozo:</p>
+      <div class="tex">f_k = \frac{k\,f_s}{N}, \qquad \Delta f = \frac{f_s}{N} = \frac{1}{T}</div>
+
+      <h3>El batido</h3>
+      <p>Dos senos casi iguales suman una nota intermedia multiplicada por un coseno lento, de frecuencia la mitad de la diferencia. El volumen es el valor absoluto de ese coseno, que llega a su máximo dos veces por ciclo, así que el oído cuenta tantos latidos por segundo como hercios de diferencia:</p>
+      <div class="tex">\sin(2\pi f_1 t) + \sin(2\pi f_2 t) = 2\cos\!\left(2\pi\,\tfrac{f_1 - f_2}{2}\,t\right)\sin\!\left(2\pi\,\tfrac{f_1 + f_2}{2}\,t\right), \qquad f_{\text{batido}} = |f_1 - f_2|</div>
+
+      <h3>Cortar un trozo es poner una ventana</h3>
+      <p>Cortar un trozo equivale a multiplicar la señal por una ventana, y el espectro del trozo es el de la señal emborronado por el de la ventana (la barra <span class="tex">*</span> es la convolución de la <a href="e07.html">lección 7</a>):</p>
+      <div class="tex">x_w[n] = x[n]\,w[n] \quad\Longrightarrow\quad X_w(f) = (X * W)(f)</div>
+
+      <h3>La ventana de Hann</h3>
+      <p>La ventana de Hann es una campana de coseno que empieza y acaba en cero; esta es la versión periódica, la adecuada para la DFT:</p>
+      <div class="tex">w[n] = \tfrac{1}{2}\left(1 - \cos\frac{2\pi n}{N}\right), \qquad n = 0, \dots, N-1</div>
+
+      <h3>Cuánto hay que mirar para separar dos picos</h3>
+      <p>Para separar dos picos, la ventana debe abarcar unos <span class="tex">K</span> periodos de la frecuencia diferencia. Una condición suficiente es <span class="tex">K = 2</span> con la ventana rectangular y <span class="tex">K = 4</span> con la de Hann (Smith, <i>Spectral Audio Signal Processing</i>); con el criterio de los retos, un valle de al menos 3 dB, salen unos 1,5 y unos 2,4:</p>
+      <div class="tex">T \ge \frac{K}{|f_2 - f_1|}</div>
+
+      <h3>El relleno con ceros</h3>
+      <p>Rellenar con ceros hasta <span class="tex">L</span> muestras solo toma más puntos de la misma curva continua, la del espectro del trozo con ventana:</p>
+      <div class="tex">X_{\text{relleno}}[k] = X_w\!\left(\frac{k\,f_s}{L}\right), \qquad L > N</div>
+
+      <h3>Decibelios</h3>
+      <p>En decibelios, una razón de amplitudes se mide con 20 veces su logaritmo decimal, y una de potencias, con 10 veces:</p>
+      <div class="tex">L_{\text{dB}} = 20\log_{10}\frac{A}{A_{\text{ref}}} = 10\log_{10}\frac{P}{P_{\text{ref}}}</div>
+
+      <h3>La FFT</h3>
+      <p>La FFT parte la DFT en la de las muestras pares, <span class="tex">E</span>, y la de las impares, <span class="tex">O</span>, y las recombina con un giro:</p>
+      <div class="tex">X[k] = E[k] + e^{-i 2\pi k/N}\,O[k], \qquad X[k + N/2] = E[k] - e^{-i 2\pi k/N}\,O[k]</div>
+      <p>Repetirlo hasta llegar a trozos de una muestra lleva a un coste de unas <span class="tex">(N/2)\log_2 N</span> multiplicaciones complejas en lugar de las <span class="tex">N^2</span> de la definición:</p>
+      <div class="tex">N^2 \;\longrightarrow\; \tfrac{N}{2}\log_2 N</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Para saber más</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Libro abierto · inglés</span>Steven W. Smith, <i>The Scientist and Engineer's Guide to Digital Signal Processing</i>, <a href="http://www.dspguide.com/CH9.PDF">capítulo 9</a> y <a href="http://www.dspguide.com/CH12.PDF">capítulo 12</a>. Resolución, ventanas, relleno con ceros y la FFT, con figuras claras.</li>
+      <li><span class="tipo">Libro abierto · inglés</span>Allen B. Downey, <a href="https://greenteapress.com/thinkdsp/html/thinkdsp004.html"><i>Think DSP</i>, capítulo 3</a>. La fuga, las ventanas y el límite de Gabor, con código de Python.</li>
+      <li><span class="tipo">Libro abierto · inglés</span>Julius O. Smith III, <a href="https://ccrma.stanford.edu/~jos/sasp/Resolving_Sinusoids.html"><i>Spectral Audio Signal Processing</i>, «Resolving Sinusoids»</a>. Cuánto hay que mirar para separar dos senos, con cada ventana.</li>
+      <li><span class="tipo">Libro abierto · inglés</span>OpenStax, <i>University Physics</i>, vol. 1, <a href="https://openstax.org/books/university-physics-volume-1/pages/17-6-beats">§ 17.6, «Beats»</a>. El batido y cómo lo usan los afinadores de pianos.</li>
+      <li><span class="tipo">Artículo · inglés</span>Daniel N. Rockmore (2000), <a href="http://math.dartmouth.edu/archive/m56s13/public_html/Rockmore1999CSE_FFT_review.pdf">«The FFT: an algorithm the whole family can use»</a>, copia del autor. La historia de Gauss, Garwin, Cooley y Tukey en nueve páginas amenas.</li>
+      <li><span class="tipo">Historia · inglés</span>IEEE History Center, <a href="https://ethw.org/Milestones:First_Demonstration_of_the_Fast_Fourier_Transform_(FFT),_1964">hito «First Demonstration of the Fast Fourier Transform (FFT), 1964»</a>. La placa de 2025 y el relato de la reunión de 1963.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>Términos nuevos</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Examen</h2>
+  </section>
+
+</main>
+
+<script src="comun/temario.js"></script>
+<script src="comun/graficas.js"></script>
+<script src="comun/senal.js"></script>
+<script src="comun/curso.js"></script>
+<script src="datos/e05.js"></script>
+<script>
+// Lección 5 · Por qué tu afinador necesita tiempo: la imagen ancla, los seis retos y el laboratorio «En tu voz».
+// Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo; aquí solo va lo de esta lección.
+// Convenio de los dos tonos: coinciden en fase en el CENTRO del trozo, cos(2π·f·(t − T/2)). Así, al alargar el trozo, la
+// separación de los dos picos mejora siempre (con otro punto de partida oscilaría). Con la ventana de Hann, el valle entre
+// los dos picos llega a 3 dB cuando T·Δf ≈ 2,43, y con la rectangular, cuando T·Δf ≈ 1,53 (medido con Senal).
+(function () {
+  'use strict';
+  const G = Graficas, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const altoEscena = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); document.querySelector(contenedor).appendChild(f); return f; };
+  const rotulo = (ctx, C, x, y, txt, o = {}) => G.texto(ctx, x, y, txt, Object.assign({ color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C }, o));
+
+  // Una tira de dibujo: fondo tenue y línea del cero punteada.
+  function tira(ctx, caja, x, y, C) {
+    ctx.save();
+    ctx.fillStyle = G.alfa(C.cuerpo, C.oscuro ? 0.04 : 0.035);
+    ctx.fillRect(caja.x, caja.y, caja.w, caja.h);
+    ctx.strokeStyle = G.alfa(C.eje, 0.6);
+    ctx.setLineDash([2, 4]);
+    const ym = Math.round(caja.y + caja.h / 2) + 0.5;
+    ctx.beginPath(); ctx.moveTo(caja.x, ym); ctx.lineTo(caja.x + caja.w, ym); ctx.stroke();
+    ctx.restore();
+    return G.ejes(ctx, { caja, x, y, soloEscala: true, C });
+  }
+  // Dos tonos de la misma altura, en fase en el centro del trozo.
+  function dosTonos(T, f1, f2, fs, a2 = 1) {
+    const N = Math.max(8, Math.round(T * fs)), x = new Float64Array(N);
+    for (let i = 0; i < N; i++) { const t = i / fs - T / 2; x[i] = Math.cos(TAU * f1 * t) + a2 * Math.cos(TAU * f2 * t); }
+    return x;
+  }
+  // Espectro con ventana y relleno con ceros hasta ×pad (solo para que la curva salga lisa): { f, mag }.
+  function espectro(x, fs, ventana, pad) {
+    return Senal.espectro(x, fs, { ventana, nfft: Senal.siguientePotencia2(Math.round(x.length * pad)) });
+  }
+  // Cuántos decibelios se hunde el valle entre los dos picos más altos del entorno (0 si no hay dos picos).
+  function profundidad(E, f1, f2) {
+    const df = E.f[1] - E.f[0], D = f2 - f1;
+    const a = Math.max(1, Math.round((f1 - D) / df)), b = Math.min(E.mag.length - 2, Math.round((f2 + D) / df));
+    const mx = [];
+    for (let k = a + 1; k < b; k++) if (E.mag[k] > E.mag[k - 1] && E.mag[k] >= E.mag[k + 1]) mx.push(k);
+    if (mx.length < 2) return 0;
+    mx.sort((p, q) => E.mag[q] - E.mag[p]);
+    const i = Math.min(mx[0], mx[1]), j = Math.max(mx[0], mx[1]);
+    let v = Infinity;
+    for (let k = i; k <= j; k++) v = Math.min(v, E.mag[k]);
+    return 20 * Math.log10(Math.min(E.mag[i], E.mag[j]) / Math.max(v, 1e-12));
+  }
+  const ventanaHann = u => 0.5 * (1 - Math.cos(TAU * u));          // u en [0, 1]
+
+  // ── La idea en una imagen: cuánto hay que mirar para ver dos notas ───────────────────────────────────────────
+  // La señal dura 2 s y las dos notas coinciden en fase en t = 1 s. El trozo analizado, de duración T, está centrado ahí.
+  (function () {
+    const FS = 2000, F1 = 440, TV = 2;
+    const e = { df: 4, T: 0.3, fase: 0, onda: null, E: null, prof: 0 };
+    function recalcular() {
+      const f2 = F1 + e.df;
+      const N = TV * FS, onda = new Float64Array(N);
+      for (let i = 0; i < N; i++) { const t = i / FS - TV / 2; onda[i] = Math.cos(TAU * F1 * t) + Math.cos(TAU * f2 * t); }
+      e.onda = onda;
+      e.E = espectro(dosTonos(e.T, F1, f2, FS), FS, 'hann', 8);
+      e.prof = profundidad(e.E, F1, f2);
+    }
+    recalcular();
+    const L = G.lienzo('#ancla-escena', {
+      alto: altoEscena(300, 330),
+      etiqueta: 'A la izquierda, dos cabinas vistas desde la verde y cuánto se separa la naranja durante el trozo; a la derecha, la suma de las dos ondas con el trozo analizado en púrpura y, debajo, el espectro de ese trozo',
+      dibujar: (ctx, w, h, C) => {
+        const estrecho = w < 560, wn = estrecho ? 104 : 150, x0 = wn + 6, ancho = w - x0 - 10, hueco = 10, abajo = 38;
+        const hA = Math.round((h - 6 - abajo - hueco) * 0.4), hB = h - 6 - abajo - hueco - hA;
+        const cA = { x: x0, y: 6, w: ancho, h: hA }, cB = { x: x0, y: 6 + hA + hueco, w: ancho, h: hB };
+        const f2 = F1 + e.df, t0 = TV / 2 - e.T / 2, tc = t0 + e.fase * e.T;
+        // La suma de las dos ondas, con el trozo analizado.
+        const escA = tira(ctx, cA, [0, TV], [-2.4, 2.4], C);
+        const px = (a, b) => ({ x: escA.x(a), w: escA.x(b) - escA.x(a) });
+        const v = px(t0, t0 + e.T);
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.plantilla, 0.16); ctx.fillRect(v.x, cA.y, v.w, cA.h);
+        ctx.strokeStyle = G.alfa(C.plantilla, 0.8); ctx.lineWidth = 1.3;
+        ctx.beginPath(); ctx.moveTo(v.x, cA.y); ctx.lineTo(v.x, cA.y + cA.h); ctx.moveTo(v.x + v.w, cA.y); ctx.lineTo(v.x + v.w, cA.y + cA.h); ctx.stroke();
+        ctx.restore();
+        G.linea(ctx, escA, null, e.onda, { t0: 0, dt: 1 / FS, color: C.senal, ancho: 1.2, alfa: 0.5, halo: false, C });
+        G.curva(ctx, escA, t => 2 * Math.abs(Math.cos(Math.PI * e.df * (t - TV / 2))), { color: C.cuerpo, ancho: 1.6, guiones: [4, 3], alfa: 0.9, halo: false, n: 600, C });
+        G.curva(ctx, escA, t => (t >= t0 && t <= t0 + e.T ? 2.2 * ventanaHann((t - t0) / e.T) : NaN), { color: C.plantilla, ancho: 1.6, halo: false, n: 300, C });
+        ctx.save(); ctx.strokeStyle = C.acento; ctx.lineWidth = 1.4;
+        const xc = escA.x(tc); ctx.beginPath(); ctx.moveTo(xc, cA.y); ctx.lineTo(xc, cA.y + cA.h); ctx.stroke(); ctx.restore();
+        rotulo(ctx, C, cA.x + 6, cA.y + 13, 'las dos cuerdas y el trozo (púrpura)');
+        G.texto(ctx, cA.x, cA.y + cA.h + 8, '0 s', { color: C.tenue, tam: 9, C });
+        G.texto(ctx, cA.x + cA.w, cA.y + cA.h + 8, '2 s', { alinear: 'right', color: C.tenue, tam: 9, C });
+        // El espectro del trozo.
+        const escB = G.ejes(ctx, { caja: cB, x: [430, 458], y: [0, 2.15], marcasX: [430, 440, 450], marcasY: false, formatoX: v2 => num(v2), etiquetaX: 'frecuencia (Hz)', rejilla: false, C });
+        const xs = [], ys = [];
+        for (let k = 0; k < e.E.f.length; k++) if (e.E.f[k] >= 430 && e.E.f[k] <= 458) { xs.push(e.E.f[k]); ys.push(e.E.mag[k]); }
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(escB.x(xs[0]), escB.y(0));
+        xs.forEach((x, i) => ctx.lineTo(escB.x(x), escB.y(ys[i])));
+        ctx.lineTo(escB.x(xs[xs.length - 1]), escB.y(0)); ctx.closePath();
+        ctx.fillStyle = G.alfa(C.espectro, 0.22); ctx.fill(); ctx.restore();
+        G.linea(ctx, escB, xs, ys, { color: C.espectro, ancho: 2, C });
+        ctx.save(); ctx.strokeStyle = G.alfa(C.eje, 0.9); ctx.setLineDash([2, 3]);
+        for (const f of [F1, f2]) { const x = escB.x(f); ctx.beginPath(); ctx.moveTo(x, cB.y + 18); ctx.lineTo(x, cB.y + cB.h); ctx.stroke(); }
+        ctx.restore();
+        // La separación entre barras, uno dividido entre T.
+        const xa = escB.x(431), xb = escB.x(431 + 1 / e.T);
+        ctx.save(); ctx.strokeStyle = C.plantilla; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(xa, cB.y + 12); ctx.lineTo(xb, cB.y + 12); ctx.moveTo(xa, cB.y + 8); ctx.lineTo(xa, cB.y + 16); ctx.moveTo(xb, cB.y + 8); ctx.lineTo(xb, cB.y + 16); ctx.stroke(); ctx.restore();
+        rotulo(ctx, C, Math.min(xb + 6, cB.x + cB.w - 120), cB.y + 14, 'uno entre T = ' + num(1 / e.T, 1) + ' Hz', { color: C.plantilla });
+        // Las dos cabinas vistas desde la verde, y lo que se ha separado la naranja hasta el instante marcado.
+        const R = Math.min(wn / 2 - 14, 46), cx = 8 + wn / 2 - 2, cy = cA.y + hA * 0.5 + 18;
+        const sep = e.df * (tc - t0);                              // vueltas de diferencia hasta ahora
+        const ang = TAU * sep, a0 = Math.PI / 2;
+        G.noria(ctx, { cx, cy, r: R, angulo: a0, cabinas: [{ desfase: 0, color: C.senal }, { desfase: ang, color: C.respuesta }], radios: 8, patas: false, C });
+        const sx = Math.cos(0.32), rr = R * 1.2;
+        ctx.save(); ctx.strokeStyle = C.plantilla; ctx.lineWidth = 3; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.ellipse(cx, cy, rr * sx, rr, 0, -a0, -(a0 + Math.min(ang, TAU * 0.999)), true); ctx.stroke(); ctx.restore();
+        G.texto(ctx, cx, cy + R + 30, 'se han separado', { alinear: 'center', color: C.tenue, tam: 10, C });
+        G.texto(ctx, cx, cy + R + 44, num(sep, 2) + (Math.abs(sep - 1) < 0.005 ? ' vuelta' : ' vueltas'), { alinear: 'center', color: C.plantilla, tam: 12, peso: 600, C });
+      },
+    });
+    const mandos = document.getElementById('ancla-mandos');
+    const lect = Curso.lecturas(mandos, [
+      { id: 'df', nombre: 'Se llevan', clase: 'respuesta' },
+      { id: 'vueltas', nombre: 'Vueltas de diferencia en el trozo' },
+      { id: 'dos', nombre: '¿Dos picos?', clase: 'destacada' },
+    ]);
+    const estado = () => {
+      lect.fijar('df', num(e.df, 1) + ' Hz');
+      lect.fijar('vueltas', num(e.df * e.T, 2));
+      lect.fijar('dos', e.prof >= 3 ? 'sí, se separan' : 'no, una montaña');
+    };
+    let anim = null;
+    const cambiar = () => { recalcular(); estado(); L.dibujar(); };
+    Curso.mando(mandos, { etiqueta: 'Diferencia entre las dos notas', clase: 'respuesta', min: 1, max: 12, paso: 0.5, valor: e.df, formato: v => num(v, 1) + ' Hz', alCambiar: v => { e.df = v; cambiar(); } });
+    Curso.mando(mandos, { etiqueta: 'Duración del trozo', min: 0.05, max: 1.8, paso: 0.01, valor: e.T, formato: v => num(v, 2) + ' s', alCambiar: v => { e.T = v; cambiar(); } });
+    const fila = crear('div', { class: 'botones' });
+    mandos.appendChild(fila);
+    anim = Curso.animar(L, (t, dt) => { e.fase = (t * 0.25) % 1; L.dibujar(); }, { boton: fila });
+    estado();
+  })();
+
+  // ── Reto 1 · Afina la segunda cuerda (arrastrar la clavija y escuchar) ───────────────────────────────────────
+  (function () {
+    const FS = 4000, TV = 2, F1 = 440, MIN = 430, MAX = 450, ABIERTO = 150;       // la clavija recorre 300° (±150°)
+    const e = { f2: 444, onda: null };
+    function recalcular() {
+      const N = TV * FS, onda = new Float64Array(N);
+      for (let i = 0; i < N; i++) { const t = i / FS; onda[i] = 0.5 * (Math.sin(TAU * F1 * t) + Math.sin(TAU * e.f2 * t)); }
+      e.onda = onda;
+    }
+    recalcular();
+    let geo = null;
+    const aAngulo = f => (f - 440) / 10 * ABIERTO;                  // grados desde arriba
+    const L = G.lienzo('#r1-escena', {
+      alto: altoEscena(240, 262), rol: 'slider',
+      etiqueta: 'A la izquierda, una clavija que se gira para cambiar la frecuencia de la segunda cuerda; a la derecha, dos segundos de la suma de las dos cuerdas, con su envolvente: el volumen sube y baja',
+      dibujar: (ctx, w, h, C) => {
+        const wn = Math.min(150, Math.round(w * 0.38)), R = Math.min(wn / 2 - 12, (h - 70) / 2), cx = 8 + wn / 2, cy = h / 2 - 6;
+        geo = { cx, cy, R };
+        // La clavija: un dial con marcas cada hercio y un indicador.
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = C.rejilla; ctx.lineWidth = 8;
+        ctx.beginPath(); ctx.arc(cx, cy, R, -Math.PI / 2 - ABIERTO * Math.PI / 180, -Math.PI / 2 + ABIERTO * Math.PI / 180); ctx.stroke();
+        for (let f = MIN; f <= MAX; f++) {
+          const a = (aAngulo(f)) * Math.PI / 180 - Math.PI / 2, mayor = f % 5 === 0;
+          ctx.strokeStyle = f === F1 ? C.senal : C.eje; ctx.lineWidth = f === F1 ? 2.4 : 1.2;
+          ctx.beginPath(); ctx.moveTo(cx + (R + 7) * Math.cos(a), cy + (R + 7) * Math.sin(a)); ctx.lineTo(cx + (R + (mayor ? 14 : 10)) * Math.cos(a), cy + (R + (mayor ? 14 : 10)) * Math.sin(a)); ctx.stroke();
+        }
+        const a = aAngulo(e.f2) * Math.PI / 180 - Math.PI / 2;
+        ctx.strokeStyle = C.respuesta; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a)); ctx.stroke();
+        ctx.fillStyle = C.respuesta; ctx.beginPath(); ctx.arc(cx + R * Math.cos(a), cy + R * Math.sin(a), 8, 0, TAU); ctx.fill();
+        ctx.fillStyle = C.superficie; ctx.strokeStyle = C.eje; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(cx, cy, 9, 0, TAU); ctx.fill(); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, cx, cy + R + 36, num(e.f2, 1) + ' Hz', { alinear: 'center', color: C.respuesta, tam: 14, peso: 600, C });
+        G.texto(ctx, cx, cy + R + 52, 'segunda cuerda', { alinear: 'center', color: C.tenue, tam: 10, C });
+        // La suma de las dos cuerdas y su envolvente.
+        const caja = { x: wn + 20, y: 12, w: w - wn - 30, h: h - 46 };
+        const esc = tira(ctx, caja, [0, TV], [-1.1, 1.1], C);
+        G.linea(ctx, esc, null, e.onda, { t0: 0, dt: 1 / FS, color: C.senal, ancho: 1.2, alfa: 0.5, halo: false, C });
+        const dif = Math.abs(e.f2 - F1);
+        const env = t => Math.abs(Math.cos(Math.PI * dif * t));
+        G.curva(ctx, esc, env, { color: C.cuerpo, ancho: 1.6, guiones: [5, 3], alfa: 0.85, halo: false, n: 700, C });
+        G.curva(ctx, esc, t => -env(t), { color: C.cuerpo, ancho: 1.6, guiones: [5, 3], alfa: 0.85, halo: false, n: 700, C });
+        rotulo(ctx, C, caja.x + 6, caja.y + 13, 'las dos cuerdas juntas');
+        G.texto(ctx, caja.x, caja.y + caja.h + 14, '0 s', { color: C.tenue, tam: 10, C });
+        G.texto(ctx, caja.x + caja.w, caja.y + caja.h + 14, '2 s', { alinear: 'right', color: C.tenue, tam: 10, C });
+      },
+    });
+    const fila = document.getElementById('r1-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'f2', nombre: 'Segunda cuerda', clase: 'respuesta' },
+      { id: 'lat', nombre: 'Latidos por segundo', clase: 'destacada' },
+    ]);
+    const estado = () => {
+      lect.fijar('f2', num(e.f2, 1) + ' Hz');
+      lect.fijar('lat', num(Math.abs(e.f2 - F1), 1));
+      L.canvas.setAttribute('aria-valuenow', num(e.f2, 1));
+      L.canvas.setAttribute('aria-valuetext', num(e.f2, 1) + ' hercios; ' + num(Math.abs(e.f2 - F1), 1) + ' latidos por segundo');
+    };
+    const poner = f => { e.f2 = limitar(Math.round(f * 10) / 10, MIN, MAX); recalcular(); estado(); L.dibujar(); Curso.cambio('reto-1'); };
+    const desde = p => {
+      let a = Math.atan2(p.x - geo.cx, geo.cy - p.y) * 180 / Math.PI;          // grados desde arriba, en (−180, 180]
+      a = limitar(a, -ABIERTO, ABIERTO);
+      poner(440 + a / ABIERTO * 10);
+    };
+    Curso.arrastre(L, {
+      alBajar: p => { if (!geo || Math.hypot(p.x - geo.cx, p.y - geo.cy) > geo.R * 1.9 || p.x > geo.cx + geo.R * 1.9) return false; desde(p); },
+      alMover: desde,
+    });
+    L.canvas.tabIndex = 0;
+    L.canvas.setAttribute('aria-valuemin', String(MIN));
+    L.canvas.setAttribute('aria-valuemax', String(MAX));
+    L.canvas.addEventListener('keydown', ev => {
+      const d = { ArrowRight: 0.1, ArrowUp: 0.1, ArrowLeft: -0.1, ArrowDown: -0.1, PageUp: 1, PageDown: -1 }[ev.key];
+      if (!d) return;
+      ev.preventDefault();
+      poner(e.f2 + d);
+    });
+    Curso.audio.boton(fila, () => ({ x: Senal.suma(Senal.seno({ f: F1, fs: 22050, dur: 2, amp: 0.5 }), Senal.seno({ f: e.f2, fs: 22050, dur: 2, amp: 0.5 })), fs: 22050, volumen: 0.5 }), 'Oír las dos cuerdas');
+    estado();
+    Curso.reto('reto-1', {
+      titulo: 'Afina la segunda cuerda', nivel: 'fácil',
+      comprobar: () => {
+        const d = e.f2 - F1, lat = Math.abs(d);
+        if (lat <= 0.3) return { ok: true, mensaje: 'Afinadas: casi no hay latidos (' + num(lat, 1) + ' por segundo).' };
+        return { ok: false, mensaje: (lat <= 1.5 ? 'Casi: ' : '') + 'todavía laten ' + num(lat, 1) + ' veces por segundo. ' + (d > 0 ? 'Baja' : 'Sube') + ' un poco la segunda cuerda.' };
+      },
+      resolver: () => poner(F1),
+      pista: [
+        'Escucha el vaivén con «Oír las dos cuerdas», o míralo en la gráfica: cuanto más despacio late, más cerca estás de afinar.',
+        'Los latidos por segundo son la diferencia entre las dos frecuencias: la segunda cuerda tiene que llegar a 440 Hz, la marca verde del dial.',
+      ],
+      exito: '<p>El batido es la diferencia de las dos frecuencias: si laten dos veces por segundo, las notas se llevan dos hercios. Para darte cuenta de que no coinciden has tenido que esperar a que se desfasen, y con medio hercio de diferencia eso son dos segundos. Así afinan los afinadores de pianos, y esa espera es la que una app de afinar no puede saltarse.</p>',
+    });
+  })();
+
+  // ── Reto 2 · Separa las notas (elegir la pareja, mover la duración y escuchar) ───────────────────────────────
+  // Tres parejas: 440 y 444 Hz, y el Mi de la sexta y el de la primera cuerda de la guitarra con su semitono de arriba.
+  // «Separadas» es que entre los dos picos de Hann haya un valle de al menos 3 dB; el umbral de cada pareja se midió con
+  // Senal (T·Δf ≈ 2,43). Para contar, el trozo no puede pasarse más de un 30 % del mínimo: lo corto es lo que busca el afinador.
+  (function () {
+    const PAREJAS = [
+      { id: 'a', texto: '440 y 444 Hz', f1: 440, f2: 444, fs: 2000, umbral: 0.608 },
+      { id: 'b', texto: 'Mi grave de la guitarra y su semitono', f1: 82.41, f2: 87.31, fs: 1000, umbral: 0.496 },
+      { id: 'c', texto: 'Mi agudo de la guitarra y su semitono', f1: 329.63, f2: 349.23, fs: 2000, umbral: 0.124 },
+    ];
+    const MARGEN = 1.3;
+    const e = { par: 0, T: 0.1, hechas: new Set(), E: null, prof: 0 };
+    const P = () => PAREJAS[e.par];
+    function recalcular() {
+      const p = P();
+      e.E = espectro(dosTonos(e.T, p.f1, p.f2, p.fs), p.fs, 'hann', 8);
+      e.prof = profundidad(e.E, p.f1, p.f2);
+    }
+    recalcular();
+    const L = G.lienzo('#r2-escena', {
+      alto: altoEscena(260, 290),
+      etiqueta: 'Arriba, la suma de las dos notas con el trozo analizado en púrpura; abajo, el espectro de ese trozo, que enseña una montaña o dos picos según la duración',
+      dibujar: (ctx, w, h, C) => {
+        const p = P(), D = p.f2 - p.f1, abajo = 38, hueco = 10;
+        const hA = Math.round((h - 6 - abajo - hueco) * 0.38), hB = h - 6 - abajo - hueco - hA;
+        const cA = { x: 12, y: 6, w: w - 24, h: hA }, cB = { x: 12, y: 6 + hA + hueco, w: w - 24, h: hB };
+        // La suma, un segundo centrado en el cruce en fase.
+        const VENT = Math.max(1.2, 1.3 * e.T);
+        const escA = tira(ctx, cA, [-VENT / 2, VENT / 2], [-2.4, 2.4], C);
+        const N = Math.round(VENT * p.fs), onda = new Float64Array(N);
+        for (let i = 0; i < N; i++) { const t = i / p.fs - VENT / 2; onda[i] = Math.cos(TAU * p.f1 * t) + Math.cos(TAU * p.f2 * t); }
+        const xa = escA.x(-e.T / 2), xb = escA.x(e.T / 2);
+        ctx.save(); ctx.fillStyle = G.alfa(C.plantilla, 0.16); ctx.fillRect(xa, cA.y, xb - xa, cA.h);
+        ctx.strokeStyle = G.alfa(C.plantilla, 0.8); ctx.lineWidth = 1.3;
+        ctx.beginPath(); ctx.moveTo(xa, cA.y); ctx.lineTo(xa, cA.y + cA.h); ctx.moveTo(xb, cA.y); ctx.lineTo(xb, cA.y + cA.h); ctx.stroke(); ctx.restore();
+        G.linea(ctx, escA, null, onda, { t0: -VENT / 2, dt: 1 / p.fs, color: C.senal, ancho: 1.2, alfa: 0.5, halo: false, C });
+        G.curva(ctx, escA, t => 2 * Math.abs(Math.cos(Math.PI * D * t)), { color: C.cuerpo, ancho: 1.1, guiones: [4, 3], alfa: 0.7, halo: false, n: 500, C });
+        G.curva(ctx, escA, t => (t >= -e.T / 2 && t <= e.T / 2 ? 2.2 * ventanaHann((t + e.T / 2) / e.T) : NaN), { color: C.plantilla, ancho: 1.6, halo: false, n: 300, C });
+        rotulo(ctx, C, cA.x + 6, cA.y + 13, 'suma de las dos notas y trozo (púrpura): ' + num(e.T, 3) + ' s');
+        // El espectro del trozo.
+        const x0 = p.f1 - 1.6 * D, x1 = p.f2 + 1.6 * D;
+        const esc = G.ejes(ctx, { caja: cB, x: [x0, x1], y: [0, 2.15], marcasX: [p.f1, p.f2], marcasY: false, formatoX: v => num(v, 2), etiquetaX: 'frecuencia (Hz)', rejilla: false, C });
+        const xs = [], ys = [];
+        for (let k = 0; k < e.E.f.length; k++) if (e.E.f[k] >= x0 && e.E.f[k] <= x1) { xs.push(e.E.f[k]); ys.push(e.E.mag[k]); }
+        if (xs.length > 1) {
+          ctx.save(); ctx.beginPath(); ctx.moveTo(esc.x(xs[0]), esc.y(0));
+          xs.forEach((x, i) => ctx.lineTo(esc.x(x), esc.y(ys[i])));
+          ctx.lineTo(esc.x(xs[xs.length - 1]), esc.y(0)); ctx.closePath(); ctx.fillStyle = G.alfa(C.espectro, 0.22); ctx.fill(); ctx.restore();
+          G.linea(ctx, esc, xs, ys, { color: C.espectro, ancho: 2, C });
+        }
+        ctx.save(); ctx.strokeStyle = G.alfa(C.eje, 0.9); ctx.setLineDash([2, 3]);
+        for (const f of [p.f1, p.f2]) { const x = esc.x(f); ctx.beginPath(); ctx.moveTo(x, cB.y + 18); ctx.lineTo(x, cB.y + cB.h); ctx.stroke(); }
+        ctx.restore();
+        const ok = e.prof >= 3;
+        rotulo(ctx, C, cB.x + cB.w - 6, cB.y + 13, ok ? 'dos picos' : 'una sola montaña', { alinear: 'right', color: ok ? C.ok : C.tenue, peso: 600, tam: 11 });
+        rotulo(ctx, C, cB.x + 6, cB.y + 13, 'espectro de Hann');
+      },
+    });
+    const mandos = document.getElementById('r2-mandos');
+    const eleccion = Curso.eleccion(mandos, { etiqueta: 'Pareja de notas', opciones: PAREJAS.map((p, i) => ({ valor: i, texto: p.texto })), valor: 0, reto: 'reto-2', alCambiar: v => { e.par = v; recalcular(); estado(); L.dibujar(); } });
+    const mT = Curso.mando(mandos, { etiqueta: 'Duración del trozo', min: 0.02, max: 1, paso: 0.002, valor: e.T, formato: v => num(v, 3) + ' s', reto: 'reto-2', alCambiar: v => { e.T = v; recalcular(); estado(); L.dibujar(); } });
+    const fila = document.getElementById('r2-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'df', nombre: 'Se llevan' },
+      { id: 'prod', nombre: 'Duración × diferencia', clase: 'destacada' },
+      { id: 'hechas', nombre: 'Parejas conseguidas' },
+    ]);
+    function estado() {
+      const p = P(), D = p.f2 - p.f1;
+      lect.fijar('df', num(D, 2) + ' Hz');
+      lect.fijar('prod', num(e.T * D, 2));
+      lect.fijar('hechas', e.hechas.size + ' de 3');
+    }
+    Curso.audio.boton(fila, () => { const p = P(); return { x: Senal.suma(Senal.seno({ f: p.f1, fs: 22050, dur: 1.5, amp: 0.5 }), Senal.seno({ f: p.f2, fs: 22050, dur: 1.5, amp: 0.5 })), fs: 22050, volumen: 0.5 }; }, 'Oír las dos notas');
+    estado();
+    Curso.reto('reto-2', {
+      titulo: 'Separa las notas', nivel: 'medio',
+      comprobar: () => {
+        const p = P(), D = p.f2 - p.f1, prod = e.T * D;
+        if (e.prof >= 3 && e.T <= MARGEN * p.umbral) e.hechas.add(e.par);
+        estado();
+        if (e.hechas.size === 3) return { ok: true, mensaje: 'Las tres parejas separadas: cuanto más juntas están las notas, más tiempo hace falta.' };
+        const hecha = e.hechas.has(e.par) ? ' (esta pareja ya está conseguida)' : '';
+        if (e.prof < 3) return { ok: false, mensaje: (prod < 1 ? 'Las dos norias ni siquiera se han sacado una vuelta (' + num(prod, 2) + ' en el trozo). ' : 'Se han sacado ' + num(prod, 2) + ' vueltas, pero con la ventana de Hann todavía se funden. ') + 'Alarga el trozo.' + hecha };
+        if (e.T > MARGEN * p.umbral) return { ok: false, mensaje: 'Separa, pero un afinador no esperaría tanto: busca un trozo más corto que todavía las separe.' + hecha };
+        return { ok: false, mensaje: 'Pareja conseguida con ' + num(e.T, 3) + ' s. Elige otra pareja.' };
+      },
+      resolver: () => { e.hechas = new Set([0, 1, 2]); eleccion.fijar(2, false); e.par = 2; mT.fijar(+(PAREJAS[2].umbral * 1.1).toFixed(3), false); e.T = +(PAREJAS[2].umbral * 1.1).toFixed(3); recalcular(); estado(); L.dibujar(); Curso.cambio('reto-2'); },
+      pista: [
+        'Mira la lectura «Duración × diferencia»: es el número de vueltas que una noria le saca a la otra durante el trozo. Con menos de una, no hay manera de separarlas.',
+        'Con la ventana de Hann, los dos picos se separan cuando esa lectura llega a unos 2,4. Divide 2,4 entre los hercios que se llevan las notas y tendrás la duración, más o menos.',
+      ],
+      exito: '<p>Para separar dos notas hay que mirar el tiempo que tardan en sacarse un par de vueltas, que es mayor cuanto más juntas están. Un semitono son unos 5 Hz en el Mi grave de la guitarra y unos 20 en el agudo, y por eso la cuerda grave pide unas cuatro veces más tiempo. El afinador no es lento calculando: es lento reuniendo señal. La frecuencia de muestreo no ha entrado en ninguna cuenta.</p>',
+    });
+  })();
+
+  // ── Reto 3 · Que el pico sea una aguja (deslizador fino) ─────────────────────────────────────────────────────
+  // El trozo dura 0,05 s (400 muestras a 8.000 Hz) y se analiza sin ventana: las barras están cada 20 Hz.
+  (function () {
+    const FS = 8000, N = 400, T = N / FS, DF = FS / N;
+    const e = { f: 410, E: null, dbs: null };
+    function recalcular() {
+      const x = Float64Array.from({ length: N }, (_, i) => Math.sin(TAU * e.f * i / FS));
+      const E = Senal.espectro(x, FS, { ventana: 'rect', nfft: N });
+      let mx = 1e-12;
+      for (let k = 0; k < E.mag.length; k++) mx = Math.max(mx, E.mag[k]);
+      const barras = [];
+      for (let k = 0; k < E.f.length; k++) if (E.f[k] >= 200 && E.f[k] <= 600) barras.push([E.f[k], 20 * Math.log10(Math.max(E.mag[k], 1e-12) / mx)]);
+      e.dbs = barras;
+      // La falda más alta: la mayor barra que no es la mayor.
+      const orden = barras.map(b => b[1]).sort((a, b) => b - a);
+      e.falda = orden.length > 1 ? orden[1] : -300;
+    }
+    recalcular();
+    const L = G.lienzo('#r3-escena', {
+      alto: altoEscena(290, 320),
+      etiqueta: 'Arriba, el trozo de 0,05 segundos repetido dos veces, como lo ve la transformada, con la costura marcada; abajo, las barras del espectro en decibelios',
+      dibujar: (ctx, w, h, C) => {
+        const abajo = 38, hueco = 24, hA = Math.round((h - 6 - abajo - hueco) * 0.4), hB = h - 6 - abajo - hueco - hA;
+        const cA = { x: 12, y: 6, w: w - 24, h: hA }, cB = { x: 46, y: 6 + hA + hueco, w: w - 58, h: hB };
+        const escA = tira(ctx, cA, [0, 2 * T], [-1.3, 1.3], C);
+        G.curva(ctx, escA, t => Math.sin(TAU * e.f * (t % T)), { color: C.senal, ancho: 2, n: 800, C });
+        const xs = escA.x(T);
+        ctx.save(); ctx.strokeStyle = C.acento; ctx.lineWidth = 1.4; ctx.setLineDash([4, 3]);
+        ctx.beginPath(); ctx.moveTo(xs, cA.y); ctx.lineTo(xs, cA.y + cA.h); ctx.stroke(); ctx.restore();
+        rotulo(ctx, C, xs + 5, cA.y + cA.h - 8, 'costura', { color: C.acento, peso: 600 });
+        rotulo(ctx, C, cA.x + 6, cA.y + 13, 'el trozo, repetido: ' + num(e.f * T, 2) + ' vueltas');
+        G.texto(ctx, cA.x, cA.y + cA.h + 12, '0', { color: C.tenue, tam: 9, C });
+        G.texto(ctx, cA.x + cA.w, cA.y + cA.h + 12, num(2 * T) + ' s', { alinear: 'right', color: C.tenue, tam: 9, C });
+        const esc = G.ejes(ctx, { caja: cB, x: [190, 610], y: [-60, 3], marcasX: [200, 300, 400, 500, 600], marcasY: [-60, -30, 0], formatoX: v => num(v), formatoY: v => num(v), etiquetaX: 'frecuencia (Hz)', etiquetaY: 'dB', rejilla: true, C });
+        G.barras(ctx, esc, e.dbs.map(b => b[0]), e.dbs.map(b => Math.max(-60, b[1])), { color: C.espectro, anchoPx: Math.max(5, cB.w / 21 * 0.55), base: -60, C });
+        ctx.save(); ctx.strokeStyle = G.alfa(C.ruido, 0.85); ctx.setLineDash([5, 4]); ctx.lineWidth = 1.2;
+        const y = Math.round(esc.y(-30)) + 0.5; ctx.beginPath(); ctx.moveTo(cB.x, y); ctx.lineTo(cB.x + cB.w, y); ctx.stroke(); ctx.restore();
+        rotulo(ctx, C, cB.x + cB.w - 6, esc.y(-30) + 14, 'meta: lo demás, por debajo', { alinear: 'right', color: C.ruido });
+      },
+    });
+    const lect = Curso.lecturas('#r3-mandos', [
+      { id: 'vueltas', nombre: 'Vueltas en el trozo', clase: 'senal' },
+      { id: 'falda', nombre: 'La mayor falda', clase: 'destacada' },
+    ]);
+    const estado = () => {
+      lect.fijar('vueltas', num(e.f * T, 2));
+      lect.fijar('falda', e.falda < -100 ? 'por debajo de −100 dB' : num(e.falda, 1) + ' dB');
+    };
+    const mando = Curso.mando('#r3-mandos', { etiqueta: 'Frecuencia del seno', clase: 'senal', min: 300, max: 500, paso: 0.1, valor: e.f, formato: v => num(v, 1) + ' Hz', reto: 'reto-3', alCambiar: v => { e.f = v; recalcular(); estado(); L.dibujar(); } });
+    estado();
+    Curso.reto('reto-3', {
+      titulo: 'Que el pico sea una aguja', nivel: 'medio',
+      comprobar: () => {
+        const v = e.f * T, resto = Math.abs(v - Math.round(v));
+        if (e.falda < -30) return { ok: true, mensaje: 'Aguja: el trozo da ' + num(Math.round(v)) + ' vueltas justas y la falda queda en ' + num(e.falda, 0) + ' dB, por debajo de −30.' };
+        if (resto > 0.2) return { ok: false, mensaje: 'El trozo da ' + num(v, 2) + ' vueltas: sobra ' + (resto > 0.4 ? 'media vuelta' : 'un pedazo de vuelta') + ' y la costura tiene un salto, así que la energía se derrama por las barras vecinas.' };
+        return { ok: false, mensaje: 'Casi: sobra ' + num(resto, 2) + ' de vuelta y la falda sigue en ' + num(e.falda, 0) + ' dB. Afina más, con las flechas del teclado si quieres.' };
+      },
+      resolver: () => mando.fijar(400),
+      pista: [
+        'Mira la costura: si el final del trozo no empalma con el principio, hay un salto. Fíjate en la lectura «Vueltas en el trozo».',
+        'El trozo dura 0,05 s, así que da un número entero de vueltas cuando la frecuencia es un múltiplo de 20 Hz: 380, 400, 420… Prueba con 400 Hz.',
+      ],
+      exito: '<p>Si la noria da un número entero de vueltas en el trozo, la costura no tiene salto y el pico es una aguja. Si no, el salto reparte la energía por todas las barras: es la fuga espectral. Con una voz real casi nunca cuadra, y por eso hacen falta las ventanas.</p>',
+    });
+  })();
+
+  // ── Reto 4 · Encuentra la nota débil (elegir la ventana y tocar el espectro) ─────────────────────────────────
+  // Un tono fuerte en 1.007,8 Hz, que cae entre dos barras, y otro 50 dB más débil en 1.200 Hz; 512 muestras a 8.000 Hz.
+  // Cuenta que la nota débil sobresalga al menos 10 dB de la falda del tono fuerte con la ventana elegida.
+  (function () {
+    const FS = 8000, N = 512, FF = 1007.8, FD = 1200, ADEB = -50, PAD = 8;
+    const VENTANAS = [{ valor: 'rect', texto: 'Rectangular' }, { valor: 'hann', texto: 'Hann' }, { valor: 'blackman', texto: 'Blackman' }];
+    const aDb = v => 20 * Math.log10(Math.max(v, 1e-12));
+    const xs = Float64Array.from({ length: N }, (_, i) => Math.cos(TAU * FF * i / FS) + Math.pow(10, ADEB / 20) * Math.cos(TAU * FD * i / FS + 0.7));
+    const fuerte = Float64Array.from({ length: N }, (_, i) => Math.cos(TAU * FF * i / FS));
+    const cache = {};
+    function analisis(v) {
+      if (cache[v]) return cache[v];
+      const opts = { ventana: v, nfft: N * PAD };
+      const E = Senal.espectro(xs, FS, opts), F = Senal.espectro(fuerte, FS, opts);
+      let mx = 1e-12;
+      for (let k = 0; k < E.mag.length; k++) mx = Math.max(mx, E.mag[k]);
+      const df = E.f[1] - E.f[0], f = [], db = [], dbF = [];
+      for (let k = 0; k < E.f.length; k++) if (E.f[k] >= 600 && E.f[k] <= 2000) { f.push(E.f[k]); db.push(Math.max(-110, aDb(E.mag[k] / mx))); dbF.push(Math.max(-110, aDb(F.mag[k] / mx))); }
+      // El pico débil: el mayor valor del espectro total a menos de 20 Hz de 1.200 Hz, frente a la falda del fuerte en ese punto.
+      let kb = -1, mejor = -1e9;
+      f.forEach((fr, k) => { if (Math.abs(fr - FD) <= 20 && db[k] > mejor) { mejor = db[k]; kb = k; } });
+      const margen = kb >= 0 ? db[kb] - dbF[kb] : 0;
+      return (cache[v] = { f, db, dbF, margen, df });
+    }
+    const e = { ventana: 'rect', marca: null };
+    const ventanaCurva = v => (v === 'rect' ? () => 1 : v === 'hann' ? u => 0.5 * (1 - Math.cos(TAU * u)) : u => 0.42 - 0.5 * Math.cos(TAU * u) + 0.08 * Math.cos(2 * TAU * u));
+    let esc2 = null;
+    const L = G.lienzo('#r4-escena', {
+      alto: altoEscena(300, 330),
+      etiqueta: 'Arriba, el trozo con la forma de la ventana en púrpura; abajo, el espectro en decibelios entre 600 y 2.000 hercios, donde se esconde una nota muy débil junto a una fuerte',
+      dibujar: (ctx, w, h, C) => {
+        const abajo = 38, hueco = 22, hA = Math.round((h - 6 - abajo - hueco) * 0.26), hB = h - 6 - abajo - hueco - hA;
+        const cA = { x: 12, y: 6, w: w - 24, h: hA }, cB = { x: 40, y: 6 + hA + hueco, w: w - 52, h: hB };
+        const T = N / FS, escA = tira(ctx, { x: 12, y: cA.y, w: w - 24, h: hA }, [0, T], [-1.15, 1.15], C);
+        const cur = ventanaCurva(e.ventana);
+        G.linea(ctx, escA, null, xs, { t0: 0, dt: 1 / FS, color: G.alfa(C.senal, 0.55), ancho: 1.2, halo: false, C });
+        G.curva(ctx, escA, t => cur(t / T), { color: C.plantilla, ancho: 2, halo: false, n: 200, C });
+        G.curva(ctx, escA, t => -cur(t / T), { color: C.plantilla, ancho: 2, halo: false, n: 200, C });
+        rotulo(ctx, C, cA.x + 6, cA.y + 13, 'el trozo (64 ms) y su ventana (púrpura)');
+        const A = analisis(e.ventana);
+        esc2 = G.ejes(ctx, { caja: cB, x: [600, 2000], y: [-110, 5], marcasX: [600, 1000, 1400, 1800], marcasY: [-100, -50, 0], formatoX: v => num(v), formatoY: v => num(v), etiquetaX: 'frecuencia (Hz)', etiquetaY: 'dB', rejilla: true, C });
+        G.linea(ctx, esc2, A.f, A.db, { color: C.espectro, ancho: 1.8, C });
+        if (e.marca != null) {
+          const x = esc2.x(e.marca);
+          ctx.save(); ctx.strokeStyle = C.acento; ctx.fillStyle = C.acento; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]);
+          ctx.beginPath(); ctx.moveTo(x, cB.y + 14); ctx.lineTo(x, cB.y + cB.h); ctx.stroke(); ctx.setLineDash([]);
+          ctx.beginPath(); ctx.moveTo(x - 5, cB.y + 3); ctx.lineTo(x + 5, cB.y + 3); ctx.lineTo(x, cB.y + 12); ctx.closePath(); ctx.fill(); ctx.restore();
+          rotulo(ctx, C, x + (x > cB.x + cB.w - 70 ? -8 : 8), cB.y + 13, 'tu marca: ' + num(e.marca) + ' Hz', { alinear: x > cB.x + cB.w - 70 ? 'right' : 'left', color: C.acento, peso: 600 });
+        }
+        rotulo(ctx, C, cB.x + cB.w - 6, cB.y + cB.h - 8, 'el tono fuerte está en 0 dB', { alinear: 'right' });
+      },
+    });
+    L.canvas.classList.add('tocable');
+    const lect = Curso.lecturas('#r4-mandos', [
+      { id: 'margen', nombre: 'La nota débil sobresale de la falda', clase: 'destacada' },
+      { id: 'marca', nombre: 'Tu marca' },
+    ]);
+    const estado = () => {
+      const m = analisis(e.ventana).margen;
+      lect.fijar('margen', num(Math.max(0, m), 0) + ' dB');
+      lect.fijar('marca', e.marca == null ? '—' : num(e.marca) + ' Hz');
+    };
+    const poner = f => { e.marca = Math.round(limitar(f, 600, 2000)); estado(); L.dibujar(); Curso.cambio('reto-4'); };
+    Curso.arrastre(L, {
+      eje: 'x',
+      alBajar: p => { if (!esc2 || p.y < esc2.caja.y - 4) return false; poner(esc2.xi(p.x)); },
+      alMover: p => poner(esc2.xi(p.x)),
+    });
+    L.canvas.tabIndex = 0;
+    L.canvas.setAttribute('role', 'slider');
+    L.canvas.setAttribute('aria-valuemin', '600');
+    L.canvas.setAttribute('aria-valuemax', '2000');
+    L.canvas.addEventListener('keydown', ev => {
+      const d = { ArrowRight: 5, ArrowUp: 5, ArrowLeft: -5, ArrowDown: -5, PageUp: 50, PageDown: -50 }[ev.key];
+      if (!d) return;
+      ev.preventDefault();
+      poner((e.marca == null ? 1000 : e.marca) + d);
+      L.canvas.setAttribute('aria-valuenow', String(e.marca));
+    });
+    const eleccion = Curso.eleccion('#r4-mandos', { etiqueta: 'Ventana', opciones: VENTANAS, valor: e.ventana, reto: 'reto-4', alCambiar: v => { e.ventana = v; estado(); L.dibujar(); } });
+    Curso.botones('#r4-mandos', [{ id: 'borrar', texto: 'Quitar la marca', tipo: 'discreto', alPulsar: () => { e.marca = null; estado(); L.dibujar(); Curso.cambio('reto-4'); } }]);
+    estado();
+    Curso.reto('reto-4', {
+      titulo: 'Encuentra la nota débil', nivel: 'difícil',
+      comprobar: () => {
+        const m = analisis(e.ventana).margen, visible = m >= 10;
+        if (e.marca == null) return { ok: false, mensaje: visible ? 'Con esta ventana la falda baja y asoma un pico pequeño: tócalo.' : 'Toca el espectro donde creas ver la nota débil, o prueba otra ventana.' };
+        if (Math.abs(e.marca - FD) > 20) return { ok: false, mensaje: 'En ' + num(e.marca) + ' Hz no hay una nota: busca un pico pequeño y aislado, no la falda del tono fuerte.' };
+        if (!visible) return { ok: false, mensaje: 'Esa zona está bien, pero con la ventana ' + (e.ventana === 'rect' ? 'rectangular' : e.ventana === 'hann' ? 'de Hann' : 'de Blackman') + ' la falda del tono fuerte sigue tapando la nota débil (sobresale ' + num(Math.max(0, m), 0) + ' dB). Prueba a suavizar más los bordes del trozo.' };
+        return { ok: true, mensaje: 'Ahí está, en ' + num(FD) + ' Hz: con esta ventana sobresale ' + num(m, 0) + ' dB de la falda.' };
+      },
+      resolver: () => { eleccion.fijar('hann', false); e.ventana = 'hann'; e.marca = FD; estado(); L.dibujar(); Curso.cambio('reto-4'); },
+      pista: [
+        'Con la ventana rectangular, la falda del tono fuerte, que se extiende por todo el espectro, tapa lo que tiene cerca.',
+        'Prueba a suavizar los bordes del trozo con la ventana de Hann: la falda baja y debería asomar un pico pequeño. Tócalo.',
+      ],
+      exito: '<p>Suavizar los bordes baja la falda del pico fuerte de forma espectacular, y la nota débil, que estaba enterrada, aparece. A cambio, cada pico se ensancha un poco: es el compromiso de las ventanas, y por eso la rectangular sigue siendo la mejor para separar dos tonos iguales muy juntos.</p>',
+    });
+  })();
+
+  // ── Reto 5 · Los ceros no hacen milagros (elegir el relleno y mover la duración) ─────────────────────────────
+  // Dos notas de 440 y 450 Hz, en fase en el centro del trozo, a 2.000 Hz de muestreo. Se ven dos picos con T·Δf ≈ 2,4,
+  // es decir, con T ≈ 0,24 s, y no importa cuánto relleno se use.
+  (function () {
+    const FS = 2000, F1 = 440, F2 = 450, UMBRAL = 0.244;
+    const e = { pad: 1, T: 0.05, ultimo: 'T', E: null, real: 0 };
+    function recalcular() {
+      const x = dosTonos(e.T, F1, F2, FS), N = x.length;
+      e.N = N;
+      e.E = Senal.espectro(x, FS, { ventana: 'hann', nfft: N * e.pad });
+      // La separación «de verdad», con un relleno grande, para no depender del que se enseña.
+      e.real = profundidad(espectro(x, FS, 'hann', 16), F1, F2);
+    }
+    recalcular();
+    const L = G.lienzo('#r5-escena', {
+      alto: altoEscena(270, 300),
+      etiqueta: 'El espectro de Hann de dos notas de 440 y 450 hercios, dibujado con las barras que calcula la transformada, como puntos, y una línea que las une',
+      dibujar: (ctx, w, h, C) => {
+        const caja = { x: 46, y: 14, w: w - 58, h: h - 62 };
+        const esc = G.ejes(ctx, { caja, x: [415, 475], y: [-40, 4], marcasX: [420, 440, 450, 470], marcasY: [-40, -20, 0], formatoX: v => num(v), formatoY: v => num(v), etiquetaX: 'frecuencia (Hz)', etiquetaY: 'dB', rejilla: true, C });
+        let mx = 1e-12;
+        for (let k = 0; k < e.E.mag.length; k++) mx = Math.max(mx, e.E.mag[k]);
+        const xs = [], ys = [];
+        for (let k = 0; k < e.E.f.length; k++) if (e.E.f[k] >= 405 && e.E.f[k] <= 485) { xs.push(e.E.f[k]); ys.push(Math.max(-40, 20 * Math.log10(Math.max(e.E.mag[k], 1e-12) / mx))); }
+        ctx.save(); ctx.strokeStyle = G.alfa(C.eje, 0.9); ctx.setLineDash([2, 3]);
+        for (const f of [F1, F2]) { const x = esc.x(f); ctx.beginPath(); ctx.moveTo(x, caja.y); ctx.lineTo(x, caja.y + caja.h); ctx.stroke(); }
+        ctx.restore();
+        G.linea(ctx, esc, xs, ys, { color: C.espectro, ancho: 1.8, C });
+        G.puntos(ctx, esc, xs, ys, { color: C.espectro, radio: e.pad >= 8 ? 2 : 3.6, C });
+        rotulo(ctx, C, caja.x + 6, caja.y + 13, 'las dos notas, en las líneas punteadas');
+      },
+    });
+    const lect = Curso.lecturas('#r5-mandos', [
+      { id: 'barras', nombre: 'Barras entre 405 y 485 Hz' },
+      { id: 'sep', nombre: 'Separación entre barras' },
+      { id: 'res', nombre: 'Uno entre T', clase: 'destacada' },
+    ]);
+    const estado = () => {
+      const df = FS / (e.N * e.pad);
+      lect.fijar('barras', num(Math.floor(485 / df) - Math.ceil(405 / df) + 1));
+      lect.fijar('sep', num(df, 2) + ' Hz');
+      lect.fijar('res', num(1 / e.T, 1) + ' Hz');
+    };
+    const eleccion = Curso.eleccion('#r5-mandos', { etiqueta: 'Relleno con ceros', opciones: [1, 2, 4, 8, 16].map(v => ({ valor: v, texto: '×' + v })), valor: e.pad, reto: 'reto-5', alCambiar: v => { e.pad = v; e.ultimo = 'pad'; recalcular(); estado(); L.dibujar(); } });
+    const mT = Curso.mando('#r5-mandos', { etiqueta: 'Duración del trozo', min: 0.05, max: 0.5, paso: 0.01, valor: e.T, formato: v => num(v, 2) + ' s', reto: 'reto-5', alCambiar: v => { e.T = v; e.ultimo = 'T'; recalcular(); estado(); L.dibujar(); } });
+    estado();
+    Curso.reto('reto-5', {
+      titulo: 'Los ceros no hacen milagros', nivel: 'medio',
+      comprobar: () => {
+        if (e.real >= 3) return { ok: true, mensaje: 'Dos picos con T = ' + num(e.T, 2) + ' s: ahora se llevan ' + num(e.T * (F2 - F1), 1) + ' vueltas de diferencia, con ×' + e.pad + ' ceros.' };
+        if (e.ultimo === 'pad' && e.pad > 1) return { ok: false, mensaje: 'Ahora el dibujo es más suave, pero la montaña mide lo mismo: los ceros no son señal.' };
+        return { ok: false, mensaje: 'Una sola montaña: las dos norias se han sacado solo ' + num(e.T * (F2 - F1), 1) + ' vueltas en el trozo. Prueba otra cosa.' };
+      },
+      resolver: () => { eleccion.fijar(4, false); e.pad = 4; mT.fijar(0.3, false); e.T = 0.3; e.ultimo = 'T'; recalcular(); estado(); L.dibujar(); Curso.cambio('reto-5'); },
+      pista: [
+        'Fíjate en la anchura de la montaña cuando cambias el relleno con ceros: ¿se estrecha, o solo se dibuja con más puntos?',
+        'Lo único que estrecha la montaña es escuchar más tiempo: se necesita que las dos norias se saquen un par de vueltas durante el trozo, y se llevan 10 Hz.',
+      ],
+      exito: '<p>El relleno con ceros dibuja la misma montaña con más puntos, y no la estrecha. Para separar dos notas hace falta más señal, no más ceros. Lo que sí hace el relleno es ayudar a colocar el centro de una nota sola con más finura que la rejilla de la DFT, y eso es precisión, no resolución.</p>',
+    });
+  })();
+
+  // ── Reto 6 · Cuenta los armónicos (interruptor lineal / decibelios y escribir un número) ─────────────────────
+  // Una «aaa» sintética de 220 Hz con doce armónicos cada vez más pequeños (a 22.050 Hz, 0,5 s, ventana de Hann). Los
+  // armónicos caen justo en barras (2 Hz de separación). Diez asoman por encima de −60 dB; en lineal apenas se ven cinco.
+  (function () {
+    const FS = 22050, N = 11025, F0 = 220;
+    const AMPS = [1, 0.5, 0.25, 0.12, 0.06, 0.03, 0.015, 0.008, 0.004, 0.002, 0.0007, 0.0003];
+    const x = Float64Array.from({ length: N }, (_, i) => AMPS.reduce((s, a, k) => s + a * Math.sin(TAU * F0 * (k + 1) * i / FS), 0));
+    const E = Senal.espectro(x, FS, { ventana: 'hann', nfft: N });                 // df = 2 Hz: los armónicos caen en barras
+    const df = E.f[1] - E.f[0];
+    const barras = AMPS.map((_, k) => { const m = E.mag[Math.round(F0 * (k + 1) / df)]; return { f: F0 * (k + 1), m, db: 20 * Math.log10(Math.max(m, 1e-12)) }; });
+    const mx = Math.max(...barras.map(b => b.m)), correcta = barras.filter(b => b.db - 20 * Math.log10(mx) > -60).length;
+    const e = { escala: 'lineal' };
+    const L = G.lienzo('#r6-escena', {
+      alto: altoEscena(250, 280),
+      etiqueta: 'El espectro de una vocal «aaa» sintética de 220 hercios, de 0 a 3.000 hercios: doce armónicos cada vez más pequeños, en escala lineal o en decibelios',
+      dibujar: (ctx, w, h, C) => {
+        const caja = { x: 46, y: 14, w: w - 60, h: h - 62 };
+        const lineal = e.escala === 'lineal';
+        const esc = G.ejes(ctx, lineal
+          ? { caja, x: [0, 3000], y: [0, 1.08], marcasX: [0, 500, 1000, 1500, 2000, 2500, 3000], marcasY: [0, 0.5, 1], formatoX: v => num(v), formatoY: v => num(v, 1), etiquetaX: 'frecuencia (Hz)', etiquetaY: 'amplitud', rejilla: true, C }
+          : { caja, x: [0, 3000], y: [-80, 3], marcasX: [0, 500, 1000, 1500, 2000, 2500, 3000], marcasY: [-80, -60, -40, -20, 0], formatoX: v => num(v), formatoY: v => num(v), etiquetaX: 'frecuencia (Hz)', etiquetaY: 'dB', rejilla: true, C });
+        const fs = barras.map(b => b.f);
+        if (lineal) G.barras(ctx, esc, fs, barras.map(b => b.m / mx), { color: C.espectro, anchoPx: w < 560 ? 6 : 9, C });
+        else G.barras(ctx, esc, fs, barras.map(b => Math.max(-80, b.db - 20 * Math.log10(mx))), { color: C.espectro, anchoPx: w < 560 ? 6 : 9, base: -80, C });
+        // La línea de −60 dB: en lineal está pegada al suelo.
+        const y = Math.round(lineal ? esc.y(Math.pow(10, -60 / 20)) : esc.y(-60)) + 0.5;
+        ctx.save(); ctx.strokeStyle = G.alfa(C.ruido, 0.9); ctx.setLineDash([5, 4]); ctx.lineWidth = 1.3;
+        ctx.beginPath(); ctx.moveTo(caja.x, y); ctx.lineTo(caja.x + caja.w, y); ctx.stroke(); ctx.restore();
+        rotulo(ctx, C, caja.x + caja.w - 6, y - (lineal ? 14 : 7), '−60 dB', { alinear: 'right', color: C.ruido, peso: 600 });
+        rotulo(ctx, C, caja.x + caja.w - 6, caja.y + 14, lineal ? 'escala lineal' : 'escala en decibelios', { alinear: 'right' });
+      },
+    });
+    const mandos = document.getElementById('r6-mandos');
+    Curso.eleccion(mandos, { etiqueta: 'Escala del dibujo', opciones: [{ valor: 'lineal', texto: 'Lineal' }, { valor: 'db', texto: 'Decibelios' }], valor: e.escala, alCambiar: v => { e.escala = v; L.dibujar(); } });
+    const fila = document.getElementById('r6-fila');
+    let reto = null;
+    const campo = Curso.campo(fila, { etiqueta: 'Armónicos por encima de −60 dB', ancho: 10, marcador: '¿cuántos?', alEnviar: () => reto.revisar() });
+    Curso.audio.boton(fila, () => ({ x: Float64Array.from({ length: FS }, (_, i) => AMPS.reduce((s, a, k) => s + a * Math.sin(TAU * F0 * (k + 1) * i / FS), 0)), fs: FS, volumen: 0.5 }), 'Oír la «aaa»');
+    reto = Curso.reto('reto-6', {
+      titulo: 'Cuenta los armónicos', nivel: 'medio', auto: false,
+      comprobar: () => {
+        const v = campo.valor;
+        if (!Number.isFinite(v)) return { ok: false, mensaje: 'Escribe cuántos picos asoman por encima de la línea de −60 dB.' };
+        if (v === correcta) { campo.marcar('bien'); return { ok: true, mensaje: 'Diez: los dos últimos armónicos quedan por debajo de −60 dB, más de mil veces más pequeños que el mayor.' }; }
+        campo.marcar('mal');
+        if (v < 7) return { ok: false, mensaje: 'Eso es más o menos lo que se ve en escala lineal. Cambia a decibelios: lo pequeño asoma, y hay que contar los que pasan de la línea discontinua.' };
+        if (v >= 12) return { ok: false, mensaje: 'Esos son todos los armónicos del sonido, pero los últimos no llegan a la línea de −60 dB.' };
+        return { ok: false, mensaje: 'Casi: cuenta otra vez los picos que quedan por encima de la línea discontinua, en decibelios.' };
+      },
+      resolver: () => campo.fijar(correcta),
+      pista: [
+        'En escala lineal, lo que es cien veces más pequeño se aplasta contra el suelo y no se ve. Cambia a decibelios.',
+        'En decibelios, cuenta los picos que sobresalen de la línea discontinua de −60 dB, de izquierda a derecha.',
+      ],
+      exito: '<p>Cada 20 dB, la amplitud se divide por diez. En decibelios ves a la vez lo grande y lo que es mil veces más pequeño, y por eso los espectros casi siempre se miran así. En lineal, la misma vocal parecía tener cuatro o cinco armónicos, y tiene muchos más.</p>',
+    });
+  })();
+
+  // ── En tu voz: el mismo pico con un trozo corto y con uno largo ─────────────────────────────────────────────
+  // Se elige el trozo de más energía, se calcula su espectro de Hann con 0,1 s y con T s (hasta 2 s), y se mide el pico, con una
+  // parábola entre barras, y su anchura a −6 dB, que con la ventana de Hann debería ser de unas 2/T.
+  (function () {
+    const FSA = 16000;
+    const st = { x: null, fs: FSA, nombre: '', largo: 2, ancho: false, A: null, B: null, aviso: '', centro: 0 };
+    const lab = Curso.voz('#voz-lab', { ejemplos: ['silbido', 'aaa', 'diapason'], fsAnalisis: FSA, alCargar: cargar });
+    const mandos = crear('div', { class: 'mandos' });
+    lab.panel.appendChild(mandos);
+    let temporizador = null;
+    Curso.mando(mandos, {
+      etiqueta: 'Duración del trozo largo', min: 0.05, max: 2, paso: 0.05, valor: st.largo, formato: v => num(v, 2) + ' s',
+      alCambiar: v => { st.largo = v; clearTimeout(temporizador); temporizador = setTimeout(() => analizar(), 120); },
+    });
+    const vista = Curso.eleccion(mandos, {
+      etiqueta: 'Qué mirar', opciones: [{ valor: 'pico', texto: 'Alrededor del pico mayor' }, { valor: 'banda', texto: 'De 0 a 1.500 Hz' }], valor: 'pico',
+      alCambiar: v => { st.ancho = v === 'banda'; LA.dibujar(); LB.dibujar(); },
+    });
+
+    // El espectro de un trozo: Hann con relleno, en dB respecto al mayor de los dos y con el pico medido.
+    function espectroDe(trozo) {
+      const nfft = Math.max(16384, Senal.siguientePotencia2(trozo.length * 4));
+      const S = Senal.espectro(trozo, st.fs, { ventana: 'hann', nfft });
+      return { f: S.f, mag: S.mag, df: S.f[1] - S.f[0], T: trozo.length / st.fs };
+    }
+    // El pico mayor entre 80 y 6.000 Hz, afinado con una parábola sobre los decibelios, y su anchura a −6 dB.
+    function medir(E) {
+      let k = -1, mejor = 0;
+      for (let i = 0; i < E.f.length; i++) if (E.f[i] >= 80 && E.f[i] <= 6000 && E.mag[i] > mejor) { mejor = E.mag[i]; k = i; }
+      if (k < 1 || mejor < 1e-5) return null;
+      const a = Math.log(Math.max(E.mag[k - 1], 1e-12)), b = Math.log(mejor), c = Math.log(Math.max(E.mag[k + 1], 1e-12)), den = a - 2 * b + c;
+      const d = den < 0 ? limitar(0.5 * (a - c) / den, -0.5, 0.5) : 0, f = E.f[k] + d * E.df;
+      const mitad = mejor / 2;
+      let i = k; while (i > 0 && E.mag[i] > mitad) i--;
+      let j = k; while (j < E.mag.length - 1 && E.mag[j] > mitad) j++;
+      const fi = E.f[i] + E.df * (mitad - E.mag[i]) / Math.max(E.mag[i + 1] - E.mag[i], 1e-12);
+      const fj = E.f[j - 1] + E.df * (E.mag[j - 1] - mitad) / Math.max(E.mag[j - 1] - E.mag[j], 1e-12);
+      return { f, mag: mejor, izq: fi, der: fj, ancho: Math.max(0, fj - fi) };
+    }
+    const crearLienzo = (titulo, cual) => {
+      const escena = crear('div', { class: 'escena' });
+      lab.panel.appendChild(escena);
+      return G.lienzo(escena, {
+        alto: altoEscena(190, 210),
+        etiqueta: 'El espectro del ' + titulo + ' de tu grabación, en decibelios, con el pico mayor marcado',
+        dibujar: (ctx, w, h, C) => {
+          const caja = { x: 46, y: 10, w: w - 58, h: h - 46 }, R = st[cual];
+          if (!R) { G.texto(ctx, w / 2, h / 2, 'Graba, sube un audio o elige un ejemplo', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+          const pico = st.A && st.A.pico ? st.A.pico : null, c = pico ? pico.f : 440;
+          const x0 = st.ancho ? 0 : Math.max(0, c - 80), x1 = st.ancho ? 1500 : c + 80;
+          const esc = G.ejes(ctx, { caja, x: [x0, x1], y: [-80, 3], marcasX: st.ancho ? [0, 500, 1000, 1500] : 5, marcasY: [-80, -60, -40, -20, 0], formatoX: v => num(v), formatoY: v => num(v), etiquetaX: 'frecuencia (Hz)', etiquetaY: 'dB', rejilla: true, C });
+          const xs = [], ys = [];
+          for (let k = 0; k < R.f.length; k++) if (R.f[k] >= x0 && R.f[k] <= x1) { xs.push(R.f[k]); ys.push(Math.max(-80, 20 * Math.log10(Math.max(R.mag[k], 1e-12) / st.ref))); }
+          if (xs.length > 1) G.linea(ctx, esc, xs, ys, { color: C.espectro, ancho: 1.7, C });
+          const m = R.medida;
+          if (m && m.f >= x0 && m.f <= x1 && Number.isFinite(m.ancho)) {
+            const y6 = esc.y(20 * Math.log10(m.mag / st.ref) - 6);
+            ctx.save(); ctx.strokeStyle = C.plantilla; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(esc.x(m.izq), y6); ctx.lineTo(esc.x(m.der), y6); ctx.stroke(); ctx.restore();
+            rotulo(ctx, C, caja.x + caja.w - 6, caja.y + 30, 'anchura a −6 dB: ' + num(m.ancho, 1) + ' Hz (teoría ≈ ' + num(2 / R.T, 1) + ')', { alinear: 'right', color: C.plantilla, peso: 600 });
+          }
+          rotulo(ctx, C, caja.x + 6, caja.y + 14, 'trozo de ' + num(R.T, 2) + ' s');
+        },
+      });
+    };
+    const LA = crearLienzo('trozo corto', 'A');
+    const LB = crearLienzo('trozo largo', 'B');
+    const fila = crear('div', { class: 'fila' });
+    lab.panel.appendChild(fila);
+    const lect = Curso.lecturas(fila, [
+      { id: 'f', nombre: 'Pico mayor', clase: 'senal' },
+      { id: 'a', nombre: 'Anchura con el trozo corto', clase: 'destacada' },
+      { id: 'b', nombre: 'Anchura con el trozo largo', clase: 'destacada' },
+    ]);
+    const ayuda = crear('p', { class: 'nota-reto' }, '');
+    lab.panel.appendChild(ayuda);
+
+    // El trozo de más energía: ventanas de la longitud pedida, cada 50 ms.
+    function mejorInicio(x, n) {
+      if (x.length <= n) return 0;
+      const paso = Math.round(0.05 * st.fs);
+      let mejor = 0, emax = -1;
+      for (let i = 0; i + n <= x.length; i += paso) {
+        let s = 0;
+        for (let k = i; k < i + n; k += 4) s += x[k] * x[k];
+        if (s > emax) { emax = s; mejor = i; }
+      }
+      return mejor;
+    }
+    function cargar(x, fs, nombre) { st.x = x; st.fs = fs; st.nombre = nombre || 'grabación'; analizar(); }
+    function analizar() {
+      const x = st.x;
+      if (!x || !x.length) return;
+      const nL = Math.min(x.length, Math.round(st.largo * st.fs)), i0 = mejorInicio(x, nL);
+      const largo = Float64Array.from(x.slice(i0, i0 + nL));
+      const nC = Math.min(nL, Math.round(0.1 * st.fs)), c0 = Math.round((nL - nC) / 2);
+      const corto = largo.slice(c0, c0 + nC);
+      const A = espectroDe(corto), B = espectroDe(largo);
+      B.medida = medir(B);
+      // El pico se busca en el trozo largo y se mide en los dos, en la misma frecuencia.
+      A.medida = medir(A);
+      st.A = A; st.B = B; A.pico = B.medida || A.medida;
+      let mx = 1e-12;
+      for (const R of [A, B]) for (let k = 0; k < R.f.length; k++) if (R.f[k] <= 6000) mx = Math.max(mx, R.mag[k]);
+      st.ref = mx;
+      lect.fijar('f', B.medida ? num(B.medida.f, 1) + ' Hz' : '—');
+      lect.fijar('a', A.medida ? num(A.medida.ancho, 1) + ' Hz (teoría ' + num(2 / A.T, 1) + ')' : '—');
+      lect.fijar('b', B.medida ? num(B.medida.ancho, 1) + ' Hz (teoría ' + num(2 / B.T, 1) + ')' : '—');
+      if (!B.medida) ayuda.textContent = 'No encuentro un pico claro: la grabación suena muy flojo o no tiene una nota. Prueba con otra o acércate al micrófono.';
+      else if (B.T > 0.25 && B.medida.ancho > 1.5 * 2 / B.T) ayuda.textContent = 'Tu nota se ha movido durante el trozo largo: el pico sale ' + num(B.medida.ancho / (2 / B.T), 1) + ' veces más ancho que la teoría. Escuchar más tiempo solo afina la lectura si la nota se queda quieta.';
+      else ayuda.textContent = 'Con el trozo corto, el pico es una montaña ancha; con el largo, se afina hasta la anchura que dice la teoría, unas dos veces uno dividido entre la duración.';
+      LA.dibujar(); LB.dibujar();
+    }
+  })();
+})();
+</script>
+</body>
+</html>

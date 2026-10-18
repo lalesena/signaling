@@ -1,0 +1,1059 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Una aguja en un pajar · Señales</title>
+<meta name="description" content="Lección 9 del curso visual «Señales, de 0 a experto»: cómo se encuentra una señal enterrada bajo el ruido, como la del GPS. La plantilla deslizante, la correlación, el filtro adaptado y la autocorrelación, con seis retos y tu propia voz.">
+<link rel="stylesheet" href="comun/fuentes.css">
+<link rel="stylesheet" href="comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e09">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Nivel 3 · Lección 9</p>
+    <h1>Una aguja en un pajar: la correlación</h1>
+    <aside class="pregunta">
+      <p>La señal que un satélite GPS envía a tu móvil llega con una potencia del orden de una diezmilbillonésima de vatio. En esa misma banda, el ruido que capta cualquier antena solo por estar a temperatura ambiente es decenas de veces más fuerte, de modo que, si dibujaras lo que recibe el móvil, solo verías ruido. Aun así, en pocos segundos el teléfono sabe dónde estás. ¿Cómo se encuentra algo que está por debajo del ruido?</p>
+    </aside>
+    <ul class="meta"><li>Unos 50 minutos</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>La idea en una imagen</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Arriba, una señal con ruido en verde, con un chirrido corto escondido en algún sitio. En púrpura, la plantilla: el chirrido tal como lo conocemos, que se desliza por la señal. Abajo, en naranja, el parecido en cada posición: casi plano casi siempre, y con un pico donde la plantilla encaja.</figcaption>
+    </figure>
+    <p>Imagina que buscas una frase en un libro que no sabes en qué página está. Pones tu frase al principio del texto, comparas letra por letra con lo que tienes debajo, anotas cuántas coinciden, la mueves una letra a la derecha y vuelves a comparar, hasta el final. La posición con más coincidencias es donde está la frase. La correlación hace lo mismo con una señal: en cada posición multiplica la plantilla por lo que tiene debajo, punto a punto, y suma.</p>
+    <p>Con el ruido más fuerte o más débil, la curva de abajo cambia de aspecto, pero el pico sigue en su sitio mientras la plantilla sea lo bastante larga. El mando de la imagen sube el ruido hasta que el chirrido deja de verse en la señal de arriba y, aun así, la curva de abajo lo encuentra.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Paso a paso</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>La plantilla deslizante</h3>
+      <p>En la <a href="e04.html">lección 4</a>, transformar era medir el parecido: se coloca una noria de prueba junto a la señal, se multiplican las dos punto a punto y se mira el área que queda. Aquí la plantilla no tiene por qué ser una noria. Puede ser cualquier forma que conozcas de antemano, como el chirrido corto que emite un sonar o la forma de onda de una palabra. A la forma conocida que se busca se le llama <b class="termino">plantilla</b>.</p>
+      <p>Se coloca la plantilla sobre el principio de la señal, se multiplican las dos punto a punto, se suman los productos y se apunta el resultado. Después se desliza un paso a la derecha y se repite, hasta llegar al final. La lista de números que sale, uno por cada posición de la plantilla, es la <b class="termino">correlación cruzada</b>, y el número de pasos que se ha desplazado la plantilla en cada punto de la lista es el <b class="termino">retardo</b>.</p>
+      <p>Donde la plantilla no se parece a lo que tiene debajo, los productos salen unas veces positivos y otras negativos, y la suma se queda cerca de cero. Donde la plantilla encaja, una cresta cae sobre una cresta y un valle sobre un valle, casi todos los productos salen positivos y la suma salta. Para poder comparar posiciones y señales de distinto volumen, se puede dividir la suma por la energía de la plantilla y por la del trozo de señal que cubre, y entonces el parecido queda entre −1 y 1.</p>
+      <p>Es casi la misma operación que la convolución de la <a href="e07.html">lección 7</a>, con una diferencia: allí el sello se daba la vuelta antes de deslizarlo, y aquí la plantilla se desliza tal como es.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Encuentra dónde está escondido el chirrido. Arrastra la plantilla púrpura por la señal y mira la curva naranja de abajo, que se va dibujando por donde pasas: cuando la plantilla caiga justo encima del chirrido, saltará el pico.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="fila" id="r1-fila"></div>
+        <p class="nota-reto">El pico es muy estrecho: al soltar, si la plantilla queda muy cerca de él, se ajusta sola. Con el teclado, pulsa la gráfica con el tabulador y usa las flechas, de muestra en muestra (con Mayús, de diez en diez).</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>Por qué gana al ruido</h3>
+      <p>El ruido también se parece un poco a cualquier plantilla, así que la curva nunca es del todo plana. La diferencia está en cómo se suman los productos. Cada punto de la señal que coincide con la plantilla aporta un producto a favor, todos con el mismo signo, y su suma crece en proporción al número de puntos. Los productos del ruido salen unas veces a favor y otras en contra, se anulan a medias, y su suma crece solo como la raíz cuadrada de ese número.</p>
+      <p>Con cuatro veces más puntos, la señal suma cuatro veces más y el ruido, solo el doble, así que el pico sobresale el doble. Cuanto más larga es la plantilla, mayor es la ventaja, y a esa ventaja se la llama <b class="termino">ganancia de procesado</b>. Medida en decibelios, como en la <a href="e05.html">lección 5</a>, vale diez veces el logaritmo del número de puntos: con mil puntos son 30 dB, que es multiplicar por mil la potencia de la señal frente a la del ruido. Por eso una señal puede estar por debajo del ruido en cada instante y, aun así, encontrarse.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">En la señal hay escondida una ristra de unos y menos unos, y en cada muestra la señal es unas cuatro veces más débil que el ruido, doce decibelios. Alarga la plantilla hasta que el pico de la curva naranja sobresalga al menos cinco veces por encima del resto de la curva y marque el sitio correcto.</p>
+        <div class="escena" id="r2-escena"></div>
+        <div class="mandos" id="r2-mandos"></div>
+        <div class="fila" id="r2-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>El radar y el sonar</h3>
+      <p>Si conoces la forma de lo que buscas, la mejor plantilla es esa misma forma. Cuando el ruido es blanco, es decir, igual de fuerte en todas las frecuencias, correlacionar con la forma exacta da el pico más alto sobre el ruido que puede dar un sistema lineal. Usar la correlación así se llama <b class="termino">filtro adaptado</b>, y la idea se atribuye a D. O. North, que la describió en un informe de los laboratorios RCA de 1943. Con ruidos de otros colores hay que blanquear antes la señal, algo de lo que se ocupa la <a href="e10.html">lección 10</a>.</p>
+      <p>El radar y el sonar lo usan así. Emiten un pulso de forma conocida y lo que vuelve es una copia retrasada y muy debilitada, enterrada en ruido. Se desliza el pulso sobre lo recibido y el retardo del pico es el tiempo que ha tardado en ir y volver. Como la onda recorre el camino dos veces, el objeto está a la mitad de lo que ha recorrido: la distancia es la velocidad por el tiempo, dividido entre dos.</p>
+      <p>A 20 °C, el sonido viaja a unos 343 metros por segundo en el aire, a unos 1.480 en agua dulce y a unos 1.540 en agua de mar. En el reto se usa el valor redondeado de 1.500. Con el móvil puedes probarlo: el experimento «Sonar» de phyphox emite chirridos de 5 ms que suben de 1 a 4 kHz, correlaciona la grabación con ellos y convierte en distancia el tiempo de cada eco.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Un sonar ha enviado un chirrido y ha recibido su eco, tan débil que se pierde entre el ruido. Toca el pico de la curva naranja para leer cuándo vuelve y calcula a cuántos metros está el objeto, con el sonido a 1.500 m/s. Escribe la distancia y pulsa «Comprobar».</p>
+        <div class="escena" id="r3-escena"></div>
+        <div class="fila" id="r3-fila"></div>
+        <div class="mandos" id="r3-mandos"></div>
+        <p class="nota-reto">Con el teclado: pulsa la gráfica con el tabulador y usa las flechas para moverte de pico en pico.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>La forma de la plantilla importa</h3>
+      <p>Un radar quiere dos cosas que se pelean. Un pulso largo lleva mucha energía, así que se detecta de más lejos, pero su correlación es un pico ancho y torpe que no separa dos objetos cercanos. Un pulso corto da un pico estrecho, pero lleva poca energía. La solución es codificar el pulso: sigue siendo largo, pero está compuesto por una ristra de elementos cortos, cada uno con su signo, y su correlación se concentra en un pico estrecho con unos <b class="termino" data-termino="Lóbulo lateral">lóbulos laterales</b> pequeños a los lados. Es la <b class="termino">compresión de pulsos</b>, y permite tener a la vez energía y precisión.</p>
+      <p>El ejemplo clásico es el código de Barker de 13 elementos: más, más, más, más, más, menos, menos, más, más, menos, más, menos, más. Su correlación tiene un pico de 13 y unos lóbulos laterales que nunca pasan de 1, es decir, 22,3 dB por debajo del pico. No se conoce ningún código de Barker de más de 13 elementos, y hay indicios muy fuertes de que no existe. Un chirp, un pulso cuya frecuencia sube mientras dura, también se comprime así.</p>
+      <p>Los lóbulos laterales importan porque son falsos ecos: si son altos, un lóbulo del avión cercano se puede confundir con otro avión.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Dos aviones vuelan casi pegados y el radar recibe sus dos ecos con ruido. Elige el pulso con el que la curva naranja enseña dos picos separados y los lóbulos laterales no pasan del 10 % del pico. Los tres pulsos duran lo mismo y llevan la misma energía.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="mandos" id="r4-mandos"></div>
+        <div class="fila" id="r4-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>Compararse consigo misma: la autocorrelación</h3>
+      <p>Si la plantilla es la propia señal, la correlación dice a qué distancias se parece la señal a sí misma, y se llama <b class="termino">autocorrelación</b>. Con el desplazamiento en cero el parecido es total, y es siempre lo máximo que se puede alcanzar. El ruido solo se parece a sí mismo sin moverse, así que su autocorrelación es un pico en cero y casi nada más. Un silbido se parece a sí mismo cada vez que completa una vuelta de la noria, y una vocal, cada vez que vibran las cuerdas vocales.</p>
+      <p>De ahí sale la nota de una voz. El primer pico alto después del cero marca lo que dura una vibración, y su inversa es la frecuencia fundamental de la <a href="e03.html">lección 3</a>. Es un método clásico, que Rabiner estudió a fondo en 1977 y que usa Praat con las mejoras de Boersma. En la práctica se resta la media, se multiplica el trozo por una ventana, se usan unos 40 ms, que dejan al menos tres periodos del tono más grave que se busca, y se dice «no hay nota» cuando ningún pico llega a una altura mínima, de 0,4 a 0,45: el ruido blanco da picos de unos 0,25.</p>
+      <p>Hay trampas. Los picos a dos y a tres vibraciones son casi tan altos como el primero, y quedarse con el más alto da una nota una octava por debajo de la real, el error de octava de la <a href="e20.html">lección 20</a>. Un pico pequeño antes del primero puede venir del primer formante de la vocal, y por eso se elige el primer pico que llega a una altura parecida a la del más alto, no el primero que pase de un umbral bajo.</p>
+      <p>La autocorrelación tiene además una relación íntima con Fourier. La transformada es una correlación con norias, un pico por cada noria que encaja, y el espectro de potencia es la transformada de Fourier de la autocorrelación. El ruido blanco tiene un espectro plano porque solo se parece a sí mismo sin desplazarlo, y de ahí parte la <a href="e10.html">lección 10</a>.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Esta es la autocorrelación de una «aaa» cantada, de 0 a 25 ms. Toca el pico que corresponde a una sola vibración de las cuerdas vocales y mira qué nota sale. Con los botones de abajo puedes oír la vocal y, después, un tono puro del pico que elijas, para comparar.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="fila" id="r5-fila"></div>
+        <p class="nota-reto">Con el teclado: pulsa la gráfica con el tabulador y usa las flechas para saltar de pico en pico.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>Vuelta a la aguja: el GPS</h3>
+      <p>Todos los satélites GPS emiten la señal civil en la misma frecuencia, 1.575,42 MHz, y todos a la vez. Lo que distingue a cada uno es su código, una ristra de 1.023 elementos, cada uno un uno o un menos uno, que se llaman <b class="termino">chips</b> y se repite cada milésima de segundo. Son <b class="termino" data-termino="Código pseudoaleatorio">códigos pseudoaleatorios</b>: parecen azar, pero el satélite y el receptor los conocen. Se parecen tan poco entre sí que la correlación de un código con otro distinto solo toma los valores −65, −1 o 63, frente a los 1.023 del pico de un código consigo mismo.</p>
+      <p>La especificación oficial del GPS fija como mínimo para esta señal una potencia recibida de −158,5 dBW, que son −128,5 dBm. La cifra redonda de −130 dBm, que citan muchos textos, viene de especificaciones anteriores; con cualquiera de las dos, es del orden de 10⁻¹⁶ vatios. Cualquier receptor a temperatura ambiente capta además un ruido térmico de unos −174 dBm por hercio, y en los 2 MHz que ocupa la señal son unos −111 dBm. La señal llega, por tanto, entre 17,6 y 19 dB por debajo del ruido, entre 58 y 80 veces menos potente.</p>
+      <p>El receptor no ve la señal: la busca. Desliza el código de cada satélite sobre lo que recibe, y correlacionar un periodo completo da una ganancia de 10 veces el logaritmo de 1.023, unos 30 dB, con lo que la señal pasa de estar unos 19 dB por debajo del ruido a estar unos 11 por encima, en un receptor ideal. Cada vez que se dobla el tiempo durante el que se correlaciona, se ganan unos 3 dB, y hasta un bit de datos de navegación, que dura 20 ms, la ganancia llega a unos 43 dB.</p>
+      <p>Como el satélite se mueve, la frecuencia puede llegar desplazada por efecto Doppler hasta unos 5 kHz, y el receptor busca en dos direcciones: el retardo del código y la frecuencia. El retardo es lo que mide cuánto ha tardado la señal en llegar. Un chip dura unos 977,5 nanosegundos, tiempo en el que la luz recorre unos 293 metros, y la señal tarda unos 67 ms en bajar desde los 20.180 km de altura de un satélite que esté justo encima.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">Hay uno de cuatro satélites en el aire, y su señal llega mucho más débil que el ruido y con un retraso que no conoces. Prueba el código de cada satélite con distintos tiempos de integración hasta que salga un pico claro, y descubre cuál es y con cuántos chips de retraso llega. Es un modelo sin efecto Doppler.</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>En tu voz</h2>
+    <p><b>Qué grabar.</b> Una «aaa» sostenida durante unos tres segundos, sin cambiar de nota, que es el tramo 3 de la grabación de referencia de la serie. También sirven una «iii» o un silbido, el tramo 2. Graba con el micrófono si tu navegador lo deja; si no, sube un audio grabado con el móvil, o prueba con los ejemplos sintéticos.</p>
+    <p><b>Qué mirar.</b> El laboratorio busca la nota de tu voz con la autocorrelación de un trozo de 40 ms, que puedes mover tocando la grabación de arriba. Verás los picos regulares, el primero marcado como tu periodo, su frecuencia y la nota más cercana, y también los picos de dos y de tres periodos, que dan la misma nota una y dos octavas más grave. Con el botón puedes oír tu grabación y, después, un tono puro de la frecuencia que ha encontrado: si es la misma nota, se oye. Con un silbido, el laboratorio cambia solo de rango de búsqueda, porque si no encontraría una frecuencia cuatro veces más grave.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>Lo que tienes que recordar</h2>
+    <ol class="tres">
+      <li>La correlación desliza una plantilla por la señal y mide el parecido en cada posición: se multiplica punto a punto y se suma. Donde la plantilla encaja, la curva tiene un pico, y el retardo del pico dice dónde está lo que buscas, o a qué distancia, si es un eco.</li>
+      <li>Gana al ruido porque los puntos de la señal suman a favor y los del ruido se anulan a medias: la ventaja crece con la longitud de la plantilla y se mide en decibelios, diez veces el logaritmo del número de puntos. Con ruido blanco, la mejor plantilla es la propia forma que buscas, y la forma decide lo estrecho que sale el pico y lo altos que son los lóbulos laterales.</li>
+      <li>La autocorrelación compara la señal consigo misma: un ruido solo se parece a sí mismo sin moverse y una nota, cada periodo. El primer pico alto marca el periodo, y quedarse con otro pico da una nota una octava más grave.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Errores típicos</h2>
+    <ul class="errores">
+      <li><b>«Para encontrar una señal, tiene que ser más fuerte que el ruido.»</b> La correlación suma a favor todos los puntos de la señal mientras el ruido se anula a medias. Con una plantilla larga se encuentra una señal decenas de veces más débil que el ruido, como la del GPS.</li>
+      <li><b>«El pico de la correlación tiene la forma de lo que buscas.»</b> El pico mide el parecido en cada posición, no copia la forma. Sin ruido es simétrico aunque la plantilla no lo sea, y dura el doble que ella. Además, el ruido se parece un poco a cualquier plantilla, así que siempre hay picos pequeños de más.</li>
+      <li><b>«El pico más alto de la autocorrelación marca siempre el periodo.»</b> En una voz muy regular, los picos de dos y de tres periodos son casi igual de altos, y elegir uno de ellos da una nota una octava o más por debajo de la real. El periodo es el primer pico alto.</li>
+      <li><b>«Cualquier plantilla vale, si es larga.»</b> La longitud da energía, pero la forma decide lo estrecho que sale el pico y lo altos que son los lóbulos laterales. Con ruido blanco, la mejor plantilla es exactamente la forma que buscas.</li>
+      <li><b>«Cada satélite GPS emite en una frecuencia distinta.»</b> Todos emiten la señal civil en la misma frecuencia, y los distingue el código: cada uno tiene el suyo y se parecen tan poco entre sí que, al deslizar el de un satélite, solo responde ese satélite.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Abrir</span>
+      <h2>Rincón matemático</h2>
+      <span class="resumen">Las fórmulas, para quien las quiera. Cada una va después de su lectura en palabras.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>Correlación cruzada</h3>
+      <p>La plantilla <span class="tex">y</span> se desliza <span class="tex">\ell</span> muestras sobre la señal <span class="tex">x</span>; en cada desplazamiento se multiplica punto a punto y se suma:</p>
+      <div class="tex">r_{xy}[\ell] = \sum_{n} x[n+\ell]\; y[n]</div>
+
+      <h3>Parecido normalizado</h3>
+      <p>Para comparar entre posiciones y señales, se divide por la energía de la plantilla y por la del trozo de señal que cubre, y el resultado queda entre −1 y 1:</p>
+      <div class="tex">\rho[\ell] = \frac{\sum_n x[n+\ell]\, y[n]}{\sqrt{\sum_n y[n]^2 \;\sum_n x[n+\ell]^2}}</div>
+
+      <h3>Correlación y convolución</h3>
+      <p>Correlacionar con una plantilla es convolucionar con la plantilla puesta del revés:</p>
+      <div class="tex">r_{xy}[\ell] = (x * \tilde{y})[\ell], \qquad \tilde{y}[n] = y[-n]</div>
+
+      <h3>Por qué gana al ruido</h3>
+      <p>Si la señal aporta <span class="tex">A</span> en cada uno de los <span class="tex">N</span> puntos y el ruido tiene desviación <span class="tex">\sigma</span> por punto, la señal suma <span class="tex">NA</span> y el ruido, <span class="tex">\sigma\sqrt{N}</span>, de modo que la relación en potencia mejora <span class="tex">N</span> veces:</p>
+      <div class="tex">\frac{(N A)^2}{N \sigma^2} = N\,\frac{A^2}{\sigma^2} \quad\Longrightarrow\quad G = 10\log_{10} N \ \text{dB}</div>
+      <p>Para el GPS, con 1.023 chips en un milisegundo y con 20 ms, que son 1,023 millones de chips por segundo partidos entre los 50 bits por segundo de los datos:</p>
+      <div class="tex">10\log_{10} 1023 \approx 30{,}1 \ \text{dB}, \qquad 10\log_{10}\frac{1{,}023\cdot 10^{6}}{50} \approx 43{,}1 \ \text{dB}</div>
+
+      <h3>El filtro adaptado</h3>
+      <p>Con ruido blanco de varianza <span class="tex">\sigma^2</span> por muestra, la plantilla que da la mayor relación señal-ruido en el pico es la propia forma <span class="tex">s</span>, escrita como convolución, al revés. Esa relación máxima es la energía de la forma partida por la varianza del ruido:</p>
+      <div class="tex">h[n] = s[N-1-n], \qquad \mathrm{SNR}_{\max} = \frac{\sum_n s[n]^2}{\sigma^2}</div>
+
+      <h3>Eco y distancia</h3>
+      <p>La onda va y vuelve, así que la distancia es la velocidad por el tiempo del eco, dividido entre dos:</p>
+      <div class="tex">d = \frac{v\, t}{2}</div>
+
+      <h3>Autocorrelación</h3>
+      <p>La señal comparada consigo misma. En cero vale su energía y nunca se supera, y si la señal se repite cada <span class="tex">P</span> muestras, los picos vuelven cada <span class="tex">P</span>, y de ahí sale la frecuencia fundamental:</p>
+      <div class="tex">r_{xx}[\ell] = \sum_n x[n]\, x[n+\ell], \qquad |r_{xx}[\ell]| \le r_{xx}[0], \qquad f_0 = \frac{f_s}{P}</div>
+
+      <h3>La corrección de la ventana</h3>
+      <p>Al multiplicar por una ventana, la autocorrelación cae con el desplazamiento. Dividirla por la autocorrelación de la propia ventana deshace esa caída, como propone Boersma:</p>
+      <div class="tex">r_x(\tau) \approx \frac{r_a(\tau)}{r_w(\tau)}</div>
+
+      <h3>Fourier es una correlación con norias</h3>
+      <p>Cada valor del espectro es la correlación de la señal con una noria de frecuencia <span class="tex">f</span>:</p>
+      <div class="tex">X(f) = \sum_n x[n]\, e^{-i 2\pi f n / f_s}</div>
+
+      <h3>El puente con el ruido</h3>
+      <p>El espectro de potencia es la transformada de Fourier de la autocorrelación, y por eso el ruido blanco, con su autocorrelación en un pico en cero, tiene un espectro plano:</p>
+      <div class="tex">S_{xx}(f) = \sum_{\ell} r_{xx}[\ell]\; e^{-i 2\pi f \ell / f_s}</div>
+
+      <h3>El presupuesto del GPS</h3>
+      <p>El ruido térmico a 290 K son unos −174 dBm por hercio. La relación de la señal con el ruido de la banda que ocupa, de ancho <span class="tex">B</span>, es la potencia recibida <span class="tex">C</span> menos ese ruido, y la correlación suma después su ganancia de procesado:</p>
+      <div class="tex">\frac{C}{N}\Big|_{B} = C_{\text{dBm}} - (-174) - 10\log_{10} B, \qquad \mathrm{SNR}_{\text{tras correlar}} = \frac{C}{N}\Big|_{B} + G</div>
+      <p>Con <span class="tex">C = -130</span> dBm y <span class="tex">B = 2{,}046</span> MHz, la señal está unos 19 dB por debajo del ruido, y con la ganancia de 30 dB de un milisegundo de código queda unos 11 dB por encima, en un receptor ideal.</p>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Para saber más</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Libro abierto · inglés</span>Smith, <i>The Scientist and Engineer's Guide to Digital Signal Processing</i>, <a href="https://www.dspguide.com/ch7.htm">capítulo 7, sección «Correlation»</a>. La máquina de correlación y el radar, explicados paso a paso.</li>
+      <li><span class="tipo">Libro abierto · inglés</span>Downey, <i>Think DSP</i>, <a href="https://greenteapress.com/thinkdsp/html/thinkdsp006.html">capítulo 5, «Autocorrelation»</a>. La autocorrelación y la estimación del tono de una voz, con código en Python.</li>
+      <li><span class="tipo">Compendio · inglés</span>u-blox, <a href="https://www.u-blox.com/sites/default/files/products/documents/GPS-Compendium_Book_%28GPS-X-02007%29.pdf"><i>GPS: Essentials of Satellite Navigation</i></a>. El GPS explicado por un fabricante de receptores: códigos, correlación, presupuesto de potencia y búsqueda.</li>
+      <li><span class="tipo">Experimentos con el móvil · inglés</span>phyphox, <a href="https://phyphox.org/wiki/index.php/Experiment:_Sonar">«Sonar»</a> y <a href="https://phyphox.org/wiki/index.php/Experiment:_Audio_Autocorrelation">«Audio Autocorrelation»</a>. La correlación y la autocorrelación en tu propio teléfono, gratis.</li>
+      <li><span class="tipo">Artículo abierto · inglés · avanzado</span>Boersma, P. (1993). <a href="https://www.fon.hum.uva.nl/paul/papers/Proceedings_1993.pdf"><i>Accurate short-term analysis of the fundamental frequency and the harmonics-to-noise ratio of a sampled sound</i></a>. El método de autocorrelación de Praat, con sus trampas y sus remedios.</li>
+      <li><span class="tipo">Especificación oficial · inglés</span><a href="https://navcen.uscg.gov/sites/default/files/pdf/gps/IS-GPS-200N.pdf">IS-GPS-200N</a> (2022). La especificación de la señal del GPS: códigos, frecuencias y potencias mínimas, para quien quiera la fuente primaria.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>Términos nuevos</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Examen</h2>
+  </section>
+
+</main>
+
+<script src="comun/temario.js"></script>
+<script src="comun/graficas.js"></script>
+<script src="comun/senal.js"></script>
+<script src="comun/curso.js"></script>
+<script src="datos/e09.js"></script>
+<script>
+// Lección 9 · Una aguja en un pajar: la imagen ancla, los seis retos y el laboratorio «En tu voz».
+// Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo; aquí solo va lo de esta lección.
+// Todo el cálculo es de Senal y todo el dibujo, de Graficas. Los sonidos solo suenan al pulsar un botón.
+// Los retos son independientes entre sí; cada uno vive en su función autoejecutable.
+(function () {
+  'use strict';
+  const G = Graficas, S = Senal, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const FS = 16000;                                    // frecuencia de muestreo de los retos y del laboratorio
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const altoEscena = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); (typeof contenedor === 'string' ? document.querySelector(contenedor) : contenedor).appendChild(f); return f; };
+  // Una bolita con brillo (en oscuro, la luz se suma, como las cabinas de la noria).
+  function bola(ctx, x, y, r, color, C) {
+    if (C.oscuro) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r * 2.6);
+      g.addColorStop(0, G.alfa(color, 0.5)); g.addColorStop(0.45, G.alfa(color, 0.16)); g.addColorStop(1, G.alfa(color, 0));
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(x, y, r * 2.6, 0, TAU); ctx.fill();
+      ctx.restore();
+    }
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+    if (!C.oscuro) { ctx.strokeStyle = G.alfa(C.cuerpo, 0.55); ctx.lineWidth = 1; ctx.stroke(); }
+  }
+  const max = a => { let m = -Infinity; for (let i = 0; i < a.length; i++) if (a[i] > m) m = a[i]; return m; };
+  const argmax = a => { let k = 0; for (let i = 1; i < a.length; i++) if (a[i] > a[k]) k = i; return k; };
+  // Media y desviación típica de un tramo de la curva, sin contar un entorno (±margen) del índice k.
+  function restoDe(v, k, margen) {
+    let s = 0, s2 = 0, n = 0;
+    for (let i = 0; i < v.length; i++) { if (Math.abs(i - k) <= margen) continue; s += v[i]; s2 += v[i] * v[i]; n++; }
+    const m = n ? s / n : 0;
+    return { media: m, sd: Math.sqrt(Math.max(1e-12, (n ? s2 / n : 0) - m * m)) };
+  }
+  // Un texto sobre un fondo, para que se lea aunque caiga encima de la curva.
+  const rotulo = (ctx, x, y, txt, o, C) => G.texto(ctx, x, y, txt, Object.assign({ tam: 11, fondo: G.alfa(C.pantalla, 0.85), C }, o));
+
+  // ── La escena de la plantilla deslizante (la usan la imagen ancla y el reto 1) ────────────────────────
+  // Arriba, la señal (verde) y la plantilla (púrpura) en su posición; abajo, el parecido en cada posición (naranja),
+  // que solo se enseña en el tramo de posiciones ya visitadas. El eje horizontal, en ms, es el mismo en los dos.
+  const CHIRRIDO = 160;                                // 10 ms
+  function plantillaChirrido() {
+    const c = S.chirp({ f0: 800, f1: 2500, fs: FS, dur: CHIRRIDO / FS }), v = S.ventana('hann', c.length), y = new Float64Array(c.length);
+    for (let i = 0; i < c.length; i++) y[i] = c[i] * v[i];
+    return y;
+  }
+  // Señal de n muestras: ruido de desviación «sd» y la plantilla escondida en «pos».
+  function senalConChirrido(n, tpl, pos, sd, semilla) {
+    const x = S.ruido('blanco', n, S.azar(semilla));
+    for (let i = 0; i < n; i++) x[i] *= sd;
+    for (let i = 0; i < tpl.length; i++) x[pos + i] += tpl[i];
+    return x;
+  }
+  // Parecido normalizado en cada posición de la plantilla (0 … n − m): entre −1 y 1.
+  function parecido(x, tpl) {
+    const n = x.length, m = tpl.length, c = S.correlacion(x, tpl), l0 = c.retrasos[0], out = new Float64Array(n - m + 1);
+    let ey = 0; for (let i = 0; i < m; i++) ey += tpl[i] * tpl[i];
+    const pre = new Float64Array(n + 1); for (let i = 0; i < n; i++) pre[i + 1] = pre[i] + x[i] * x[i];
+    for (let l = 0; l <= n - m; l++) { const ex = pre[l + m] - pre[l]; out[l] = c.valores[l - l0] / (Math.sqrt(ey * ex) || 1); }
+    return out;
+  }
+  function dibujarEscena(ctx, w, h, C, o) {
+    const ms = o.sig.length / FS * 1000, izq = 14, ancho = w - izq - 14, hA = Math.round((h - 64) * 0.5), yB = 18 + hA + 12, hB = h - yB - 34;
+    const escA = G.ejes(ctx, { caja: { x: izq, y: 18, w: ancho, h: hA }, x: [0, ms], y: [-o.rango, o.rango], marcasX: false, marcasY: false, rejilla: false, C });
+    G.linea(ctx, escA, null, o.sig, { t0: 0, dt: 1000 / FS, color: C.senal, ancho: 1.3, C });
+    const t0 = o.pos / FS * 1000, t1 = (o.pos + o.tpl.length) / FS * 1000;
+    ctx.save();
+    ctx.fillStyle = G.alfa(C.plantilla, C.oscuro ? 0.16 : 0.1);
+    ctx.fillRect(escA.x(t0), escA.caja.y, escA.x(t1) - escA.x(t0), escA.caja.h);
+    ctx.restore();
+    G.linea(ctx, escA, null, S.escalar(o.tpl, o.escalaPlantilla || 1), { t0, dt: 1000 / FS, color: C.plantilla, ancho: 1.9, C });
+    G.texto(ctx, izq + 2, 11, o.rotuloSenal || 'la señal, con ruido', { color: C.senal, tam: 11, peso: 600, C });
+    G.texto(ctx, izq + ancho, 11, 'la plantilla', { alinear: 'right', color: C.plantilla, tam: 11, peso: 600, C });
+    const escB = G.ejes(ctx, { caja: { x: izq, y: yB, w: ancho, h: hB }, x: [0, ms], y: [-0.5, 1.05], marcasX: w < 500 ? [0, 25, 50, 75, 100] : [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100], marcasY: [0, 1], formatoX: v => num(v), formatoY: v => num(v), etiquetaX: 'posición de la plantilla (ms)', C });
+    G.texto(ctx, izq + 2, yB - 5, 'parecido en cada posición', { color: C.respuesta, tam: 11, peso: 600, C });
+    const a = o.visto[0], b = o.visto[1];
+    if (b >= a) G.linea(ctx, escB, null, o.curva.subarray(a, b + 1), { t0: a / FS * 1000, dt: 1000 / FS, color: C.respuesta, ancho: 2, C });
+    const xp = escA.x(t0), v = o.curva[limitar(o.pos, 0, o.curva.length - 1)];
+    ctx.save();
+    ctx.strokeStyle = G.alfa(C.plantilla, 0.55); ctx.lineWidth = 1; ctx.setLineDash([3, 4]);
+    ctx.beginPath(); ctx.moveTo(Math.round(xp) + 0.5, escA.caja.y + escA.caja.h); ctx.lineTo(Math.round(xp) + 0.5, escB.y(v)); ctx.stroke();
+    ctx.restore();
+    bola(ctx, xp, escB.y(v), 5, C.respuesta, C);
+    return { escA, escB };
+  }
+
+  // ── La idea en una imagen: la plantilla deslizante ──────────────────────────────────────────────────
+  // Una señal de 0,1 s con un chirrido de 10 ms escondido en ella y mucho ruido. La plantilla (el chirrido) avanza
+  // por la señal y, debajo, se va dibujando el parecido. Parada, la imagen enseña la curva entera con la plantilla
+  // en su pico. El mando sube el ruido: el chirrido deja de verse arriba y el pico de abajo sigue ahí.
+  (function () {
+    const N = 1600, POS = 900, VEL = 420, tpl = plantillaChirrido(), nL = N - tpl.length;
+    const e = { sd: 0.6, p: 0, espera: 0, sig: null, curva: null, pico: 0 };
+    let anim = null;
+    function recalcular() {
+      e.sig = senalConChirrido(N, tpl, POS, e.sd, 7);
+      e.curva = parecido(e.sig, tpl);
+      e.pico = argmax(e.curva);
+    }
+    recalcular();
+    const parado = () => !anim || !anim.corriendo;
+    const L = G.lienzo('#ancla-escena', {
+      alto: altoEscena(300, 330),
+      etiqueta: 'Una señal verde con ruido y un chirrido escondido; la plantilla púrpura, que es ese chirrido, se desliza por ella, y debajo, en naranja, se dibuja el parecido en cada posición, con un pico donde la plantilla encaja.',
+      dibujar: (ctx, w, h, C) => {
+        const pos = parado() ? e.pico : Math.min(nL, Math.floor(e.p));
+        dibujarEscena(ctx, w, h, C, { sig: e.sig, tpl, pos, curva: e.curva, visto: parado() ? [0, nL] : [0, pos], rango: Math.max(1.8, 3.2 * e.sd), escalaPlantilla: 1.0 });
+      },
+    });
+    const mandos = document.getElementById('ancla-mandos');
+    const redibujar = () => { L.etiquetar('Una señal verde con ruido ' + (e.sd > 1.2 ? 'muy fuerte, en la que el chirrido ya no se ve' : 'en la que se adivina un chirrido') + '; la plantilla púrpura se desliza por ella, y el parecido, en naranja, tiene un pico en el sitio del chirrido.'); L.dibujar(); };
+    Curso.mando(mandos, { etiqueta: 'Cuánto ruido', min: 0, max: 2, paso: 0.05, valor: e.sd, formato: v => num(v, 2) + ' veces el chirrido', alCambiar: v => { e.sd = v; recalcular(); redibujar(); } });
+    const fila = filaBotones(mandos);
+    Curso.botones(fila, [{ id: 'otra', texto: 'Desde el principio', icono: 'otra', tipo: 'discreto', alPulsar: () => { e.p = 0; e.espera = 0; if (anim && !anim.corriendo) anim.reanudar(); L.dibujar(); } }]);
+    anim = Curso.animar(L, (t, dt) => {
+      if (dt > 0) {
+        if (e.espera > 0) { e.espera -= dt; if (e.espera <= 0) e.p = 0; }
+        else { e.p += dt * VEL; if (e.p >= nL) { e.p = nL; e.espera = 1.6; } }
+      }
+      L.dibujar();
+    }, { boton: fila });
+  })();
+
+  // ── Reto 1 · Desliza la plantilla (arrastrar sobre el lienzo) ───────────────────────────────────────
+  // La plantilla se arrastra por la señal y la curva naranja se dibuja solo en las posiciones visitadas.
+  // Acierta si la deja a 3 muestras (0,2 ms) como mucho de donde está escondido el chirrido. Como el pico es muy
+  // estrecho, al soltar la plantilla se ajusta al máximo de la curva si lo tiene a menos de 1,5 ms y ese máximo
+  // llega a 0,4 de parecido; con las flechas se afina de muestra en muestra.
+  (function () {
+    const N = 1600, tpl = plantillaChirrido(), nL = N - tpl.length;
+    const azar = Curso.azar();
+    const real = azar.entero(300, 1300);
+    const sig = senalConChirrido(N, tpl, real, 0.35, 11), curva = parecido(sig, tpl);
+    const e = { pos: 0, lo: 0, hi: 0 };
+    let esc = null;
+    const L = G.lienzo('#r1-escena', {
+      alto: altoEscena(300, 330), rol: 'slider',
+      etiqueta: 'Una señal verde con un chirrido escondido y una plantilla púrpura que puedes arrastrar; debajo, el parecido en cada posición por la que has pasado',
+      dibujar: (ctx, w, h, C) => { esc = dibujarEscena(ctx, w, h, C, { sig, tpl, pos: e.pos, curva, visto: [e.lo, e.hi], rango: 1.9, rotuloSenal: 'la señal' }).escA; },
+    });
+    L.canvas.classList.add('tocable');
+    const lect = Curso.lecturas('#r1-fila', [
+      { id: 'pos', nombre: 'Plantilla en', clase: 'cuerpo' },
+      { id: 'par', nombre: 'Parecido aquí', clase: 'respuesta' },
+    ]);
+    const estado = () => {
+      lect.fijar('pos', num(e.pos / FS * 1000, 1) + ' ms');
+      lect.fijar('par', num(curva[e.pos], 2));
+      L.canvas.setAttribute('aria-valuenow', String(e.pos));
+      L.canvas.setAttribute('aria-valuetext', 'Plantilla en ' + num(e.pos / FS * 1000, 1) + ' milisegundos; parecido ' + num(curva[e.pos], 2));
+    };
+    const mover = p => {
+      const nuevo = limitar(Math.round(p), 0, nL);
+      e.lo = Math.min(e.lo, nuevo, e.pos); e.hi = Math.max(e.hi, nuevo, e.pos);
+      e.pos = nuevo;
+      estado(); L.dibujar(); Curso.cambio('reto-1');
+    };
+    const imantar = () => {
+      const a = Math.max(0, e.pos - 24), b = Math.min(nL, e.pos + 24);
+      let k = a; for (let i = a; i <= b; i++) if (curva[i] > curva[k]) k = i;
+      if (curva[k] >= 0.4 && k !== e.pos) mover(k);
+    };
+    const desdeX = p => esc.xi(p.x) / 1000 * FS - tpl.length / 2;      // el dedo agarra la plantilla por el centro
+    Curso.arrastre(L, { eje: 'x', alBajar: p => { if (!esc) return false; mover(desdeX(p)); }, alMover: p => mover(desdeX(p)), alSoltar: () => imantar() });
+    L.canvas.tabIndex = 0;
+    L.canvas.setAttribute('aria-valuemin', '0');
+    L.canvas.setAttribute('aria-valuemax', String(nL));
+    L.canvas.addEventListener('keydown', ev => {
+      const d = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[ev.key];
+      if (!d) return;
+      ev.preventDefault();
+      mover(e.pos + d * (ev.shiftKey ? 10 : 1));
+    });
+    estado();
+    Curso.reto('reto-1', {
+      titulo: 'Desliza la plantilla', nivel: 'fácil',
+      comprobar: () => {
+        const d = (e.pos - real) / FS * 1000;
+        if (Math.abs(e.pos - real) <= 3) return { ok: true, mensaje: 'La plantilla está encima del chirrido, y el parecido vale ' + num(curva[e.pos], 2) + '.' };
+        if (e.hi - e.lo < 80) return { ok: false, mensaje: '' };
+        if (Math.abs(d) <= 1.5) return { ok: false, mensaje: 'Muy cerca: estás a ' + num(Math.abs(d), 2) + ' ms del pico. Afina con las flechas hacia ' + (d > 0 ? 'la izquierda' : 'la derecha') + '.' };
+        return { ok: false, mensaje: 'Aquí el parecido es de ' + num(curva[e.pos], 2) + ': la plantilla no encaja. Sigue la curva naranja, que sube hacia el chirrido.' };
+      },
+      resolver: () => mover(real),
+      pista: [
+        'Mira la curva naranja, no la señal de arriba: busca dónde se dispara. A simple vista el chirrido apenas se distingue entre el ruido.',
+        'Barre la señal de izquierda a derecha, despacio. La curva solo se dibuja por donde pasas, y donde la plantilla encaja sube hasta casi 1.',
+      ],
+      exito: '<p>Donde la plantilla encaja, todos los productos suman a favor y el parecido salta; en el resto, unos suman y otros restan y se anulan a medias. Es la noria de prueba de la <a href="e04.html">lección 4</a>, con cualquier forma.</p>',
+    });
+  })();
+
+  // ── Reto 2 · Más larga, más fuerte (deslizador) ─────────────────────────────────────────────────────
+  // 4.096 muestras de ruido de desviación 4 y, escondida en la muestra 1.500, una ristra de ±1 de longitud L. Cada
+  // muestra de la señal es 12 dB más débil que el ruido. La plantilla es esa misma ristra. El pico de la correlación
+  // crece como L y el resto de la curva, como √L: con la semilla elegida, a 512 sale 5,3 veces y a 1.023, 8,3.
+  (function () {
+    const N = 4096, POS = 1500, SD = 4, MAXL = 1023;
+    const ruido = S.ruido('blanco', N, S.azar(3)), az = S.azar(99), codigo = new Float64Array(MAXL);
+    for (let i = 0; i < N; i++) ruido[i] *= SD;
+    for (let i = 0; i < MAXL; i++) codigo[i] = az.real() < 0.5 ? 1 : -1;
+    const e = { L: 64, cache: null };
+    function calcular() {
+      if (e.cache && e.cache.L === e.L) return e.cache;
+      const L = e.L, x = Float64Array.from(ruido), y = codigo.slice(0, L);
+      for (let i = 0; i < L; i++) x[POS + i] += y[i];
+      const c = S.correlacion(x, y, { maxRetraso: N }), l0 = c.retrasos[0], n = N - L + 1, v = new Float64Array(n);
+      for (let l = 0; l < n; l++) v[l] = c.valores[l - l0];
+      const pico = max(v); for (let l = 0; l < n; l++) v[l] /= pico;                 // el máximo vale 1: lo que importa es cuánto sobresale
+      const k = argmax(v), r = restoDe(v, k, 3);
+      e.cache = { L, x, v, k, relacion: (v[k] - r.media) / r.sd, bien: k === POS };
+      return e.cache;
+    }
+    const L = G.lienzo('#r2-escena', {
+      alto: altoEscena(310, 340),
+      etiqueta: 'Arriba, la señal con mucho ruido; abajo, la correlación con una plantilla de la longitud elegida, con su pico más alto marcado',
+      dibujar: (ctx, w, h, C) => {
+        const c = calcular(), izq = 14, ancho = w - izq - 14, hA = Math.round((h - 64) * 0.46), yB = 18 + hA + 14, hB = h - yB - 34;
+        const escA = G.ejes(ctx, { caja: { x: izq, y: 18, w: ancho, h: hA }, x: [0, N], y: [-13, 13], marcasX: false, marcasY: false, rejilla: false, C });
+        G.linea(ctx, escA, null, c.x, { t0: 0, dt: 1, color: C.senal, ancho: 1, C });
+        G.texto(ctx, izq + 2, 11, 'la señal: casi todo es ruido', { color: C.senal, tam: 11, peso: 600, C });
+        const escB = G.ejes(ctx, { caja: { x: izq, y: yB, w: ancho, h: hB }, x: [0, N], y: [-0.9, 1.15], marcasX: [0, 1024, 2048, 3072, 4096], marcasY: [0, 1], formatoX: v => num(v), formatoY: v => num(v), etiquetaX: 'posición de la plantilla (muestras)', C });
+        G.texto(ctx, izq + 2, yB - 5, 'correlación con la plantilla de ' + num(c.L) + ' puntos', { color: C.respuesta, tam: 11, peso: 600, C });
+        G.linea(ctx, escB, null, c.v, { t0: 0, dt: 1, color: C.respuesta, ancho: 1.4, C });
+        // El nivel del resto de la curva: cinco veces su desviación es la meta.
+        const r = restoDe(c.v, c.k, 3), meta = r.media + 5 * r.sd;
+        if (meta < 1.05) {
+          ctx.save();
+          ctx.strokeStyle = G.alfa(C.eje, 0.9); ctx.lineWidth = 1; ctx.setLineDash([5, 4]);
+          const y5 = Math.round(escB.y(meta)) + 0.5;
+          ctx.beginPath(); ctx.moveTo(izq, y5); ctx.lineTo(izq + ancho, y5); ctx.stroke();
+          ctx.restore();
+          G.texto(ctx, izq + ancho - 2, y5 - 5, 'cinco veces el ruido de la curva', { alinear: 'right', color: C.tenue, tam: 10, C });
+        }
+        bola(ctx, escB.x(c.k), escB.y(c.v[c.k]), 5, c.bien ? C.ok : C.mal, C);
+        rotulo(ctx, Math.min(izq + ancho - 4, escB.x(c.k) + 10), escB.y(c.v[c.k]) - 3, c.bien ? 'pico en su sitio' : 'pico en otro sitio', { alinear: escB.x(c.k) > izq + ancho * 0.6 ? 'right' : 'left', color: c.bien ? C.ok : C.mal, peso: 600 }, C);
+      },
+    });
+    const lect = Curso.lecturas('#r2-fila', [
+      { id: 'rel', nombre: 'El pico sobresale', clase: 'respuesta' },
+      { id: 'db', nombre: 'Ganancia de procesado' },
+      { id: 'sitio', nombre: 'Posición del máximo' },
+    ]);
+    const estado = () => {
+      const c = calcular();
+      lect.fijar('rel', num(c.relacion, 1) + ' veces');
+      lect.fijar('db', num(10 * Math.log10(c.L), 1) + ' dB');
+      lect.fijar('sitio', c.bien ? 'la correcta' : 'otra');
+    };
+    const mando = Curso.mando('#r2-mandos', { etiqueta: 'Longitud de la plantilla', clase: 'senal', min: 16, max: MAXL, paso: 1, valor: e.L, formato: v => num(v) + ' puntos', reto: 'reto-2', alCambiar: v => { e.L = Math.round(v); estado(); L.dibujar(); } });
+    estado();
+    Curso.reto('reto-2', {
+      titulo: 'Más larga, más fuerte', nivel: 'medio',
+      comprobar: () => {
+        const c = calcular();
+        if (c.bien && c.relacion >= 5) return { ok: true, mensaje: 'Con ' + num(c.L) + ' puntos el pico sobresale ' + num(c.relacion, 1) + ' veces y está en su sitio.' };
+        if (!c.bien) return { ok: false, mensaje: 'Con ' + num(c.L) + ' puntos el máximo de la curva todavía cae en otro sitio: es un pico de ruido. Alarga la plantilla.' };
+        return { ok: false, mensaje: 'El pico ya está en su sitio, pero solo sobresale ' + num(c.relacion, 1) + ' veces. Hacen falta 5: alarga la plantilla.' };
+      },
+      resolver: () => { mando.fijar(MAXL); },
+      pista: [
+        'Cuadruplica la longitud y mira cuánto crece el pico frente al ruido de la curva.',
+        'El pico crece con la longitud y el ruido, solo con su raíz cuadrada. Con unos 500 puntos o más, el pico sale lo bastante limpio.',
+      ],
+      exito: '<p>El pico crece con la longitud de la plantilla y el ruido solo con su raíz: con cuatro veces más puntos, el pico sobresale el doble. Así sale la señal del GPS, decenas de veces más débil que el ruido, con una plantilla de 1.023 puntos.</p>',
+    });
+  })();
+
+  // ── Reto 3 · ¿A qué distancia está? (tocar el pico y escribir un número) ─────────────────────────────
+  // Un sonar emite un chirrido de 2 a 4 kHz y 20 ms, y recibe un segundo de grabación con ruido y un eco débil escondido
+  // entre 0,1 y 0,8 s. La correlación con el chirrido enseña el pico; la distancia es 1.500 m/s · t / 2.
+  (function () {
+    const N = FS, MP = 320, V = 1500;
+    const azar = Curso.azar();
+    const retraso = Math.round(azar.real(0.1, 0.8) * FS), t = retraso / FS, dist = V * t / 2;
+    const c0 = S.chirp({ f0: 2000, f1: 4000, fs: FS, dur: MP / FS }), vent = S.ventana('hann', MP), ping = new Float64Array(MP);
+    for (let i = 0; i < MP; i++) ping[i] = c0[i] * vent[i];
+    const x = S.ruido('blanco', N, S.azar(5));
+    for (let i = 0; i < MP; i++) x[retraso + i] += 0.8 * ping[i];
+    const c = S.correlacion(x, ping, { maxRetraso: N }), l0 = c.retrasos[0], n = N - MP + 1, v = new Float64Array(n);
+    for (let l = 0; l < n; l++) v[l] = c.valores[l - l0];
+    const pk = max(v); for (let l = 0; l < n; l++) v[l] /= pk;
+    const picos = S.picos(v, { umbral: 0.35, minDistancia: 200 });
+    const e = { cur: -1 };
+    let esc = null;
+    const L = G.lienzo('#r3-escena', {
+      alto: altoEscena(300, 330), rol: 'slider',
+      etiqueta: 'Arriba, un segundo de grabación del sonar, casi todo ruido; abajo, la correlación con el chirrido enviado, con un pico donde vuelve el eco. Toca el pico para leer su tiempo',
+      dibujar: (ctx, w, h, C) => {
+        const izq = 14, ancho = w - izq - 14, hA = Math.round((h - 64) * 0.46), yB = 18 + hA + 14, hB = h - yB - 34;
+        const escA = G.ejes(ctx, { caja: { x: izq, y: 18, w: ancho, h: hA }, x: [0, 1], y: [-4.2, 4.2], marcasX: false, marcasY: false, rejilla: false, C });
+        G.linea(ctx, escA, null, x, { t0: 0, dt: 1 / FS, color: C.senal, ancho: 1, C });
+        G.texto(ctx, izq + 2, 11, 'lo que recibe el sonar', { color: C.senal, tam: 11, peso: 600, C });
+        esc = G.ejes(ctx, { caja: { x: izq, y: yB, w: ancho, h: hB }, x: [0, 1], y: [-0.45, 1.15], marcasX: [0, 0.2, 0.4, 0.6, 0.8, 1], marcasY: [0, 1], formatoX: val => num(val, 1), formatoY: val => num(val), etiquetaX: 'tiempo desde que sale el chirrido (s)', C });
+        G.texto(ctx, izq + 2, yB - 5, 'parecido con el chirrido enviado', { color: C.respuesta, tam: 11, peso: 600, C });
+        G.linea(ctx, esc, null, v, { t0: 0, dt: 1 / FS, color: C.respuesta, ancho: 1.6, C });
+        if (e.cur >= 0) {
+          const xc = Math.round(esc.x(e.cur / FS)) + 0.5;
+          ctx.save();
+          ctx.strokeStyle = G.alfa(C.acento, 0.9); ctx.lineWidth = 1.2; ctx.setLineDash([4, 4]);
+          ctx.beginPath(); ctx.moveTo(xc, 18); ctx.lineTo(xc, yB + hB); ctx.stroke();
+          ctx.restore();
+          bola(ctx, esc.x(e.cur / FS), esc.y(v[e.cur]), 5, C.acento, C);
+          rotulo(ctx, xc + (xc > izq + ancho * 0.7 ? -8 : 8), yB + hB - 8, num(e.cur / FS, 3) + ' s', { alinear: xc > izq + ancho * 0.7 ? 'right' : 'left', color: C.acento, peso: 600 }, C);
+        }
+      },
+    });
+    L.canvas.classList.add('tocable');
+    const fila = document.getElementById('r3-fila');
+    const lect = Curso.lecturas(fila, [{ id: 'cur', nombre: 'Tiempo del cursor', clase: 'cuerpo' }, { id: 'v', nombre: 'Velocidad del sonido' }]);
+    lect.fijar('v', '1.500 m/s (redondeada)');
+    const poner = idx => {
+      e.cur = idx < 0 ? -1 : limitar(idx, 0, n - 1);
+      lect.fijar('cur', e.cur < 0 ? 'toca la curva' : num(e.cur / FS, 3) + ' s');
+      if (e.cur >= 0) { L.canvas.setAttribute('aria-valuenow', String(e.cur)); L.canvas.setAttribute('aria-valuetext', 'Cursor en ' + num(e.cur / FS, 3) + ' segundos'); }
+      L.dibujar();
+    };
+    // Al tocar, el cursor se ajusta al máximo de la curva en un entorno de ±25 ms.
+    const ajustar = p => {
+      const c = limitar(Math.round(esc.xi(p.x) * FS), 0, n - 1), a = Math.max(0, c - 400), b = Math.min(n - 1, c + 400);
+      let k = a; for (let i = a; i <= b; i++) if (v[i] > v[k]) k = i;
+      poner(k);
+    };
+    Curso.arrastre(L, { eje: 'x', alBajar: p => { if (!esc) return false; ajustar(p); }, alMover: p => ajustar(p) });
+    L.canvas.tabIndex = 0;
+    L.canvas.addEventListener('keydown', ev => {
+      const d = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[ev.key];
+      if (!d) return;
+      ev.preventDefault();
+      const sig = d > 0 ? picos.find(i => i > e.cur) : picos.slice().reverse().find(i => i < e.cur);
+      if (sig !== undefined) poner(sig);
+    });
+    Curso.audio.boton(fila, () => {
+      const rep = 3, sep = Math.round(0.35 * FS), s = new Float64Array(rep * sep + MP);
+      for (let r = 0; r < rep; r++) s.set(ping, r * sep);
+      return { x: s, fs: FS, volumen: 0.5 };
+    }, 'Oír el chirrido');
+    let reto;
+    const campo = Curso.campo('#r3-mandos', { etiqueta: 'Distancia', unidad: 'm', marcador: '¿cuántos metros?', alEnviar: () => reto.revisar() });
+    poner(-1);
+    reto = Curso.reto('reto-3', {
+      titulo: '¿A qué distancia está?', nivel: 'medio', auto: false,
+      comprobar: () => {
+        const val = campo.valor;
+        if (!Number.isFinite(val)) return { ok: false, mensaje: 'Escribe un número de metros, por ejemplo 300. Toca antes el pico de la curva para leer cuándo vuelve el eco.' };
+        if (Math.abs(val - dist) / dist <= 0.02) { campo.marcar('bien'); return { ok: true, mensaje: 'El eco vuelve a los ' + num(t, 3) + ' s, y el objeto está a ' + num(dist, 0) + ' m.' }; }
+        campo.marcar('mal');
+        if (Math.abs(val - 2 * dist) / (2 * dist) <= 0.03) return { ok: false, mensaje: 'Casi: ese es el camino entero. El sonido va hasta el objeto y vuelve, así que el objeto está a la mitad.' };
+        if (e.cur < 0) return { ok: false, mensaje: 'Toca el pico de la curva naranja: su tiempo es lo que ha tardado el eco en volver.' };
+        return { ok: false, mensaje: 'No sale. Con el tiempo del cursor, multiplica por 1.500 m/s y divide entre dos.' };
+      },
+      resolver: () => { poner(retraso); campo.fijar(Math.round(dist)); },
+      pista: [
+        'La curva naranja salta donde la grabación se parece al chirrido que enviaste: el tiempo de ese pico es lo que tardó el eco en volver. Tócalo para leerlo.',
+        'El sonido va hasta el objeto y vuelve. Multiplica el tiempo por 1.500 m/s y divide entre dos.',
+      ],
+      exito: '<p>El pico marca cuándo vuelve el eco aunque en la señal no se vea. Como el sonido recorre el camino dos veces, el objeto está a la mitad de lo recorrido. El sonar de phyphox hace justo esto con chirridos en el aire.</p>',
+    });
+  })();
+
+  // ── Reto 4 · El mejor pulso para el radar (elegir entre opciones y escuchar) ────────────────────────
+  // Tres pulsos de 52 muestras y la misma energía: un tono plano, el código de Barker de 13 elementos (4 muestras por
+  // elemento) y un código al azar de 13 elementos. Dos ecos, separados 12 muestras, con ruido. Se mide el ancho del
+  // pico a media altura, el mayor lóbulo lateral y si los dos ecos se separan, siempre sin ruido.
+  (function () {
+    const M = 52, NR = 360, POS1 = 150, POS2 = 162, A2 = 0.8, SDR = 0.8;
+    const elementos = c => { const o = new Float64Array(M); for (let i = 0; i < M; i++) o[i] = c[Math.floor(i / 4)]; return o; };
+    const BARKER = [1, 1, 1, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1];
+    const AZAR = [-1, -1, 1, 1, 1, 1, 1, -1, 1, -1, -1, 1, -1];
+    const PULSOS = {
+      plano: { nombre: 'Tono plano', p: new Float64Array(M).fill(1) },
+      barker: { nombre: 'Código de Barker de 13', p: elementos(BARKER) },
+      azar: { nombre: 'Código al azar de 13', p: elementos(AZAR) },
+    };
+    // Autocorrelación del pulso, con el retardo 0 en el índice M − 1, dividida por su energía.
+    const auto = p => { const c = S.correlacion(p, p), l0 = c.retrasos[0]; return Float64Array.from(c.valores, q => q / c.valores[-l0]); };
+    function medir(p) {
+      const r = auto(p), k = M - 1;
+      let ancho = 0; for (const q of r) if (q >= 0.5) ancho++;
+      // El lóbulo principal llega hasta donde la curva deja de bajar; lo que hay más allá son lóbulos laterales.
+      let b = k; while (b + 1 < r.length && r[b + 1] < r[b]) b++;
+      let lat = 0; for (let i = b + 1; i < r.length; i++) lat = Math.max(lat, Math.abs(r[i]));
+      return { ancho, lobulo: lat };
+    }
+    for (const id of Object.keys(PULSOS)) {
+      const q = PULSOS[id], m = medir(q.p);
+      // Los dos ecos, sin ruido: ¿se ve un valle entre los dos picos?
+      const sin = new Float64Array(NR); for (let i = 0; i < M; i++) { sin[POS1 + i] += q.p[i]; sin[POS2 + i] += A2 * q.p[i]; }
+      const cc = S.correlacion(sin, q.p), l0 = cc.retrasos[0], cr = i => cc.valores[i - l0] / M;
+      let valle = 1e9; for (let i = POS1 + 2; i < POS2 - 1; i++) valle = Math.min(valle, cr(i));
+      const picoMenor = Math.min(cr(POS1), cr(POS2));
+      q.ancho = m.ancho; q.lobulo = m.lobulo; q.separa = valle < 0.75 * picoMenor;
+      // La señal recibida, con ruido, y su correlación (los mismos ecos y el mismo ruido para los tres).
+      const x = S.ruido('blanco', NR, S.azar(21)); for (let i = 0; i < NR; i++) x[i] *= SDR;
+      for (let i = 0; i < M; i++) { x[POS1 + i] += q.p[i]; x[POS2 + i] += A2 * q.p[i]; }
+      const c = S.correlacion(x, q.p), l1 = c.retrasos[0], v = new Float64Array(NR - M + 1);
+      for (let l = 0; l < v.length; l++) v[l] = c.valores[l - l1] / M;
+      q.x = x; q.v = v;
+      q.bien = q.ancho <= 8 && q.lobulo <= 0.1 && q.separa;
+    }
+    const e = { id: 'plano' };
+    const L = G.lienzo('#r4-escena', {
+      alto: altoEscena(360, 400),
+      etiqueta: 'El pulso elegido, la señal recibida con dos ecos casi pegados y ruido, y la correlación, con la posición real de los dos aviones marcada',
+      dibujar: (ctx, w, h, C) => {
+        const q = PULSOS[e.id], izq = 14, ancho = w - izq - 14, hP = 40, hA = Math.round((h - hP - 100) * 0.42);
+        const yA = 18 + hP + 18, yB = yA + hA + 26, hB = h - yB - 34;
+        const escP = G.ejes(ctx, { caja: { x: izq, y: 18, w: ancho, h: hP }, x: [0, M * 2.2], y: [-1.4, 1.4], marcasX: false, marcasY: false, rejilla: false, C });
+        G.linea(ctx, escP, null, q.p, { t0: 0, dt: 1, color: C.plantilla, ancho: 2, C });
+        G.texto(ctx, izq + 2, 11, 'el pulso: ' + q.nombre.toLowerCase(), { color: C.plantilla, tam: 11, peso: 600, C });
+        const escA = G.ejes(ctx, { caja: { x: izq, y: yA, w: ancho, h: hA }, x: [0, NR], y: [-3.2, 3.2], marcasX: false, marcasY: false, rejilla: false, C });
+        G.linea(ctx, escA, null, q.x, { t0: 0, dt: 1, color: C.senal, ancho: 1.2, C });
+        G.texto(ctx, izq + 2, yA - 5, 'lo que recibe el radar: dos ecos y ruido', { color: C.senal, tam: 11, peso: 600, C });
+        const escB = G.ejes(ctx, { caja: { x: izq, y: yB, w: ancho, h: hB }, x: [0, NR], y: [-0.5, 1.95], marcasX: [0, 100, 200, 300], marcasY: [0, 1], formatoX: val => num(val), formatoY: val => num(val), etiquetaX: 'retardo (muestras)', C });
+        G.texto(ctx, izq + 2, yB - 5, 'correlación con el pulso', { color: C.respuesta, tam: 11, peso: 600, C });
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.eje, 0.9); ctx.lineWidth = 1; ctx.setLineDash([3, 4]);
+        for (const p of [POS1, POS2]) { const xp = Math.round(escB.x(p)) + 0.5; ctx.beginPath(); ctx.moveTo(xp, yB); ctx.lineTo(xp, yB + hB); ctx.stroke(); }
+        ctx.restore();
+        G.texto(ctx, escB.x(POS1) - 6, yB + 12, 'avión 1', { alinear: 'right', color: C.tenue, tam: 10, C });
+        G.texto(ctx, escB.x(POS2) + 6, yB + 12, 'avión 2', { color: C.tenue, tam: 10, C });
+        G.linea(ctx, escB, null, q.v, { t0: 0, dt: 1, color: C.respuesta, ancho: 1.8, C });
+      },
+    });
+    const lect = Curso.lecturas('#r4-fila', [
+      { id: 'ancho', nombre: 'Ancho del pico', clase: 'respuesta' },
+      { id: 'lobulo', nombre: 'Mayor lóbulo lateral' },
+      { id: 'separa', nombre: '¿Separa los dos aviones?' },
+    ]);
+    const estado = () => {
+      const q = PULSOS[e.id];
+      lect.fijar('ancho', num(q.ancho) + ' muestras');
+      lect.fijar('lobulo', q.lobulo < 0.005 ? 'ninguno' : num(100 * q.lobulo, 0) + ' % del pico');
+      lect.fijar('separa', q.separa ? 'sí' : 'no, es un solo bulto');
+    };
+    const sel = Curso.eleccion('#r4-mandos', {
+      etiqueta: 'Pulso', valor: e.id, reto: 'reto-4',
+      opciones: Object.keys(PULSOS).map(id => ({ valor: id, texto: PULSOS[id].nombre })),
+      alCambiar: v => { e.id = v; estado(); L.dibujar(); },
+    });
+    // El pulso, repetido cuatro veces, como un bip o un chasquido.
+    Curso.audio.boton('#r4-fila', () => {
+      const q = PULSOS[e.id], paso = Math.round(0.16 * FS), s = new Float64Array(4 * paso + 600);
+      for (let r = 0; r < 4; r++) for (let i = 0; i < M; i++) s[r * paso + 100 + i] = q.p[i];
+      return { x: s, fs: FS, volumen: 0.4 };
+    }, 'Oír el pulso');
+    estado();
+    Curso.reto('reto-4', {
+      titulo: 'El mejor pulso para el radar', nivel: 'medio',
+      comprobar: () => {
+        const q = PULSOS[e.id];
+        if (q.bien) return { ok: true, mensaje: 'Sí: pico de ' + num(q.ancho) + ' muestras, lóbulos del ' + num(100 * q.lobulo, 0) + ' % y los dos aviones se ven por separado.' };
+        if (!q.separa) return { ok: false, mensaje: 'Con este pulso, los dos ecos se funden en un solo bulto ancho de ' + num(q.ancho) + ' muestras. Prueba con uno codificado.' };
+        return { ok: false, mensaje: 'El pico es estrecho, pero hay lóbulos laterales del ' + num(100 * q.lobulo, 0) + ' % del pico: un lóbulo se podría confundir con otro avión. Busca uno por debajo del 10 %.' };
+      },
+      resolver: () => sel.fijar('barker'),
+      pista: [
+        'Un pico estrecho separa los dos aviones, y unos lóbulos bajos no inventan aviones de más. Compara los tres pulsos con las tres lecturas.',
+        'Los tres pulsos duran lo mismo. Prueba los dos codificados: uno de los dos tiene lóbulos mucho más bajos que el otro.',
+      ],
+      exito: '<p>Por fuera, los tres pulsos duran lo mismo y llevan la misma energía. Pero el codificado se comprime en un pico unas diez veces más estrecho, con lóbulos de una treceava parte del pico: es la compresión de pulsos, energía y precisión a la vez. El código al azar también estrecha el pico, pero sus lóbulos son mucho más altos, y por eso se buscan códigos especiales, como el de Barker.</p>',
+    });
+  })();
+
+  // ── Reto 5 · La nota de una «aaa» (tocar sobre la gráfica y escuchar) ───────────────────────────────
+  // Una vocal sintética con una nota al azar entre 100 y 250 Hz. Se toma un trozo de 40 ms de la mitad, se le resta la
+  // media, se multiplica por una ventana de Hann y se calcula su autocorrelación, dividida por la de la ventana (Boersma).
+  // Se toca el pico que marca una vibración: el primero que llega al 80 % del más alto.
+  (function () {
+    const azar = Curso.azar();
+    const f0 = azar.entero(100, 250), NV = 640, MAXL = 400;
+    const voz = S.ejemplos.vocal(FS, { vocal: 'a', f0, dur: 0.6 });
+    const i0 = Math.round(0.3 * FS - NV / 2), tr = voz.slice(i0, i0 + NV), w = S.ventana('hann', NV);
+    let media = 0; for (let i = 0; i < NV; i++) media += tr[i]; media /= NV;
+    const y = Float64Array.from(tr, (a, i) => (a - media) * w[i]), ra = S.autocorrelacion(y, MAXL), rw = S.autocorrelacion(w, MAXL);
+    const r = Float64Array.from(ra, (a, i) => a / rw[i]);
+    // Los picos tocables: el del retardo cero y los máximos locales por encima de 0,2.
+    const picos = [{ lag: 0, x: 0, y: 1 }];
+    for (const i of S.picos(r, { umbral: 0.2, minDistancia: 12 })) { const p = S.interpolarPico(r, i); picos.push({ lag: i, x: p.x, y: p.y }); }
+    const altoMax = Math.max(...picos.slice(1).map(p => p.y));
+    const primero = picos.slice(1).find(p => p.y >= 0.8 * altoMax);
+    const e = { sel: null };
+    let esc = null;
+    const L = G.lienzo('#r5-escena', {
+      alto: altoEscena(250, 280), rol: 'slider',
+      etiqueta: 'La autocorrelación de una vocal «aaa», de 0 a 25 milisegundos, con sus picos marcados; toca el que corresponde a una sola vibración',
+      dibujar: (ctx, wd, h, C) => {
+        esc = G.ejes(ctx, { caja: { x: 14, y: 22, w: wd - 28, h: h - 22 - 38 }, x: [0, MAXL / FS * 1000], y: [-0.5, 1.12], marcasX: [0, 5, 10, 15, 20, 25], marcasY: [0, 1], formatoX: v => num(v), formatoY: v => num(v), etiquetaX: 'desplazamiento (ms)', C });
+        G.texto(ctx, 16, 14, 'parecido de la vocal con ella misma, desplazada', { color: C.respuesta, tam: 11, peso: 600, C });
+        G.linea(ctx, esc, null, r, { t0: 0, dt: 1000 / FS, color: C.respuesta, ancho: 1.8, C });
+        for (const p of picos) {
+          const sel = e.sel === p, px = esc.x(p.x / FS * 1000), py = esc.y(p.y);
+          bola(ctx, px, py, sel ? 6 : 3.6, sel ? C.acento : C.cuerpo, C);
+        }
+        if (e.sel) {
+          const p = e.sel, px = esc.x(p.x / FS * 1000), der = px > wd * 0.65;
+          rotulo(ctx, px + (der ? -10 : 10), esc.y(p.y) - 8, p.lag === 0 ? 'desplazamiento cero' : num(p.x / FS * 1000, 2) + ' ms', { alinear: der ? 'right' : 'left', color: C.acento, peso: 600 }, C);
+        }
+      },
+    });
+    L.canvas.classList.add('tocable');
+    const fila = document.getElementById('r5-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'T', nombre: 'Periodo', clase: 'cuerpo' },
+      { id: 'f', nombre: 'Frecuencia', clase: 'senal' },
+      { id: 'nota', nombre: 'Nota más cercana' },
+    ]);
+    const freqDe = p => FS / p.x;
+    const estado = () => {
+      const p = e.sel;
+      if (!p || p.lag === 0) { lect.fijar('T', '—'); lect.fijar('f', '—'); lect.fijar('nota', '—'); }
+      else {
+        const f = freqDe(p), n = Curso.nota(f);
+        lect.fijar('T', num(p.x / FS * 1000, 2) + ' ms');
+        lect.fijar('f', num(f, 0) + ' Hz');
+        lect.fijar('nota', n.nombre + n.octava + (Math.abs(n.centimos) >= 5 ? ' (' + (n.centimos > 0 ? '+' : '−') + Math.abs(n.centimos) + ' cents)' : ''));
+      }
+      if (p) { L.canvas.setAttribute('aria-valuetext', p.lag === 0 ? 'Pico del desplazamiento cero' : 'Pico en ' + num(p.x / FS * 1000, 2) + ' milisegundos, ' + num(freqDe(p), 0) + ' hercios'); }
+    };
+    const elegir = p => { e.sel = p; estado(); L.dibujar(); Curso.cambio('reto-5'); };
+    const cercano = p => { const t = esc.xi(p.x) * FS / 1000; let b = picos[0]; for (const q of picos) if (Math.abs(q.x - t) < Math.abs(b.x - t)) b = q; return b; };
+    Curso.arrastre(L, { eje: 'x', alBajar: p => { if (!esc) return false; elegir(cercano(p)); }, alMover: p => elegir(cercano(p)) });
+    L.canvas.tabIndex = 0;
+    L.canvas.addEventListener('keydown', ev => {
+      const d = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[ev.key];
+      if (!d) return;
+      ev.preventDefault();
+      const i = e.sel ? picos.indexOf(e.sel) : -1;
+      elegir(picos[limitar(i + d, 0, picos.length - 1)]);
+    });
+    Curso.audio.boton(fila, () => ({ x: voz, fs: FS, volumen: 0.7 }), 'Oír la vocal');
+    Curso.audio.boton(fila, () => (e.sel && e.sel.lag > 0 ? { f: freqDe(e.sel), dur: 1.2, volumen: 0.3 } : null), 'Oír un tono de ese pico');
+    estado();
+    Curso.reto('reto-5', {
+      titulo: 'La nota de una «aaa»', nivel: 'medio',
+      comprobar: () => {
+        const p = e.sel;
+        if (!p) return { ok: false, mensaje: '' };
+        if (p.lag === 0) return { ok: false, mensaje: 'En el desplazamiento cero la vocal se parece del todo a sí misma, siempre: no dice nada de su periodo. Busca más a la derecha.' };
+        const f = freqDe(p), q = f / f0;
+        if (Math.abs(q - 1) <= 0.03) return { ok: true, mensaje: 'Una vibración dura ' + num(p.x / FS * 1000, 2) + ' ms: son ' + num(f, 0) + ' Hz, y la vocal suena a esa nota.' };
+        for (const k of [2, 3, 4, 5]) if (Math.abs(q * k - 1) <= 0.04) return { ok: false, mensaje: 'Has elegido ' + k + ' vibraciones seguidas: sale ' + (k === 2 ? 'una octava' : 'más de una octava') + ' por debajo de la nota real. Quédate con el primer pico alto.' };
+        if (p.x < primero.x) return { ok: false, mensaje: 'Ese pico es pequeño: viene de los formantes de la vocal, no de sus cuerdas vocales. Busca el primero que llegue casi a la altura del más alto.' };
+        return { ok: false, mensaje: 'Ese pico no marca una sola vibración. Busca el primero que llegue casi a la altura del más alto.' };
+      },
+      resolver: () => elegir(primero),
+      pista: [
+        'Fíjate en los picos altos: el primero de ellos, no el más alto. Los picos pequeños de antes vienen de la forma de la vocal, y los de después repiten la misma vibración.',
+        'Si tocas el segundo pico alto y escuchas el tono, suena una octava más grave que la vocal. Compara con el botón «Oír un tono de ese pico».',
+      ],
+      exito: '<p>El primer gran pico de la autocorrelación es lo que tarda una vibración de las cuerdas vocales, y su inversa es la nota. Los picos siguientes repiten la misma información: si te quedas con uno de ellos, la máquina se equivoca una octava. Ese error tiene lección propia, la <a href="e20.html">20</a>.</p>',
+    });
+  })();
+
+  // ── Reto 6 · Encuentra el satélite (elegir código y tiempo de integración) ──────────────────────────
+  // Los códigos C/A de los satélites 1 a 4, generados con los polinomios de IS-GPS-200N: G1 = 1 + x³ + x¹⁰ y
+  // G2 = 1 + x² + x³ + x⁶ + x⁸ + x⁹ + x¹⁰, ambos registros a todo unos, y la salida de G2 tomada de dos casillas por
+  // satélite (2 y 6, 3 y 7, 4 y 8, 5 y 9). Los diez primeros chips, en octal, salen 1440, 1620, 1710 y 1744, como en la
+  // tabla de la especificación. Modelo sin efecto Doppler: lo recibido es el código del satélite desplazado un número
+  // de chips y sumado, periodo a periodo, a un ruido 24 dB más fuerte por chip (desviación 15).
+  (function () {
+    const NC = 1023, SD = 15, TS = [1, 4, 16, 64], MAXT = 64;
+    const TOMAS = { 1: [2, 6], 2: [3, 7], 3: [4, 8], 4: [5, 9] };
+    function codigoCA(prn) {
+      const [a, b] = TOMAS[prn], g1 = new Array(10).fill(1), g2 = new Array(10).fill(1), c = new Float64Array(NC);
+      for (let i = 0; i < NC; i++) {
+        c[i] = (g1[9] ^ g2[a - 1] ^ g2[b - 1]) ? 1 : -1;
+        const f1 = g1[2] ^ g1[9], f2 = g2[1] ^ g2[2] ^ g2[5] ^ g2[7] ^ g2[8] ^ g2[9];
+        g1.unshift(f1); g1.pop(); g2.unshift(f2); g2.pop();
+      }
+      return c;
+    }
+    const CODIGOS = {}; for (const p of [1, 2, 3, 4]) CODIGOS[p] = codigoCA(p);
+    const azar = Curso.azar();
+    const real = azar.entero(1, 4), desfase = azar.entero(0, NC - 1);
+    const ruido = S.ruido('blanco', NC * MAXT, S.azar(33)); for (let i = 0; i < ruido.length; i++) ruido[i] *= SD;
+    // Lo recibido tras sumar T periodos: T copias del código desplazado más T tandas de ruido distinto.
+    const acumulados = {};
+    function recibido(T) {
+      if (acumulados[T]) return acumulados[T];
+      const a = new Float64Array(NC), c = CODIGOS[real];
+      for (let k = 0; k < T; k++) for (let i = 0; i < NC; i++) a[i] += ruido[k * NC + i];
+      for (let i = 0; i < NC; i++) a[i] += T * c[(i - desfase + NC) % NC];
+      return (acumulados[T] = a);
+    }
+    const memoria = {};
+    function correlar(prn, T) {
+      const clave = prn + '|' + T;
+      if (memoria[clave]) return memoria[clave];
+      const a = recibido(T), c = CODIGOS[prn], v = new Float64Array(NC), norma = T * NC;
+      for (let l = 0; l < NC; l++) {
+        let s = 0;
+        for (let i = 0; i < NC; i++) s += a[(i + l) % NC] * c[i];
+        v[l] = s / norma;                                // el satélite verdadero da un pico de 1
+      }
+      const k = argmax(v), r = restoDe(v, k, 2);
+      return (memoria[clave] = { v, k, relacion: (v[k] - r.media) / r.sd, sd: r.sd, media: r.media });
+    }
+    const e = { prn: 1, T: 1 };
+    const bien = () => { const c = correlar(e.prn, e.T), d = Math.abs(c.k - desfase), dd = Math.min(d, NC - d); return e.prn === real && c.relacion >= 6 && dd <= 1; };
+    const L = G.lienzo('#r6-escena', {
+      alto: altoEscena(330, 360),
+      etiqueta: 'Arriba, un milisegundo de lo que recibe el móvil, solo ruido a simple vista; abajo, la correlación con el código del satélite elegido tras sumar los milisegundos elegidos',
+      dibujar: (ctx, w, h, C) => {
+        const c = correlar(e.prn, e.T), izq = 14, ancho = w - izq - 14, hA = Math.round((h - 64) * 0.4), yB = 18 + hA + 14, hB = h - yB - 34;
+        const escA = G.ejes(ctx, { caja: { x: izq, y: 18, w: ancho, h: hA }, x: [0, NC], y: [-62, 62], marcasX: false, marcasY: false, rejilla: false, C });
+        G.linea(ctx, escA, null, recibido(1), { t0: 0, dt: 1, color: C.senal, ancho: 1, C });
+        G.texto(ctx, izq + 2, 11, 'lo que recibe el móvil en 1 ms', { color: C.senal, tam: 11, peso: 600, C });
+        const escB = G.ejes(ctx, { caja: { x: izq, y: yB, w: ancho, h: hB }, x: [0, NC], y: [-1.7, 1.7], marcasX: [0, 250, 500, 750, 1000], marcasY: [-1, 0, 1], formatoX: v => num(v), formatoY: v => num(v), etiquetaX: 'retraso del código (chips)', C });
+        G.texto(ctx, izq + 2, yB - 5, 'correlación con el satélite ' + e.prn + ', tras ' + num(e.T) + ' ms', { color: C.respuesta, tam: 11, peso: 600, C });
+        G.linea(ctx, escB, null, c.v, { t0: 0, dt: 1, color: C.respuesta, ancho: 1.2, C });
+        const meta = c.media + 6 * c.sd;
+        if (meta < 1.6) {
+          ctx.save();
+          ctx.strokeStyle = G.alfa(C.eje, 0.9); ctx.lineWidth = 1; ctx.setLineDash([5, 4]);
+          const ym = Math.round(escB.y(meta)) + 0.5;
+          ctx.beginPath(); ctx.moveTo(izq, ym); ctx.lineTo(izq + ancho, ym); ctx.stroke();
+          ctx.restore();
+          G.texto(ctx, izq + ancho - 2, ym - 5, 'seis veces el ruido', { alinear: 'right', color: C.tenue, tam: 10, C });
+        }
+        const claro = c.relacion >= 6;
+        bola(ctx, escB.x(c.k), escB.y(c.v[c.k]), 5, claro ? C.ok : C.acento, C);
+        rotulo(ctx, escB.x(c.k) + (escB.x(c.k) > izq + ancho * 0.6 ? -9 : 9), escB.y(c.v[c.k]) - (c.v[c.k] > 1.2 ? -14 : 6), 'máximo: ' + num(c.relacion, 1) + ' veces el ruido', { alinear: escB.x(c.k) > izq + ancho * 0.6 ? 'right' : 'left', color: claro ? C.ok : C.suave, peso: 600 }, C);
+      },
+    });
+    const lect = Curso.lecturas('#r6-fila', [
+      { id: 'rel', nombre: 'Máximo sobre el ruido', clase: 'respuesta' },
+      { id: 'lag', nombre: 'Retraso del máximo' },
+      { id: 'cod', nombre: 'Código probado' },
+    ]);
+    const estado = () => {
+      const c = correlar(e.prn, e.T);
+      lect.fijar('rel', num(c.relacion, 1) + ' veces');
+      lect.fijar('lag', num(c.k) + ' chips · ' + num(c.k * 0.9775, 0) + ' µs');
+      lect.fijar('cod', 'satélite ' + e.prn + ', ' + num(e.T) + ' ms');
+    };
+    const selP = Curso.eleccion('#r6-mandos', { etiqueta: 'Satélite (código)', valor: e.prn, reto: 'reto-6', opciones: [1, 2, 3, 4].map(p => ({ valor: p, texto: 'Satélite ' + p })), alCambiar: v => { e.prn = Number(v); estado(); L.dibujar(); } });
+    const selT = Curso.eleccion('#r6-mandos', { etiqueta: 'Tiempo de integración', valor: e.T, reto: 'reto-6', opciones: TS.map(t => ({ valor: t, texto: t + ' ms' })), alCambiar: v => { e.T = Number(v); estado(); L.dibujar(); } });
+    estado();
+    Curso.reto('reto-6', {
+      titulo: 'Encuentra el satélite', nivel: 'difícil',
+      comprobar: () => {
+        const c = correlar(e.prn, e.T);
+        if (bien()) return { ok: true, mensaje: 'Es el satélite ' + real + ', y su señal llega con ' + num(desfase) + ' chips de retraso: ' + num(desfase * 0.9775, 0) + ' µs de código. El pico sobresale ' + num(c.relacion, 1) + ' veces.' };
+        if (c.relacion >= 6) return { ok: false, mensaje: 'El pico sobresale ' + num(c.relacion, 1) + ' veces, pero el retraso no cuadra del todo: afina.' };
+        if (c.relacion >= 4.5) return { ok: false, mensaje: 'El máximo sobresale ' + num(c.relacion, 1) + ' veces: aún podría ser una casualidad del ruido. Cambia de código o suma más milisegundos.' };
+        return { ok: false, mensaje: 'El máximo sobresale solo ' + num(c.relacion, 1) + ' veces: no se distingue del ruido. Prueba otro satélite o integra más tiempo.' };
+      },
+      resolver: () => { selP.fijar(real); selT.fijar(16); },
+      pista: [
+        'Con el satélite equivocado no hay pico, por mucho que integres: el código no se parece a lo que llega. Con el bueno, el pico aparece cuando suficientes milisegundos se suman.',
+        'Si el pico no sobresale, suma más milisegundos. Cada vez que se dobla el tiempo se ganan unos 3 dB, así que con 16 ms ya sobresale con claridad.',
+      ],
+      exito: '<p>Con 1 ms el pico se confunde con el ruido y con 16 ms sale limpio, porque cada vez que se dobla el tiempo de integración se ganan unos 3 dB. Los demás satélites no dan pico, porque sus códigos apenas se parecen al que buscas. Tu móvil hace esta búsqueda con todos los satélites a la vez, y también en frecuencia.</p>',
+    });
+  })();
+
+  // ── En tu voz: la nota de tu «aaa» con la autocorrelación ───────────────────────────────────────────
+  // Se toma un trozo de 40 ms (20 ms si la grabación es un silbido), se le resta la media, se multiplica por una ventana
+  // de Hann y se calcula su autocorrelación, dividida por la de la ventana (Boersma, 1993). El periodo es el primer pico
+  // que llega al 80 % del más alto, y si ninguno pasa de 0,45 se dice que no hay una nota clara. La voz se busca entre
+  // 60 y 1.000 Hz, y un silbido (frecuencia dominante por encima de 500 Hz), entre 400 y 4.000 Hz.
+  (function () {
+    const st = { x: null, dur: 0, ini: 0, ventana: 0.04, modo: 'voz', res: null };
+    const RANGOS = { voz: { fmin: 60, fmax: 1000, ventana: 0.04 }, silbido: { fmin: 400, fmax: 4000, ventana: 0.02 } };
+
+    // Un trozo de n muestras desde i0: sin media, con ventana de Hann.
+    function trozo(i0, n) {
+      const t = st.x.slice(i0, i0 + n), w = S.ventana('hann', n);
+      let m = 0; for (let i = 0; i < n; i++) m += t[i]; m /= n;
+      return { y: Float64Array.from(t, (a, i) => (a - m) * w[i]), w, t };
+    }
+    function dominante(t) {
+      const sp = S.espectro(t, FS, { ventana: 'hann' });
+      let k = 1; for (let i = 2; i < sp.mag.length; i++) if (sp.mag[i] > sp.mag[k]) k = i;
+      const fp = sp.f[k];
+      let tot = 0, cerca = 0;
+      for (let i = 1; i < sp.mag.length; i++) { if (sp.f[i] < 100 || sp.f[i] > 7500) continue; const p = sp.mag[i] * sp.mag[i]; tot += p; if (sp.f[i] >= 0.85 * fp && sp.f[i] <= 1.15 * fp) cerca += p; }
+      return { f: fp, pureza: tot > 0 ? cerca / tot : 0 };
+    }
+    // El trozo con más energía de la grabación, mirando de 20 ms en 20 ms.
+    function mejorInicio(n) {
+      const paso = Math.round(0.02 * FS); let mejor = 0, em = -1;
+      for (let i = 0; i + n <= st.x.length; i += paso) { let e = 0; for (let k = i; k < i + n; k++) e += st.x[k] * st.x[k]; if (e > em) { em = e; mejor = i; } }
+      return mejor;
+    }
+    // Un silbido es casi un seno: su frecuencia dominante pasa de 500 Hz y concentra casi toda la energía. Una vocal tiene muchos armónicos.
+    function esSilbido(t) { const d = dominante(t); return d.f > 500 && d.pureza > 0.85; }
+    function analizar() {
+      const R = RANGOS[st.modo];
+      let n = Math.round(R.ventana * FS);
+      if (st.x.length < n) n = st.x.length;
+      const i0 = limitar(Math.round(st.ini * FS), 0, Math.max(0, st.x.length - n));
+      const res = { modo: st.modo, n, i0, r: new Float64Array(0), picos: [], periodo: null, alto: 0, claro: false, octavas: [] };
+      const maxLag = Math.min(Math.ceil(FS / R.fmin) + 2, Math.floor(n * 0.6));
+      if (n < 160 || maxLag < 8) return res;
+      const { y, w } = trozo(i0, n);
+      const ra = S.autocorrelacion(y, maxLag), rw = S.autocorrelacion(w, maxLag);
+      res.r = Float64Array.from(ra, (a, i) => a / (rw[i] || 1));
+      const lmin = Math.max(2, Math.floor(FS / R.fmax));
+      const cand = S.picos(res.r, { umbral: 0.1, minDistancia: 3 }).filter(i => i >= lmin).map(i => { const p = S.interpolarPico(res.r, i); return { lag: i, x: p.x, y: p.y }; });
+      res.picos = cand;
+      res.alto = cand.reduce((m, p) => Math.max(m, p.y), 0);
+      if (res.alto >= 0.45) {
+        const p = cand.find(q => q.y >= 0.8 * res.alto);
+        res.periodo = p; res.claro = true;
+        // Los picos a dos y a tres periodos, si los hay.
+        for (const k of [2, 3]) { const q = cand.find(c => Math.abs(c.x / p.x - k) < 0.06 * k); if (q) res.octavas.push({ k, p: q }); }
+      }
+      return res;
+    }
+
+    const lab = Curso.voz('#voz-lab', {
+      ejemplos: ['aaa', 'silbido'], fsAnalisis: FS, fsEjemplos: FS, alCargar: cargar,
+      alTocarVista: t => mover(t - st.ventana / 2),
+      alDibujarVista: (ctx, esc, C) => {
+        if (!st.x) return;
+        const x0 = esc.x(st.ini), x1 = Math.max(x0 + 3, esc.x(st.ini + st.ventana));
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.plantilla, 0.22);
+        ctx.fillRect(x0 - 2, esc.caja.y - 2, x1 - x0 + 4, esc.caja.h + 4);
+        ctx.strokeStyle = C.plantilla; ctx.lineWidth = 1.5;
+        ctx.strokeRect(Math.round(x0 - 2) + 0.5, esc.caja.y - 2, Math.round(x1 - x0 + 4), esc.caja.h + 4);
+        ctx.restore();
+      },
+    });
+    const escena = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena);
+    const vista = G.lienzo(escena, {
+      alto: altoEscena(240, 270),
+      etiqueta: 'La autocorrelación del trozo de tu grabación elegido, con el primer pico alto marcado como tu periodo y los picos de dos y tres periodos',
+      dibujar: (ctx, w, h, C) => dibujar(ctx, w, h, C),
+    });
+    const mandos = crear('div', { class: 'mandos' });
+    lab.panel.appendChild(mandos);
+    const pos = Curso.mando(mandos, { etiqueta: 'Posición del trozo', min: 0, max: 100, paso: 0.1, valor: 50, formato: v => (st.dur ? num(v / 100 * Math.max(0, st.dur - st.ventana), 2) + ' s' : '—'), alCambiar: v => mover(v / 100 * Math.max(0, st.dur - st.ventana), true) });
+    const fila = crear('div', { class: 'fila' });
+    lab.panel.appendChild(fila);
+    const lect = Curso.lecturas(fila, [
+      { id: 'T', nombre: 'Tu periodo', clase: 'cuerpo' },
+      { id: 'f', nombre: 'Frecuencia', clase: 'senal' },
+      { id: 'nota', nombre: 'Nota más cercana' },
+      { id: 'alto', nombre: 'Altura del pico', clase: 'respuesta' },
+    ]);
+    const botones = crear('div', { class: 'botones' });
+    lab.panel.appendChild(botones);
+    Curso.audio.boton(botones, () => (st.x ? { x: st.x, fs: FS, volumen: 0.8 } : null), 'Oír tu grabación');
+    Curso.audio.boton(botones, () => (st.res && st.res.claro ? { f: FS / st.res.periodo.x, dur: 1.4, volumen: 0.3 } : null), 'Oír un tono de esa frecuencia');
+    const nota = crear('p', { class: 'nota-reto' }, '');
+    lab.panel.appendChild(nota);
+
+    function dibujar(ctx, w, h, C) {
+      if (!st.x || !st.res) { G.texto(ctx, w / 2, h / 2, 'Graba, sube un audio o elige un ejemplo', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C }); return; }
+      const R = st.res;
+      if (!R.r.length) { G.texto(ctx, w / 2, h / 2, 'Este audio es demasiado corto para buscar una nota', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C }); return; }
+      const tmax = (R.r.length - 1) / FS * 1000;
+      const esc = G.ejes(ctx, { caja: { x: 14, y: 22, w: w - 28, h: h - 22 - 38 }, x: [0, tmax], y: [-0.5, 1.12], marcasY: [0, 1], formatoX: v => num(v, v < 5 ? 1 : 0), formatoY: v => num(v), etiquetaX: 'desplazamiento (ms)', C });
+      G.texto(ctx, 16, 14, 'parecido de tu trozo con él mismo, desplazado', { color: C.respuesta, tam: 11, peso: 600, C });
+      G.linea(ctx, esc, null, R.r, { t0: 0, dt: 1000 / FS, color: C.respuesta, ancho: 1.8, C });
+      ctx.save();
+      ctx.strokeStyle = G.alfa(C.eje, 0.8); ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+      const yu = Math.round(esc.y(0.45)) + 0.5;
+      ctx.beginPath(); ctx.moveTo(esc.caja.x, yu); ctx.lineTo(esc.caja.x + esc.caja.w, yu); ctx.stroke();
+      ctx.restore();
+      G.texto(ctx, esc.caja.x + esc.caja.w - 2, yu + 12, 'por debajo de 0,45, no hay nota', { alinear: 'right', color: C.tenue, tam: 10, C });
+      for (const p of R.picos) bola(ctx, esc.x(p.x / FS * 1000), esc.y(p.y), 3.2, C.cuerpo, C);
+      for (const o of R.octavas) {
+        const px = esc.x(o.p.x / FS * 1000), py = esc.y(o.p.y);
+        bola(ctx, px, py, 4.6, C.plantilla, C);
+        rotulo(ctx, px, py - 10, o.k + ' periodos', { alinear: 'center', tam: 10, color: C.plantilla }, C);
+      }
+      if (R.claro) {
+        const px = esc.x(R.periodo.x / FS * 1000), py = esc.y(R.periodo.y);
+        bola(ctx, px, py, 6.2, C.acento, C);
+        rotulo(ctx, px + (px > w * 0.6 ? -10 : 10), py - 8, 'tu periodo: ' + num(R.periodo.x / FS * 1000, 2) + ' ms', { alinear: px > w * 0.6 ? 'right' : 'left', color: C.acento, peso: 600 }, C);
+      }
+    }
+    function refrescar() {
+      if (!st.x) return;
+      st.res = analizar();
+      const R = st.res;
+      if (R.claro) {
+        const f = FS / R.periodo.x, n = Curso.nota(f);
+        lect.fijar('T', num(R.periodo.x / FS * 1000, 2) + ' ms');
+        lect.fijar('f', num(f, 1) + ' Hz');
+        lect.fijar('nota', n.nombre + n.octava + (Math.abs(n.centimos) >= 5 ? ' (' + (n.centimos > 0 ? '+' : '−') + Math.abs(n.centimos) + ' cents)' : ''));
+      } else { lect.fijar('T', '—'); lect.fijar('f', '—'); lect.fijar('nota', '—'); }
+      lect.fijar('alto', R.r.length ? num(R.alto, 2) : '—');
+      const rango = RANGOS[st.modo];
+      nota.textContent = (st.modo === 'silbido'
+        ? 'Tu audio parece un silbido, casi un tono puro por encima de 500 Hz, y por eso busco entre 400 y 4.000 Hz con un trozo de 20 ms: con el rango de la voz saldría una frecuencia cuatro veces más grave. '
+        : 'Busco entre ' + num(rango.fmin) + ' y ' + num(rango.fmax) + ' Hz con un trozo de 40 ms. ')
+        + (R.claro
+          ? (R.octavas.length ? 'Los puntos púrpura son los picos de dos y tres periodos: dan la misma nota una octava y más abajo, y por eso se elige el primer pico alto y no el más alto.' : 'Los demás picos repiten el mismo periodo.')
+          : (R.r.length ? 'Ningún pico llega a 0,45: no encuentro una nota clara. Prueba con otro trozo, una vocal sostenida o un silbido, sin ruido de fondo, a un palmo del micrófono.' : 'El audio es demasiado corto.'));
+      vista.dibujar();
+      lab.redibujarVista();
+    }
+    function mover(t, directo) {
+      if (!st.x) return;
+      st.ini = limitar(t, 0, Math.max(0, st.dur - st.ventana));
+      if (!directo) pos.fijar(st.dur > st.ventana ? 100 * st.ini / (st.dur - st.ventana) : 0, false);
+      refrescar();
+    }
+    function cargar(x) {
+      st.x = x; st.dur = x.length / FS;
+      st.modo = 'voz'; st.ventana = RANGOS.voz.ventana;
+      const n0 = Math.min(x.length, Math.round(0.04 * FS)), i0 = mejorInicio(n0);
+      if (n0 >= 160 && esSilbido(x.slice(i0, i0 + n0))) { st.modo = 'silbido'; st.ventana = RANGOS.silbido.ventana; }
+      const n = Math.min(x.length, Math.round(st.ventana * FS));
+      st.ini = x.length > n ? mejorInicio(n) / FS : 0;
+      pos.fijar(st.dur > st.ventana ? 100 * st.ini / (st.dur - st.ventana) : 0, false);
+      refrescar();
+    }
+  })();
+
+})();
+</script>
+</body>
+</html>

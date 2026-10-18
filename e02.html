@@ -1,0 +1,1103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fotos de una noria: muestrear sin engañarte · Señales</title>
+<meta name="description" content="Lección 2 del curso visual «Señales, de 0 a experto»: cómo se convierte el mundo en números sin engañarse (muestreo, regla de Nyquist, aliasing y cuantización), con una noria fotografiada, seis retos y tu propia voz.">
+<link rel="stylesheet" href="comun/fuentes.css">
+<link rel="stylesheet" href="comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e02">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Nivel 1 · Lección 2</p>
+    <h1>Fotos de una noria: muestrear sin engañarte</h1>
+    <aside class="pregunta">
+      <p>En una película, un coche arranca y sus ruedas giran cada vez más deprisa, hasta que de pronto parecen frenarse, quedarse quietas e incluso girar hacia atrás mientras el coche sigue avanzando. La cámara funciona bien y la rueda también, y sin embargo lo que vemos es falso. El mismo engaño ocurre cuando un aparato convierte el mundo en números, también cuando graba un sonido, y por eso importa tanto cuántas medidas toma por segundo. ¿Cómo puede engañarnos algo que mide bien?</p>
+    </aside>
+    <ul class="meta"><li>Unos 45 minutos</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>La idea en una imagen</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Una noria gira a oscuras y un flash la ilumina a intervalos regulares, de modo que solo vemos fotos. Cada foto es un tallo verde, la altura de la cabina en ese instante. La curva fina es la noria de verdad; la naranja, la noria más lenta que deja exactamente esas mismas fotos, que es lo que «cuentan» las fotos.</figcaption>
+    </figure>
+    <p>Un estroboscopio es una luz que destella a intervalos regulares, y bajo ella solo vemos el mundo en los instantes del destello. Con una noria que gira a oscuras, lo que llega al ojo es una colección de fotos sueltas, y entre una y otra no sabemos qué ha pasado. Convertir el mundo en números es justo eso: un aparato que mira cada poquito y que, entre mirada y mirada, no mira.</p>
+    <p>Mueve la velocidad de la noria y el ritmo del flash y fíjate en la noria naranja. Con muchas fotos por vuelta, la naranja y la verdadera giran igual. Con pocas, la naranja se separa de la verdadera y gira más despacio, quieta o al revés, mientras las fotos siguen siendo exactamente las mismas.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Paso a paso</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>Hacer fotos con flash</h3>
+      <p>En la <a href="e01.html">lección 1</a>, la altura de una cabina de noria, apuntada instante a instante, dibujaba una onda, y para una máquina esa onda es una lista de números en orden. Pero una máquina no puede apuntar la altura en todos los instantes, que son infinitos: la apunta cada poquito. Cada vez que mira, guarda un número, la altura de la cabina en ese momento, y a ese número se le llama <b class="termino">muestra</b>.</p>
+      <p>Tomar muestras a intervalos regulares es el <b class="termino">muestreo</b>. Cuántas muestras se toman por segundo es la <b class="termino">frecuencia de muestreo</b>, que se mide en hercios porque cuenta cosas por segundo, y el hueco entre una muestra y la siguiente es el <b class="termino">periodo de muestreo</b>, que es su inversa, igual que el periodo de una vuelta lo es de la frecuencia. Un móvil graba audio a 44.100 o 48.000 muestras por segundo, y el cine, a 24 fotos por segundo.</p>
+      <p>Bajo un flash, cada destello es una muestra. Si caben muchos en cada vuelta, el ojo reconstruye el giro sin esfuerzo. Si el flash va más despacio, lo que ocurre entre una foto y la siguiente no se ve: se ve la cabina en un sitio y, un momento después, en otro, y hay que adivinar por dónde ha ido. Lo que se ve en esos casos, cuando algo que gira se ilumina a destellos y parece ir más despacio, pararse o retroceder, se llama <b class="termino">efecto estroboscópico</b>.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">La noria da una vuelta por segundo. Mueve el ritmo del flash hasta que parezca quieta aunque siga girando y, después, hasta que parezca girar despacio hacia atrás.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="fila" id="r1-fila"></div>
+        <div class="mandos" id="r1-mandos"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>La rueda de carro</h3>
+      <p>Una cámara de cine hace 24 fotos por segundo, y cada foto es una muestra de lo que pasa delante del objetivo. Imagina una rueda de coche con seis radios iguales. Si entre una foto y la siguiente la rueda gira casi lo que separa dos radios, en cada foto el radio más cercano aparece un poco por detrás de donde estaba el anterior, y en la pantalla la rueda parece retroceder aunque el coche avance. Si gira justo lo que separa dos radios, todas las fotos son iguales y la rueda parece parada. Es el <i>efecto de la rueda de carro</i>, y la cámara no tiene ningún fallo: hace lo que hace cualquier sistema que mira a intervalos.</p>
+      <p>Como los radios son iguales, lo que cuenta no es la vuelta entera, sino lo que tarda la rueda en <i>parecer igual</i>. Con seis radios basta un sexto de vuelta, así que la cámara muestrea, en realidad, «radios por vueltas por segundo». Una rueda de coche de unos 60 cm de diámetro da unas 7 vueltas por segundo a 50 km/h, de modo que los radios pasan por delante del objetivo mucho más deprisa de lo que la cámara puede contar.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">También con luz del día</span>
+        <p>A veces la rueda parece girar al revés incluso sin cámara de por medio, mirándola a la luz del sol. Los investigadores todavía discuten por qué: unos creen que el cerebro procesa el movimiento a saltos, y otros, que compiten detectores de movimiento que miran en sentidos opuestos. Lo que no se puede decir es que el ojo vea a 24 fotos por segundo: esa cifra es una decisión del cine.</p>
+      </aside>
+      <p>Tampoco hace falta una cámara para que el engaño ocurra. Una lámpara que parpadea al ritmo de la red eléctrica, que en Europa son 100 destellos por segundo, hace de estroboscopio: una sierra que gira a 6.000 vueltas por minuto, justo 100 por segundo, sale en el mismo sitio en cada destello y parece parada. Con la iluminación moderna es raro, pero las guías de seguridad laboral piden evitarlo, porque puede ser peligroso. Bien usado, el mismo engaño sirve de herramienta: muchos tocadiscos llevan en el borde del plato una corona de rayitas, 180 en las de Europa, que bajo una lámpara así parecen quietas solo cuando el plato gira justo a 33⅓ vueltas por minuto.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Consigue que la rueda parezca quieta en el vídeo aunque el coche siga avanzando. Elige cuántos radios tiene y a cuántas vueltas por segundo gira.</p>
+        <div class="escena" id="r2-escena"></div>
+        <p class="nota-reto">El coche va hacia la derecha, así que «hacia delante» es en el sentido de las agujas del reloj. La rueda de verdad gira tan deprisa que a simple vista sería un borrón.</p>
+        <div class="fila" id="r2-fila"></div>
+        <div class="mandos" id="r2-mandos"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>Las mismas fotos, muchas norias</h3>
+      <p>De todo esto sale una consecuencia incómoda: las fotos no dicen cuántas vueltas ha dado la noria entre una y otra. Si entre dos fotos la cabina da una vuelta entera de más, sale exactamente en el mismo sitio, y las fotos no se enteran. Por eso no hay una noria que deje esas fotos, sino muchas.</p>
+      <p>Un ejemplo con números: con 10 fotos por segundo, una noria de 7 vueltas por segundo deja las mismas fotos que una de 17, que da una vuelta más entre foto y foto, y que una de 27. Y como la altura de una cabina no distingue si la noria gira hacia un lado o hacia el otro, también las deja una de 3 vueltas por segundo, que es lo que le falta a 7 para llegar a 10, y todas las que salen de sumarle a esa vueltas de 10 en 10: 13, 23 y así sin parar.</p>
+      <p>A este disfraz se le llama <b class="termino">aliasing</b>. El nombre viene del inglés: un <i>alias</i> es el nombre falso de un delincuente, y la noria rápida se hace pasar por otra más lenta. En español también se dice solapamiento. Cuando algo gira más deprisa que la mitad de la frecuencia de muestreo, en las muestras aparece como otra noria más lenta, quieta o al revés, y no hay nada en las fotos que delate el cambio.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Estas 20 fotos son de una noria que no te enseño. Encuentra tres norias distintas que pasen por todas: arrastra por la regla de abajo para cambiar la noria candidata y guarda cada una que encaje.</p>
+        <div class="escena" id="r3-escena"></div>
+        <div class="fila" id="r3-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>Más de dos fotos por vuelta</h3>
+      <p>La buena noticia es que el disfraz tiene un límite. Si entre una foto y la siguiente la cabina avanza menos de media vuelta, de todas las norias que dejan esas fotos solo una avanza menos de media vuelta entre foto y foto, la verdadera, y las demás dan vueltas de más. Avanzar menos de media vuelta entre fotos es lo mismo que hacer más de dos fotos por cada vuelta. Un sonido real, como verás en la <a href="e03.html">lección 3</a>, es una suma de norias de velocidades distintas, y la que manda es la más rápida: la frecuencia de muestreo tiene que ser mayor que el doble de la frecuencia de esa noria. Esa es la <b class="termino">regla de Nyquist</b>.</p>
+      <p>A la mitad de la frecuencia de muestreo se le llama <b class="termino">frecuencia de Nyquist</b>, y es lo más rápido que las fotos pueden contar sin disfrazarlo. Algunos libros usan ese nombre para el doble de la frecuencia de la señal, pero en este curso es la mitad de la de muestreo. Fíjate en que la regla pide más de dos fotos por vuelta, no dos: con dos justas, las fotos pueden caer siempre cuando la cabina pasa por la altura media, y todas las muestras valdrían cero, como si no hubiera noria.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">Una regla con nombre prestado</span>
+        <p>La regla lleva el nombre de Harry Nyquist, que en 1928 estudió cuántos pulsos por segundo podían viajar por una línea de telégrafo. El teorema completo lo publicaron por su cuenta Vladímir Kotélnikov, en 1933, y Claude Shannon, en 1949, y antes que ellos varios matemáticos habían estudiado cómo rellenar una curva a partir de puntos a intervalos iguales.</p>
+      </aside>
+      <p>Con el sonido, el aliasing se oye. Si haces sonar un pitido que sube sin parar, pero solo tomas 8.000 muestras por segundo, al pasar de 4.000 hercios el tono no sigue subiendo: da media vuelta y baja, como si rebotara en un espejo colocado en la frecuencia de Nyquist. Cuando se cumple la regla, en cambio, entre los puntos solo cabe una curva suave sin nada más rápido que esa frecuencia, y se puede recuperar entera: es la <b class="termino">reconstrucción</b>.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Un pitido sube de 100 a 6.000 Hz en tres segundos. Elige la frecuencia de muestreo más baja con la que el pitido sube hasta el final sin rebotar. Con «Escuchar» lo oyes tal como quedaría grabado.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="mandos" id="r4-mandos"></div>
+        <div class="fila" id="r4-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>El filtro va antes de la foto</h3>
+      <p>¿Y si el sonido trae algo más rápido de lo que esperabas? Una vez hechas las fotos, lo falso y lo verdadero ocupan las mismas frecuencias y no hay manera de separarlos, igual que no se puede separar el café de la leche. Por eso todo conversor lleva delante un <b class="termino">filtro antialias</b>, que quita, antes de muestrear, lo que va demasiado rápido para las fotos que se van a hacer.</p>
+      <p>Un filtro de verdad no corta en seco, así que necesita un margen entre lo que quieres guardar y la frecuencia de Nyquist. Oímos, más o menos, de 20 a 20.000 hercios, y el CD guarda hasta ahí con 44.100 muestras por segundo: su frecuencia de Nyquist es 22.050 Hz, y le quedan 2.050 Hz de margen para el filtro. El teléfono clásico, en cambio, toma 8.000 muestras por segundo y deja pasar más o menos de 300 a 3.400 hercios: la voz se entiende, pero suena apagada, porque le faltan los agudos.</p>
+      <p>El número exacto del CD, 44.100, tiene una historia más prosaica. A finales de los años setenta, el audio digital se grababa en cintas de vídeo, con tres muestras en cada línea de la imagen, y 44.100 era la cifra que encajaba a la vez con la televisión europea y con la americana. Sony y Philips la eligieron para el CD en 1980, entre otras cosas porque era más fácil de recordar que 44.056, la que salía del vídeo americano en color.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Este sonido lleva dos tonos buenos, de 1.000 y 3.000 Hz, y dos intrusos agudos, de 5.200 y 7.400 Hz, y se va a muestrear a 8.000 Hz. Ajusta el corte del filtro para que los intrusos no se cuelen en las fotos, sin apagar el tono de 3.000 Hz.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>La escalera de las alturas</h3>
+      <p>Hasta aquí hemos hablado del <i>cuándo</i> de cada foto. Falta el <i>cuánto</i>: cada muestra es un número, y un ordenador solo escribe números con una cantidad fija de cifras binarias, los <b class="termino">bits</b>. Con 2 bits se pueden escribir 4 alturas distintas, con 8, 256, y con 16, 65.536. Es una escalera de peldaños, y cada muestra se redondea al peldaño más cercano. Ese redondeo se llama <b class="termino">cuantización</b>, y en España también se dice cuantificación.</p>
+      <p>Redondear comete un error de, como mucho, medio peldaño, y ese error se comporta como un ruido: el <b class="termino">ruido de cuantización</b>, que suena como un siseo débil. Cada bit más parte cada peldaño en dos y aleja el siseo unos 6 decibelios. Un decibelio (dB) es una forma de comparar tamaños con una escala comprimida: cada 20 dB, una señal es diez veces mayor que otra, y 40 dB son cien veces. Los decibelios se cuentan con calma en la <a href="e05.html">lección 5</a>. El CD usa 16 bits, y deja el siseo unos 98 dB por debajo de un sonido que ocupe todo el rango, casi 80.000 veces más flojo, que en la práctica no se oye.</p>
+      <p>Estos peldaños son de altura, de los valores que puede tomar cada muestra, y existen de verdad. No hay que confundirlos con los escalones de los dibujos que unen las muestras con tramos horizontales: esos solo están en el dibujo, porque el conversor de tu móvil entrega la curva suave que pasa por todas las muestras. En el reto vas a ver también por qué conviene que el sonido ocupe casi todo el rango antes de guardarlo.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">Encuentra el menor número de bits con el que el error de redondeo queda cien veces por debajo del tono (40 dB). Hazlo con el tono fuerte y después con el flojito, que solo ocupa una décima del rango.</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>En tu voz</h2>
+    <p><b>Qué grabar.</b> Una frase hablada, el tramo 5 de la grabación de referencia de la serie, y un silbido sostenido, el tramo 2. Si quieres ver cómo se pliega un tono que cambia, añade el silbido que sube y baja, el tramo 4. Graba con el micrófono si tu navegador lo deja; si no, sube un audio grabado con el móvil o prueba con los ejemplos sintéticos.</p>
+    <p><b>Qué mirar.</b> El laboratorio vuelve a muestrear tu audio a 8.000 y a 2.000 muestras por segundo, con y sin filtro antes de la foto. A 8.000 sin filtro, la voz suena a teléfono, con algo de aspereza en las eses, porque la «s» tiene energía por encima de 4.000 Hz que se dobla. A 2.000 sin filtro suena metálica y, a ratos, incomprensible: ese metal es el aliasing. Con filtro suena sorda, como oída a través de una pared, pero sin metal, y esa comparación demuestra que el metal es el disfraz y no la falta de agudos. En la gráfica, lo que sobra respecto a tu audio original sale en coral, y con un silbido puedes comprobar la fórmula del disfraz: el laboratorio predice en qué frecuencia va a sonar tu silbido y la mide.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>Lo que tienes que recordar</h2>
+    <ol class="tres">
+      <li>Muestrear es hacer fotos a intervalos regulares: cada foto es un número, y entre una foto y la siguiente no se mira. La frecuencia de muestreo cuenta cuántas se hacen por segundo.</li>
+      <li>Con más de dos fotos por vuelta de la noria más rápida, las fotos cuentan la verdad. Con menos, esa noria se disfraza de otra más lenta, quieta o al revés. Ese aliasing no se puede deshacer después, y por eso el filtro va antes de la foto.</li>
+      <li>Cada foto se guarda con un número limitado de bits, que redondea la altura a un peldaño de una escalera. Cada bit más duplica los peldaños y aleja el ruido de redondeo unos 6 dB.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Errores típicos</h2>
+    <ul class="errores">
+      <li><b>«Con el doble exacto basta.»</b> Hace falta más del doble. Con dos fotos justas por vuelta pueden caer siempre cuando la cabina pasa por la altura media, y la onda saldría plana. La regla pide más de dos, no dos.</li>
+      <li><b>«El audio digital es una escalera.»</b> Los escalones solo están en los dibujos que unen las muestras con tramos horizontales. Si se cumple la regla, el conversor entrega la curva suave que pasa por todas las muestras. Los peldaños de verdad son de altura, y son los de la cuantización.</li>
+      <li><b>«El aliasing se quita después con un filtro.»</b> Una vez hechas las fotos, lo doblado ocupa las mismas frecuencias que lo bueno y no se puede separar. El filtro tiene que ir antes de muestrear.</li>
+      <li><b>«La rueda que gira al revés es un fallo de la cámara.»</b> La cámara funciona bien: hace lo que hace cualquier sistema que mira a intervalos. Pasa igual con un estroboscopio, con una lámpara que parpadea o con un conversor de audio.</li>
+      <li><b>«Más muestras por segundo siempre suena mejor.»</b> Lo que importa es cumplir la regla con margen para el filtro. Por encima de la calidad del CD, la mejora es pequeña y discutida: un análisis de 18 estudios encontró que solo los oyentes entrenados la distinguen, y no siempre.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Abrir</span>
+      <h2>Rincón matemático</h2>
+      <span class="resumen">Las fórmulas, para quien las quiera. Cada una va después de su lectura en palabras.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>Muestrear</h3>
+      <p>Muestrear es leer la señal cada <span class="tex">T_s</span> segundos. La muestra número <span class="tex">n</span> es el valor de la señal en el instante <span class="tex">n\,T_s</span>, y el periodo de muestreo es la inversa de la frecuencia de muestreo:</p>
+      <div class="tex">x[n] = x(n\,T_s), \qquad T_s = \frac{1}{f_s}</div>
+
+      <h3>Por qué hay impostores</h3>
+      <p>Una noria de frecuencia <span class="tex">f</span> y otra que dé <span class="tex">k\,f_s</span> vueltas por segundo más, con <span class="tex">k</span> entero, dejan las mismas muestras, porque en cada foto la segunda ha dado <span class="tex">k</span> vueltas enteras de más:</p>
+      <div class="tex">\cos\big(2\pi (f + k f_s)\, n T_s\big) = \cos\big(2\pi f\, n T_s + 2\pi k n\big) = \cos\big(2\pi f\, n T_s\big)</div>
+      <p>Y como el coseno no distingue el sentido de giro, la noria de <span class="tex">f_s - f</span> vueltas por segundo también deja las mismas muestras:</p>
+      <div class="tex">\cos\big(2\pi (f_s - f)\, n T_s\big) = \cos\big(2\pi f\, n T_s\big)</div>
+
+      <h3>La frecuencia aparente</h3>
+      <p>Para saber en qué frecuencia suena un tono doblado, se resta el múltiplo de <span class="tex">f_s</span> más cercano y se toma el valor absoluto, que queda entre 0 y <span class="tex">f_s/2</span>:</p>
+      <div class="tex">f_a = \left|\, f - f_s \cdot \operatorname{round}\!\left(\frac{f}{f_s}\right) \right|</div>
+      <p>Para una noria o una rueda, que sí enseñan el sentido, se conserva el signo: si sale negativo, parece girar hacia atrás:</p>
+      <div class="tex">f_{\text{giro}} = f - f_s \cdot \operatorname{round}\!\left(\frac{f}{f_s}\right), \qquad -\frac{f_s}{2} < f_{\text{giro}} \le \frac{f_s}{2}</div>
+
+      <h3>La rueda con radios</h3>
+      <p>Una rueda con <span class="tex">N</span> radios iguales repite su dibujo <span class="tex">N</span> veces por vuelta, así que lo que muestrea la cámara es <span class="tex">N</span> veces la frecuencia de giro, y la vuelta aparente es esa frecuencia doblada dividida entre <span class="tex">N</span>:</p>
+      <div class="tex">f_{\text{dibujo}} = N\,f, \qquad f_{\text{vídeo}} = \frac{1}{N}\left( N f - f_s \cdot \operatorname{round}\!\left(\frac{N f}{f_s}\right) \right)</div>
+
+      <h3>La regla de Nyquist</h3>
+      <p>La noria más rápida de la señal tiene que girar a menos de la mitad de la frecuencia de muestreo:</p>
+      <div class="tex">f_{\max} < \frac{f_s}{2}</div>
+
+      <h3>La reconstrucción</h3>
+      <p>Cuando se cumple la regla, entre las muestras la curva es la suma de un «sinc» centrado en cada muestra y escalado por su valor (fórmula de Whittaker y Shannon):</p>
+      <div class="tex">x(t) = \sum_{n} x[n]\; \operatorname{sinc}\!\left(\frac{t - nT_s}{T_s}\right), \qquad \operatorname{sinc}(u) = \frac{\sin(\pi u)}{\pi u}</div>
+
+      <h3>La escalera</h3>
+      <p>Con <span class="tex">N</span> bits en un rango de <span class="tex">-A</span> a <span class="tex">A</span>, el peldaño mide <span class="tex">\Delta</span>, y el error de redondeo, repartido por igual entre <span class="tex">-\Delta/2</span> y <span class="tex">\Delta/2</span>, tiene una desviación de <span class="tex">\Delta</span> dividido por la raíz de 12:</p>
+      <div class="tex">\Delta = \frac{2A}{2^N}, \qquad \sigma_q = \frac{\Delta}{\sqrt{12}} \approx 0{,}29\,\Delta</div>
+      <p>Para un seno que ocupa todo el rango, la relación entre su potencia y la del ruido de redondeo crece unos 6 dB por bit. Si el seno solo ocupa una fracción <span class="tex">a</span> del rango, la relación baja lo mismo que baja su nivel:</p>
+      <div class="tex">\mathrm{SNR}_q \approx 6{,}02\,N + 1{,}76 + 20\,\log_{10} a \ \text{dB}</div>
+      <p>Con <span class="tex">a = 0{,}1</span>, son 20 dB menos, unos tres bits de más para llegar al mismo resultado.</p>
+
+      <h3>El caudal</h3>
+      <p>El audio sin comprimir ocupa muestras por segundo, por bits por muestra, por canales:</p>
+      <div class="tex">R = f_s \cdot N \cdot C, \qquad \text{CD: } 44{.}100 \cdot 16 \cdot 2 = 1{.}411{.}200\ \text{bit/s}</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Para saber más</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Libro abierto · inglés</span>Steven W. Smith, <i>The Scientist and Engineer's Guide to Digital Signal Processing</i>, <a href="https://www.dspguide.com/ch3.htm">capítulo 3, «ADC and DAC»</a>. Muestreo, aliasing con su metáfora del alias, cuantización como ruido y filtros antialias, en lenguaje llano y gratis.</li>
+      <li><span class="tipo">Libro abierto · inglés</span>Allen B. Downey, <i>Think DSP</i>, <a href="https://greenteapress.com/thinkdsp/html/thinkdsp003.html">capítulo 2, § 2.3, «Aliasing»</a>. Un ejemplo sonoro: los armónicos de una onda triangular que se doblan y aparecen donde no deberían.</li>
+      <li><span class="tipo">Interactivo · inglés</span>Jack Schaedler, <a href="https://jackschaedler.github.io/circles-sines-signals/sampling4.html"><i>Circles, Sines and Signals</i>: «The Wagon Wheel Effect»</a>. Una demostración de la rueda con un deslizador de muestreo; las páginas anteriores del mismo texto tratan el teorema de muestreo y el aliasing de una sinusoide.</li>
+      <li><span class="tipo">Vídeo · inglés</span>Xiph.Org (2013), <a href="https://xiph.org/video/vid2.shtml"><i>Digital Show &amp; Tell</i></a>. Con aparatos reales, demuestra que el audio digital no tiene escalones, qué hacen los bits y para qué sirve el <i>dither</i>, un ruido que se añade a propósito.</li>
+      <li><span class="tipo">Artículo · inglés</span>K. A. Schouhamer Immink (2007), <a href="https://www.dmi.unict.it/~battiato/mm1213/beethoven.pdf"><i>Shannon, Beethoven, and the Compact Disc</i></a>, <i>IEEE Information Theory Society Newsletter</i>. Cómo se eligieron de verdad los 44.100 Hz, los 16 bits y el tamaño del CD, contado por uno de sus ingenieros.</li>
+      <li><span class="tipo">Artículo · inglés</span>Purves, D., Paydarfar, J. A. y Andrews, T. J. (1996), <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC39674/"><i>The wagon wheel illusion in movies and reality</i></a>, <i>PNAS</i>. El artículo que describió la rueda que gira al revés también con luz continua.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>Términos nuevos</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Examen</h2>
+  </section>
+
+</main>
+
+<script src="comun/temario.js"></script>
+<script src="comun/graficas.js"></script>
+<script src="comun/senal.js"></script>
+<script src="comun/curso.js"></script>
+<script src="datos/e02.js"></script>
+<script>
+// Lección 2 · Fotos de una noria: la imagen ancla (el estroboscopio), los seis retos y el laboratorio «En tu voz».
+// Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo; aquí solo va lo de esta lección.
+// Colores con significado fijo: verde, las fotos (lo que se mide); tinta, la noria de verdad; naranja, lo que
+// cuentan las fotos; ámbar, espectros; coral, ruido y aliasing; púrpura, el filtro.
+(function () {
+  'use strict';
+  const G = Graficas, S = Senal, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const altoEscena = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  const hz = v => num(v) + ' Hz';
+  // Una fila de botones dentro de un contenedor (para el botón de pausa de las animaciones).
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); document.querySelector(contenedor).appendChild(f); return f; };
+  // Cuántas veces más flojo es algo atenuado «db» decibelios, escrito para una persona.
+  const vecesMasFlojo = db => {
+    if (db < 0.5) return 'pasa entero';
+    const v = Math.pow(10, db / 20);
+    return num(v, v < 10 ? 1 : 0) + ' veces más flojo';
+  };
+  // El giro aparente (con signo, en vueltas por segundo) dicho con palabras. fs: el ritmo del flash, para el caso
+  // de dos fotos justas por vuelta, en que no se sabe hacia dónde va.
+  const textoGiro = (g, ambiguo) => {
+    if (ambiguo) return 'no se sabe hacia dónde';
+    if (Math.abs(g) < 0.015) return 'quieta';
+    return num(Math.abs(g), 2) + ' vueltas/s ' + (g < 0 ? 'hacia atrás' : 'hacia delante');
+  };
+
+  // Leyenda de colores dentro de un lienzo: puntos con su texto, en filas que se parten si no caben.
+  // → número de filas; con pintar = false solo mide.
+  function leyenda(ctx, C, items, x, y, anchoMax, pintar = true) {
+    ctx.save();
+    ctx.font = '400 11px ' + G.FUENTE_MONO;
+    let cx = x, cy = y, filas = 1;
+    for (const it of items) {
+      const ancho = 14 + ctx.measureText(it.texto).width;
+      if (cx > x && cx + ancho > x + anchoMax) { cx = x; cy += 17; filas += 1; }
+      if (pintar) {
+        ctx.fillStyle = it.color;
+        ctx.beginPath(); ctx.arc(cx + 4, cy, 3.6, 0, TAU); ctx.fill();
+        G.texto(ctx, cx + 13, cy + 4, it.texto, { color: C.suave, tam: 11, C });
+      }
+      cx += ancho + 16;
+    }
+    ctx.restore();
+    return filas;
+  }
+
+  // ── El estroboscopio: una noria fotografiada ───────────────────────────────────────────────────────────
+  // A la izquierda, la noria de verdad (tinta), las últimas fotos (verde) y, si se pide, una manecilla naranja que
+  // gira a la velocidad aparente. A la derecha, la altura de la cabina en el tiempo, con el tiempo hacia la derecha:
+  // la curva fina es la de verdad, los tallos son las fotos y la naranja es la noria lenta que las deja idénticas.
+  const VENTANA = 4;          // segundos que enseña la gráfica
+  const FASE0 = 0.9;          // la cabina sale a 52° sobre las tres en punto
+  const FANTASMAS = 5;        // fotos recientes que se quedan dibujadas sobre la noria
+  const YAW = 0.32;           // el giro de perspectiva de Graficas.noria
+  const fotosHasta = (fs, tope) => { const n = Math.floor(tope * fs + 1e-9), a = []; for (let i = 0; i <= n; i++) a.push(i / fs); return a; };
+
+  function dibujarEstrobo(ctx, w, h, C, e, completa) {
+    const estrecho = w < 560, sx = Math.cos(YAW);
+    const zr = estrecho ? { x: 0, y: 0, w, h: 160 } : { x: 0, y: 0, w: Math.round(w * 0.36), h };
+    const zg = estrecho ? { x: 0, y: 164, w, h: h - 164 } : { x: zr.w, y: 0, w: w - zr.w, h };
+    const giro = S.aliasConSigno(e.f, e.fs);
+    const items = [{ color: C.cuerpo, texto: 'la noria de verdad' }, { color: C.senal, texto: 'las fotos' }];
+    if (e.naranja) items.push({ color: C.respuesta, texto: 'lo que cuentan las fotos' });
+
+    // La noria
+    const r = Math.max(24, Math.min((zr.h - 20) / 2.3, estrecho ? 54 : (zr.w - 28) / 2 / sx));
+    const cx = estrecho ? 14 + r * sx : zr.x + zr.w / 2, cy = 12 + r;
+    const fotos = fotosHasta(e.fs, completa ? VENTANA : e.t);
+    const recientes = fotos.filter(t => t <= e.t + 1e-9).slice(-FANTASMAS);
+    if (!completa && recientes.length) {
+      const edad = e.t - recientes[recientes.length - 1];
+      if (edad < 0.2) {
+        const k = 1 - edad / 0.2, g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 1.3);
+        g.addColorStop(0, G.alfa(C.senal, 0.3 * k)); g.addColorStop(1, G.alfa(C.senal, 0));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r * 1.3, 0, TAU); ctx.fill();
+      }
+    }
+    const cabinas = recientes.map((t, i) => ({ desfase: TAU * e.f * t + FASE0, color: G.alfa(C.senal, 0.28 + 0.72 * (i + 1) / recientes.length), brillo: false }));
+    cabinas.push({ desfase: TAU * e.f * e.t + FASE0, color: C.cuerpo, brillo: false });
+    G.noria(ctx, { C, cx, cy, r, angulo: 0, cabinas, radios: 8, neutras: false, yaw: YAW });
+    if (e.naranja) {
+      const a = TAU * giro * e.t + FASE0, rr = r * 0.6;
+      const hx = cx + rr * Math.cos(a) * sx, hy = cy - rr * Math.sin(a);
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = G.alfa(C.respuesta, 0.85); ctx.lineWidth = 2.4;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(hx, hy); ctx.stroke();
+      if (C.oscuro) {
+        ctx.globalCompositeOperation = 'lighter';
+        const g = ctx.createRadialGradient(hx, hy, 0, hx, hy, 18);
+        g.addColorStop(0, G.alfa(C.respuesta, 0.5)); g.addColorStop(1, G.alfa(C.respuesta, 0));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(hx, hy, 18, 0, TAU); ctx.fill();
+        ctx.globalCompositeOperation = 'source-over';
+      }
+      ctx.fillStyle = C.respuesta;
+      ctx.beginPath(); ctx.arc(hx, hy, 6.5, 0, TAU); ctx.fill();
+      if (!C.oscuro) { ctx.strokeStyle = G.alfa(C.cuerpo, 0.5); ctx.lineWidth = 1; ctx.stroke(); }
+      ctx.restore();
+    }
+
+    // La gráfica
+    let arriba = 10;
+    if (estrecho) leyenda(ctx, C, items, cx + r * sx + 24, cy - 22, w - (cx + r * sx + 24) - 6);
+    else {
+      const filas = leyenda(ctx, C, items, zg.x + 14, zg.y + 16, zg.w - 30, false);
+      leyenda(ctx, C, items, zg.x + 14, zg.y + 16, zg.w - 30);
+      arriba = 16 + (filas - 1) * 17 + 18;
+    }
+    const caja = { x: zg.x + 14, y: zg.y + arriba, w: zg.w - 14 - 16, h: zg.h - arriba - 36 };
+    const esc = G.ejes(ctx, { caja, x: [0, VENTANA], y: [-1.3, 1.3], marcasX: [0, 1, 2, 3, 4], marcasY: false, formatoX: v => num(v), etiquetaX: 'tiempo (s)', C });
+    G.curva(ctx, esc, t => Math.sin(TAU * e.f * t + FASE0), { color: C.cuerpo, ancho: 1.4, alfa: 0.6, halo: false, n: 800, C });
+    if (e.naranja) G.curva(ctx, esc, t => Math.sin(TAU * giro * t + FASE0), { color: C.respuesta, ancho: 2.3, n: 500, C });
+    G.tallos(ctx, esc, fotos, fotos.map(t => Math.sin(TAU * e.f * t + FASE0)), { color: C.senal, radio: 4, C });
+    if (!completa) {
+      ctx.save();
+      ctx.strokeStyle = G.alfa(C.acento, 0.7); ctx.lineWidth = 1.2; ctx.setLineDash([3, 3]);
+      const x = Math.round(esc.x(e.t)) + 0.5;
+      ctx.beginPath(); ctx.moveTo(x, caja.y); ctx.lineTo(x, caja.y + caja.h); ctx.stroke();
+      ctx.restore();
+    }
+  }
+  // Monta una escena de estroboscopio con su animación. e: { f, fs, naranja, t }.
+  function montarEstrobo(selector, etiqueta, e, fila) {
+    let anim = null;
+    const L = G.lienzo(selector, {
+      alto: altoEscena(330, 272), etiqueta,
+      dibujar: (ctx, w, h, C) => dibujarEstrobo(ctx, w, h, C, e, !anim || !anim.corriendo),
+    });
+    anim = Curso.animar(L, (t, dt) => { if (dt > 0) e.t = (e.t + dt) % VENTANA; L.dibujar(); }, { boton: fila });
+    return { L, anim };
+  }
+  // Las dos lecturas del estroboscopio: fotos por vuelta y giro aparente.
+  function lecturasEstrobo(contenedor, e) {
+    const lect = Curso.lecturas(contenedor, [
+      { id: 'fotos', nombre: 'Fotos por vuelta' },
+      { id: 'giro', nombre: 'La noria parece', clase: 'respuesta' },
+    ]);
+    return () => {
+      const ambiguo = Math.abs(e.fs - 2 * e.f) < 1e-6;
+      lect.fijar('fotos', num(e.fs / e.f, 2));
+      lect.fijar('giro', textoGiro(S.aliasConSigno(e.f, e.fs), ambiguo));
+    };
+  }
+
+  // ── La idea en una imagen ───────────────────────────────────────────────────────────────────────────────
+  (function () {
+    const e = { f: 1, fs: 1.25, naranja: true, t: 3.1 };
+    const mandos = document.getElementById('ancla-mandos');
+    let escena = null, refrescar = () => {};
+    const cambiar = () => { refrescar(); if (escena) escena.L.dibujar(); };
+    Curso.mando(mandos, { etiqueta: 'Velocidad de la noria', min: 0.25, max: 3, paso: 0.05, valor: e.f, formato: v => num(v, 2) + ' vueltas/s', alCambiar: v => { e.f = v; cambiar(); } });
+    Curso.mando(mandos, { etiqueta: 'Ritmo del flash', clase: 'senal', min: 0.5, max: 8, paso: 0.05, valor: e.fs, formato: v => num(v, 2) + ' fotos/s', alCambiar: v => { e.fs = v; cambiar(); } });
+    refrescar = lecturasEstrobo(mandos, e);
+    const fila = crear('div', { class: 'botones' });
+    mandos.appendChild(fila);
+    Curso.botones(fila, [{ id: 'naranja', texto: 'La noria que cuentan las fotos', pulsado: true, alPulsar: on => { e.naranja = on; cambiar(); } }]);
+    escena = montarEstrobo('#ancla-escena', 'Una noria fotografiada con un flash: a la izquierda, la noria de verdad y las últimas fotos; a la derecha, la altura de la cabina en el tiempo, con las fotos como tallos verdes y, en naranja, la noria lenta que deja exactamente esas fotos', e, fila);
+    refrescar();
+  })();
+
+  // ── Reto 1 · Para la noria (deslizador) ─────────────────────────────────────────────────────────────────
+  // Una noria de 1 vuelta/s y un flash con ritmo ajustable. Hay que conseguir dos cosas, en el orden que quieras:
+  // que parezca quieta (una foto cada vuelta) y que parezca girar despacio hacia atrás (el flash, algo más rápido).
+  (function () {
+    const e = { f: 1, fs: 3, naranja: true, t: 3.1 };
+    const logro = { quieta: false, atras: false };
+    let escena = null;
+    const mandos = document.getElementById('r1-mandos');
+    const fila = document.getElementById('r1-fila');
+    const refrescar = lecturasEstrobo(fila, e);
+    const lect = Curso.lecturas(fila, [{ id: 'hecho', nombre: 'Conseguido' }]);
+    const giro = () => S.aliasConSigno(e.f, e.fs);
+    const estado = () => {
+      refrescar();
+      lect.fijar('hecho', 'quieta: ' + (logro.quieta ? 'sí' : 'no') + ' · hacia atrás: ' + (logro.atras ? 'sí' : 'no'));
+    };
+    const mFs = Curso.mando(mandos, {
+      etiqueta: 'Ritmo del flash', clase: 'senal', min: 0.5, max: 4, paso: 0.05, valor: e.fs, formato: v => num(v, 2) + ' fotos/s', reto: 'reto-1',
+      alCambiar: v => {
+        e.fs = v;
+        const g = giro();
+        if (Math.abs(g) < 0.03) logro.quieta = true;
+        if (g <= -0.05 && g >= -0.25) logro.atras = true;
+        estado();
+        if (escena) escena.L.dibujar();
+      },
+    });
+    const filaB = crear('div', { class: 'botones' });
+    fila.appendChild(filaB);
+    escena = montarEstrobo('#r1-escena', 'Una noria que da una vuelta por segundo, fotografiada con un flash de ritmo ajustable; a la derecha, su altura en el tiempo, las fotos como tallos verdes y, en naranja, lo que cuentan las fotos', e, filaB);
+    estado();
+    Curso.reto('reto-1', {
+      titulo: 'Para la noria', nivel: 'fácil',
+      comprobar: () => {
+        if (logro.quieta && logro.atras) return { ok: true, mensaje: 'Las dos cosas: la has parado y la has hecho girar hacia atrás.' };
+        const g = giro();
+        if (logro.quieta) return { ok: false, mensaje: 'Quieta, conseguido. Ahora hazla girar despacio hacia atrás: el flash, un poco más rápido que la noria.' };
+        if (logro.atras) return { ok: false, mensaje: 'Hacia atrás, conseguido. Ahora párala: una foto exactamente cada vuelta.' };
+        if (e.fs >= 2 * e.f + 1e-9) return { ok: false, mensaje: 'Con más de dos fotos por vuelta, la noria se ve girar de verdad (' + textoGiro(g) + '). Baja el ritmo del flash.' };
+        return { ok: false, mensaje: 'Ya engaña: la noria parece ' + textoGiro(g, Math.abs(e.fs - 2 * e.f) < 1e-6) + '. Busca el ritmo del flash en el que no se mueve.' };
+      },
+      resolver: () => { mFs.fijar(1); mFs.fijar(1.1); },
+      pista: [
+        'Si haces una foto exactamente cada vuelta, la cabina sale siempre en el mismo sitio. Con la noria a una vuelta por segundo, eso es un flash por segundo.',
+        'Para que retroceda, haz las fotos un poquito más deprisa de lo que gira la noria: el flash llega antes de que la cabina acabe la vuelta, y la pilla algo por detrás de donde la vio la vez anterior.',
+      ],
+      exito: '<p>Con una foto por vuelta, la cabina sale siempre en el mismo sitio y la noria parece quieta aunque siga girando. Las fotos no saben cuántas vueltas ha dado entre una y otra, y por eso también funciona con una foto cada dos vueltas. Con el flash un poco más rápido, cada foto llega antes de que la cabina complete la vuelta y la pilla algo por detrás de la anterior, y la noria parece retroceder. Es la rueda de carro de las películas.</p>',
+    });
+  })();
+
+  // ── Reto 2 · La rueda de carro (elegir y deslizador) ────────────────────────────────────────────────────
+  // Dos ruedas con N radios iguales: la de verdad, que gira a f vueltas/s, y la del vídeo, a 24 fotos por segundo,
+  // que gira a la velocidad aparente: (N·f doblado en 24) / N. Hacia delante es en el sentido de las agujas del reloj.
+  (function () {
+    const FPS = 24;
+    const e = { N: 6, f: 3, t: 0 };
+    const giroVideo = () => S.aliasConSigno(e.N * e.f, FPS) / e.N;
+    const ambiguoVideo = () => Math.abs(Math.abs(e.N * e.f) - FPS / 2) < 1e-6 || Math.abs(Math.abs(e.N * e.f) - 1.5 * FPS) < 1e-6;
+    function rueda(ctx, cx, cy, R, ang, N, color, borrosa) {
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = G.alfa(color, 0.9); ctx.lineWidth = R * 0.16;
+      ctx.beginPath(); ctx.arc(cx, cy, R * 0.92, 0, TAU); ctx.stroke();
+      ctx.strokeStyle = G.alfa(color, 0.45); ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(cx, cy, R * 0.74, 0, TAU); ctx.stroke();
+      if (borrosa) {
+        ctx.fillStyle = G.alfa(color, 0.1);
+        ctx.beginPath(); ctx.arc(cx, cy, R * 0.74, 0, TAU); ctx.fill();
+        ctx.strokeStyle = G.alfa(color, 0.1); ctx.lineWidth = R * 0.05;
+      } else { ctx.strokeStyle = G.alfa(color, 0.9); ctx.lineWidth = Math.max(2, R * 0.06); }
+      ctx.beginPath();
+      for (let k = 0; k < N; k++) { const a = ang + TAU * k / N; ctx.moveTo(cx, cy); ctx.lineTo(cx + R * 0.74 * Math.cos(a), cy + R * 0.74 * Math.sin(a)); }
+      ctx.stroke();
+      ctx.fillStyle = color;
+      ctx.beginPath(); ctx.arc(cx, cy, R * 0.1, 0, TAU); ctx.fill();
+      ctx.restore();
+    }
+    const L = G.lienzo('#r2-escena', {
+      alto: altoEscena(206, 236),
+      etiqueta: 'Dos ruedas con radios iguales: a la izquierda la rueda de verdad, que gira rápido y se ve borrosa; a la derecha, lo que sale en un vídeo de 24 fotos por segundo',
+      dibujar: (ctx, w, h, C) => {
+        const mitad = w / 2, R = Math.max(30, Math.min((h - 78) / 2, (mitad - 30) / 2));
+        const cy = 40 + R;
+        const paneles = [
+          { cx: mitad / 2, titulo: 'la rueda de verdad', color: C.cuerpo, ang: TAU * e.f * e.t, borrosa: e.N * e.f > 9 },
+          { cx: mitad + mitad / 2, titulo: 'lo que sale en el vídeo', color: C.respuesta, ang: TAU * giroVideo() * e.t, borrosa: false },
+        ];
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.eje, 0.5); ctx.lineWidth = 1; ctx.setLineDash([2, 4]);
+        ctx.beginPath(); ctx.moveTo(mitad + 0.5, 8); ctx.lineTo(mitad + 0.5, h - 8); ctx.stroke();
+        ctx.restore();
+        for (const p of paneles) {
+          G.texto(ctx, p.cx, 20, p.titulo, { alinear: 'center', color: C.suave, tam: 11, C });
+          rueda(ctx, p.cx, cy, R, p.ang, e.N, p.color, p.borrosa);
+          ctx.save();
+          ctx.strokeStyle = G.alfa(C.eje, 0.7); ctx.lineWidth = 1.2; ctx.setLineDash([2, 4]);
+          ctx.beginPath(); ctx.moveTo(p.cx - R * 1.15, cy + R + 4.5); ctx.lineTo(p.cx + R * 1.15, cy + R + 4.5); ctx.stroke();
+          ctx.restore();
+        }
+        G.texto(ctx, mitad / 2, h - 10, 'gira a ' + num(e.f, 2) + ' vueltas/s', { alinear: 'center', color: C.tenue, tam: 11, C });
+        G.texto(ctx, mitad + mitad / 2, h - 10, '24 fotos por segundo', { alinear: 'center', color: C.tenue, tam: 11, C });
+      },
+    });
+    const mandos = document.getElementById('r2-mandos');
+    let reto = null;
+    const cambio = () => { estado(); L.dibujar(); };
+    const eR = Curso.eleccion(mandos, { etiqueta: 'Radios', opciones: [3, 4, 5, 6, 7, 8].map(n => ({ valor: n, texto: String(n) })), valor: e.N, reto: 'reto-2', alCambiar: v => { e.N = v; cambio(); } });
+    const mF = Curso.mando(mandos, { etiqueta: 'Velocidad de la rueda', min: 0, max: 8, paso: 0.05, valor: e.f, formato: v => num(v, 2) + ' vueltas/s', reto: 'reto-2', alCambiar: v => { e.f = v; cambio(); } });
+    const fila = document.getElementById('r2-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'repite', nombre: 'El dibujo se repite' },
+      { id: 'video', nombre: 'En el vídeo, la rueda', clase: 'respuesta' },
+    ]);
+    function estado() {
+      lect.fijar('repite', num(e.N * e.f, 1) + ' veces/s');
+      lect.fijar('video', textoGiro(giroVideo(), ambiguoVideo()));
+    }
+    const filaB = crear('div', { class: 'botones' });
+    fila.appendChild(filaB);
+    Curso.animar(L, (t, dt) => { e.t += dt; L.dibujar(); }, { boton: filaB });
+    estado();
+    reto = Curso.reto('reto-2', {
+      titulo: 'La rueda de carro', nivel: 'medio',
+      comprobar: () => {
+        const d = Math.abs(e.N * e.f - FPS * Math.round(e.N * e.f / FPS));
+        if (e.f < 1) return { ok: false, mensaje: 'Con la rueda casi parada es trivial: súbela por encima de una vuelta por segundo.' };
+        if (d < 0.1) return { ok: true, mensaje: 'Quieta: con ' + e.N + ' radios a ' + num(e.f, 2) + ' vueltas por segundo, la cámara ve el dibujo repetirse ' + num(e.N * e.f, 1) + ' veces por segundo, justo un múltiplo de 24.' };
+        const g = giroVideo();
+        if (d < 1.2) return { ok: false, mensaje: 'Casi: en el vídeo la rueda se mueve despacio, ' + textoGiro(g) + '. ' + (g < 0 ? 'Sube un poco la velocidad de la rueda.' : 'Baja un poco la velocidad de la rueda.') };
+        return { ok: false, mensaje: 'La cámara ve el dibujo repetirse ' + num(e.N * e.f, 1) + ' veces por segundo. Para que parezca quieto tiene que repetirse justo 24 veces por segundo, o 48.' };
+      },
+      resolver: () => { eR.fijar(6); mF.fijar(4); },
+      pista: [
+        'Con 6 radios iguales, la rueda parece la misma cada sexta parte de vuelta. Fíjate en la lectura «El dibujo se repite»: es lo que cuenta la cámara.',
+        'Busca que los radios por las vueltas por segundo den 24, porque la cámara hace 24 fotos por segundo. Con 6 radios, 4 vueltas por segundo; con 8, 3.',
+      ],
+      exito: '<p>Con radios iguales, lo que cuenta no es la vuelta entera, sino lo que tarda la rueda en parecer igual: con 6 radios, un sexto de vuelta. Si en cada foto la rueda ha girado justo lo que separa dos radios, todas las fotos son iguales y la rueda parece quieta aunque el coche avance. Baja un poquito la velocidad y la verás retroceder despacio, igual que en las películas.</p>',
+    });
+  })();
+
+  // ── Reto 3 · Los impostores (arrastrar sobre el lienzo) ─────────────────────────────────────────────────
+  // 20 fotos de un coseno de 7 Hz con 10 fotos por segundo. Todas las norias de 7 + 10k Hz y de 3 + 10k Hz pasan por
+  // ellas: entre 0 y 25 Hz, 3, 7, 13, 17 y 23. Se elige la noria candidata arrastrando por una regla de frecuencias.
+  (function () {
+    const FS = 10, F_VERDAD = 7, N = 20, FMAX = 25, PASO = 0.5;
+    const ts = Array.from({ length: N }, (_, n) => n / FS);
+    const ys = ts.map(t => Math.cos(TAU * F_VERDAD * t));
+    const errorMax = f => { let m = 0; for (let n = 0; n < N; n++) m = Math.max(m, Math.abs(Math.cos(TAU * f * ts[n]) - ys[n])); return m; };
+    const e = { fc: 5, guardadas: [], ultimo: '' };
+    const HREGLA = 78;
+    let geo = null;
+    const L = G.lienzo('#r3-escena', {
+      alto: altoEscena(262, 290), rol: 'slider',
+      etiqueta: 'Veinte fotos de una noria, como tallos verdes, con la curva de la noria candidata en naranja; debajo, una regla de 0 a 25 Hz por la que arrastras para cambiar la frecuencia de la noria candidata',
+      dibujar: (ctx, w, h, C) => {
+        const caja = { x: 16, y: 14, w: w - 32, h: h - HREGLA - 14 - 30 };
+        const esc = G.ejes(ctx, { caja, x: [0, 2], y: [-1.3, 1.3], marcasX: [0, 0.5, 1, 1.5, 2], marcasY: false, formatoX: v => num(v, 1), etiquetaX: 'tiempo (s)', C });
+        for (const f of e.guardadas) G.curva(ctx, esc, t => Math.cos(TAU * f * t), { color: C.cuerpo, ancho: 1.3, alfa: 0.45, halo: false, n: 1200, C });
+        G.curva(ctx, esc, t => Math.cos(TAU * e.fc * t), { color: C.respuesta, ancho: 2.3, n: 1200, C });
+        G.tallos(ctx, esc, ts, ys, { color: C.senal, radio: 4.5, C });
+        G.texto(ctx, caja.x + caja.w - 4, caja.y + 14, '10 fotos por segundo', { alinear: 'right', color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+        // La regla de frecuencias
+        const yL = h - 34, y0 = h - HREGLA + 4;
+        const xr = f => caja.x + f / FMAX * caja.w;
+        geo = { caja, yRegla: h - HREGLA, xr };
+        G.texto(ctx, caja.x, y0 + 12, 'noria candidata, en Hz: arrastra aquí', { color: C.suave, tam: 11, C });
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.eje, 0.9); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(caja.x, Math.round(yL) + 0.5); ctx.lineTo(caja.x + caja.w, Math.round(yL) + 0.5);
+        for (let f = 0; f <= FMAX; f++) { const x = Math.round(xr(f)) + 0.5, l = f % 5 === 0 ? 8 : 4; ctx.moveTo(x, yL); ctx.lineTo(x, yL + l); }
+        ctx.stroke();
+        ctx.restore();
+        for (let f = 0; f <= FMAX; f += 5) G.texto(ctx, xr(f), yL + 22, num(f), { alinear: f === 0 ? 'left' : f === FMAX ? 'right' : 'center', color: C.tenue, tam: 10, C });
+        for (const f of e.guardadas) {
+          ctx.fillStyle = C.senal;
+          ctx.beginPath(); ctx.arc(xr(f), yL, 4.5, 0, TAU); ctx.fill();
+        }
+        const x = xr(e.fc);
+        if (C.oscuro) {
+          ctx.save(); ctx.globalCompositeOperation = 'lighter';
+          const g = ctx.createRadialGradient(x, yL, 0, x, yL, 20);
+          g.addColorStop(0, G.alfa(C.respuesta, 0.5)); g.addColorStop(1, G.alfa(C.respuesta, 0));
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, yL, 20, 0, TAU); ctx.fill(); ctx.restore();
+        }
+        ctx.fillStyle = C.respuesta;
+        ctx.beginPath(); ctx.arc(x, yL, 8, 0, TAU); ctx.fill();
+        ctx.strokeStyle = C.pantalla; ctx.lineWidth = 2; ctx.stroke();
+      },
+    });
+    const fila = document.getElementById('r3-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'cand', nombre: 'Noria candidata', clase: 'respuesta' },
+      { id: 'err', nombre: 'Error máximo con las fotos' },
+      { id: 'gua', nombre: 'Guardadas', clase: 'senal' },
+    ]);
+    let reto = null;
+    function estado() {
+      const err = errorMax(e.fc);
+      lect.fijar('cand', num(e.fc, 1) + ' Hz');
+      lect.fijar('err', num(err, 2));
+      lect.clase('err', err < 0.05 ? 'destacada' : '');
+      lect.fijar('gua', e.guardadas.length + ' de 3' + (e.guardadas.length ? ' (' + e.guardadas.map(f => num(f, 1)).join(', ') + ' Hz)' : ''));
+      L.canvas.setAttribute('aria-valuenow', String(e.fc));
+      L.canvas.setAttribute('aria-valuetext', 'Noria candidata de ' + num(e.fc, 1) + ' hercios; error máximo con las fotos ' + num(err, 2));
+    }
+    const poner = f => { e.fc = limitar(Math.round(f / PASO) * PASO, 0, FMAX); estado(); L.dibujar(); Curso.cambio('reto-3'); };
+    // Solo se arrastra desde la regla: el resto del lienzo deja que la página se desplace.
+    Curso.arrastre(L, {
+      eje: 'x',
+      alBajar: p => { if (!geo || p.y < geo.yRegla - 6) return false; poner((p.x - geo.caja.x) / geo.caja.w * FMAX); },
+      alMover: p => poner((p.x - geo.caja.x) / geo.caja.w * FMAX),
+    });
+    L.canvas.tabIndex = 0;
+    L.canvas.setAttribute('aria-valuemin', '0');
+    L.canvas.setAttribute('aria-valuemax', String(FMAX));
+    L.canvas.addEventListener('keydown', ev => {
+      const d = { ArrowRight: PASO, ArrowUp: PASO, ArrowLeft: -PASO, ArrowDown: -PASO }[ev.key];
+      if (d) { ev.preventDefault(); poner(e.fc + d); }
+    });
+    const guardar = () => {
+      const err = errorMax(e.fc);
+      if (err >= 0.05) e.ultimo = 'Esa noria (' + num(e.fc, 1) + ' Hz) no pasa por todas las fotos: se separa hasta ' + num(err, 2) + ' de alguna. Busca una en la que el error máximo baje casi a cero.';
+      else if (e.guardadas.includes(e.fc)) e.ultimo = 'Esa ya la tienes guardada. Busca otra distinta.';
+      else {
+        e.guardadas.push(e.fc);
+        e.guardadas.sort((a, b) => a - b);
+        e.ultimo = 'Guardada: la noria de ' + num(e.fc, 1) + ' Hz pasa por todas las fotos. Llevas ' + e.guardadas.length + ' de 3.';
+      }
+      estado(); L.dibujar(); Curso.cambio('reto-3');
+    };
+    Curso.botones(fila, [
+      { id: 'guardar', texto: 'Guardar esta noria', tipo: 'principal', alPulsar: guardar },
+      { id: 'borrar', texto: 'Borrar las guardadas', tipo: 'discreto', alPulsar: () => { e.guardadas = []; e.ultimo = ''; estado(); L.dibujar(); reto.reiniciar(); } },
+    ]);
+    estado();
+    reto = Curso.reto('reto-3', {
+      titulo: 'Los impostores', nivel: 'medio',
+      comprobar: () => ({ ok: e.guardadas.length >= 3, mensaje: e.ultimo || 'Arrastra por la regla: cuando el error máximo baje casi a cero, esa noria pasa por todas las fotos.' }),
+      resolver: () => { e.guardadas = [3, 7, 13]; e.fc = 13; e.ultimo = 'Tres norias, las mismas veinte fotos.'; estado(); L.dibujar(); },
+      pista: [
+        'Hay una por debajo de 5 Hz: busca la que gira justo lo que le falta a la verdadera para llegar a las 10 fotos por segundo.',
+        'Si una noria vale, también vale la que da 10 vueltas por segundo más: una vuelta más entre foto y foto. Con 3 Hz encaja, así que con 13 Hz también.',
+      ],
+      exito: '<p>Las fotos no deciden: pasan por ellas infinitas norias, y tú has encontrado tres. La de verdad giraba a 7 Hz, pero con 10 fotos por segundo es indistinguible de las de 3, 13 o 17. Las fotos solo cuentan la verdad si la noria más rápida va a menos de la mitad de las fotos por segundo, aquí 5 Hz. Por eso, lo que sobra hay que quitarlo antes de hacer las fotos.</p>',
+    });
+  })();
+
+  // ── Reto 4 · Oye el rebote (escuchar y deslizador) ──────────────────────────────────────────────────────
+  // Un pitido que sube de 100 a 6.000 Hz en 3 s, muestreado a fs. Lo que suena es la frecuencia plegada en fs/2:
+  // el audio se sintetiza ya a fs, muestra a muestra, y se reproduce a esa frecuencia.
+  (function () {
+    const F0 = 100, F1 = 6000, DUR = 3, MINIMO = 12500;
+    const fReal = t => F0 + (F1 - F0) * t / DUR;
+    const e = { fs: 8000 };
+    const L = G.lienzo('#r4-escena', {
+      alto: altoEscena(262, 300),
+      etiqueta: 'Frecuencia del pitido en el tiempo: la verdadera sube de 100 a 6.000 Hz en tres segundos y la que suena, en naranja, rebota al llegar al espejo, la mitad de la frecuencia de muestreo',
+      dibujar: (ctx, w, h, C) => {
+        const items = [{ color: C.cuerpo, texto: 'la frecuencia verdadera' }, { color: C.respuesta, texto: 'la que suena' }];
+        leyenda(ctx, C, items, 16, 14, w - 32);
+        const caja = { x: 56, y: 30, w: w - 56 - 16, h: h - 30 - 38 };
+        const esc = G.ejes(ctx, { caja, x: [0, DUR], y: [0, 8000], marcasX: [0, 1, 2, 3], marcasY: [0, 2000, 4000, 6000, 8000], formatoX: v => num(v), formatoY: v => num(v), etiquetaX: 'tiempo (s)', C });
+        const nyq = e.fs / 2, yN = esc.y(nyq);
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.cuerpo, 0.07);
+        ctx.fillRect(caja.x, caja.y, caja.w, yN - caja.y);
+        ctx.strokeStyle = G.alfa(C.cuerpo, 0.75); ctx.lineWidth = 1.2; ctx.setLineDash([6, 4]);
+        ctx.beginPath(); ctx.moveTo(caja.x, yN); ctx.lineTo(caja.x + caja.w, yN); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, caja.x + caja.w - 4, yN < caja.y + 22 ? yN + 15 : yN - 6, 'el espejo: ' + hz(nyq), { alinear: 'right', color: C.suave, tam: 11, fondo: G.alfa(C.pantalla, 0.85), C });
+        G.curva(ctx, esc, fReal, { color: C.cuerpo, ancho: 1.4, alfa: 0.6, halo: false, n: 60, C });
+        G.curva(ctx, esc, t => Math.abs(S.aliasConSigno(fReal(t), e.fs)), { color: C.respuesta, ancho: 2.4, n: 500, C });
+        if (nyq < F1) {
+          const tb = DUR * (nyq - F0) / (F1 - F0);
+          G.puntos(ctx, esc, [tb], [nyq], { color: C.respuesta, radio: 5, C });
+        }
+      },
+    });
+    const mandos = document.getElementById('r4-mandos');
+    const mFs = Curso.mando(mandos, {
+      etiqueta: 'Frecuencia de muestreo', clase: 'senal', min: 8000, max: 16000, paso: 500, valor: e.fs, formato: v => num(v) + ' Hz', reto: 'reto-4',
+      alCambiar: v => { e.fs = v; estado(); L.dibujar(); },
+    });
+    const fila = document.getElementById('r4-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'espejo', nombre: 'El espejo está en', clase: 'senal' },
+      { id: 'final', nombre: 'El pitido termina en' },
+    ]);
+    const botones = crear('div', { class: 'botones' });
+    fila.appendChild(botones);
+    Curso.audio.boton(botones, () => ({ x: S.chirp({ f0: F0, f1: F1, fs: e.fs, dur: DUR, amp: 0.8 }), fs: e.fs, volumen: 0.45 }), 'Escuchar el pitido');
+    function estado() {
+      lect.fijar('espejo', hz(e.fs / 2));
+      lect.fijar('final', e.fs / 2 > F1 ? hz(F1) : hz(Math.abs(S.aliasConSigno(F1, e.fs))) + ' (rebotado)');
+    }
+    estado();
+    Curso.reto('reto-4', {
+      titulo: 'Oye el rebote', nivel: 'medio',
+      comprobar: () => {
+        const fs = e.fs;
+        if (fs === MINIMO) return { ok: true, mensaje: 'Con ' + hz(fs) + ' el espejo queda en ' + hz(fs / 2) + ', por encima de 6.000 Hz, y el pitido sube hasta el final sin rebotar.' };
+        if (fs > MINIMO) return { ok: false, mensaje: 'Funciona: el pitido sube hasta el final sin rebotar. Pero aún sobran fotos: ¿puedes bajar más?' };
+        if (fs === 12000) return { ok: false, mensaje: 'Casi: con 12.000 Hz el espejo queda justo en 6.000 Hz, donde acaba el pitido. Con dos fotos justas por vuelta no basta: sube un poco más.' };
+        const tb = DUR * (fs / 2 - F0) / (F1 - F0);
+        return { ok: false, mensaje: 'El pitido llega al espejo, en ' + hz(fs / 2) + ', a los ' + num(tb, 1) + ' s, y desde ahí baja. El espejo tiene que quedar por encima de 6.000 Hz, donde acaba el pitido.' };
+      },
+      resolver: () => mFs.fijar(MINIMO),
+      pista: [
+        'El tono rebota cuando llega a la mitad de la frecuencia de muestreo: el espejo. ¿A qué altura tiene que estar ese espejo para que el pitido, que acaba en 6.000 Hz, no llegue a tocarlo?',
+        'Un pitido de 6.000 Hz necesita más de 12.000 muestras por segundo. Con los pasos de 500 Hz del deslizador, la primera que lo cumple es 12.500.',
+      ],
+      exito: '<p>Ninguna foto puede contar algo más rápido que la mitad de las fotos por segundo. Al llegar ahí, el tono rebota como en un espejo, y ese rebote es el aliasing: se ve y se oye. Con 12.000, el final del pitido caería justo en el espejo, con dos fotos justas por vuelta, y no basta: hace falta algo más del doble de la frecuencia más alta.</p>',
+    });
+  })();
+
+  // ── Reto 5 · El filtro antes de la foto (deslizador, espectro y escuchar) ───────────────────────────────
+  // Cuatro tonos a 22.050 Hz: 1.000 y 3.000 (los buenos) y 5.200 y 7.400 (los intrusos). Se muestrea a 8.000 Hz:
+  // los intrusos se doblan a 2.800 y 600 Hz. Un Butterworth de orden 8 va delante; su respuesta, tono a tono, sale de
+  // Senal.respuesta. Lo que suena «muestreado» se sintetiza directamente a 8.000 Hz, tono a tono.
+  (function () {
+    const FS_IN = 22050, FS_OUT = 8000, TONOS = [1000, 3000, 5200, 7400], BUENO = [true, true, false, false];
+    const FRECS = Float64Array.from({ length: 161 }, (_, i) => i * 50);
+    const SUELO = -70, e = { fc: 6000, quitado: false };
+    const memoria = new Map();
+    const medir = fc => {
+      if (!memoria.has(fc)) {
+        const sec = S.butterworth(8, fc, FS_IN, 'pasoBajo');
+        memoria.set(fc, { tonos: Array.from(S.respuesta(sec, FS_IN, TONOS).magDb), curva: Array.from(S.respuesta(sec, FS_IN, FRECS).magDb) });
+      }
+      return memoria.get(fc);
+    };
+    const niveles = () => (e.quitado ? [0, 0, 0, 0] : medir(e.fc).tonos);
+    const L = G.lienzo('#r5-escena', {
+      alto: altoEscena(390, 410),
+      etiqueta: 'Dos gráficas de espectro: arriba, los cuatro tonos que llegan al conversor y la curva del filtro; abajo, lo que queda guardado al muestrear a 8.000 muestras por segundo, con los tonos falsos, si se cuelan, en coral',
+      dibujar: (ctx, w, h, C) => {
+        const lv = niveles();
+        const items = [{ color: C.espectro, texto: 'tono bueno' }, { color: C.ruido, texto: 'intruso' }, { color: C.plantilla, texto: 'filtro' }, { color: C.cuerpo, texto: 'el espejo: 4.000 Hz' }];
+        const filas = leyenda(ctx, C, items, 14, 14, w - 28);
+        const y0 = 8 + filas * 17, hp = Math.floor((h - y0 - 100) / 2);
+        const cajaA = { x: 50, y: y0 + 22, w: w - 50 - 14, h: hp };
+        const cajaB = { x: 50, y: y0 + 22 + hp + 24 + 26, w: w - 50 - 14, h: hp };
+        const marcasY = [-60, -40, -20, 0];
+        G.texto(ctx, cajaA.x, y0 + 14, 'lo que llega, antes de las fotos', { color: C.suave, tam: 11, C });
+        const escA = G.ejes(ctx, { caja: cajaA, x: [0, 8000], y: [SUELO, 8], marcasX: [0, 2000, 4000, 6000, 8000], marcasY, formatoX: v => num(v / 1000) + ' kHz', formatoY: v => num(v), C });
+        G.texto(ctx, cajaA.x - 6, cajaA.y - 7, 'dB', { alinear: 'right', color: C.tenue, tam: 10, C });
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.cuerpo, 0.06);
+        ctx.fillRect(escA.x(FS_OUT / 2), cajaA.y, cajaA.x + cajaA.w - escA.x(FS_OUT / 2), cajaA.h);
+        ctx.strokeStyle = G.alfa(C.cuerpo, 0.75); ctx.lineWidth = 1.2; ctx.setLineDash([6, 4]);
+        ctx.beginPath(); ctx.moveTo(escA.x(FS_OUT / 2), cajaA.y); ctx.lineTo(escA.x(FS_OUT / 2), cajaA.y + cajaA.h); ctx.stroke();
+        ctx.restore();
+        // el filtro
+        if (e.quitado) G.linea(ctx, escA, [0, 8000], [0, 0], { color: C.plantilla, ancho: 1.6, guiones: [5, 4], halo: false, C });
+        else G.linea(ctx, escA, FRECS, medir(e.fc).curva.map(v => Math.max(SUELO, v)), { color: C.plantilla, ancho: 2.2, C });
+        // los tonos: el trazo fino llega a 0 dB (lo que entra) y el grueso, hasta lo que deja pasar el filtro
+        TONOS.forEach((f, i) => {
+          const color = BUENO[i] ? C.espectro : C.ruido;
+          ctx.save();
+          ctx.lineCap = 'round';
+          ctx.strokeStyle = G.alfa(color, 0.3); ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(escA.x(f), escA.y(SUELO)); ctx.lineTo(escA.x(f), escA.y(0)); ctx.stroke();
+          ctx.restore();
+          G.tallos(ctx, escA, [f], [Math.max(SUELO, lv[i])], { color, base: SUELO, ancho: 3.5, radio: 4.5, C });
+          G.texto(ctx, escA.x(f), escA.y(0) - 7, num(f), { alinear: 'center', color: C.tenue, tam: 10, C });
+        });
+        // lo que queda guardado
+        G.texto(ctx, cajaB.x, cajaB.y - 12, 'lo que queda guardado (8.000 fotos/s)', { color: C.suave, tam: 11, C });
+        const escB = G.ejes(ctx, { caja: cajaB, x: [0, FS_OUT / 2], y: [SUELO, 8], marcasX: [0, 1000, 2000, 3000, 4000], marcasY, formatoX: v => num(v / 1000) + ' kHz', formatoY: v => num(v), C });
+        G.texto(ctx, cajaB.x - 6, cajaB.y - 7, 'dB', { alinear: 'right', color: C.tenue, tam: 10, C });
+        TONOS.forEach((f, i) => {
+          const fa = S.alias(f, FS_OUT), nivel = Math.max(SUELO, lv[i]), color = BUENO[i] ? C.espectro : C.ruido;
+          G.tallos(ctx, escB, [fa], [nivel], { color, base: SUELO, ancho: 3.5, radio: 4.5, C });
+          if (BUENO[i] ? nivel > -45 : nivel > -50) G.texto(ctx, escB.x(fa), escB.y(nivel) - 8, (BUENO[i] ? num(fa) : 'falso, ' + num(fa)), { alinear: 'center', color: BUENO[i] ? C.suave : C.ruido, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+        });
+      },
+    });
+    const mandos = document.getElementById('r5-mandos');
+    const mFc = Curso.mando(mandos, {
+      etiqueta: 'Corte del filtro', clase: 'senal', min: 1000, max: 8000, paso: 50, valor: e.fc, formato: v => num(v) + ' Hz', reto: 'reto-5',
+      alCambiar: v => { e.fc = v; estado(); L.dibujar(); },
+    });
+    const botonQuitar = Curso.botones(mandos, [{ id: 'quitar', texto: 'Quitar el filtro', tipo: 'discreto', pulsado: false, alPulsar: on => { e.quitado = on; estado(); L.dibujar(); Curso.cambio('reto-5'); } }]).quitar;
+    const fila = document.getElementById('r5-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'bueno', nombre: 'Tono bueno de 3.000 Hz', clase: 'senal' },
+      { id: 'i52', nombre: 'Intruso de 5.200 Hz, suena en 2.800 Hz' },
+      { id: 'i74', nombre: 'Intruso de 7.400 Hz, suena en 600 Hz' },
+    ]);
+    const botones = crear('div', { class: 'botones' });
+    fila.appendChild(botones);
+    // Lo que entra, a 22.050 Hz, y lo que queda guardado a 8.000 Hz: los mismos tonos, cada uno con lo que deja pasar el filtro.
+    const sonido = (fs, amp) => S.suma(...TONOS.map((f, i) => S.seno({ f, fs, dur: 1.4, amp: amp[i] })));
+    Curso.audio.boton(botones, () => ({ x: sonido(FS_IN, [0.25, 0.25, 0.25, 0.25]), fs: FS_IN, volumen: 0.5 }), 'Escuchar lo que entra');
+    Curso.audio.boton(botones, () => ({ x: sonido(FS_OUT, niveles().map(db => 0.25 * Math.pow(10, db / 20))), fs: FS_OUT, volumen: 0.5 }), 'Escuchar lo guardado');
+    const perdida = () => -niveles()[1];
+    const atenuacion = i => -niveles()[i];
+    function estado() {
+      const lv = niveles();
+      lect.fijar('bueno', Math.abs(lv[1]) < 0.05 ? 'intacto' : num(-lv[1], 1) + ' dB más flojo');
+      lect.fijar('i52', vecesMasFlojo(-lv[2]));
+      lect.fijar('i74', vecesMasFlojo(-lv[3]));
+    }
+    estado();
+    Curso.reto('reto-5', {
+      titulo: 'El filtro antes de la foto', nivel: 'difícil',
+      comprobar: () => {
+        if (e.quitado) return { ok: false, mensaje: 'Sin filtro, los dos intrusos pasan enteros y se doblan sobre los tonos buenos. Pon el filtro.' };
+        const p = perdida(), a52 = atenuacion(2), a74 = atenuacion(3);
+        if (p >= 3) return { ok: false, mensaje: 'El filtro se come el tono bueno de 3.000 Hz: lo deja ' + num(p, 1) + ' dB más flojo. Sube el corte.' };
+        if (a52 < 30 || a74 < 30) {
+          const f = a52 < 30 ? 5200 : 7400;
+          return { ok: false, mensaje: 'Se cuela un intruso: el de ' + num(f) + ' Hz queda solo ' + vecesMasFlojo(a52 < 30 ? a52 : a74).replace('pasa entero', 'igual de fuerte') + ' y suena en ' + num(S.alias(f, FS_OUT)) + ' Hz, donde no hay nada. Baja el corte, sin pasarte de 3.000 Hz.' };
+        }
+        return { ok: true, mensaje: 'El tono de 3.000 Hz pierde ' + num(p, 1) + ' dB, y los intrusos quedan ' + vecesMasFlojo(Math.min(a52, a74)).replace(' más flojo', '') + ' o más por debajo: no se oyen.' };
+      },
+      resolver: () => { botonQuitar.setAttribute('aria-pressed', 'false'); e.quitado = false; mFc.fijar(3300); },
+      pista: [
+        'El corte tiene que quedar por debajo de 4.000 Hz, la mitad de las fotos por segundo, pero un filtro no corta en seco: el tono bueno de 3.000 Hz también tiene que pasar.',
+        'Entre 3.000 y 4.000 Hz hay sitio para el filtro. Busca el corte en el que el tono de 3.000 Hz casi no se toca y el de 5.200 Hz ya queda muy por debajo.',
+      ],
+      exito: '<p>Todo conversor lleva un filtro antes de la foto. Como ningún filtro corta en seco, hace falta un margen entre lo que quieres guardar y la mitad de las fotos por segundo: aquí, el que hay entre los 3.000 Hz del tono bueno y los 4.000 Hz del espejo. El CD guarda hasta unos 20.000 Hz y muestrea a 44.100, así que su margen es de 2.050 Hz.</p>',
+    });
+  })();
+
+  // ── Reto 6 · La escalera de bits (botones y escuchar) ───────────────────────────────────────────────────
+  // Un tono de 997 Hz a 16.000 Hz, cuantizado con 1 a 16 bits. La relación señal-ruido se mide de verdad
+  // (Senal.snr de la señal limpia frente a la cuantizada). Hay que dar con el mínimo de bits para 40 dB, con el tono a
+  // todo el rango y con otro que solo usa una décima.
+  (function () {
+    const FS = 16000, F = 997, NM = 4000, VISTAS = 48, META = 40;
+    const AMP = { fuerte: 1, flojito: 0.1 };
+    const tono = {};
+    for (const k in AMP) tono[k] = S.seno({ f: F, fs: FS, dur: NM / FS, amp: AMP[k] });
+    const snrDe = (nivel, bits) => S.snr(tono[nivel], S.cuantizar(tono[nivel], bits, 1));
+    const minimo = {};
+    for (const k in AMP) { let b = 1; while (b < 16 && snrDe(k, b) < META) b++; minimo[k] = b; }
+    const e = { nivel: 'fuerte', bits: 3, hecho: { fuerte: false, flojito: false } };
+    let frase = null;
+    const L = G.lienzo('#r6-escena', {
+      alto: altoEscena(330, 366),
+      etiqueta: 'Arriba, tres milisegundos de un tono y sus muestras redondeadas a los peldaños de la escalera; abajo, el error de redondeo de cada muestra, ampliado',
+      dibujar: (ctx, w, h, C) => {
+        const x = tono[e.nivel], q = S.cuantizar(x, e.bits, 1), paso = Math.pow(2, 1 - e.bits);
+        const util = h - 84, hT = Math.round(util * 0.6), hE = util - hT;
+        const cajaT = { x: 50, y: 22, w: w - 50 - 14, h: hT };
+        const cajaE = { x: 50, y: 22 + hT + 30, w: w - 50 - 14, h: hE };
+        G.texto(ctx, cajaT.x, 13, 'el tono y sus muestras redondeadas', { color: C.suave, tam: 11, C });
+        const escT = G.ejes(ctx, { caja: cajaT, x: [0, VISTAS / FS * 1000], y: [-1.1, 1.1], marcasX: [0, 1, 2, 3], marcasY: [-1, 0, 1], formatoX: () => '', formatoY: v => num(v), C });
+        // peldaños: se dibujan si no están demasiado juntos
+        const sep = paso * Math.abs(escT.y(1) - escT.y(0));
+        if (sep >= 5) {
+          ctx.save();
+          ctx.strokeStyle = G.alfa(C.eje, 0.55); ctx.lineWidth = 1;
+          ctx.beginPath();
+          for (let k = 0; k < Math.pow(2, e.bits); k++) { const v = (-Math.pow(2, e.bits) / 2 + k + 0.5) * paso, y = Math.round(escT.y(v)) + 0.5; ctx.moveTo(cajaT.x, y); ctx.lineTo(cajaT.x + cajaT.w, y); }
+          ctx.stroke();
+          ctx.restore();
+        }
+        G.curva(ctx, escT, ms => AMP[e.nivel] * Math.sin(TAU * F * ms / 1000), { color: C.cuerpo, ancho: 1.4, alfa: 0.7, halo: false, n: 300, C });
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.ruido, 0.8); ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        for (let i = 0; i < VISTAS; i++) { const px = escT.x(i / FS * 1000); ctx.moveTo(px, escT.y(x[i])); ctx.lineTo(px, escT.y(q[i])); }
+        ctx.stroke();
+        ctx.restore();
+        const ms = Array.from({ length: VISTAS }, (_, i) => i / FS * 1000);
+        G.puntos(ctx, escT, ms, Array.from(q.subarray(0, VISTAS)), { color: C.senal, radio: 3.2, C });
+        G.texto(ctx, cajaE.x, cajaE.y - 10, 'el error de cada muestra, ampliado', { color: C.suave, tam: 11, C });
+        const escE = G.ejes(ctx, { caja: cajaE, x: [0, VISTAS / FS * 1000], y: [-1.2, 1.2], marcasX: [0, 1, 2, 3], marcasY: [-1, 0, 1], formatoX: v => num(v) + ' ms', formatoY: v => (v === 0 ? '0' : v > 0 ? '+½' : '−½'), C });
+        const err = Array.from({ length: VISTAS }, (_, i) => (q[i] - x[i]) / (paso / 2));
+        G.tallos(ctx, escE, ms, err, { color: C.ruido, radio: 2.8, base: 0, C });
+        G.texto(ctx, cajaE.x + cajaE.w - 4, cajaE.y + 13, 'unidades: medio peldaño', { alinear: 'right', color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+      },
+    });
+    const mandos = document.getElementById('r6-mandos');
+    const eNivel = Curso.eleccion(mandos, {
+      etiqueta: 'Tono', valor: e.nivel, reto: 'reto-6',
+      opciones: [{ valor: 'fuerte', texto: 'Fuerte (todo el rango)' }, { valor: 'flojito', texto: 'Flojito (una décima)' }],
+      alCambiar: v => { e.nivel = v; cambio(); },
+    });
+    const bBits = Curso.botones(mandos, [
+      { id: 'menos', texto: '− Un bit', alPulsar: () => { fijarBits(e.bits - 1); } },
+      { id: 'mas', texto: '+ Un bit', alPulsar: () => { fijarBits(e.bits + 1); } },
+    ]);
+    const fila = document.getElementById('r6-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'bits', nombre: 'Bits', clase: 'senal' },
+      { id: 'snr', nombre: 'El error es' },
+      { id: 'hecho', nombre: 'Conseguido' },
+    ]);
+    const botones = crear('div', { class: 'botones' });
+    fila.appendChild(botones);
+    const nivelDe = () => AMP[e.nivel];
+    Curso.audio.boton(botones, () => ({ x: S.cuantizar(S.seno({ f: F, fs: FS, dur: 1.2, amp: nivelDe() }), e.bits, 1), fs: FS, volumen: 0.5 }), 'Oír el tono');
+    Curso.audio.boton(botones, () => {
+      if (!frase) frase = S.ejemplos.frase(FS);
+      return { x: S.cuantizar(S.escalar(frase, nivelDe()), e.bits, 1), fs: FS, volumen: 0.6 };
+    }, 'Oír una frase');
+    function fijarBits(b) { e.bits = limitar(b, 1, 16); cambio(); }
+    function cambio() {
+      const snr = snrDe(e.nivel, e.bits);
+      if (e.bits === minimo[e.nivel] && snr >= META) e.hecho[e.nivel] = true;
+      estado();
+      L.dibujar();
+      Curso.cambio('reto-6');
+    }
+    function estado() {
+      const snr = snrDe(e.nivel, e.bits);
+      bBits.menos.disabled = e.bits <= 1;
+      bBits.mas.disabled = e.bits >= 16;
+      lect.fijar('bits', e.bits + ' · ' + num(Math.pow(2, e.bits)) + ' peldaños');
+      lect.fijar('snr', num(Math.pow(10, snr / 20), 0) + ' veces menor que el tono (' + num(snr, 1) + ' dB)');
+      lect.fijar('hecho', 'fuerte: ' + (e.hecho.fuerte ? 'sí' : 'no') + ' · flojito: ' + (e.hecho.flojito ? 'sí' : 'no'));
+    }
+    estado();
+    Curso.reto('reto-6', {
+      titulo: 'La escalera de bits', nivel: 'difícil',
+      comprobar: () => {
+        if (e.hecho.fuerte && e.hecho.flojito) return { ok: true, mensaje: 'Las dos: ' + minimo.fuerte + ' bits para el tono fuerte y ' + minimo.flojito + ' para el flojito.' };
+        const snr = snrDe(e.nivel, e.bits), min = minimo[e.nivel], otro = e.nivel === 'fuerte' ? 'flojito' : 'fuerte';
+        if (e.hecho[e.nivel]) return { ok: false, mensaje: 'Con el tono ' + e.nivel + ' ya está. ' + (e.hecho[otro] ? '' : 'Ahora prueba con el ' + otro + '.') };
+        if (snr >= META) return { ok: false, mensaje: 'Lo consigues, pero sobran bits: el error ya queda ' + num(snr, 1) + ' dB por debajo. ¿Con menos?' };
+        return { ok: false, mensaje: 'Todavía se oye el siseo: el error es solo ' + num(Math.pow(10, snr / 20), 0) + ' veces menor que el tono y necesitas cien. Con el tono ' + e.nivel + ', ' + (min - e.bits > 2 ? 'te faltan unos cuantos bits.' : 'estás cerca.') };
+      },
+      resolver: () => { e.hecho.fuerte = true; e.hecho.flojito = true; eNivel.fijar('flojito', false); e.nivel = 'flojito'; fijarBits(minimo.flojito); },
+      pista: [
+        'Cada bit más parte cada peldaño en dos y aleja el error unos 6 dB. Sube bits hasta que la lectura «El error es» llegue a 100 veces, que son 40 dB.',
+        'El tono flojito solo usa una décima de los peldaños, así que le salen como unos 3 bits menos de escalera: necesita 3 bits más que el fuerte para el mismo resultado.',
+      ],
+      exito: '<p>Cada bit duplica los peldaños de la escalera y aleja el siseo unos 6 dB. Con el tono a todo el rango bastan ' + minimo.fuerte + ' bits; con el flojito, que solo usa una décima de los peldaños, hacen falta ' + minimo.flojito + '. Por eso se graba con el nivel lo más alto posible sin pasarse, y por eso el CD tiene 16 bits: deja el siseo unos 98 dB por debajo de la música más fuerte.</p>',
+    });
+  })();
+
+  // ── En tu voz: tu audio, muestreado a 8.000 y a 2.000 muestras por segundo, con y sin filtro ─────────────
+  // El audio llega a 16.000 Hz. Cada versión se calcula al pedirla: sin filtro es quedarse con una de cada 2 o de cada 8
+  // muestras; con filtro, Senal.remuestrear. Se compara la densidad espectral (Welch) de cada versión con la original:
+  // lo que la versión tiene de más es el aliasing. La versión de 2.000 Hz se vuelve a subir a 16.000 Hz con un filtro de
+  // interpolación antes de oírla: nada de escalones, que añadirían otro defecto.
+  (function () {
+    const FS = 16000, OPC = [8000, 2000];
+    const st = { x: null, orig: null, fsT: 2000, filtro: 'sin', aviso: '' };
+    const memoria = new Map();
+    const pot2 = n => { let p = 16; while (p * 2 <= n) p *= 2; return p; };
+    // Densidad espectral con la misma resolución (unos 15,6 Hz) en todas las frecuencias de muestreo.
+    const densidad = (x, fs) => S.welch(x, fs, { n: Math.min(Math.round(fs / 15.625), pot2(x.length)), solape: 0.5, ventana: 'hann' });
+    // El pico más alto de una densidad entre dos frecuencias, afinado con una parábola.
+    function pico(d, desde, hasta) {
+      let k = -1, m = 0;
+      for (let i = 1; i < d.f.length - 1; i++) { if (d.f[i] < desde || d.f[i] > hasta) continue; if (d.psd[i] > m) { m = d.psd[i]; k = i; } }
+      if (k < 0 || !(m > 0)) return null;
+      const a = Math.log(d.psd[k - 1] + 1e-30), b = Math.log(m), c = Math.log(d.psd[k + 1] + 1e-30), den = a - 2 * b + c;
+      const delta = den < 0 ? limitar(0.5 * (a - c) / den, -0.5, 0.5) : 0;
+      return { f: d.f[k] + delta * (d.f[1] - d.f[0]), p: m };
+    }
+    // Frecuencia dominante cada 20 ms (marcos de 40 ms): solo vale para sonidos con un tono claro.
+    function pista(x, fs) {
+      const n = Math.max(32, Math.round(0.04 * fs)), salto = Math.max(8, Math.round(0.02 * fs)), nfft = S.siguientePotencia2(2 * n), df = fs / nfft;
+      const t = [], f = [], rms = [], k0 = Math.max(1, Math.ceil(100 / df));
+      for (let i = 0; i + n <= x.length; i += salto) {
+        const tr = x.subarray(i, i + n);
+        let en = 0;
+        for (let k = 0; k < n; k++) en += tr[k] * tr[k];
+        rms.push(Math.sqrt(en / n));
+        t.push((i + n / 2) / fs);
+        const sp = S.espectro(tr, fs, { ventana: 'hann', nfft }), k1 = Math.min(sp.mag.length - 2, Math.floor(0.48 * fs / df));
+        let km = k0, tot = 0;
+        for (let k = k0; k <= k1; k++) { const p = sp.mag[k] * sp.mag[k]; tot += p; if (p > sp.mag[km] * sp.mag[km]) km = k; }
+        const pm = sp.mag[km] * sp.mag[km];
+        const a = sp.mag[km - 1], b = sp.mag[km], c = sp.mag[km + 1], den = a - 2 * b + c;
+        const fm = (km + (den < 0 ? limitar(0.5 * (a - c) / den, -0.5, 0.5) : 0)) * df;
+        f.push(tot > 0 && pm / tot > 0.3 ? fm : NaN);
+      }
+      let mx = 1e-12;
+      for (const r of rms) mx = Math.max(mx, r);
+      let sonoras = 0, tonales = 0;
+      for (let i = 0; i < f.length; i++) { if (rms[i] < 0.08 * mx) f[i] = NaN; else { sonoras++; if (Number.isFinite(f[i])) tonales++; } }
+      return { t, f, tonal: sonoras >= 6 && tonales / sonoras > 0.5 };
+    }
+    function version(fsT, filtro) {
+      const clave = fsT + '|' + filtro;
+      if (!memoria.has(clave)) {
+        const x = S.remuestrear(st.x, FS, fsT, { filtro: filtro === 'con' });
+        memoria.set(clave, { x, dens: densidad(x, fsT), pista: pista(x, fsT), rep: null });
+      }
+      return memoria.get(clave);
+    }
+    const reproducible = (v, fsT) => { if (!v.rep) v.rep = fsT >= FS / 2 ? v.x : S.remuestrear(v.x, fsT, FS); return v.rep; };
+
+    const lab = Curso.voz('#voz-lab', { ejemplos: ['frase', 'silbido', 'silbidoQueSube'], fsAnalisis: FS, fsEjemplos: FS, alCargar: cargar });
+    const mandos = crear('div', { class: 'mandos' });
+    lab.panel.appendChild(mandos);
+    Curso.eleccion(mandos, { etiqueta: 'Muestras por segundo', opciones: OPC.map(v => ({ valor: v, texto: num(v) })), valor: st.fsT, alCambiar: v => { st.fsT = v; refrescar(); } });
+    Curso.eleccion(mandos, { etiqueta: 'Filtro antes de la foto', opciones: [{ valor: 'sin', texto: 'Sin filtro' }, { valor: 'con', texto: 'Con filtro' }], valor: st.filtro, alCambiar: v => { st.filtro = v; refrescar(); } });
+    const filaA = crear('div', { class: 'botones' });
+    lab.panel.appendChild(filaA);
+    Curso.audio.boton(filaA, () => (st.x ? { x: st.x, fs: FS, volumen: 0.8 } : null), 'Escuchar el original');
+    Curso.audio.boton(filaA, () => {
+      if (!st.x) return null;
+      const v = version(st.fsT, st.filtro), fsRep = st.fsT >= FS / 2 ? st.fsT : FS;
+      return { x: reproducible(v, st.fsT), fs: fsRep, volumen: 0.7 };
+    }, 'Escuchar la versión muestreada');
+    const lect = Curso.lecturas(lab.panel, [
+      { id: 'pico', nombre: 'Pico más alto de tu sonido' },
+      { id: 'pred', nombre: 'La fórmula predice', clase: 'respuesta' },
+      { id: 'med', nombre: 'Medido en la versión', clase: 'senal' },
+    ]);
+    const escena = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena);
+    const vistaEsp = G.lienzo(escena, {
+      alto: altoEscena(270, 300),
+      etiqueta: 'Espectro de tu audio original y de la versión muestreada, con lo que sobra, el aliasing, en coral',
+      dibujar: dibujarEspectro,
+    });
+    const escena2 = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena2);
+    const vistaTono = G.lienzo(escena2, {
+      alto: altoEscena(200, 220),
+      etiqueta: 'Frecuencia dominante de tu audio a lo largo del tiempo, la original y la de la versión muestreada',
+      dibujar: dibujarTono,
+    });
+    const nota = crear('p', { class: 'nota-reto' }, '');
+    lab.panel.appendChild(nota);
+
+    function cargar(x) {
+      st.x = x;
+      memoria.clear();
+      st.orig = { dens: densidad(x, FS), pista: pista(x, FS) };
+      refrescar();
+    }
+    function refrescar() {
+      if (!st.x) return;
+      const fsT = st.fsT, v = version(fsT, st.filtro), nyq = fsT / 2;
+      const p0 = pico(st.orig.dens, 150, 7900), p1 = pico(v.dens, 150, nyq * 0.99);
+      if (!p0) { lect.fijar('pico', '—'); lect.fijar('pred', '—'); lect.fijar('med', '—'); }
+      else {
+        lect.fijar('pico', hz(Math.round(p0.f / 5) * 5));
+        lect.fijar('pred', p0.f < nyq * 0.98 ? 'no se mueve: está por debajo de ' + hz(nyq) : 'sale en ' + hz(Math.round(S.alias(p0.f, fsT) / 5) * 5));
+        lect.fijar('med', p1 && p1.p > p0.p * 0.003 ? hz(Math.round(p1.f / 5) * 5) : 'nada destacado');
+      }
+      nota.textContent = st.orig.pista.tonal
+        ? 'Abajo, la frecuencia dominante de cada instante: la tinta es la de tu audio y la naranja, la de la versión muestreada. Donde la de tu audio pasa del espejo, la naranja rebota.'
+        : 'Este audio no es un tono único, como un silbido, sino una mezcla con muchos armónicos, así que no hay una frecuencia dominante clara que seguir. Con un silbido, el segundo gráfico enseña el rebote.';
+      vistaEsp.dibujar();
+      vistaTono.dibujar();
+    }
+    function dibujarEspectro(ctx, w, h, C) {
+      if (!st.x) { G.texto(ctx, w / 2, h / 2, 'Graba, sube un audio o elige un ejemplo', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C }); return; }
+      const fsT = st.fsT, nyq = fsT / 2, v = version(fsT, st.filtro), o = st.orig.dens;
+      const items = [{ color: C.cuerpo, texto: 'tu audio original' }, { color: C.espectro, texto: 'la versión muestreada' }, { color: C.ruido, texto: 'lo que sobra: aliasing' }];
+      const filas = leyenda(ctx, C, items, 16, 14, w - 32);
+      const caja = { x: 50, y: 20 + filas * 17, w: w - 50 - 14, h: h - (20 + filas * 17) - 38 };
+      let mx = -300;
+      for (let i = 0; i < o.psdDb.length; i++) mx = Math.max(mx, o.psdDb[i]);
+      const techo = mx + 4, suelo = mx - 84;
+      const esc = G.ejes(ctx, { caja, x: [0, 8000], y: [suelo, techo], marcasX: [0, 2000, 4000, 6000, 8000], marcasY: [mx, mx - 20, mx - 40, mx - 60, mx - 80], formatoX: val => num(val / 1000) + ' kHz', formatoY: val => num(Math.round(val - mx)), C });
+      G.texto(ctx, caja.x - 6, caja.y - 7, 'dB', { alinear: 'right', color: C.tenue, tam: 10, C });
+      const rec = a => Math.max(suelo, a);
+      // lo que está por encima del espejo
+      ctx.save();
+      ctx.fillStyle = G.alfa(C.cuerpo, 0.06);
+      ctx.fillRect(esc.x(nyq), caja.y, caja.x + caja.w - esc.x(nyq), caja.h);
+      ctx.strokeStyle = G.alfa(C.cuerpo, 0.75); ctx.lineWidth = 1.2; ctx.setLineDash([6, 4]);
+      ctx.beginPath(); ctx.moveTo(esc.x(nyq), caja.y); ctx.lineTo(esc.x(nyq), caja.y + caja.h); ctx.stroke();
+      ctx.restore();
+      G.texto(ctx, esc.x(nyq) + 6, caja.y + 14, 'el espejo: ' + hz(nyq), { color: C.suave, tam: 10, C });
+      // el aliasing: donde la versión supera a la original
+      ctx.save();
+      ctx.strokeStyle = G.alfa(C.ruido, 0.6);
+      ctx.lineWidth = Math.max(1, esc.x(v.dens.f[1]) - esc.x(v.dens.f[0]));
+      ctx.beginPath();
+      for (let k = 0; k < v.dens.f.length; k++) {
+        const f = v.dens.f[k];
+        const j = Math.min(o.f.length - 1, Math.round(f / (o.f[1] - o.f[0])));
+        if (v.dens.psd[k] > o.psd[j] * 1.5) { const x = esc.x(f); ctx.moveTo(x, esc.y(rec(o.psdDb[j]))); ctx.lineTo(x, esc.y(rec(v.dens.psdDb[k]))); }
+      }
+      ctx.stroke();
+      ctx.restore();
+      G.linea(ctx, esc, o.f, Array.from(o.psdDb, rec), { color: C.cuerpo, ancho: 1.3, alfa: 0.75, halo: false, C });
+      G.linea(ctx, esc, v.dens.f, Array.from(v.dens.psdDb, rec), { color: C.espectro, ancho: 1.9, C });
+    }
+    function dibujarTono(ctx, w, h, C) {
+      if (!st.x || !st.orig.pista.tonal) {
+        G.texto(ctx, w / 2, h / 2, st.x ? 'sin un tono claro que seguir' : 'Graba, sube un audio o elige un ejemplo', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C });
+        return;
+      }
+      const fsT = st.fsT, nyq = fsT / 2, a = st.orig.pista, b = version(fsT, st.filtro).pista, dur = st.x.length / FS;
+      const items = [{ color: C.cuerpo, texto: 'tu audio' }, { color: C.respuesta, texto: 'la versión muestreada' }];
+      leyenda(ctx, C, items, 16, 14, w - 32);
+      let mx = nyq * 1.25;
+      for (const f of a.f) if (Number.isFinite(f)) mx = Math.max(mx, f * 1.15);
+      mx = Math.min(8000, Math.ceil(mx / 500) * 500);
+      const caja = { x: 56, y: 28, w: w - 56 - 14, h: h - 28 - 38 };
+      const esc = G.ejes(ctx, { caja, x: [0, dur], y: [0, mx], marcasY: 4, formatoY: v => num(v), etiquetaX: 'tiempo (s)', C });
+      ctx.save();
+      ctx.strokeStyle = G.alfa(C.cuerpo, 0.75); ctx.lineWidth = 1.2; ctx.setLineDash([6, 4]);
+      const yN = esc.y(nyq);
+      ctx.beginPath(); ctx.moveTo(caja.x, yN); ctx.lineTo(caja.x + caja.w, yN); ctx.stroke();
+      ctx.restore();
+      G.texto(ctx, caja.x + caja.w - 4, yN - 6, 'el espejo: ' + hz(nyq), { alinear: 'right', color: C.suave, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+      G.linea(ctx, esc, a.t, a.f, { color: C.cuerpo, ancho: 1.6, alfa: 0.8, halo: false, C });
+      G.linea(ctx, esc, b.t, b.f, { color: C.respuesta, ancho: 2.2, C });
+    }
+  })();
+})();
+</script>
+</body>
+</html>

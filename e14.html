@@ -1,0 +1,1253 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Desvío: wavelets para comprimir y limpiar · Señales</title>
+<meta name="description" content="Lección 14 del curso visual «Señales, de 0 a experto»: cómo una pirámide de wavelets guarda una imagen en mucho menos espacio y le quita el ruido a una grabación, con seis retos, una huella sintética y tu propia voz.">
+<link rel="stylesheet" href="comun/fuentes.css">
+<link rel="stylesheet" href="comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e14">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Nivel 4 · Lección 14</p>
+    <h1>Desvío: wavelets para comprimir y limpiar</h1>
+    <aside class="pregunta">
+      <p>A principios de los años noventa, el FBI tenía en papel más de cien millones de fichas con huellas dactilares y quería pasarlas a digital, pero cada ficha escaneada ocupaba unos 10 megabytes. La idea que permitió encogerlas unas quince veces sirve también para quitarle el siseo a una grabación, y las dos cosas salen de partir una señal en una versión borrosa y en los detalles que le faltan. ¿Cómo se parte una señal sin perder nada y por qué, después, se puede tirar casi todo lo que sale y quedarse con algo casi igual?</p>
+    </aside>
+    <ul class="meta"><li>Unos 45 minutos</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>La idea en una imagen</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Una pirámide de señales. Abajo está la señal; en el piso de encima, su versión borrosa, en tinta, que tiene la mitad de muestras, y a su lado, en verde, los detalles que le faltan. Cada piso vuelve a partir la versión borrosa del anterior. Con el mando eliges cuántos pisos subir, y si pulsas «Tirar los detalles pequeños», los que no llegan a cierta altura se apagan y la señal que vuelve a bajar, en naranja, apenas cambia.</figcaption>
+    </figure>
+    <p>En la <a href="e13.html">lección 13</a> una wavelet se estiraba y se deslizaba para medir el parecido con la señal en cada escala, y salían cientos de miles de medidas, muchas de ellas casi repetidas. Esta lección hace la pregunta contraria: cuál es el mínimo de números con el que se puede guardar una señal entera. La respuesta es la pirámide de la imagen, en la que cada piso reparte la señal en una <b class="termino" data-termino="Versión borrosa (aproximación)">versión borrosa</b>, vista con menos detalle y con la mitad de muestras, y en los <b class="termino" data-termino="Detalle (coeficiente de detalle)">detalles</b>, que son lo que hay que añadirle para recuperar la nitidez. A todo ese reparto, con tantos números como muestras tenía la señal, se le llama <b class="termino" data-termino="Transformada wavelet discreta">transformada wavelet discreta</b>.</p>
+    <p>Esta lección es un desvío de la ruta principal del curso, que sigue en la <a href="e15.html">lección 15</a>. Sirve para ver con otra mirada las wavelets de la <a href="e13.html">lección 13</a> y para entender dos usos muy corrientes de ellas: guardar una señal en menos espacio y quitarle el ruido.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Paso a paso</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>Dos números en lugar de dos</h3>
+      <p>Imagina una fila de muestras vecinas y tómalas de dos en dos. De cada pareja puedes guardar su media, que es una versión borrosa de las dos, y la semidiferencia, que es la mitad de lo que se separan. Esa semidiferencia es el detalle: lo que hay que añadirle a la media para recuperar la pareja exacta.</p>
+      <p>Con la media y el detalle se recuperan las dos muestras: la primera es la media más el detalle y la segunda, la media menos el detalle. No se pierde nada, porque dos números se han cambiado por otros dos. Ese reparto en medias y semidiferencias es la <b class="termino" data-termino="Wavelet de Haar">wavelet de Haar</b>, la más sencilla de todas, un escalón hacia arriba seguido de otro hacia abajo. El matemático húngaro Alfréd Haar la describió en su tesis de 1909, en Gotinga, mucho antes de que existiera la palabra wavelet.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Estas ocho muestras están agrupadas por parejas. Arrastra cada barra naranja hasta la media de su pareja; las cruces de tinta te dicen si, con el detalle que sale, vuelven a las muestras de verdad.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="fila" id="r1-fila"></div>
+        <p class="nota-reto">También puedes usar el teclado: con las flechas izquierda y derecha eliges la barra, y con las de arriba y abajo la subes o la bajas de medio en medio.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>La pirámide</h3>
+      <p>Lo que se hizo con las muestras se puede repetir con las medias: la versión borrosa también se agrupa de dos en dos, y de cada pareja salen otra media y otro detalle. Así, piso a piso, la versión borrosa se encoge a la mitad y los detalles guardan lo que se perdió en cada subida. A esta manera de ver la misma señal desde cada vez más lejos se la llama <b class="termino" data-termino="Multirresolución">multirresolución</b>, y sus pisos se parecen a las octavas del piano, porque cada uno ve la señal con la mitad de detalle que el de abajo.</p>
+      <p>En 1989, Stéphane Mallat mostró que la transformada wavelet se puede calcular exactamente así, como una pirámide. Un filtro paso bajo, como los de la <a href="e06.html">lección 6</a>, da la versión borrosa; un paso alto da el detalle; y de cada uno te quedas con una muestra de cada dos. Esa pareja de filtros se llama <b class="termino" data-termino="Banco de filtros">banco de filtros</b>, y es como un ecualizador partido en dos mitades. Cada detalle es la wavelet de la lección 13 en una escala, el doble de ancha que la del piso de abajo.</p>
+      <p>Lo más sorprendente de la pirámide es su contabilidad. Cada piso tiene la mitad de muestras que el anterior, pero guarda también sus detalles, así que el total de números no crece: es el mismo que el de la señal.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Esta señal tiene 512 muestras. Sube por la pirámide hasta que la versión borrosa del último piso tenga solo 16 muestras.</p>
+        <div class="escena" id="r2-escena"></div>
+        <div class="mandos" id="r2-mandos"></div>
+        <div class="fila" id="r2-lecturas"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>Guardar solo lo grande</h3>
+      <p>La pirámide, por sí sola, no comprime nada: da tantos números como muestras. La compresión viene después, y se apoya en algo que ocurre en casi todas las señales: donde la señal es suave, la media de cada pareja lo explica casi todo y el detalle es casi cero. Solo hay detalles grandes en los bordes, los golpes y los cambios bruscos. Si guardas los pocos grandes y tiras los pequeños, al deshacer la pirámide recuperas casi la misma señal con muchos menos números, y a esto se le llama <b class="termino" data-termino="Compresión con pérdida">compresión con pérdida</b>: guardar lo importante y aceptar a cambio un error pequeño.</p>
+      <p>Un escalón es el caso ideal. Para las norias de Fourier, un salto brusco es un mal trago: hacen falta muchísimas y, aun así, quedan los flecos de la <a href="e03.html">lección 3</a>. Para la pirámide de Haar, en cambio, un salto deja solo un detalle grande en cada piso, y el resto son ceros. En el reto puedes comparar las dos maneras con la misma señal, hecha de escalones.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Guarda como mucho el 6 % de los números y consigue que la señal vuelva con un parecido de más de 30 dB. Compara la pirámide de Haar con las norias de Fourier.</p>
+        <div class="escena" id="r3-escena"></div>
+        <div class="mandos" id="r3-mandos"></div>
+        <div class="fila" id="r3-lecturas"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>Cada señal, con su wavelet</h3>
+      <p>Que Haar guarde tan bien los escalones no significa que guarde bien todo. Una wavelet es una plantilla, y transformar es medir el parecido, como en la <a href="e04.html">lección 4</a>: cada wavelet guarda bien lo que se le parece. La de Haar es un escalón y guarda escalones. Con una curva suave, en cambio, los escalones de Haar son un mal parecido, y hacen falta muchos detalles para dibujarla.</p>
+      <p>A finales de los años ochenta, la matemática Ingrid Daubechies encontró wavelets cortas, suaves y con las que la pirámide se deshace sin error, y la <b class="termino" data-termino="Wavelet de Daubechies">wavelet de Daubechies</b> que se usa aquí tiene ocho coeficientes. Las que usan las normas de imagen que verás en el paso siguiente son primas suyas, simétricas.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Hay dos señales. Elige para cada una la wavelet que mejor la guarda cuando solo se conserva el 5 % de los números.</p>
+        <div class="escena" id="r4-wavelets"></div>
+        <div class="columnas-2" id="r4-paneles"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>De las huellas del FBI a tus fotos</h3>
+      <p>La historia de las huellas es la de estos pasos con una cifra grande detrás. A principios de los años noventa, el FBI guardaba en papel más de cien millones de fichas con huellas entintadas. Escaneada a 500 puntos por pulgada, cada ficha ocupaba unos 10 megabytes, y todo el archivo habría ocupado del orden de 2.000 terabytes, en una época en la que un disquete guardaba megabyte y medio.</p>
+      <p>Las fotos de hoy se comprimen con JPEG, una norma de 1992 que corta la imagen en bloques de 8 × 8 píxeles y resume cada uno con cosenos. Si se aprieta mucho, cada bloque se queda casi solo con su tono medio y aparecen las <b class="termino" data-termino="Baldosas (artefactos de bloque)">baldosas</b>: las juntas entre bloques que no casan. En una huella escaneada a 500 puntos por pulgada, las crestas están separadas casi lo mismo que miden esos bloques, y las baldosas engañaban a los programas que buscan minucias, los finales y las bifurcaciones de las crestas. En las pruebas del FBI, las baldosas eran inevitables por encima de unos 10 a 1.</p>
+      <p>La solución fue una norma propia, la <b class="termino" data-termino="WSQ">WSQ</b>, que descompone cada huella en una pirámide de wavelets, en dos dimensiones, por filas y luego por columnas, y la reduce unas 15 veces. En una prueba a ciegas con examinadores de huellas, a esa compresión solo notaron pérdidas en 7 de 202 comparaciones, y a una compresión de 20 a 1 las notaron en 159 de 196, así que se recomendó 15 a 1. Al apretar, la imagen pierde detalle fino poco a poco, sin juntas, y eso fue lo que el FBI valoró. Una familia parecida de wavelets es la de <b class="termino" data-termino="JPEG 2000">JPEG 2000</b>, que no sustituyó a JPEG en la web, pero es el formato de las copias digitales del cine.</p>
+      <p>Aquí no hay huellas reales ni códecs reales: el reto usa una huella sintética, dibujada con una fórmula, y una imitación simplificada de cada método que guarda el mismo número de coeficientes, los más grandes. Por un lado, los cosenos en bloques de 8 × 8; por otro, una pirámide de wavelets suaves. La de Haar, ojo, también hace bloques en las imágenes, así que la comparación se hace con la de Daubechies.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Aprieta la compresión hasta que se guarde 1 de cada 20 números, como mínimo, y toca la imagen que se llena de baldosas.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-lecturas"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>Limpiar: el umbral</h3>
+      <p>Quitar ruido es la misma operación con otro propósito. El ruido blanco, el de la <a href="e10.html">lección 10</a>, reparte su energía por igual y deja un poco en cada detalle, mientras que una señal con saltos la concentra en unos pocos detalles grandes. Entre los dos suele haber un hueco, y si se pone una línea horizontal ahí, a cierta altura sobre los detalles, se puede borrar todo lo que queda por debajo y deshacer la pirámide. Esa línea es el <b class="termino" data-termino="Umbral">umbral</b>. Se puede aplicar de dos maneras: el <b class="termino" data-termino="Umbral duro y umbral suave">umbral duro</b> borra lo que no llega y deja intacto lo demás, y el suave, además, acerca a cero lo que deja.</p>
+      <p>En 1994, los estadísticos David Donoho e Iain Johnstone propusieron una regla que sorprende por lo sencilla: calcula la pirámide, borra los detalles que no superen cierta altura y deshaz la pirámide. La altura depende de cuánto ruido haya, y eso se estima con los propios detalles más finos, que casi solo contienen ruido. A la altura que propusieron se la llama <b class="termino" data-termino="Umbral universal">umbral universal</b>, y crece muy despacio con la longitud de la señal: para un segundo de audio a 16.000 muestras por segundo, es unas 4,4 veces el nivel típico del ruido.</p>
+      <p>El umbral y el paso bajo de la <a href="e06.html">lección 6</a> limpian de manera distinta. El paso bajo decide por frecuencia, y se lleva todo lo agudo, también el filo de un salto. El umbral decide por tamaño, y quita lo pequeño en todas las frecuencias, así que respeta los bordes y los golpes. En el reto compararás las dos cosas con la misma señal.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">Esta señal de escalones está llena de ruido. Mueve el umbral hasta que la limpieza con wavelets supere en 3 dB al mejor paso bajo posible.</p>
+        <div class="escena" id="r6-detalles"></div>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-lecturas"></div>
+      </div>
+
+      <p>El umbral tiene límites que conviene oír, no solo medir. El universal es prudente y también borra lo débil de la señal: en una voz, la «s» y los armónicos flojos se parecen al ruido por su tamaño, y se van con él, de modo que la voz queda apagada, como bajo el agua. Si bajas el umbral, queda más voz y también más ruido. Y un zumbido de 50 Hz no se va con un umbral, porque es grande y constante, y el umbral lo toma por señal: para eso está la banda eliminada de la lección 6. Tu propia voz, en el laboratorio de abajo, te lo va a enseñar.</p>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>En tu voz</h2>
+    <p><b>Qué grabar.</b> Una frase hablada de unos 10 segundos: es el tramo 5 de la grabación de referencia de la serie. Si en tu habitación hay ruido de fondo, un ventilador o la calle, mejor, porque es justo lo que se quiere quitar; si no, el laboratorio puede añadir ruido sintético. Graba con el micrófono si tu navegador lo deja; si no, sube un audio grabado con el móvil o prueba con los ejemplos sintéticos.</p>
+    <p><b>Qué mirar.</b> El laboratorio calcula la pirámide de tu grabación, estima el nivel del ruido con los detalles más finos, borra los que no llegan al umbral y compara el resultado con un paso bajo. Escucha las tres versiones y mira sus espectrogramas. Con el umbral universal, los silencios quedan casi mudos, pero la voz suena apagada y la «s» se debilita o desaparece; con un umbral más bajo, queda más voz y algo más de ruido. El paso bajo se come la «s» siempre y apenas limpia los silencios, porque el ruido blanco también ocupa los graves. Muchos móviles ya quitan el ruido al grabar, y entonces hay poco que limpiar: añade ruido para verlo.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>Lo que tienes que recordar</h2>
+    <ol class="tres">
+      <li>La transformada wavelet discreta reparte una señal en una versión borrosa y en detalles a escalas que se duplican, en una pirámide. Da tantos números como muestras y, al deshacerla, devuelve la señal sin error.</li>
+      <li>Comprimir es tirar los detalles pequeños y guardar los grandes. Cada wavelet guarda bien lo que se le parece, y en las imágenes una pirámide de wavelets suaves emborrona donde los bloques de JPEG hacen baldosas.</li>
+      <li>Limpiar es la misma operación: el ruido deja detalles pequeños y la señal, pocos y grandes, de modo que un umbral los separa por tamaño y no por frecuencia. Por eso respeta los saltos, pero se come lo débil, como la «s», y no quita un zumbido.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Errores típicos</h2>
+    <ul class="errores">
+      <li><b>«Comprimir con wavelets es quitar los agudos.»</b> Se quitan los detalles pequeños, sean graves o agudos. Un borde, que es agudo, se conserva porque su detalle es grande. Quitar los agudos es lo que hace un paso bajo.</li>
+      <li><b>«La transformada wavelet ya comprime, porque da menos números.»</b> Da exactamente tantos números como muestras, y con ellos se recupera la señal sin error. La compresión viene después, cuando casi todos los detalles, que son pequeños, se tiran o se guardan con pocos bits.</li>
+      <li><b>«El umbral solo quita el ruido.»</b> El ruido y la parte débil de la señal se parecen, porque los dos dan detalles pequeños. El umbral universal también se come la «s» y los armónicos flojos, y la voz queda apagada. Si bajas el umbral, queda más voz y más ruido.</li>
+      <li><b>«El umbral también quita el zumbido del enchufe.»</b> Un zumbido de 50 Hz es grande y constante, así que sus coeficientes son grandes y el umbral los toma por señal. Para eso está la banda eliminada de la <a href="e06.html">lección 6</a>.</li>
+      <li><b>«Cualquier wavelet vale, y cuantos más niveles, mejor.»</b> Cada wavelet guarda bien lo que se le parece: Haar, los escalones, y las de Daubechies, las curvas suaves. Y cada nivel parte la versión borrosa en dos, así que cuando ya tiene muy pocas muestras, añadir niveles no gana nada y los bordes de la señal empiezan a molestar.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Abrir</span>
+      <h2>Rincón matemático</h2>
+      <span class="resumen">Las fórmulas, para quien las quiera. Cada una va después de su lectura en palabras.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>Un piso con la wavelet de Haar</h3>
+      <p>En la versión que conserva la energía, la versión borrosa de cada pareja es su suma partida por raíz de dos, y el detalle, su diferencia partida por raíz de dos. Con la media y la semidiferencia de la lección, solo cambia la escala:</p>
+      <div class="tex">a_k = \frac{x_{2k} + x_{2k+1}}{\sqrt{2}}, \qquad d_k = \frac{x_{2k} - x_{2k+1}}{\sqrt{2}}</div>
+      <p>Para volver, se suman y se restan:</p>
+      <div class="tex">x_{2k} = \frac{a_k + d_k}{\sqrt{2}}, \qquad x_{2k+1} = \frac{a_k - d_k}{\sqrt{2}}</div>
+
+      <h3>Un piso en general</h3>
+      <p>Un piso de la pirámide es filtrar con un paso bajo <span class="tex">h</span> y un paso alto <span class="tex">g</span>, y quedarse con una muestra de cada dos (Mallat, 1989):</p>
+      <div class="tex">a_{j+1}[k] = \sum_n h[n - 2k]\, a_j[n], \qquad d_{j+1}[k] = \sum_n g[n - 2k]\, a_j[n]</div>
+      <p>En el caso ortogonal, el paso alto se obtiene del paso bajo dándole la vuelta y alternando los signos; el signo y el desplazamiento cambian según el libro:</p>
+      <div class="tex">g[n] = (-1)^n\, h[1 - n]</div>
+
+      <h3>Las escalas</h3>
+      <p>Todas las wavelets de la pirámide son la misma, estirada por potencias de dos y desplazada:</p>
+      <div class="tex">\psi_{j,k}(t) = 2^{j/2}\, \psi\!\left(2^{j} t - k\right)</div>
+      <p>Y el piso <span class="tex">j</span> de detalle ocupa, más o menos, la octava entre <span class="tex">f_s/2^{j+1}</span> y <span class="tex">f_s/2^{j}</span>:</p>
+      <div class="tex">d_j \;\leftrightarrow\; \left[\frac{f_s}{2^{j+1}},\; \frac{f_s}{2^{j}}\right]</div>
+
+      <h3>Qué se pierde al tirar coeficientes</h3>
+      <p>Con una pirámide ortonormal, la energía de la señal es la suma de las energías de todos sus coeficientes, y por eso el error al tirar coeficientes es la energía de los que tiras (Parseval):</p>
+      <div class="tex">\sum_n x[n]^2 = \sum_k a_L[k]^2 + \sum_{j=1}^{L} \sum_k d_j[k]^2</div>
+      <p>El parecido de una reconstrucción se mide en decibelios, como la relación señal-ruido de la lección 10:</p>
+      <div class="tex">\mathrm{SNR} = 10 \log_{10} \frac{\sum_n x[n]^2}{\sum_n \left(x[n] - \hat{x}[n]\right)^2} \ \text{dB}</div>
+
+      <h3>El umbral</h3>
+      <p>El umbral duro deja o borra; el suave, además, acerca a cero todo lo que deja:</p>
+      <div class="tex">\eta_{\text{duro}}(d) = d \cdot \mathbf{1}\{|d| > \lambda\}, \qquad \eta_{\text{suave}}(d) = \operatorname{sgn}(d)\, \max(|d| - \lambda,\, 0)</div>
+      <p>El umbral universal es el nivel del ruido por la raíz de dos veces el logaritmo de la longitud, y el nivel del ruido se estima con la mediana de los detalles más finos, entre 0,6745, que es la mediana del valor absoluto de un ruido gaussiano de desviación uno (Donoho y Johnstone, 1994):</p>
+      <div class="tex">\lambda = \hat\sigma\,\sqrt{2\ln N}, \qquad \hat\sigma = \frac{\operatorname{mediana}\left(|d_1|\right)}{0{,}6745}</div>
+      <p>La razón de esa altura es que el mayor de <span class="tex">N</span> ruidos gaussianos independientes apenas pasa de <span class="tex">\sigma</span> por la raíz de dos veces el logaritmo de <span class="tex">N</span>:</p>
+      <div class="tex">\Pr\!\left(\max_{i \le N} |z_i| > \sigma\sqrt{2\ln N}\right) \longrightarrow 0 \quad \text{cuando } N \to \infty</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Para saber más</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Artículo · inglés</span>Brislawn, C. M. (1995). <a href="https://www.nist.gov/document/14-wsqbrislawnnoticesams-199511pdf"><i>Fingerprints go digital</i></a>, <i>Notices of the AMS</i>. La historia del FBI contada por uno de los autores de WSQ, con la misma huella comprimida con JPEG y con WSQ.</li>
+      <li><span class="tipo">Artículo · inglés</span>Mallat, S. G. (1989). <a href="https://www.di.ens.fr/~mallat/papiers/MallatTheory89.pdf"><i>A theory for multiresolution signal decomposition</i></a>. El artículo de la pirámide; las figuras de la descomposición de una imagen se entienden sin las ecuaciones.</li>
+      <li><span class="tipo">Libro abierto · inglés</span>Smith, S. W., <a href="https://www.dspguide.com/ch27/6.htm"><i>The Scientist and Engineer's Guide to DSP</i>, cap. 27</a>. Cómo comprime JPEG con bloques de 8 × 8 y cosenos, con la misma imagen a 10 a 1 y a 45 a 1.</li>
+      <li><span class="tipo">Ficha · inglés</span>Library of Congress, <a href="https://www.loc.gov/preservation/digital/formats/fdd/fdd000138.shtml">JPEG 2000 Part 1, Core Coding</a>. Qué es JPEG 2000, en qué se diferencia de JPEG y dónde se usa.</li>
+      <li><span class="tipo">Artículo · inglés</span>Donoho, D. L. (1995). <a href="https://web.stanford.edu/dept/statistics/cgi-bin/donoho/wp-content/uploads/2018/08/denoiserelease3.pdf"><i>De-noising by soft-thresholding</i></a>, versión de trabajo en Stanford. El umbral explicado por su autor; técnico, pero la introducción se lee bien.</li>
+      <li><span class="tipo">Archivo · inglés</span>NIST, <a href="https://www.nist.gov/itl/iad/image-group/wsq-bibliography">WSQ bibliography</a>. Los documentos originales de la norma, incluida la prueba con examinadores de 1994.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>Términos nuevos</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Examen</h2>
+  </section>
+
+</main>
+
+<script src="comun/temario.js"></script>
+<script src="comun/graficas.js"></script>
+<script src="comun/senal.js"></script>
+<script src="comun/curso.js"></script>
+<script src="datos/e14.js"></script>
+<script>
+
+// Lección 14 · cálculo propio de la página (señales de prueba, compresión 1D y 2D). Se prueba con Node y se incrusta en e14.html.
+var CALC = (function () {
+  'use strict';
+  const TAU = Math.PI * 2;
+
+  // Relación señal-ruido de una reconstrucción, en dB (999 si es exacta).
+  function snr(x, y) {
+    let a = 0, b = 0;
+    for (let i = 0; i < x.length; i++) { a += x[i] * x[i]; b += (x[i] - y[i]) * (x[i] - y[i]); }
+    return b < 1e-20 * Math.max(1, a) ? 999 : 10 * Math.log10(a / b);
+  }
+  function normalizada(x) {
+    const N = x.length;
+    let m = 0;
+    for (let i = 0; i < N; i++) m += x[i];
+    m /= N;
+    let s = 0;
+    for (let i = 0; i < N; i++) s += (x[i] - m) * (x[i] - m);
+    const sd = Math.sqrt(s / N) || 1, y = new Float64Array(N);
+    for (let i = 0; i < N; i++) y[i] = (x[i] - m) / sd;
+    return y;
+  }
+  // Escalones: once saltos de alturas distintas («Blocks» de Donoho y Johnstone), varianza 1.
+  function escalones(N) {
+    const tj = [0.1, 0.13, 0.15, 0.23, 0.25, 0.4, 0.44, 0.65, 0.76, 0.78, 0.81], h = [4, -5, 3, -4, 5, -4.2, 2.1, 4.3, -3.1, 2.1, -4.2];
+    const x = new Float64Array(N);
+    for (let i = 0; i < N; i++) { let v = 0; const t = i / N; for (let j = 0; j < tj.length; j++) v += h[j] * (t >= tj[j] ? 1 : 0); x[i] = v; }
+    return normalizada(x);
+  }
+  // Una oscilación que se frena (la «Doppler» de Donoho y Johnstone), varianza 1.
+  function oscilacion(N) {
+    const x = new Float64Array(N);
+    for (let i = 0; i < N; i++) { const t = (i + 0.5) / N; x[i] = Math.sqrt(t * (1 - t)) * Math.sin(TAU * 1.05 / (t + 0.05)); }
+    return normalizada(x);
+  }
+  // La señal del reto de la pirámide: unos escalones, un trozo de seno y un golpe (512 muestras, entre −1 y 1).
+  function senalPiramide(N) {
+    const x = new Float64Array(N);
+    for (let i = 0; i < N; i++) {
+      const u = i / N;
+      let v = u < 0.12 ? 0.2 : u < 0.27 ? -0.35 : u < 0.4 ? 0.55 : 0;
+      if (u >= 0.4 && u < 0.72) v = 0.45 * Math.sin(TAU * 3.5 * (u - 0.4) / 0.32);
+      if (u >= 0.72) v = 0.1;
+      if (u >= 0.83 && u < 0.845) v = 0.95;
+      x[i] = v;
+    }
+    return x;
+  }
+
+  // ── Compresión de una señal con una pirámide: guarda los K números más grandes y deshace la pirámide ─────
+  function aplanar(c) {
+    const partes = [c.aprox].concat(c.detalles.slice().reverse());
+    let n = 0;
+    for (const p of partes) n += p.length;
+    const v = new Float64Array(n);
+    let o = 0;
+    for (const p of partes) { v.set(p, o); o += p.length; }
+    return v;
+  }
+  function desaplanar(v, c) {
+    const partes = [c.aprox].concat(c.detalles.slice().reverse());
+    let o = 0;
+    const nuevas = partes.map(p => { const q = v.slice(o, o + p.length); o += p.length; return q; });
+    return { aprox: nuevas[0], detalles: nuevas.slice(1).reverse(), wavelet: c.wavelet, longitud: c.longitud, niveles: c.niveles };
+  }
+  function umbralPorK(v, K) {
+    const m = Array.from(v, Math.abs).sort((a, b) => b - a);
+    return m[Math.max(0, Math.min(m.length, K) - 1)];
+  }
+  // → { N, reconstruir(K) }: la señal vuelve con solo sus K coeficientes mayores.
+  function compresorWavelet(x, wavelet, niveles) {
+    const c = Senal.dwt(x, niveles, wavelet), v = aplanar(c), mag = Array.from(v, Math.abs).sort((a, b) => b - a);
+    return {
+      N: x.length,
+      reconstruir(K) {
+        const t = mag[Math.max(0, Math.min(mag.length, K) - 1)], w = v.map(a => (Math.abs(a) >= t ? a : 0));
+        return Senal.idwt(desaplanar(w, c));
+      },
+    };
+  }
+  // Lo mismo con las norias de Fourier: cada frecuencia guardada cuesta dos números (su tamaño y su fase).
+  function compresorFourier(x) {
+    const N = x.length, X = Senal.fftReal(x), idx = [];
+    for (let k = 0; k <= N / 2; k++) idx.push({ k, p: X.re[k] * X.re[k] + X.im[k] * X.im[k] });
+    idx.sort((a, b) => b.p - a.p);
+    return {
+      N,
+      reconstruir(K) {
+        const re = new Float64Array(N), im = new Float64Array(N), n = Math.max(1, Math.round(K / 2));
+        for (let i = 0; i < n && i < idx.length; i++) {
+          const k = idx[i].k;
+          re[k] = X.re[k]; im[k] = X.im[k];
+          if (k > 0 && k < N / 2) { re[N - k] = X.re[N - k]; im[N - k] = X.im[N - k]; }
+        }
+        Senal.ifft(re, im);
+        return re;
+      },
+    };
+  }
+
+  // ── Imágenes ──────────────────────────────────────────────────────────────────────────────────────────
+  // Una huella sintética de n × n (1 = papel, 0 = tinta): crestas concéntricas deformadas, 9 píxeles entre una cresta y la siguiente.
+  function huella(n) {
+    const v = new Float64Array(n * n), c = (n - 1) / 2, R = n / 2;
+    for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+      const dx = (i - c) / R, dy = (j - c) / R * 1.12, r = Math.hypot(dx, dy), a = Math.atan2(dy, dx);
+      const fase = r * R / 9 + 0.28 * Math.sin(2 * a + 3 * r) + 0.12 * Math.sin(5 * a - 4 * r);
+      const env = 1 / (1 + Math.exp((r - 0.85) / 0.05));
+      v[j * n + i] = 1 - env * (0.5 - 0.5 * Math.cos(TAU * fase));
+    }
+    return v;
+  }
+  function psnr(a, b) {
+    let e = 0;
+    for (let i = 0; i < a.length; i++) e += (a[i] - b[i]) * (a[i] - b[i]);
+    e /= a.length;
+    return e < 1e-12 ? 99 : 10 * Math.log10(1 / e);
+  }
+  // Cuánto se ven las juntas de los bloques de 8: salto medio en las fronteras entre salto medio dentro del bloque (1 = ninguna).
+  function bloqueo(img, n, b) {
+    b = b || 8;
+    let sf = 0, nf = 0, sd = 0, nd = 0;
+    for (let y = 0; y < n; y++) for (let x = 1; x < n; x++) {
+      const d = Math.abs(img[y * n + x] - img[y * n + x - 1]);
+      if (x % b === 0) { sf += d; nf++; } else { sd += d; nd++; }
+    }
+    for (let y = 1; y < n; y++) for (let x = 0; x < n; x++) {
+      const d = Math.abs(img[y * n + x] - img[(y - 1) * n + x]);
+      if (y % b === 0) { sf += d; nf++; } else { sd += d; nd++; }
+    }
+    return (sf / nf) / ((sd / nd) || 1e-9);
+  }
+  // DCT de 8 × 8 (ortonormal), la de JPEG.
+  const COS8 = (() => {
+    const m = [];
+    for (let u = 0; u < 8; u++) { m.push([]); for (let x = 0; x < 8; x++) m[u].push((u === 0 ? Math.sqrt(1 / 8) : Math.sqrt(2 / 8)) * Math.cos((2 * x + 1) * u * Math.PI / 16)); }
+    return m;
+  })();
+  function dct8(blk, inversa) {
+    const t = new Float64Array(64), o = new Float64Array(64);
+    for (let y = 0; y < 8; y++) for (let u = 0; u < 8; u++) {
+      let s = 0;
+      for (let x = 0; x < 8; x++) s += (inversa ? COS8[x][u] * blk[y * 8 + x] : COS8[u][x] * blk[y * 8 + x]);
+      t[y * 8 + u] = s;
+    }
+    for (let u = 0; u < 8; u++) for (let v = 0; v < 8; v++) {
+      let s = 0;
+      for (let y = 0; y < 8; y++) s += (inversa ? COS8[y][v] * t[y * 8 + u] : COS8[v][y] * t[y * 8 + u]);
+      o[v * 8 + u] = s;
+    }
+    return o;
+  }
+  function compresorBloques(img, n) {
+    const co = new Float64Array(n * n), blk = new Float64Array(64);
+    for (let by = 0; by < n; by += 8) for (let bx = 0; bx < n; bx += 8) {
+      for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) blk[y * 8 + x] = img[(by + y) * n + bx + x] - 0.5;
+      const d = dct8(blk, false);
+      for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) co[(by + y) * n + bx + x] = d[y * 8 + x];
+    }
+    const mag = Array.from(co, Math.abs).sort((a, b) => b - a);
+    return {
+      reconstruir(K) {
+        const t = mag[Math.max(0, Math.min(mag.length, K) - 1)], out = new Float64Array(n * n), b2 = new Float64Array(64);
+        for (let by = 0; by < n; by += 8) for (let bx = 0; bx < n; bx += 8) {
+          for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) { const a = co[(by + y) * n + bx + x]; b2[y * 8 + x] = Math.abs(a) >= t ? a : 0; }
+          const d = dct8(b2, true);
+          for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) out[(by + y) * n + bx + x] = Math.min(1, Math.max(0, d[y * 8 + x] + 0.5));
+        }
+        return out;
+      },
+    };
+  }
+  // Pirámide en dos dimensiones: se aplica por filas y luego por columnas, y se repite sobre la esquina borrosa.
+  function dwt2(img, n, niveles, wavelet) {
+    const a = Float64Array.from(img);
+    let m = n;
+    for (let l = 0; l < niveles; l++) {
+      for (let y = 0; y < m; y++) {
+        const c = Senal.dwt(a.slice(y * n, y * n + m), 1, wavelet);
+        a.set(c.aprox, y * n); a.set(c.detalles[0], y * n + m / 2);
+      }
+      for (let x = 0; x < m; x++) {
+        const col = new Float64Array(m);
+        for (let y = 0; y < m; y++) col[y] = a[y * n + x];
+        const c = Senal.dwt(col, 1, wavelet);
+        for (let y = 0; y < m / 2; y++) { a[y * n + x] = c.aprox[y]; a[(y + m / 2) * n + x] = c.detalles[0][y]; }
+      }
+      m /= 2;
+    }
+    return a;
+  }
+  function idwt2(a0, n, niveles, wavelet) {
+    const a = Float64Array.from(a0);
+    for (let l = niveles - 1; l >= 0; l--) {
+      const m = n / Math.pow(2, l);
+      for (let x = 0; x < m; x++) {
+        const lo = new Float64Array(m / 2), hi = new Float64Array(m / 2);
+        for (let y = 0; y < m / 2; y++) { lo[y] = a[y * n + x]; hi[y] = a[(y + m / 2) * n + x]; }
+        const col = Senal.idwt({ aprox: lo, detalles: [hi], wavelet, longitud: m, niveles: 1 });
+        for (let y = 0; y < m; y++) a[y * n + x] = col[y];
+      }
+      for (let y = 0; y < m; y++) {
+        const row = Senal.idwt({ aprox: a.slice(y * n, y * n + m / 2), detalles: [a.slice(y * n + m / 2, y * n + m)], wavelet, longitud: m, niveles: 1 });
+        a.set(row, y * n);
+      }
+    }
+    return a;
+  }
+  function compresorWavelet2D(img, n, niveles, wavelet) {
+    const co = dwt2(img, n, niveles, wavelet), mag = Array.from(co, Math.abs).sort((a, b) => b - a);
+    return {
+      reconstruir(K) {
+        const t = mag[Math.max(0, Math.min(mag.length, K) - 1)], w = co.map(a => (Math.abs(a) >= t ? a : 0));
+        return idwt2(w, n, niveles, wavelet).map(v => Math.min(1, Math.max(0, v)));
+      },
+    };
+  }
+
+  // ── Limpieza: umbral sobre los detalles ───────────────────────────────────────────────────────────────
+  // Nivel del ruido a partir de los detalles más finos: mediana de |d| entre 0,6745.
+  function sigmaDe(detalles) {
+    const a = Array.from(detalles[0], Math.abs).sort((p, q) => p - q), m = a.length;
+    return (m % 2 ? a[(m - 1) / 2] : (a[m / 2 - 1] + a[m / 2]) / 2) / 0.6745;
+  }
+  function limpiar(coefs, lambda, modo) {
+    const c = { aprox: coefs.aprox, detalles: coefs.detalles.map(d => Senal.umbral(d, lambda, modo)), wavelet: coefs.wavelet, longitud: coefs.longitud, niveles: coefs.niveles };
+    return Senal.idwt(c);
+  }
+  // El mejor paso bajo (Butterworth de orden 4, ida y vuelta) frente a la señal limpia: → { snr, corte }.
+  function mejorPasoBajo(limpia, ruidosa) {
+    let mejor = -Infinity, corte = 0.1;
+    for (let fc = 0.01; fc <= 0.3001; fc += 0.005) {
+      const v = snr(limpia, Senal.filtfilt(Senal.butterworth(4, fc, 1, 'pasoBajo'), ruidosa));
+      if (v > mejor) { mejor = v; corte = fc; }
+    }
+    return { snr: mejor, corte };
+  }
+
+  return { snr, escalones, oscilacion, senalPiramide, compresorWavelet, compresorFourier, huella, psnr, bloqueo, compresorBloques, compresorWavelet2D, dwt2, idwt2, sigmaDe, limpiar, mejorPasoBajo };
+})();
+if (typeof module !== 'undefined' && module.exports) module.exports = CALC;
+
+// Lección 14 · Desvío: wavelets para comprimir y limpiar: la imagen ancla (la pirámide), los seis retos y el laboratorio
+// «En tu voz». Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo; aquí solo va lo de esta lección.
+// Convenios: señal en verde, versión borrosa en tinta, reconstrucción o versión limpia en naranja, ruido en coral,
+// umbral y wavelets en púrpura, espectrogramas en magma con su leyenda en dB. El cálculo propio está en CALC (arriba).
+(function () {
+  'use strict';
+  const G = Graficas, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const altoDe = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  const dB = v => (v >= 60 ? 'exacta' : num(v, 1) + ' dB');
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); document.querySelector(contenedor).appendChild(f); return f; };
+  // Unos palitos con cabeza (muestras) en una banda: de x0 a x1, con la línea base en yb y la escala s (píxeles por unidad).
+  function palitos(ctx, vals, x0, x1, yb, s, color, alfa, radio) {
+    const n = vals.length, dx = (x1 - x0) / n;
+    ctx.save();
+    ctx.globalAlpha = alfa == null ? 1 : alfa;
+    ctx.strokeStyle = color; ctx.fillStyle = color;
+    ctx.lineWidth = dx > 5 ? 1.6 : 1.2;
+    for (let i = 0; i < n; i++) {
+      const x = x0 + (i + 0.5) * dx, y = yb - vals[i] * s;
+      ctx.beginPath(); ctx.moveTo(x, yb); ctx.lineTo(x, y); ctx.stroke();
+      if (dx > 4.5) { ctx.beginPath(); ctx.arc(x, y, radio || 2.4, 0, TAU); ctx.fill(); }
+    }
+    ctx.restore();
+  }
+  // Una pirámide de medias y semidiferencias (la wavelet de Haar con la escala de la lección): a[j] es la versión
+  // borrosa del piso j (a[0] es la señal) y d[j] sus detalles; j va de 1 a L.
+  function piramideMedias(x, L) {
+    const a = [Float64Array.from(x)], d = [null];
+    for (let j = 1; j <= L; j++) {
+      const p = a[j - 1], m = p.length / 2, aj = new Float64Array(m), dj = new Float64Array(m);
+      for (let k = 0; k < m; k++) { aj[k] = (p[2 * k] + p[2 * k + 1]) / 2; dj[k] = (p[2 * k] - p[2 * k + 1]) / 2; }
+      a.push(aj); d.push(dj);
+    }
+    return { a, d, L };
+  }
+  // Deshace la pirámide con los detalles que se le den (d[j] puede tener ceros).
+  function deshacerMedias(aL, d, L) {
+    let a = aL;
+    for (let j = L; j >= 1; j--) {
+      const m = a.length, p = new Float64Array(2 * m);
+      for (let k = 0; k < m; k++) { p[2 * k] = a[k] + d[j][k]; p[2 * k + 1] = a[k] - d[j][k]; }
+      a = p;
+    }
+    return a;
+  }
+
+  // ── La idea en una imagen: la pirámide ───────────────────────────────────────────────────────────────
+  // 64 muestras y hasta tres pisos. Un par de muestras recorre la señal y se ve de qué pareja salen la media y el detalle
+  // de cada piso. «Tirar los detalles pequeños» apaga los que no llegan a una altura y enseña la señal que vuelve (naranja).
+  (function () {
+    const N = 64, x = CALC.senalPiramide(N);
+    const e = { pisos: 2, tirar: false, k: 11, t: 0 };
+    const P = piramideMedias(x, 3);
+    // Altura (en la escala de la wavelet que conserva la energía) bajo la que se apagan los detalles.
+    const mayor = Math.max.apply(null, [1, 2, 3].map(j => Math.max.apply(null, Array.from(P.d[j], v => Math.abs(v) * Math.pow(2, j / 2)))));
+    const TAU_DET = 0.12 * mayor;
+    const sobrevive = (j, v) => Math.abs(v) * Math.pow(2, j / 2) > TAU_DET;
+    function estado() {
+      const d = [null];
+      let quedan = 0, total = 0;
+      for (let j = 1; j <= e.pisos; j++) {
+        d.push(P.d[j].map(v => { total++; if (!e.tirar || sobrevive(j, v)) { quedan++; return v; } return 0; }));
+      }
+      const rec = deshacerMedias(P.a[e.pisos], d, e.pisos);
+      return { d, rec, quedan, total };
+    }
+    let lect = null;
+    const L = G.lienzo('#ancla-escena', {
+      alto: altoDe(300, 340),
+      etiqueta: 'Una pirámide de señales: abajo, la señal de 64 muestras; en los pisos de encima, su versión borrosa en tinta, con la mitad de muestras cada vez, y al lado los detalles que le faltan, en verde. Un par de muestras destacado recorre la señal.',
+      dibujar: (ctx, w, h, C) => {
+        const S = estado(), mx = 14, W = w - 2 * mx, filas = e.pisos + 1, top = 8, alto = h - top - 8, fh = alto / filas;
+        const filaY = i => h - 8 - (i + 0.5) * fh;               // centro de la fila i (0 = la señal)
+        const esc = fh * 0.3;                                      // píxeles por unidad de altura
+        // Fila 0: la señal y, si se tiran detalles, lo que vuelve.
+        const y0 = filaY(0);
+        ctx.save(); ctx.strokeStyle = G.alfa(C.eje, 0.5); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(mx, y0); ctx.lineTo(mx + W, y0); ctx.stroke(); ctx.restore();
+        palitos(ctx, x, mx, mx + W, y0, esc, C.senal, e.tirar ? 0.45 : 1);
+        if (e.tirar) {
+          ctx.save();
+          ctx.strokeStyle = C.respuesta; ctx.lineWidth = 2.2; ctx.lineJoin = 'round'; ctx.beginPath();
+          for (let i = 0; i < N; i++) { const px = mx + (i + 0.5) * W / N, py = y0 - S.rec[i] * esc; if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py); }
+          ctx.stroke(); ctx.restore();
+        }
+        G.texto(ctx, mx + W, y0 + fh * 0.5 - 2, 'señal · ' + N + ' muestras', { color: C.tenue, tam: 10, alinear: 'right', base: 'bottom', C });
+        // Pisos 1…pisos.
+        for (let j = 1; j <= e.pisos; j++) {
+          const yb = filaY(j), m = N / Math.pow(2, j), wa = W / Math.pow(2, j);
+          ctx.save(); ctx.strokeStyle = G.alfa(C.eje, 0.4); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(mx, yb); ctx.lineTo(mx + 2 * wa, yb); ctx.stroke(); ctx.restore();
+          palitos(ctx, P.a[j], mx, mx + wa, yb, esc, C.cuerpo, 1, 2.2);
+          // Detalles: en verde los que quedan y en gris tenue los que se han tirado.
+          const dj = P.d[j], vivos = [], muertos = [];
+          for (let k = 0; k < m; k++) { const v = dj[k]; if (S.d[j][k] === 0 && v !== 0) { muertos.push(v); vivos.push(0); } else { vivos.push(v); muertos.push(0); } }
+          if (e.tirar) palitos(ctx, muertos, mx + wa, mx + 2 * wa, yb, esc * 1, C.tenue, 0.55, 1.8);
+          palitos(ctx, vivos, mx + wa, mx + 2 * wa, yb, esc, C.senal, 1, 2.2);
+          if (wa > 120) {
+            G.texto(ctx, mx + 2, yb - fh * 0.5 + 3, 'versión borrosa · ' + m, { color: C.suave, tam: 10, base: 'top', C });
+            G.texto(ctx, mx + wa + 4, yb - fh * 0.5 + 3, 'detalles · ' + m, { color: C.suave, tam: 10, base: 'top', C });
+          } else {
+            G.texto(ctx, mx + 2 * wa + 8, yb - 8, 'borrosa · ' + m, { color: C.suave, tam: 10, base: 'middle', C });
+            G.texto(ctx, mx + 2 * wa + 8, yb + 8, 'detalles · ' + m, { color: C.suave, tam: 10, base: 'middle', C });
+          }
+        }
+        // La pareja que recorre la señal, y de dónde salen su media y su detalle en el piso 1.
+        const k = e.k % (N / 2);
+        const dx = W / N;
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.plantilla, 0.2); ctx.strokeStyle = C.plantilla; ctx.lineWidth = 1.6;
+        ctx.fillRect(mx + 2 * k * dx, y0 - fh * 0.46, 2 * dx, fh * 0.92);
+        ctx.strokeRect(mx + 2 * k * dx + 0.5, y0 - fh * 0.46, 2 * dx - 1, fh * 0.92);
+        if (e.pisos >= 1) {
+          const y1 = filaY(1), wa = W / 2, d1 = wa / (N / 2);
+          for (const base of [0, wa]) {
+            ctx.fillRect(mx + base + k * d1, y1 - fh * 0.46, d1, fh * 0.92);
+            ctx.strokeRect(mx + base + k * d1 + 0.5, y1 - fh * 0.46, Math.max(1, d1 - 1), fh * 0.92);
+          }
+        }
+        ctx.restore();
+        if (lect) {
+          lect.fijar('quedan', S.quedan + ' de ' + S.total);
+          lect.fijar('total', (N / Math.pow(2, e.pisos)) + ' + ' + [1, 2, 3].slice(0, e.pisos).reverse().map(j => N / Math.pow(2, j)).join(' + ') + ' = ' + N);
+        }
+      },
+    });
+    const mandos = document.getElementById('ancla-mandos');
+    let anim = null;
+    const cambiar = () => L.dibujar();
+    Curso.mando(mandos, { etiqueta: 'Pisos de la pirámide', min: 1, max: 3, paso: 1, valor: e.pisos, decimales: 0, alCambiar: v => { e.pisos = v; cambiar(); } });
+    const fila = crear('div', { class: 'botones' });
+    mandos.appendChild(fila);
+    Curso.botones(fila, [{ id: 'tirar', texto: 'Tirar los detalles pequeños', pulsado: false, alPulsar: on => { e.tirar = on; cambiar(); } }]);
+    lect = Curso.lecturas(mandos, [{ id: 'total', nombre: 'Números en total', clase: 'senal' }, { id: 'quedan', nombre: 'Detalles que quedan', clase: 'respuesta' }]);
+    anim = Curso.animar(L, (t, dt) => {
+      if (dt > 0) { e.t += dt; e.k = Math.floor(e.t / 0.45) % (N / 2); }
+      L.dibujar();
+    }, { boton: fila });
+  })();
+
+
+  // ── Reto 1 · Media y detalle (arrastrar sobre el lienzo) ────────────────────────────────────────────
+  // Ocho muestras en cuatro parejas. Cada barra naranja es la «media» que adivina el lector; el detalle sale solo
+  // (primera muestra menos barra) y las cruces de tinta son lo que vuelve: barra + detalle y barra − detalle.
+  (function () {
+    const V = [6, 8, 7, 7, 3, 1, 9, 11], MEDIAS = [7, 7, 2, 10], YMAX = 13, YMIN = -4;
+    const e = { b: [0, 0, 0, 0], sel: 0 };
+    let esc = null;
+    const L = G.lienzo('#r1-escena', {
+      alto: altoDe(290, 310), rol: 'slider',
+      etiqueta: 'Ocho muestras agrupadas por parejas y cuatro barras naranjas que se arrastran hacia arriba y hacia abajo: cada barra tiene que quedar en la media de su pareja',
+      dibujar: (ctx, w, h, C) => {
+        esc = G.ejes(ctx, { x: [0, 9], y: [YMIN, YMAX + 1], marcasX: false, marcasY: [0, 5, 10], rejilla: true, margen: { izquierda: 34, derecha: 10, arriba: 14, abajo: 34 }, C });
+        // Los corchetes de las parejas.
+        for (let k = 0; k < 4; k++) {
+          const xa = esc.x(2 * k + 1) - 12, xb = esc.x(2 * k + 2) + 12, yy = esc.caja.y + esc.caja.h + 8;
+          ctx.save(); ctx.strokeStyle = C.tenue; ctx.lineWidth = 1.4; ctx.beginPath();
+          ctx.moveTo(xa, yy - 4); ctx.lineTo(xa, yy); ctx.lineTo(xb, yy); ctx.lineTo(xb, yy - 4); ctx.stroke(); ctx.restore();
+          G.texto(ctx, (xa + xb) / 2, yy + 4, 'pareja ' + (k + 1), { alinear: 'center', base: 'top', color: C.tenue, tam: 10, C });
+        }
+        // Las barras: una rampa naranja hasta la altura que ha elegido el lector.
+        for (let k = 0; k < 4; k++) {
+          const xc = esc.x(2 * k + 1.5), y = esc.y(e.b[k]), y0 = esc.y(0), ok = Math.abs(e.b[k] - MEDIAS[k]) < 0.25;
+          ctx.save();
+          ctx.fillStyle = G.alfa(C.respuesta, ok ? 0.42 : 0.24);
+          ctx.fillRect(xc - 15, y, 30, y0 - y);
+          ctx.strokeStyle = C.respuesta; ctx.lineWidth = k === e.sel ? 3.2 : 2;
+          ctx.beginPath(); ctx.moveTo(xc - 19, y); ctx.lineTo(xc + 19, y); ctx.stroke();
+          ctx.fillStyle = C.respuesta; ctx.beginPath(); ctx.arc(xc, y, 5, 0, TAU); ctx.fill();
+          ctx.restore();
+          G.texto(ctx, xc, Math.min(y - 9, y0 - 6), num(e.b[k], 1), { alinear: 'center', base: 'bottom', color: C.texto, tam: 11, peso: 600, C });
+        }
+        // Las muestras de verdad.
+        G.tallos(ctx, esc, [1, 2, 3, 4, 5, 6, 7, 8], V, { color: C.senal, radio: 4.5, C });
+        // Lo que vuelve: primera = barra + detalle (siempre cae sobre la muestra) y segunda = barra − detalle.
+        for (let k = 0; k < 4; k++) {
+          const d = V[2 * k] - e.b[k], seg = e.b[k] - d, xs = esc.x(2 * k + 2), ys = esc.y(limitar(seg, YMIN + 0.4, YMAX + 0.6));
+          ctx.save(); ctx.strokeStyle = C.texto; ctx.lineWidth = 2; ctx.beginPath();
+          ctx.moveTo(xs - 5, ys - 5); ctx.lineTo(xs + 5, ys + 5); ctx.moveTo(xs + 5, ys - 5); ctx.lineTo(xs - 5, ys + 5); ctx.stroke(); ctx.restore();
+        }
+      },
+    });
+    const lect = Curso.lecturas('#r1-fila', [0, 1, 2, 3].map(k => ({ id: 'd' + k, nombre: 'Detalle ' + (k + 1), clase: 'senal' })));
+    const pintarLecturas = () => { for (let k = 0; k < 4; k++) lect.fijar('d' + k, num(V[2 * k] - e.b[k], 1)); };
+    const poner = (k, y) => {
+      e.sel = k;
+      e.b[k] = limitar(Math.round(y * 2) / 2, 0, YMAX);
+      L.canvas.setAttribute('aria-valuenow', String(e.b[k]));
+      L.canvas.setAttribute('aria-valuetext', 'Barra ' + (k + 1) + ' en ' + num(e.b[k], 1));
+      pintarLecturas(); L.dibujar(); Curso.cambio('reto-1');
+    };
+    let activa = 0;
+    Curso.arrastre(L, {
+      alBajar: p => {
+        if (!esc) return false;
+        let k = 0, dmin = 1e9;
+        for (let i = 0; i < 4; i++) { const d = Math.abs(p.x - esc.x(2 * i + 1.5)); if (d < dmin) { dmin = d; k = i; } }
+        activa = k; poner(k, esc.yi(p.y));
+      },
+      alMover: p => poner(activa, esc.yi(p.y)),
+    });
+    L.canvas.tabIndex = 0;
+    L.canvas.setAttribute('aria-valuemin', '0'); L.canvas.setAttribute('aria-valuemax', String(YMAX));
+    L.canvas.addEventListener('keydown', ev => {
+      if (ev.key === 'ArrowRight') { ev.preventDefault(); e.sel = Math.min(3, e.sel + 1); L.dibujar(); }
+      else if (ev.key === 'ArrowLeft') { ev.preventDefault(); e.sel = Math.max(0, e.sel - 1); L.dibujar(); }
+      else if (ev.key === 'ArrowUp') { ev.preventDefault(); poner(e.sel, e.b[e.sel] + 0.5); }
+      else if (ev.key === 'ArrowDown') { ev.preventDefault(); poner(e.sel, e.b[e.sel] - 0.5); }
+    });
+    pintarLecturas();
+    Curso.reto('reto-1', {
+      titulo: 'La media de cada pareja', nivel: 'fácil',
+      comprobar: () => {
+        const bien = e.b.filter((b, k) => Math.abs(b - MEDIAS[k]) < 0.25).length;
+        if (bien === 4) return { ok: true, mensaje: 'Las cuatro barras están en su media, y las cruces caen sobre todas las muestras.' };
+        if (e.b.every(b => b === 0)) return { ok: false, mensaje: '' };
+        const k = e.b.findIndex((b, i) => Math.abs(b - MEDIAS[i]) >= 0.25);
+        return { ok: false, mensaje: 'Van ' + bien + ' de 4. La barra ' + (k + 1) + ' está ' + (e.b[k] > MEDIAS[k] ? 'por encima' : 'por debajo') + ' del punto medio de su pareja: mira dónde cae la cruz de la segunda muestra.' };
+      },
+      resolver: () => { e.b = MEDIAS.slice(); pintarLecturas(); L.dibujar(); },
+      pista: ['La media de una pareja es el punto que queda a medio camino entre sus dos alturas.', 'Entre 6 y 8, el punto medio es 7.'],
+      exito: '<p>Con la media y la semidiferencia recuperas las dos muestras exactas: la primera es la media más el detalle, y la segunda, la media menos el detalle. No has perdido nada, y ya tienes la mitad de los números en la versión borrosa y la otra mitad en los detalles.</p>',
+    });
+  })();
+
+  // ── Reto 2 · Sube por la pirámide (deslizador) ───────────────────────────────────────────────────────
+  (function () {
+    const N = 512, x = CALC.senalPiramide(N), P = piramideMedias(x, 8);
+    const e = { niv: 2 };
+    // Una banda con la señal: palitos si hay pocas muestras y una línea si hay muchas.
+    function traza(ctx, v, x0, x1, yb, s, color) {
+      if (v.length <= 40) { palitos(ctx, v, x0, x1, yb, s, color, 1, 1.8); return; }
+      ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 1.3; ctx.lineJoin = 'round'; ctx.beginPath();
+      for (let i = 0; i < v.length; i++) { const px = x0 + (i + 0.5) * (x1 - x0) / v.length, py = yb - v[i] * s; if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py); }
+      ctx.stroke(); ctx.restore();
+    }
+    const L = G.lienzo('#r2-escena', {
+      alto: altoDe(280, 330),
+      etiqueta: 'La pirámide de una señal de 512 muestras: abajo la señal y, en cada piso de encima, su versión borrosa en tinta con la mitad de muestras y sus detalles en verde',
+      dibujar: (ctx, w, h, C) => {
+        const mx = 12, W = w - 2 * mx, filas = e.niv + 1, fh = (h - 16) / Math.max(filas, 3), filaY = i => h - 8 - (i + 0.5) * fh, esc = fh * 0.4;
+        ctx.save(); ctx.strokeStyle = G.alfa(C.eje, 0.45); ctx.lineWidth = 1;
+        for (let i = 0; i < filas; i++) { ctx.beginPath(); ctx.moveTo(mx, filaY(i)); ctx.lineTo(mx + (i === 0 ? W : W / Math.pow(2, i - 1)), filaY(i)); ctx.stroke(); }
+        ctx.restore();
+        traza(ctx, x, mx, mx + W, filaY(0), esc, C.senal);
+        G.texto(ctx, mx + W, filaY(0) + fh * 0.5 - 2, 'señal · ' + N, { alinear: 'right', base: 'bottom', color: C.tenue, tam: 10, C });
+        for (let j = 1; j <= e.niv; j++) {
+          const yb = filaY(j), m = N / Math.pow(2, j), wa = W / Math.pow(2, j);
+          traza(ctx, P.a[j], mx, mx + wa, yb, esc, C.cuerpo);
+          traza(ctx, P.d[j], mx + wa, mx + 2 * wa, yb, esc, C.senal);
+          if (wa > 34) {
+            G.texto(ctx, mx + wa / 2, yb - fh * 0.5 + 1, String(m), { alinear: 'center', base: 'top', color: C.suave, tam: 10, C });
+            G.texto(ctx, mx + 1.5 * wa, yb - fh * 0.5 + 1, String(m), { alinear: 'center', base: 'top', color: C.suave, tam: 10, C });
+          }
+        }
+        if (e.niv >= 1) {
+          const wa = W / Math.pow(2, e.niv), yb = filaY(e.niv);
+          ctx.save(); ctx.strokeStyle = C.plantilla; ctx.lineWidth = 1.8; ctx.setLineDash([4, 3]);
+          ctx.strokeRect(mx - 2, yb - fh * 0.47, wa + 4, fh * 0.94); ctx.restore();
+          if (wa < 34) G.texto(ctx, mx + wa + 8, yb - fh * 0.2, '← la versión borrosa: ' + (N >> e.niv), { color: C.plantilla, tam: 10, peso: 600, C });
+        }
+      },
+    });
+    const lect = Curso.lecturas('#r2-lecturas', [
+      { id: 'borrosa', nombre: 'Versión borrosa', clase: 'cuerpo' },
+      { id: 'detalles', nombre: 'Detalles', clase: 'senal' },
+      { id: 'total', nombre: 'Total' },
+    ]);
+    const pintar = () => {
+      const n = e.niv, det = [];
+      for (let j = n; j >= 1; j--) det.push(N / Math.pow(2, j));
+      lect.fijar('borrosa', String(N / Math.pow(2, n)));
+      lect.fijar('detalles', det.length ? det.join(' + ') : 'ninguno');
+      lect.fijar('total', (N / Math.pow(2, n)) + (det.length ? ' + ' + det.join(' + ') : '') + ' = ' + N);
+      L.etiquetar('La pirámide de una señal de 512 muestras con ' + n + ' pisos: la versión borrosa del último tiene ' + (N >> n) + ' muestras');
+    };
+    const mando = Curso.mando('#r2-mandos', {
+      etiqueta: 'Pisos que subes', min: 0, max: 8, paso: 1, valor: e.niv, decimales: 0, reto: 'reto-2',
+      alCambiar: v => { e.niv = v; pintar(); L.dibujar(); },
+    });
+    pintar();
+    Curso.reto('reto-2', {
+      titulo: 'Sube por la pirámide', nivel: 'fácil',
+      comprobar: () => {
+        if (e.niv === 5) return { ok: true, mensaje: 'La versión borrosa tiene 16 muestras.' };
+        const n = N >> e.niv;
+        return { ok: false, mensaje: n > 16 ? 'La versión borrosa todavía tiene ' + n + ' muestras: sube más pisos.' : 'Te has pasado: ahora tiene solo ' + n + ' muestras.' };
+      },
+      resolver: () => mando.fijar(5),
+      pista: ['Cada piso parte la versión borrosa por la mitad.', '512, 256, 128, 64, 32…'],
+      exito: '<p>Cada piso ve la señal con la mitad de detalle que el de abajo, como una octava del piano. Y las cuentas salen: 16 + 16 + 32 + 64 + 128 + 256 = 512. La pirámide no inventa números ni pierde ninguno.</p>',
+    });
+  })();
+
+
+  // ── Reto 3 · Guarda solo lo grande (deslizador y elegir) ─────────────────────────────────────────────
+  // Escalones de 1.024 muestras: la pirámide de Haar frente a las norias de Fourier, con los K números más grandes.
+  (function () {
+    const N = 1024, x = CALC.escalones(N);
+    const comp = { haar: CALC.compresorWavelet(x, 'haar', 8), fourier: CALC.compresorFourier(x) };
+    const e = { pct: 6, metodo: 'fourier', rec: null, snr: 0, K: 0 };
+    const recalcular = () => {
+      e.K = Math.max(1, Math.round(e.pct / 100 * N));
+      e.rec = comp[e.metodo].reconstruir(e.K);
+      e.snr = CALC.snr(x, e.rec);
+    };
+    let lect = null;
+    const ymin = Math.min.apply(null, x) - 0.3, ymax = Math.max.apply(null, x) + 0.3;
+    const L = G.lienzo('#r3-escena', {
+      alto: altoDe(220, 260),
+      etiqueta: 'Una señal de escalones, en verde, y la señal que vuelve al guardar solo una parte de los números, en naranja',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { x: [0, N], y: [ymin, ymax], marcasX: [0, 256, 512, 768, 1024], marcasY: false, etiquetaX: 'muestra', margen: { izquierda: 12, derecha: 12, arriba: 12, abajo: 32 }, C });
+        G.linea(ctx, esc, null, x, { t0: 0, dt: 1, color: C.senal, ancho: 2, alfa: 0.9, C });
+        if (e.rec) G.linea(ctx, esc, null, e.rec, { t0: 0, dt: 1, color: C.respuesta, ancho: 2, C });
+      },
+    });
+    const pintar = () => {
+      recalcular();
+      if (lect) {
+        lect.fijar('pct', num(e.pct, 1) + ' %');
+        lect.fijar('K', num(e.K) + ' de ' + num(N));
+        lect.fijar('snr', dB(e.snr));
+        lect.clase('snr', e.snr >= 30 ? 'destacada' : 'respuesta');
+      }
+      L.dibujar();
+    };
+    const mandoPct = Curso.mando('#r3-mandos', { etiqueta: 'Números que guardas', min: 1, max: 20, paso: 0.5, valor: e.pct, formato: v => num(v, 1) + ' %', reto: 'reto-3', alCambiar: v => { e.pct = v; pintar(); } });
+    const eleccion = Curso.eleccion('#r3-mandos', {
+      etiqueta: 'Cómo guardas', valor: e.metodo, reto: 'reto-3',
+      opciones: [{ valor: 'haar', texto: 'Pirámide de Haar' }, { valor: 'fourier', texto: 'Norias (Fourier)' }],
+      alCambiar: v => { e.metodo = v; pintar(); },
+    });
+    lect = Curso.lecturas('#r3-lecturas', [{ id: 'pct', nombre: 'Guardado' }, { id: 'K', nombre: 'Números', clase: 'cuerpo' }, { id: 'snr', nombre: 'Parecido', clase: 'respuesta' }]);
+    pintar();
+    Curso.reto('reto-3', {
+      titulo: 'Guarda solo lo grande', nivel: 'medio',
+      comprobar: () => {
+        if (e.pct <= 6 && e.snr >= 30) return { ok: true, mensaje: 'Con ' + num(e.pct, 1) + ' % de los números, la señal vuelve con ' + dB(e.snr) + '.' };
+        if (e.pct > 6) return { ok: false, mensaje: 'Guardas el ' + num(e.pct, 1) + ' %, y el tope es el 6 %. ' + (e.metodo === 'haar' ? 'Baja un poco el deslizador.' : 'Con las norias, aunque guardes mucho, el parecido sigue bajo: prueba la pirámide.') };
+        if (e.metodo === 'fourier') return { ok: false, mensaje: 'Con las norias de Fourier no se llega: cada salto necesita muchísimas. Prueba la pirámide de Haar.' };
+        return { ok: false, mensaje: 'Casi: con ' + num(e.pct, 1) + ' % el parecido es de ' + dB(e.snr) + '. Sube el porcentaje sin pasar del 6 %.' };
+      },
+      resolver: () => { eleccion.fijar('haar'); mandoPct.fijar(6); },
+      pista: ['Prueba la pirámide: un escalón le cuesta a Fourier muchas norias.', 'Con Haar, cada salto deja solo un detalle grande en cada piso; con el 6 % de los números caben todos.'],
+      exito: '<p>Un escalón es un mal trago para las norias: hacen falta muchísimas y aun así quedan flecos. Para la pirámide de Haar es fácil, porque solo hay detalles grandes donde salta la señal y el resto son ceros. Comprimir es eso: guardar los pocos números grandes y tirar los pequeños.</p>',
+    });
+  })();
+
+  // ── Reto 4 · Cada señal, con su wavelet (elegir) ─────────────────────────────────────────────────────
+  (function () {
+    const N = 4096, K = Math.round(0.05 * N);
+    const señales = [
+      { id: 'A', nombre: 'Señal A: escalones', x: CALC.escalones(N), mejor: 'haar' },
+      { id: 'B', nombre: 'Señal B: una oscilación que se frena', x: CALC.oscilacion(N), mejor: 'db4' },
+    ];
+    const comp = {};
+    const reconstruccion = (s, w) => {
+      const clave = s.id + w;
+      if (!comp[clave]) { const c = CALC.compresorWavelet(s.x, w, 8), rec = c.reconstruir(K); comp[clave] = { rec, snr: CALC.snr(s.x, rec) }; }
+      return comp[clave];
+    };
+    // Las dos wavelets, dibujadas: se obtienen deshaciendo una pirámide con un solo detalle encendido.
+    function forma(wavelet) {
+      const M = 512, det = [new Float64Array(256), new Float64Array(128), new Float64Array(64), new Float64Array(32), new Float64Array(16)];
+      det[4][8] = 1;
+      const y = Senal.idwt({ aprox: new Float64Array(16), detalles: det, wavelet, longitud: M, niveles: 5 });
+      let a = M, b = 0, m = 0;
+      for (let i = 0; i < M; i++) m = Math.max(m, Math.abs(y[i]));
+      for (let i = 0; i < M; i++) if (Math.abs(y[i]) > 0.02 * m) { a = Math.min(a, i); b = Math.max(b, i); }
+      const pad = Math.round((b - a) * 0.15) + 2;
+      return { y: y.slice(Math.max(0, a - pad), Math.min(M, b + pad + 1)), m };
+    }
+    const formas = { haar: forma('haar'), db4: forma('db4') };
+    G.lienzo('#r4-wavelets', {
+      alto: altoDe(110, 120),
+      etiqueta: 'Las dos wavelets: la de Haar, un escalón hacia arriba y otro hacia abajo, y la de Daubechies, una onda corta y suave',
+      dibujar: (ctx, w, h, C) => {
+        [['haar', w < 500 ? 'Haar' : 'Haar: un escalón y otro'], ['db4', w < 500 ? 'Daubechies' : 'Daubechies: una onda corta y suave']].forEach(([k, titulo], i) => {
+          const x0 = i * w / 2 + 14, ancho = w / 2 - 28, f = formas[k], n = f.y.length;
+          const esc = G.ejes(ctx, { caja: { x: x0, y: 22, w: ancho, h: h - 34 }, x: [0, n - 1], y: [-1.25 * f.m, 1.25 * f.m], marcasX: false, marcasY: false, rejilla: false, C });
+          G.linea(ctx, esc, null, f.y, { t0: 0, dt: 1, color: C.plantilla, ancho: 2.2, C });
+          G.texto(ctx, x0 + ancho / 2, 14, titulo, { alinear: 'center', color: C.suave, tam: w < 460 ? 10 : 11, peso: 600, C });
+        });
+      },
+    });
+    const sel = { A: 'db4', B: 'haar' };
+    const lienzos = {};
+    const cont = document.getElementById('r4-paneles');
+    señales.forEach(s => {
+      const panel = crear('div', { class: 'panel-mini' });
+      panel.appendChild(crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, s.nombre)));
+      const escena = crear('div', { class: 'escena' });
+      panel.appendChild(escena);
+      cont.appendChild(panel);
+      const rangoY = (() => { let lo = Infinity, hi = -Infinity; for (const v of s.x) { lo = Math.min(lo, v); hi = Math.max(hi, v); } return [lo - 0.3, hi + 0.3]; })();
+      lienzos[s.id] = G.lienzo(escena, {
+        alto: altoDe(150, 170),
+        etiqueta: s.nombre + ': la señal en verde y, en naranja, lo que vuelve al guardar el 5 % de los números con la wavelet elegida',
+        dibujar: (ctx, w, h, C) => {
+          const esc = G.ejes(ctx, { x: [0, N], y: rangoY, marcasX: false, marcasY: false, rejilla: false, margen: { izquierda: 8, derecha: 8, arriba: 8, abajo: 10 }, C });
+          G.linea(ctx, esc, null, s.x, { t0: 0, dt: 1, color: C.senal, ancho: 1.8, alfa: 0.9, C });
+          G.linea(ctx, esc, null, reconstruccion(s, sel[s.id]).rec, { t0: 0, dt: 1, color: C.respuesta, ancho: 1.8, C });
+        },
+      });
+      s.eleccion = Curso.eleccion(panel, {
+        etiqueta: s.id + ' se guarda mejor con…', valor: sel[s.id], reto: 'reto-4',
+        opciones: [{ valor: 'haar', texto: 'Haar' }, { valor: 'db4', texto: 'Daubechies' }],
+        alCambiar: v => { sel[s.id] = v; actualizar(s); },
+      });
+      s.lect = Curso.lecturas(panel, [{ id: 'snr', nombre: 'Parecido con tu elección', clase: 'respuesta' }]);
+    });
+    function actualizar(s) {
+      const r = reconstruccion(s, sel[s.id]);
+      s.lect.fijar('snr', dB(r.snr));
+      lienzos[s.id].dibujar();
+    }
+    señales.forEach(actualizar);
+    Curso.reto('reto-4', {
+      titulo: 'Cada señal, con su wavelet', nivel: 'medio',
+      comprobar: () => {
+        const bien = señales.filter(s => sel[s.id] === s.mejor);
+        if (bien.length === 2) return { ok: true, mensaje: 'Las dos son las que mejor guardan: ' + dB(reconstruccion(señales[0], 'haar').snr) + ' para A con Haar y ' + dB(reconstruccion(señales[1], 'db4').snr) + ' para B con Daubechies.' };
+        if (bien.length === 1) return { ok: false, mensaje: 'La ' + bien[0].id + ' ya está. En la otra, mira cuál de las dos wavelets deja la reconstrucción naranja más pegada a la verde.' };
+        return { ok: false, mensaje: 'Compara el parecido de cada una con las dos wavelets: la mejor deja la reconstrucción naranja tapando la verde.' };
+      },
+      resolver: () => señales.forEach(s => s.eleccion.fijar(s.mejor)),
+      pista: ['Transformar es medir el parecido, y una wavelet guarda bien lo que se le parece.', '¿A qué se parece cada wavelet, a un escalón o a una onda suave?'],
+      exito: '<p>Una wavelet guarda bien lo que se le parece. La de Haar es un escalón y guarda escalones, de modo que a la señal A le sobra con el 5 % de los números. La de Daubechies es una onda suave y guarda curvas, así que a la B le va mucho mejor que con Haar. No hay una wavelet mejor para todo.</p>',
+    });
+  })();
+
+
+  // ── Reto 5 · Baldosas o borrón (deslizador, tocar y elegir) ──────────────────────────────────────────
+  // Una huella sintética de 128 × 128 comprimida con una imitación de JPEG (cosenos en bloques de 8 × 8) y con una pirámide
+  // de wavelets suaves (db4), guardando en los dos el mismo número de coeficientes, los más grandes. Los dos métodos salen
+  // en orden aleatorio y sin nombre hasta que el lector acierta cuál tiene las baldosas.
+  (function () {
+    const n = 128, TOTAL = n * n;
+    const azar = Curso.azar();
+    const orden = azar.real() < 0.5 ? ['bloques', 'wavelet'] : ['wavelet', 'bloques'];   // el método 1 y el método 2
+    const e = { N: 8, sel: 'nada', revelado: false, datos: null };
+    const NOMBRES = { bloques: 'Bloques de 8 × 8 (JPEG)', wavelet: 'Pirámide de wavelets', original: 'Original' };
+    let hecho = false;
+    const rgbDe = color => { const c = document.createElement('canvas'); c.width = c.height = 1; const t = c.getContext('2d'); t.fillStyle = color; t.fillRect(0, 0, 1, 1); const d = t.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2]]; };
+    const fuera = {};                                              // las imágenes ya pintadas, una por panel
+    const pintarImagen = (clave, v, C) => {
+      const c = fuera[clave] || (fuera[clave] = document.createElement('canvas'));
+      c.width = c.height = n;
+      const t = c.getContext('2d'), im = t.createImageData(n, n), tinta = rgbDe(C.cuerpo), papel = rgbDe(C.pantalla);
+      for (let i = 0; i < TOTAL; i++) {
+        const u = limitar(v[i], 0, 1);
+        for (let k = 0; k < 3; k++) im.data[4 * i + k] = Math.round(tinta[k] + (papel[k] - tinta[k]) * u);
+        im.data[4 * i + 3] = 255;
+      }
+      t.putImageData(im, 0, 0);
+    };
+    let lect = null, eleccion = null;
+    const calcular = () => {
+      const K = Math.max(1, Math.round(TOTAL / e.N));
+      const r = { bloques: e.cB.reconstruir(K), wavelet: e.cW.reconstruir(K) };
+      e.rec = r;
+      e.m = {};
+      for (const k of ['bloques', 'wavelet']) e.m[k] = { psnr: CALC.psnr(e.original, r[k]), juntas: CALC.bloqueo(r[k], n) };
+      e.dirty = true;
+    };
+    const geometria = w => { const mx = 10, gap = w < 420 ? 8 : 14, pw = (w - 2 * mx - 2 * gap) / 3; return { mx, gap, pw, y0: 34 }; };
+    const L = G.lienzo('#r5-escena', {
+      alto: w => { const g = geometria(w); return Math.round(g.y0 + g.pw + 14); },
+      etiqueta: 'Tres imágenes de una huella sintética: la original y dos versiones muy comprimidas con métodos distintos; una de ellas se llena de baldosas de 8 píxeles. Se toca la imagen con baldosas.',
+      dibujar: (ctx, w, h, C) => {
+        const g = geometria(w);
+        if (!e.original) { G.texto(ctx, w / 2, h / 2, 'Calculando la huella…', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+        if (e.dirty || e.oscuro !== C.oscuro) {
+          pintarImagen('original', e.original, C); pintarImagen('bloques', e.rec.bloques, C); pintarImagen('wavelet', e.rec.wavelet, C);
+          e.dirty = false; e.oscuro = C.oscuro;
+        }
+        const paneles = ['original', orden[0], orden[1]];
+        ctx.imageSmoothingEnabled = g.pw < n;                      // si se encoge, que se vea suave; si se amplía, nítido
+        paneles.forEach((clave, i) => {
+          const x0 = g.mx + i * (g.pw + g.gap);
+          ctx.drawImage(fuera[clave], x0, g.y0, g.pw, g.pw);
+          const marcado = e.sel === clave && clave !== 'original';
+          ctx.save(); ctx.strokeStyle = marcado ? C.acento : C.linea; ctx.lineWidth = marcado ? 3 : 1; ctx.strokeRect(x0 - 0.5, g.y0 - 0.5, g.pw + 1, g.pw + 1); ctx.restore();
+          const nombre = clave === 'original' ? 'Original' : (e.revelado ? (clave === 'bloques' ? 'Bloques de 8 × 8' : 'Wavelets') : 'Método ' + i);
+          G.texto(ctx, x0 + g.pw / 2, 14, nombre, { alinear: 'center', color: marcado ? C.acento : C.texto, tam: w < 420 ? 11 : 12, peso: 600, C });
+          if (clave !== 'original') G.texto(ctx, x0 + g.pw / 2, 27, marcado ? 'tu marca' : 'toca para marcar', { alinear: 'center', color: marcado ? C.acento : C.tenue, tam: 10, C });
+          else G.texto(ctx, x0 + g.pw / 2, 27, 'sin comprimir', { alinear: 'center', color: C.tenue, tam: 10, C });
+        });
+      },
+    });
+    const refrescarLecturas = () => {
+      if (!lect || !e.m) return;
+      orden.forEach((k, i) => {
+        lect.fijar('p' + (i + 1), num(e.m[k].psnr, 1) + ' dB');
+        lect.fijar('j' + (i + 1), num(e.m[k].juntas, 2));
+      });
+    };
+    const mando = Curso.mando('#r5-mandos', {
+      etiqueta: 'Compresión', min: 4, max: 60, paso: 1, valor: e.N, formato: v => 'se guarda 1 de cada ' + num(v) + ' números', reto: 'reto-5',
+      alCambiar: v => { e.N = v; if (e.original) { calcular(); refrescarLecturas(); L.dibujar(); } },
+    });
+    eleccion = Curso.eleccion('#r5-mandos', {
+      etiqueta: 'Marca la imagen con baldosas', valor: 'nada', reto: 'reto-5',
+      opciones: [{ valor: 'nada', texto: 'Ninguna todavía' }, { valor: orden[0], texto: 'Método 1' }, { valor: orden[1], texto: 'Método 2' }],
+      alCambiar: v => { e.sel = v; L.dibujar(); },
+    });
+    lect = Curso.lecturas('#r5-lecturas', [
+      { id: 'p1', nombre: 'Método 1 · parecido', clase: 'respuesta' }, { id: 'j1', nombre: 'Método 1 · juntas', clase: 'cuerpo' },
+      { id: 'p2', nombre: 'Método 2 · parecido', clase: 'respuesta' }, { id: 'j2', nombre: 'Método 2 · juntas', clase: 'cuerpo' },
+    ]);
+    L.canvas.classList.add('tocable');
+    L.canvas.addEventListener('click', ev => {
+      const r = L.canvas.getBoundingClientRect(), g = geometria(L.w), px = ev.clientX - r.left, py = ev.clientY - r.top;
+      if (py < 0 || py > g.y0 + g.pw + 8) return;
+      for (let i = 1; i <= 2; i++) {
+        const x0 = g.mx + i * (g.pw + g.gap);
+        if (px >= x0 - g.gap / 2 && px <= x0 + g.pw + g.gap / 2) { eleccion.fijar(orden[i - 1]); return; }
+      }
+    });
+    const preparar = () => {
+      if (hecho) return;
+      hecho = true;
+      e.original = CALC.huella(n);
+      e.cB = CALC.compresorBloques(e.original, n);
+      e.cW = CALC.compresorWavelet2D(e.original, n, 4, 'db4');
+      calcular(); refrescarLecturas(); L.dibujar();
+    };
+    Curso.alVerse(L.canvas, preparar);
+    Curso.reto('reto-5', {
+      titulo: 'Baldosas o borrón', nivel: 'difícil',
+      comprobar: () => {
+        preparar();
+        if (e.N < 20) return { ok: false, mensaje: e.sel !== 'nada' ? 'A esta compresión todavía casi no se notan las baldosas: aprieta más, hasta 1 de cada 20 o más.' : 'Aprieta la compresión: en las imágenes comprimidas, uno de los métodos va a dejar una cuadrícula.' };
+        if (e.sel === 'nada') return { ok: false, mensaje: 'Ya aprieta bastante. Toca la imagen en la que se ve una cuadrícula de 8 píxeles.' };
+        if (e.sel !== 'bloques') return { ok: false, mensaje: 'Esa pierde detalle poco a poco, pero no tiene cuadrícula. Busca la imagen donde las crestas se cortan en cuadrados.' };
+        e.revelado = true; L.dibujar();
+        return { ok: true, mensaje: 'Es la de bloques de 8 × 8: las baldosas aparecen en las juntas.' };
+      },
+      resolver: () => { preparar(); mando.fijar(20); eleccion.fijar('bloques'); },
+      pista: ['Las baldosas aparecen en las juntas: busca una cuadrícula cada 8 píxeles.', 'Compara las crestas a la misma compresión en los dos métodos: uno las corta en cuadrados y el otro las emborrona.'],
+      exito: '<p>JPEG resume cada bloque de 8 × 8 por su cuenta, y al apretar, los bloques vecinos dejan de casar. En una huella escaneada a 500 puntos por pulgada, las crestas miden casi lo mismo que esos bloques, y las baldosas engañaban a los programas que buscan minucias. Por eso el FBI eligió una pirámide de wavelets, que al apretar emborrona en vez de enlosar. La lectura «juntas» lo mide: vale 1 cuando no hay ninguna y sube con las baldosas.</p><p class="nota-reto">Imitación simplificada: no son los códecs reales, sino los mismos coeficientes grandes de cada método, sobre una huella sintética.</p>',
+    });
+  })();
+
+  // ── Reto 6 · Borra el ruido, no los saltos (deslizador y elegir) ─────────────────────────────────────
+  // Escalones de 1.024 muestras con ruido blanco de desviación 0,25 (relación señal-ruido de unos 12 dB). La pirámide de Haar
+  // tiene 8 pisos; arriba se ven todos los detalles como tallos, con el umbral como una banda púrpura.
+  (function () {
+    const N = 1024, x = CALC.escalones(N), az = Senal.azar(5), ruidosa = new Float64Array(N);
+    for (let i = 0; i < N; i++) ruidosa[i] = x[i] + 0.25 * az.normal();
+    const coefs = Senal.dwt(ruidosa, 8, 'haar'), sigma = CALC.sigmaDe(coefs.detalles), entrada = CALC.snr(x, ruidosa);
+    const e = { k: 0, modo: 'duro', rec: ruidosa, snr: entrada, viven: 100, lp: null };
+    const lp = () => e.lp || (e.lp = CALC.mejorPasoBajo(x, ruidosa));
+    // Todos los detalles, del piso más fino al más grueso, para dibujarlos en fila.
+    const todos = [], limites = [];
+    for (let j = 0; j < coefs.detalles.length; j++) { limites.push(todos.length); for (const v of coefs.detalles[j]) todos.push(v); }
+    const dmax = 9 * sigma;                       // escala de los tallos: los grandes se recortan en el borde
+    const ymin = Math.min.apply(null, ruidosa) - 0.3, ymax = Math.max.apply(null, ruidosa) + 0.3;
+    let lect = null;
+    const recalcular = () => {
+      const lambda = e.k * sigma;
+      e.rec = e.k === 0 ? ruidosa : CALC.limpiar(coefs, lambda, e.modo);
+      e.snr = CALC.snr(x, e.rec);
+      let v = 0;
+      for (const d of todos) if (Math.abs(d) > lambda) v++;
+      e.viven = 100 * v / todos.length;
+    };
+    const L1 = G.lienzo('#r6-detalles', {
+      alto: altoDe(150, 170),
+      etiqueta: 'Todos los detalles de la pirámide como tallos, del piso más fino al más grueso, con una banda púrpura que es el umbral: los que quedan dentro se borran',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { x: [0, todos.length], y: [-dmax, dmax], marcasX: false, marcasY: false, rejilla: false, margen: { izquierda: 8, derecha: 8, arriba: 20, abajo: 8 }, C });
+        const lambda = e.k * sigma;
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.plantilla, C.oscuro ? 0.2 : 0.12);
+        ctx.fillRect(esc.caja.x, esc.y(lambda), esc.caja.w, Math.max(0, esc.y(-lambda) - esc.y(lambda)));
+        const y0 = esc.y(0);
+        ctx.lineWidth = 1;
+        for (let i = 0; i < todos.length; i++) {
+          const vivo = Math.abs(todos[i]) > lambda || e.k === 0;
+          ctx.strokeStyle = vivo ? C.senal : G.alfa(C.ruido, 0.5);
+          const px = esc.x(i + 0.5);
+          ctx.beginPath(); ctx.moveTo(px, y0); ctx.lineTo(px, esc.y(limitar(todos[i], -dmax, dmax))); ctx.stroke();
+        }
+        ctx.setLineDash([5, 3]); ctx.strokeStyle = C.plantilla; ctx.lineWidth = 1.6;
+        for (const s of [1, -1]) { ctx.beginPath(); ctx.moveTo(esc.caja.x, esc.y(s * lambda)); ctx.lineTo(esc.caja.x + esc.caja.w, esc.y(s * lambda)); ctx.stroke(); }
+        ctx.restore();
+        G.texto(ctx, esc.caja.x + 2, 11, 'piso 1 (el más fino)', { color: C.tenue, tam: 10, base: 'middle', C });
+        G.texto(ctx, esc.caja.x + esc.caja.w - 2, 11, 'pisos gruesos', { alinear: 'right', color: C.tenue, tam: 10, base: 'middle', C });
+      },
+    });
+    const L2 = G.lienzo('#r6-escena', {
+      alto: altoDe(210, 250),
+      etiqueta: 'La señal de escalones con ruido, en coral; la señal verdadera, punteada en tinta, y la que queda tras limpiar con el umbral, en naranja',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { x: [0, N], y: [ymin, ymax], marcasX: false, marcasY: false, etiquetaX: 'muestra', margen: { izquierda: 8, derecha: 8, arriba: 10, abajo: 30 }, C });
+        G.linea(ctx, esc, null, ruidosa, { t0: 0, dt: 1, color: C.ruido, ancho: 1.1, alfa: e.k === 0 ? 0.9 : 0.5, halo: false, C });
+        G.linea(ctx, esc, null, x, { t0: 0, dt: 1, color: C.cuerpo, ancho: 1.4, guiones: [5, 4], alfa: 0.75, halo: false, C });
+        if (e.k > 0) G.linea(ctx, esc, null, e.rec, { t0: 0, dt: 1, color: C.respuesta, ancho: 2.2, C });
+      },
+    });
+    const pintar = () => {
+      recalcular();
+      const b = lp();
+      lect.fijar('sigma', num(sigma, 3));
+      lect.fijar('umbral', num(e.k * sigma, 2));
+      lect.fijar('viven', num(e.viven, 0) + ' %');
+      lect.fijar('entrada', num(entrada, 1) + ' dB');
+      lect.fijar('wavelet', num(e.snr, 1) + ' dB');
+      lect.fijar('lp', num(b.snr, 1) + ' dB');
+      lect.clase('wavelet', e.snr >= b.snr + 3 ? 'destacada' : 'respuesta');
+      L1.dibujar(); L2.dibujar();
+    };
+    lect = Curso.lecturas('#r6-lecturas', [
+      { id: 'sigma', nombre: 'Ruido estimado (σ)', clase: 'cuerpo' },
+      { id: 'umbral', nombre: 'Umbral', clase: 'cuerpo' },
+      { id: 'viven', nombre: 'Detalles que sobreviven', clase: 'senal' },
+      { id: 'entrada', nombre: 'Con ruido', clase: 'cuerpo' },
+      { id: 'wavelet', nombre: 'Limpia con wavelets', clase: 'respuesta' },
+      { id: 'lp', nombre: 'Mejor paso bajo', clase: 'cuerpo' },
+    ]);
+    const mando = Curso.mando('#r6-mandos', { etiqueta: 'Umbral', min: 0, max: 8, paso: 0.1, valor: e.k, formato: v => num(v, 1) + ' veces σ', reto: 'reto-6', alCambiar: v => { e.k = v; pintar(); } });
+    const eleccion = Curso.eleccion('#r6-mandos', {
+      etiqueta: 'Tipo de umbral', valor: e.modo, reto: 'reto-6',
+      opciones: [{ valor: 'duro', texto: 'Duro' }, { valor: 'suave', texto: 'Suave' }],
+      alCambiar: v => { e.modo = v; pintar(); },
+    });
+    Curso.alVerse(L2.canvas, pintar);
+    pintar();
+    Curso.reto('reto-6', {
+      titulo: 'Borra el ruido, no los saltos', nivel: 'difícil',
+      comprobar: () => {
+        const b = lp(), falta = b.snr + 3 - e.snr;
+        if (falta <= 0) return { ok: true, mensaje: 'La limpieza con wavelets queda en ' + num(e.snr, 1) + ' dB, por encima del mejor paso bajo (' + num(b.snr, 1) + ' dB).' };
+        if (e.k === 0) return { ok: false, mensaje: '' };
+        if (e.k < 2.5) return { ok: false, mensaje: 'Todavía queda ruido: hay muchos detalles pequeños sin borrar. Sube el umbral.' };
+        if (e.k > 5) return { ok: false, mensaje: 'Te has pasado: el umbral ya borra también los detalles de los saltos. Bájalo.' };
+        if (e.modo === 'suave') return { ok: false, mensaje: 'Estás a ' + num(falta, 1) + ' dB de lo necesario. Casi: el suave encoge también los saltos que deja; prueba el duro.' };
+        return { ok: false, mensaje: 'Estás a ' + num(falta, 1) + ' dB de lo necesario. Ajusta el umbral un poco arriba o abajo.' };
+      },
+      resolver: () => { eleccion.fijar('duro'); mando.fijar(3.7); },
+      pista: ['El ruido deja muchos detalles pequeños; los saltos, pocos y grandes. El umbral tiene que quedar justo por encima del ruido.', 'Prueba con unas 4 veces σ y el umbral duro.'],
+      exito: '<p>El umbral no mira la frecuencia, mira el tamaño. Borra los detalles pequeños, que son casi todo ruido, y deja los grandes, que son los saltos. Donoho y Johnstone propusieron como punto de partida un umbral de unas cuatro veces el nivel del ruido, que crece muy despacio con la longitud de la señal. El paso bajo, en cambio, no distingue el ruido agudo del filo de un salto, porque los dos son agudos, y se lleva los dos: convierte los saltos en rampas.</p>',
+    });
+  })();
+
+
+  // ── En tu voz: limpia tu grabación con el umbral wavelet y con un paso bajo, y compáralos oyendo y mirando ─────
+  (function () {
+    const FS = 16000, NIV = 6;
+    const st = { x: null, fs: FS, ruido: null, anadir: true, snr: 15, k: 1, modo: 'suave', porPiso: false, corte: 3400, R: null, rango: [-90, 0] };
+    let programado = false, nota = null, lect = null;
+    const lab = Curso.voz('#voz-lab', {
+      ejemplos: ['frase', 'palmadas'], fsAnalisis: FS, maxSegundos: 8,
+      alCargar: (x, fs) => { st.x = x; st.fs = fs; st.ruido = null; analizar(); },
+    });
+    const panel = lab.panel;
+    // Mandos: ruido que se añade, altura del umbral, tipo de umbral, un umbral por piso y el corte del paso bajo.
+    const mandos = crear('div', { class: 'mandos' });
+    panel.appendChild(mandos);
+    const filaRuido = crear('div', { class: 'botones' });
+    mandos.appendChild(filaRuido);
+    Curso.botones(filaRuido, [{ id: 'ruido', texto: 'Añadir ruido', pulsado: true, alPulsar: on => { st.anadir = on; programar(); } }]);
+    Curso.mando(mandos, { etiqueta: 'Cuánto ruido', min: 5, max: 40, paso: 1, valor: st.snr, formato: v => 'a ' + num(v) + ' dB por debajo de tu voz', alCambiar: v => { st.snr = v; programar(); } });
+    Curso.mando(mandos, { etiqueta: 'Umbral', min: 0, max: 1.5, paso: 0.05, valor: st.k, formato: v => num(v, 2) + ' × el universal', alCambiar: v => { st.k = v; programar(); } });
+    Curso.eleccion(mandos, { etiqueta: 'Tipo de umbral', valor: st.modo, opciones: [{ valor: 'suave', texto: 'Suave' }, { valor: 'duro', texto: 'Duro' }], alCambiar: v => { st.modo = v; programar(); } });
+    const filaPiso = crear('div', { class: 'botones' });
+    mandos.appendChild(filaPiso);
+    Curso.botones(filaPiso, [{ id: 'piso', texto: 'Un umbral para cada piso', pulsado: false, alPulsar: on => { st.porPiso = on; programar(); } }]);
+    Curso.mando(mandos, { etiqueta: 'Corte del paso bajo', min: 2000, max: 6000, paso: 100, valor: st.corte, formato: v => num(v) + ' Hz', alCambiar: v => { st.corte = v; programar(); } });
+    // Escuchar las tres versiones, todas con la misma ganancia.
+    const filaAudio = crear('div', { class: 'botones' });
+    panel.appendChild(filaAudio);
+    const fuente = clave => () => (st.R ? { x: st.R.audio[clave], fs: st.fs, normalizar: false, volumen: 1 } : null);
+    Curso.audio.boton(filaAudio, fuente('orig'), 'Original');
+    Curso.audio.boton(filaAudio, fuente('umbral'), 'Con umbral');
+    Curso.audio.boton(filaAudio, fuente('bajo'), 'Con paso bajo');
+    // Tres espectrogramas apilados, con la misma escala de color.
+    const mapas = [['orig', 'Original, con el ruido'], ['umbral', 'Limpia con el umbral wavelet'], ['bajo', 'Limpia con el paso bajo']].map(([clave, titulo], i, lista) => {
+      const escena = crear('div', { class: 'escena' });
+      panel.appendChild(escena);
+      const L = G.lienzo(escena, {
+        alto: altoDe(i === lista.length - 1 ? 170 : 140, i === lista.length - 1 ? 190 : 160),
+        etiqueta: 'Espectrograma: ' + titulo + '. Frecuencia hacia arriba, tiempo hacia la derecha, con la misma escala en dB que los otros dos.',
+        dibujar: (ctx, w, h, C) => {
+          const E = st.R ? st.R.E[clave] : null, ultimo = i === lista.length - 1;
+          const margen = { izquierda: w < 380 ? 44 : 52, derecha: w < 380 ? 52 : 60, arriba: 18, abajo: ultimo ? 30 : 8 };
+          const esc = G.ejes(ctx, { x: [0, Math.max(0.1, st.R ? st.R.dur : 1)], y: [0, st.fs / 2], marcasX: ultimo ? undefined : false, marcasY: [0, 2000, 4000, 6000, 8000].filter(v => v <= st.fs / 2), formatoX: v => num(v, 1), formatoY: v => num(v), rejilla: false,
+            etiquetaX: ultimo ? 'tiempo (s)' : undefined, margen, C });
+          if (E) G.mapa(ctx, esc, { datos: E.db, nF: E.nF, nT: E.nT, t: E.t, f: E.f, rango: st.rango });
+          ctx.save(); ctx.strokeStyle = C.eje; ctx.strokeRect(Math.round(esc.caja.x) + 0.5, Math.round(esc.caja.y) + 0.5, Math.round(esc.caja.w), Math.round(esc.caja.h)); ctx.restore();
+          G.leyenda(ctx, { x: w - margen.derecha + 14, y: esc.caja.y + 6, ancho: 9, alto: Math.max(36, esc.caja.h - 6), rango: st.rango, etiqueta: 'dB', C });
+          G.texto(ctx, 6, 9, 'Hz', { color: C.tenue, tam: 10, base: 'middle', C });
+          G.texto(ctx, esc.caja.x + 4, 9, titulo, { color: C.suave, tam: 11, peso: 600, base: 'middle', C });
+          if (!E) G.texto(ctx, esc.caja.x + esc.caja.w / 2, esc.caja.y + esc.caja.h / 2, 'Graba, sube un audio o elige un ejemplo', { alinear: 'center', color: C.tenue, tam: 12, C });
+        },
+      });
+      return L;
+    });
+    lect = Curso.lecturas(panel, [
+      { id: 'sigma', nombre: 'Ruido estimado (σ)', clase: 'cuerpo' },
+      { id: 'viven', nombre: 'Detalles que sobreviven', clase: 'senal' },
+      { id: 'sOrig', nombre: 'Silencios: original', clase: 'cuerpo' },
+      { id: 'sUmbral', nombre: 'Silencios: con umbral', clase: 'respuesta' },
+      { id: 'sBajo', nombre: 'Silencios: con paso bajo', clase: 'respuesta' },
+    ]);
+    nota = crear('p', { class: 'nota-reto' }, 'Elige un audio o graba el tuyo para limpiarlo.');
+    panel.appendChild(nota);
+
+    function programar() {
+      if (programado || !st.x) return;
+      programado = true;
+      requestAnimationFrame(() => { programado = false; analizar(); });
+    }
+    // Nivel, en dBFS, de lo que suena en las tramas de 20 ms que menos sonaban en el original (el 10 % más silencioso).
+    function nivelSilencios(ref, otras) {
+      const T = Math.round(0.02 * st.fs), m = Math.floor(ref.length / T);
+      if (m < 3) return otras.map(() => NaN);
+      const en = [];
+      for (let f = 0; f < m; f++) { let s = 0; for (let i = f * T; i < (f + 1) * T; i++) s += ref[i] * ref[i]; en.push([s, f]); }
+      en.sort((a, b) => a[0] - b[0]);
+      const tramas = en.slice(0, Math.max(1, Math.ceil(0.1 * m))).map(a => a[1]);
+      return otras.map(v => {
+        let s = 0, c = 0;
+        for (const f of tramas) for (let i = f * T; i < (f + 1) * T; i++) { s += v[i] * v[i]; c++; }
+        return 20 * Math.log10(Math.max(1e-6, Math.sqrt(s / c)));
+      });
+    }
+    function analizar() {
+      const x = st.x;
+      if (!x || x.length < 64) { nota.textContent = 'Este audio es demasiado corto para analizarlo: prueba con uno de más de medio segundo.'; return; }
+      const n = x.length, dur = n / st.fs;
+      // 1. El ruido blanco que se añade (el mismo siempre para una grabación) y la entrada con ruido.
+      if (!st.ruido || st.ruido.length !== n) st.ruido = Senal.ruido('blanco', n, Senal.azar(3));
+      const y = Float64Array.from(x);
+      if (st.anadir) {
+        const g = Senal.rms(x) * Math.pow(10, -st.snr / 20);
+        for (let i = 0; i < n; i++) y[i] += g * st.ruido[i];
+      }
+      // 2. La pirámide, el nivel del ruido y el umbral.
+      const c = Senal.dwt(y, NIV, 'db4'), sigma = CALC.sigmaDe(c.detalles), universal = Senal.umbralUniversal(c.detalles, n);
+      let viven = 0, total = 0, limpia;
+      if (st.porPiso) {
+        const det = c.detalles.map(d => {
+          const lam = CALC.sigmaDe([d]) * Math.sqrt(2 * Math.log(Math.max(2, n))) * st.k;
+          for (const v of d) { total++; if (Math.abs(v) > lam) viven++; }
+          return Senal.umbral(d, lam, st.modo);
+        });
+        limpia = Senal.idwt({ aprox: c.aprox, detalles: det, wavelet: c.wavelet, longitud: c.longitud, niveles: c.niveles });
+      } else {
+        const lam = universal * st.k;
+        for (const d of c.detalles) for (const v of d) { total++; if (Math.abs(v) > lam) viven++; }
+        limpia = CALC.limpiar(c, lam, st.modo);
+      }
+      // 3. El paso bajo, de orden 4 y de ida y vuelta, para comparar.
+      let bajo;
+      try { bajo = Senal.filtfilt(Senal.butterworth(4, Math.min(st.corte, st.fs / 2 - 100), st.fs, 'pasoBajo'), y); } catch (err) { bajo = Float64Array.from(y); }
+      // 4. Los espectrogramas, con la misma escala, y lo que se oye, con la misma ganancia.
+      const nv = Math.max(32, Math.min(512, 1 << Math.floor(Math.log2(n)))), salto = Math.max(16, Math.round(nv / 4));
+      const E = {}, entradas = { orig: y, umbral: limpia, bajo };
+      let M = -Infinity;
+      for (const k of Object.keys(entradas)) { E[k] = Senal.espectrograma(entradas[k], st.fs, { n: nv, salto, ventana: 'hann', nfft: nv, suelo: -120 }); M = Math.max(M, E[k].max); }
+      st.rango = [M - 80, M];
+      let pico = 1e-9;
+      for (const k of Object.keys(entradas)) pico = Math.max(pico, Senal.pico(entradas[k]));
+      const ganancia = 0.8 / pico, audio = {};
+      for (const k of Object.keys(entradas)) audio[k] = entradas[k].map(v => v * ganancia);
+      st.R = { E, audio, dur };
+      // 5. Las lecturas y los avisos.
+      const sil = nivelSilencios(y, [y, limpia, bajo]);
+      const f = v => (Number.isFinite(v) ? num(v, 0) + ' dBFS' : '—');
+      lect.fijar('sigma', num(sigma, 4));
+      lect.fijar('viven', num(100 * viven / Math.max(1, total), 0) + ' %');
+      lect.fijar('sOrig', f(sil[0])); lect.fijar('sUmbral', f(sil[1])); lect.fijar('sBajo', f(sil[2]));
+      let saturado = 0;
+      for (let i = 0; i < n; i++) if (Math.abs(x[i]) >= 0.99) saturado++;
+      const avisos = [];
+      if (dur < 0.5) avisos.push('El audio dura menos de medio segundo: casi todo parecerá ruido y los números no son fiables.');
+      if (sigma < 1e-4) avisos.push('Los detalles más finos casi no tienen energía: o no hay ruido, o el móvil o el formato (AAC, MP3) ya lo han quitado. Activa «Añadir ruido» para ver el efecto.');
+      if (saturado / n > 0.001) avisos.push('La grabación está saturada: los recortes crean detalles grandes en todos los pisos, y el umbral los toma por señal.');
+      nota.textContent = avisos.length ? avisos.join(' ') : (st.anadir
+        ? 'Con «Añadir ruido» activado, el ruido blanco que ves es sintético. Fíjate en los silencios: el umbral los deja mucho más bajos que el paso bajo, y en el espectrograma mira qué pasa con la «s», arriba, entre 4.000 y 7.000 Hz.'
+        : 'Sin ruido añadido, lo que se limpia es el ruido que ya traía tu grabación.');
+      mapas.forEach(L => L.dibujar());
+    }
+  })();
+
+})();
+</script>
+</body></html>

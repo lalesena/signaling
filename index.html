@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Señales, de 0 a experto · Ena en Curso</title>
+<meta name="description" content="Curso visual e interactivo de procesamiento de señales, de la noria al sincrosqueezing: 21 lecciones con retos paso a paso, un laboratorio con tu propia voz y exámenes, con las ecuaciones aparte, en un rincón plegado.">
+<link rel="stylesheet" href="comun/fuentes.css">
+<link rel="stylesheet" href="comun/estilo.css">
+<style>
+/* Portada del curso: estilos propios de index.html. Lo común (tokens, botones, marcos, pie) está en comun/estilo.css.
+   Todo sale de los tokens, así que cambia solo con el tema. Cada selector lleva dos clases como mínimo para ganar
+   a la hoja común aunque este bloque llegue antes que ella (en el artefacto de claude.ai, el <style> va delante). */
+
+.portada { max-width: calc(var(--lab) + 2rem); margin: 0 auto; padding: 0 1rem 1rem; }
+.portada .bloque { margin-top: 5.2rem; }
+.portada .bloque > h2 { margin-bottom: 0.7rem; }
+.portada .intro { max-width: var(--col); margin: 0 0 1.5rem; color: var(--texto-suave); }
+.portada a.boton { text-decoration: none; }
+.portada .boton.grande { min-height: 3.1rem; padding: 0.7rem 1.25rem; font-size: var(--t-3); border-radius: 11px; }
+
+/* ── 1. Arriba: la noria dibujando su onda, el título y el botón ─────────────────────────────────────────── */
+.portada .hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.7rem; padding-top: 1.9rem; align-items: center; }
+.portada .hero-texto { display: contents; }
+.portada .hero-t1 { order: 1; min-width: 0; }
+.portada .hero-cta { order: 2; min-width: 0; }
+.portada .hero-figura { order: 3; min-width: 0; }
+.portada .hero-lead { order: 4; margin: 0; max-width: 34rem; color: var(--texto-suave); }
+.portada .hero h1 { margin: 0.15rem 0 0; }
+.portada .hero-subtitulo { margin: 0.95rem 0 0; max-width: 30rem; font-size: 1.14rem; line-height: 1.45; font-style: italic; }
+.portada .hero-acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.9rem; }
+.portada .enlace-mapa { padding: 0.5rem 0.1rem; font: 500 var(--t-2)/1.3 var(--f-mono); color: var(--acento); text-decoration: none; }
+.portada .enlace-mapa:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+.portada .hero-detalle { margin: 0.85rem 0 0; min-height: 1.5em; font: 400 var(--t-2)/1.45 var(--f-mono); color: var(--texto-suave); }
+.portada .hero-detalle b { font-weight: 600; color: var(--texto); }
+.portada .hero .meta { margin-top: 1.1rem; }
+.portada .hero-figura .escena { min-height: 10.5rem; }
+.portada .hero-pie { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem 1rem; padding: 0.8rem 0.35rem 0.2rem; }
+.portada .hero-leyenda { flex: 1 1 15rem; margin: 0; font-size: var(--t-3); line-height: 1.5; font-style: italic; color: var(--texto-suave); }
+@media (min-width: 40rem) {
+  .portada .hero { padding-top: 2.6rem; }
+  .portada .hero-subtitulo { font-size: 1.28rem; }
+}
+@media (min-width: 60rem) {
+  .portada .hero { grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); gap: 3rem; padding-top: 3.4rem; }
+  .portada .hero-texto { display: block; }
+  .portada .hero-figura { order: 0; }
+  .portada .hero-lead { margin: 1.4rem 0 1.7rem; }
+}
+
+/* ── 2. Cómo funciona ────────────────────────────────────────────────────────────────────────────────────── */
+.portada .como { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.9rem; }
+.portada .como > li { margin: 0; padding: 1.15rem 1.2rem 1.2rem; background: var(--superficie); border: 1px solid var(--linea); border-radius: 14px; box-shadow: var(--sombra); }
+.portada .como svg { display: block; width: 30px; height: 30px; margin-bottom: 0.75rem; fill: none; stroke: var(--acento); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.portada .como h3 { margin: 0 0 0.45rem; font-size: 1.14rem; letter-spacing: -0.005em; }
+.portada .como p { margin: 0 0 0.6rem; font-size: var(--t-3); line-height: 1.55; color: var(--texto-suave); }
+.portada .como p:last-child { margin-bottom: 0; }
+.portada .como .enlace-ruta { font-family: var(--f-mono); font-size: var(--t-2); }
+@media (min-width: 52rem) { .portada .como { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; } }
+
+/* ── 3. Las tres ideas ───────────────────────────────────────────────────────────────────────────────────── */
+.portada ol.tres { grid-template-columns: minmax(0, 1fr); }
+.portada ol.tres > li .idea-titulo { display: block; margin-bottom: 0.3rem; font-size: 1.12rem; font-weight: 650; line-height: 1.3; }
+.portada ol.tres > li .idea-texto { display: block; font-size: var(--t-3); line-height: 1.55; color: var(--texto-suave); }
+@media (min-width: 52rem) {
+  .portada ol.tres { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .portada ol.tres > li { padding: 3.2rem 1.2rem 1.25rem; }
+}
+
+/* ── 4. El mapa: el curso, dibujado como una señal muestreada ────────────────────────────────────────────── */
+.portada .mapa-caja { padding: 0.9rem 0.7rem 0.85rem; background: var(--superficie); border: 1px solid var(--linea); border-radius: 14px; box-shadow: var(--sombra); }
+.portada .mapa-controles { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem 1.4rem; margin: 0 0.2rem 1.1rem; }
+.portada .leyenda { display: flex; flex-wrap: wrap; gap: 0.3rem 1.1rem; margin: 0; padding: 0; list-style: none; font: 400 var(--t-1)/1.3 var(--f-mono); color: var(--texto-suave); }
+.portada .leyenda li { display: inline-flex; align-items: center; gap: 0.45rem; margin: 0; }
+
+.portada .mapa { --alto-plano: 9.5rem; --n: 21; position: relative; }
+@media (min-width: 40rem) { .portada .mapa { --alto-plano: 12rem; } }
+.portada .mapa-senal { position: relative; height: calc(var(--alto-plano) + 1.6rem); }
+.portada .mapa-onda { position: absolute; left: 0; top: 0; width: 100%; height: var(--alto-plano); overflow: visible; }
+.portada .mapa-onda .eje { stroke: var(--eje); stroke-width: 1; stroke-dasharray: 2 4; opacity: 0.75; }
+.portada .mapa-onda .onda { fill: none; stroke: var(--eje); stroke-width: 1.5; opacity: 0.55; stroke-linejoin: round; }
+.portada .mapa-onda .halo { fill: none; stroke: var(--c-senal); stroke-width: 7; opacity: 0; stroke-linejoin: round; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .portada .mapa-onda .halo { opacity: 0.1; } }
+:root[data-theme="dark"] .portada .mapa-onda .halo { opacity: 0.1; }
+
+.portada .mapa-muestras { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; }
+.portada .mapa-muestras > li { position: relative; margin: 0; }
+.portada .m { position: absolute; inset: 0; display: block; color: var(--texto-tenue); text-decoration: none; border-radius: 5px; transition: opacity 0.25s ease; }
+.portada .m .plano-m { position: absolute; left: 0; right: 0; top: 0; height: var(--alto-plano); }
+.portada .m .tallo { position: absolute; left: 50%; top: var(--t); height: var(--a); width: 1.5px; margin-left: -0.75px; background: var(--eje); }
+.portada .m .glifo { position: absolute; left: 50%; top: var(--y); margin: -6px 0 0 -6px; }
+.portada .m .n { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font: 500 0.6875rem/1 var(--f-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.portada .m[data-estado="curso"] .tallo { background: var(--c-senal); opacity: 0.55; }
+.portada .m[data-estado="superada"] .tallo { background: var(--c-senal); }
+.portada .m[data-estado="superada"] .n, .portada .m[data-estado="curso"] .n { color: var(--senal-texto); }
+.portada .m.resalte .n, .portada .m:hover .n { color: var(--texto); }
+
+/* El glifo: la cabeza de una muestra. Vacío = sin empezar; a medias (los retos hechos) = en curso; lleno = superada. */
+.portada .glifo { position: relative; display: inline-block; flex: none; box-sizing: border-box; width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--eje); background: var(--superficie); transition: transform 0.18s ease, background-color 0.3s ease, border-color 0.3s ease; }
+.portada [data-estado="curso"] .glifo { border-color: var(--c-senal); background: conic-gradient(from 0deg, var(--c-senal) var(--p, 0%), var(--superficie) 0); }
+.portada [data-estado="superada"] .glifo { border-color: var(--c-senal); background: var(--c-senal); box-shadow: var(--muestra-halo); }
+.portada .m:hover .glifo, .portada .m.resalte .glifo { transform: scale(1.4); }
+.portada .m.siguiente .glifo::after, .portada .fila-leccion.siguiente .glifo::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 1.5px solid var(--acento); }
+.portada .leyenda .glifo { transform: none; }
+
+/* Los niveles: cortes entre grupos y, debajo, una llave con el nombre de cada uno */
+.portada .corte { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px dashed var(--linea-fuerte); pointer-events: none; }
+.portada .mapa-niveles { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); margin-top: 0.4rem; }
+.portada .nivel-rot { min-width: 0; margin: 0 0.22rem; padding-top: 0.45rem; border-top: 1.5px solid var(--linea-fuerte); font-size: var(--t-1); line-height: 1.3; color: var(--texto-suave); text-wrap: balance; }
+.portada .nivel-rot b { display: block; margin-bottom: 0.15rem; font: 600 var(--t-0)/1.2 var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--acento); }
+.portada .mapa-lectura { min-height: 2.9em; margin: 0.9rem 0.2rem 0; font: 400 var(--t-2)/1.45 var(--f-mono); color: var(--texto-suave); }
+.portada .mapa-lectura b { font-weight: 600; color: var(--texto); }
+@media (max-width: 40rem) {
+  .portada .nivel-resumen { margin-left: 0; flex-basis: 100%; }
+  .portada .m .n .cero { display: none; }
+  .portada .nivel-rot { margin: 0 0.1rem; text-align: center; }
+  .portada .nivel-rot span { display: none; }
+  .portada .nivel-rot b { margin: 0; letter-spacing: 0; }
+  .portada .nivel-rot .pal { display: none; }
+}
+
+/* La ruta corta: lo que no está en ella se apaga, en el mapa y en la lista */
+.portada .solo-ruta .m:not(.ruta) { opacity: 0.2; }
+.portada .solo-ruta .fila-leccion:not(.ruta) { opacity: 0.45; }
+.portada .fila-leccion { transition: opacity 0.25s ease, border-color 0.15s ease; }
+
+/* La lista, por niveles */
+.portada .nivel { margin-top: 2.8rem; }
+.portada .nivel > h3 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.9rem; margin: 0 0 0.85rem; font-size: 1.32rem; }
+.portada .nivel-n { font: 500 var(--t-1)/1 var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--acento); }
+.portada .nivel-resumen { margin-left: auto; font: 400 var(--t-1)/1.3 var(--f-mono); letter-spacing: 0; color: var(--texto-tenue); }
+.portada .lecciones { display: grid; gap: 0.55rem; margin: 0; padding: 0; list-style: none; }
+.portada .fila-leccion {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: "num titulo" "pregunta pregunta" "marcas marcas";
+  gap: 0.2rem 0.85rem;
+  align-items: baseline;
+  margin: 0;
+  padding: 0.85rem 0.95rem 0.9rem;
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: 12px;
+}
+.portada .fila-leccion:hover, .portada .fila-leccion.resalte { border-color: var(--linea-fuerte); box-shadow: var(--sombra); }
+.portada .fl-num { grid-area: num; display: inline-flex; align-items: center; gap: 0.6rem; font: 600 1.1rem/1.4 var(--f-mono); font-variant-numeric: tabular-nums; color: var(--texto); }
+.portada .fl-titulo { grid-area: titulo; margin: 0; font-size: 1.08rem; line-height: 1.3; letter-spacing: -0.005em; }
+.portada .fl-titulo a { color: var(--texto); text-decoration: none; }
+.portada .fl-titulo a::after { content: ''; position: absolute; inset: 0; border-radius: 12px; }
+.portada .fl-titulo a:hover { color: var(--acento); }
+.portada .fl-pregunta { grid-area: pregunta; margin: 0.1rem 0 0.15rem; font-size: var(--t-3); line-height: 1.5; color: var(--texto-suave); }
+.portada .fl-marcas { grid-area: marcas; display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.2rem; }
+@media (min-width: 40rem) {
+  .portada .fila-leccion { grid-template-columns: 3.9rem minmax(0, 1fr) auto; grid-template-areas: "num titulo marcas" "num pregunta marcas"; gap: 0.15rem 1rem; padding: 0.9rem 1.1rem 0.95rem 1rem; }
+  .portada .fl-marcas { flex-direction: column; align-items: flex-end; align-self: start; margin-top: 0; }
+}
+
+/* Estados y marcas, como pastillas */
+.portada .estado, .portada .marca { display: inline-flex; align-items: center; padding: 0.24rem 0.55rem; border: 1px solid var(--linea-fuerte); border-radius: 999px; font: 500 var(--t-0)/1.2 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--texto-tenue); white-space: nowrap; }
+.portada .estado.curso { border-color: var(--c-senal); color: var(--senal-texto); }
+.portada .estado.superada { border-color: var(--c-senal); background: var(--senal-suave); color: var(--senal-texto); }
+.portada .estado.intento { border-color: var(--acento); color: var(--acento); }
+.portada .marca.ruta { border-color: var(--acento); color: var(--acento); }
+.portada .marca.desvio { border-style: dashed; }
+
+/* ── 5. Exámenes y glosario ──────────────────────────────────────────────────────────────────────────────── */
+.portada .examenes { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: 0.7rem; margin: 0; padding: 0; list-style: none; }
+.portada .examenes > li { margin: 0; }
+.portada .ex-tarjeta { position: relative; display: grid; align-content: start; gap: 0.35rem; height: 100%; padding: 1rem 1.05rem 1.05rem; background: var(--superficie); border: 1px solid var(--linea); border-radius: 14px; box-shadow: var(--sombra); color: var(--texto); text-decoration: none; transition: border-color 0.15s ease; }
+.portada .ex-tarjeta:hover { border-color: var(--acento); }
+.portada .ex-tarjeta .kicker { font: 500 var(--t-1)/1.2 var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--acento); }
+.portada .ex-tarjeta .titulo { font: 650 1.06rem/1.25 var(--f-texto); letter-spacing: -0.005em; }
+.portada .ex-tarjeta .meta-ex span { display: block; }
+.portada .ex-tarjeta .meta-ex { margin-bottom: 0.3rem; font: 400 var(--t-1)/1.4 var(--f-mono); color: var(--texto-tenue); }
+.portada .ex-tarjeta .estado { justify-self: start; }
+.portada .glosario-banda { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.9rem 1.5rem; margin-top: 1rem; padding: 1.1rem 1.25rem; border: 1px dashed var(--linea-fuerte); border-radius: 14px; }
+.portada .glosario-banda p { margin: 0; max-width: 38rem; font-size: var(--t-3); line-height: 1.5; color: var(--texto-suave); }
+.portada .glosario-banda b { font-family: var(--f-texto); font-size: 1.1rem; color: var(--texto); }
+
+/* ── 6. Pie ──────────────────────────────────────────────────────────────────────────────────────────────── */
+.pie.pie-portada .pie-linea { margin: 0 0 0.9rem; font-size: var(--t-3); line-height: 1.55; color: var(--texto-suave); }
+.pie.pie-portada .pie-linea b { color: var(--texto); }
+.pie.pie-portada .pie-interior > .antetitulo { margin-bottom: 1.1rem; }
+.pie.pie-portada .pie-nav { margin-top: 1.8rem; align-items: center; }
+.pie.pie-portada .borrar { padding: 0; border: 0; background: none; color: var(--texto-tenue); font: inherit; text-decoration: underline; text-underline-offset: 0.18em; cursor: pointer; }
+.pie.pie-portada .borrar:hover { color: var(--texto); }
+.pie.pie-portada .borrar.seguro { color: var(--mal); text-decoration: none; font-weight: 500; }
+.pie.pie-portada .aviso-almacen { margin: 0 0 0.9rem; padding: 0.6rem 0.85rem; border-left: 3px solid var(--mal); border-radius: 9px; background: var(--superficie); font-size: var(--t-3); line-height: 1.5; color: var(--texto-suave); }
+</style>
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body>
+<main class="portada" id="contenido">
+
+  <!-- Arriba: la tesis del curso. Una noria dibujando su onda, el título y un botón que sabe por dónde vas. -->
+  <header class="hero" id="inicio">
+    <div class="hero-texto">
+      <div class="hero-t1">
+        <p class="antetitulo">Un curso de Ena en Curso</p>
+        <h1 id="titulo">Señales, de 0 a experto</h1>
+        <p class="hero-subtitulo" id="subtitulo">Un curso visual de procesamiento de señales, de la noria al sincrosqueezing</p>
+      </div>
+      <p class="hero-lead">Aprende procesamiento de señales con los ojos y con los oídos. No hace falta saber nada de antemano: cada idea empieza en una imagen que se mueve, se prueba con retos que se tocan y se escuchan, y las ecuaciones esperan plegadas en un rincón aparte para quien las quiera.</p>
+      <div class="hero-cta">
+        <div class="hero-acciones">
+          <a class="boton principal grande" id="cta" href="e01.html">Empieza por la lección 1</a>
+          <a class="enlace-mapa" href="#mapa">Ver el mapa del curso ↓</a>
+        </div>
+        <p class="hero-detalle" id="cta-detalle"></p>
+        <ul class="meta" id="hero-cifras"></ul>
+      </div>
+    </div>
+    <div class="hero-figura" role="group" aria-label="La noria de la serie dibujando una onda">
+      <div class="marco">
+        <div class="escena" id="hero-escena"></div>
+        <div class="hero-pie">
+          <p class="hero-leyenda">Una noria gira a velocidad constante y la altura de su cabina, apuntada instante a instante, dibuja una onda: el curso entero parte de esa imagen.</p>
+          <div class="botones" id="hero-botones"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <noscript><p class="nota">Este curso es interactivo y necesita JavaScript para funcionar.</p></noscript>
+
+  <section class="bloque" id="como" aria-labelledby="h-como">
+    <h2 id="h-como">Cómo funciona</h2>
+    <ul class="como">
+      <li>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M6.2 13.2c1.3-3.6 2.6-3.6 3.9 0s2.6 3.6 3.9 0 2.6-2.6 3.8-1.2"/></svg>
+        <h3>Cada lección tiene cuatro partes</h3>
+        <p>La idea en una imagen que se mueve, retos paso a paso que se resuelven tocando y escuchando, un laboratorio llamado «En tu voz» para probarlo con tu propia grabación y un examen corto que explica cada respuesta.</p>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 18h17"/><path d="M6.5 18v-6.1M12 18V7.1M17.5 18V8.9"/><circle cx="6.5" cy="10" r="1.9"/><circle cx="12" cy="5.2" r="1.9"/><circle cx="17.5" cy="7" r="1.9"/></svg>
+        <h3>Tu progreso se guarda en este navegador</h3>
+        <p>Los retos que consigues y las notas de tus exámenes se quedan aquí, sin cuentas ni registros. Si abres el curso en otro ordenador o en el móvil, empezará de cero.</p>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="5" cy="18.5" r="1.9"/><circle cx="19" cy="5.5" r="1.9"/><path d="M6.4 17.1 17.6 6.9"/><path d="M5 16.6V10a4 4 0 0 1 4-4h8" stroke-dasharray="1.6 2.6"/></svg>
+        <h3>Hay una ruta corta al sincrosqueezing</h3>
+        <p>Si lo que quieres es llegar al sincrosqueezing, bastan <span id="n-ruta">14</span> lecciones: <span id="txt-ruta">1 a 5, 11 a 13 y 15 a 20</span>. Cada una se sostiene sola, así que puedes dejar las demás para después.</p>
+        <p><a class="enlace-ruta" href="#ruta">Resaltarla en el mapa →</a></p>
+      </li>
+    </ul>
+  </section>
+
+  <section class="bloque" id="ideas" aria-labelledby="h-ideas">
+    <h2 id="h-ideas">Las tres ideas del curso</h2>
+    <p class="intro">Todas las lecciones vuelven a estas tres imágenes en lugar de inventar otras nuevas.</p>
+    <ol class="tres" id="lista-ideas"></ol>
+  </section>
+
+  <section class="bloque" id="mapa" aria-labelledby="h-mapa">
+    <h2 id="h-mapa">El mapa del curso</h2>
+    <p class="intro">El curso, dibujado como una señal muestreada: una muestra por lección, agrupadas en cinco niveles. Cada muestra se enciende según avanzas: vacía si no has empezado, a medias si estás en ello y llena cuando apruebas el examen de la lección.</p>
+    <div class="mapa-caja">
+      <div class="mapa-controles">
+        <div id="mapa-botones"></div>
+        <ul class="leyenda" aria-label="Qué significa cada muestra">
+          <li data-estado="sin"><i class="glifo" aria-hidden="true"></i>Sin empezar</li>
+          <li data-estado="curso" style="--p: 55%"><i class="glifo" aria-hidden="true"></i>En curso</li>
+          <li data-estado="superada"><i class="glifo" aria-hidden="true"></i>Superada</li>
+        </ul>
+      </div>
+      <!-- El dibujo es un adorno con la misma información que la lista de debajo, que es la que leen los lectores de pantalla. -->
+      <div class="mapa" id="mapa-dibujo" aria-hidden="true">
+        <div class="mapa-senal" id="mapa-senal">
+          <ol class="mapa-muestras" id="mapa-muestras"></ol>
+        </div>
+        <div class="mapa-niveles" id="mapa-niveles"></div>
+      </div>
+      <p class="mapa-lectura" id="mapa-lectura" aria-hidden="true"></p>
+    </div>
+    <p class="oculto-visual" id="estado-ruta" aria-live="polite"></p>
+    <div id="lista-niveles"></div>
+  </section>
+
+  <section class="bloque" id="examenes" aria-labelledby="h-examenes">
+    <h2 id="h-examenes">Exámenes</h2>
+    <p class="intro">Al terminar cada temporada hay un examen con dos preguntas de cada lección, y al final del curso, uno con una pregunta de cada lección. Se aprueba con el 70 % y se guarda tu mejor nota.</p>
+    <ul class="examenes" id="lista-examenes"></ul>
+    <div class="glosario-banda">
+      <p><b>Glosario.</b> Todos los términos del curso por orden alfabético, cada uno con su definición, su imagen y un enlace a la lección donde aparece.</p>
+      <a class="boton" href="glosario.html">Abrir el glosario</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="pie pie-portada">
+  <div class="pie-interior">
+    <p class="antetitulo">Un curso de Ena en Curso</p>
+    <p class="pie-linea"><b>Qué es.</b> La versión interactiva de la serie de vídeos «Procesamiento de señales, de 0 a experto», del canal Ena en Curso de Alejandro Ena.</p>
+    <p class="pie-linea"><b>Qué falta.</b> La grabación de referencia de Alejandro: cuando exista, se añadirá como ejemplo real al laboratorio «En tu voz». Hasta entonces, el laboratorio trabaja con ejemplos sintéticos, rotulados como tales, y con lo que grabes o subas tú.</p>
+    <p class="pie-linea"><b>El micrófono.</b> Dentro de la vista previa de claude.ai está bloqueado; funciona abriendo el curso desde el disco o en un alojamiento propio. Si no puedes grabar, el laboratorio deja subir un audio.</p>
+    <p class="aviso-almacen" id="aviso-almacen" hidden>Este navegador no deja guardar el progreso en este momento, así que lo que hagas se perderá al cerrar la página.</p>
+    <nav class="pie-nav" aria-label="Páginas del curso">
+      <a href="glosario.html">Glosario</a>
+      <a href="examenes.html">Exámenes</a>
+      <button type="button" class="borrar" id="borrar" hidden>Borrar el progreso de este navegador</button>
+    </nav>
+    <p class="pie-creditos">Señales, de 0 a experto · Ena en Curso · Alejandro Ena. Tu progreso se guarda solo en este navegador.</p>
+    <p class="oculto-visual" id="estado-borrado" aria-live="polite"></p>
+  </div>
+</footer>
+
+<script src="comun/temario.js"></script>
+<script src="comun/graficas.js"></script>
+<script src="comun/curso.js"></script>
+<script>
+// Portada · Señales, de 0 a experto.
+// Todo sale del temario (comun/temario.js) y del progreso guardado en el navegador; no depende de datos/.
+// El progreso se lee directamente del almacén (clave senales:progreso:v1, la misma de Curso.progreso), y no de la
+// memoria de Curso, para que la portada se actualice al volver desde una lección, aunque el navegador la guarde
+// en su caché de páginas, o al cambiar el progreso desde otra pestaña.
+(function () {
+  'use strict';
+  const T = TEMARIO, G = Graficas, crear = Curso.crear, TAU = Math.PI * 2;
+  const lecciones = T.lecciones, N = lecciones.length;
+  const $ = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2, '0');
+  const seguro = (nombre, f) => { try { f(); } catch (e) { console.error('[portada] ' + nombre + ': ' + e.message); } };
+  const plural = (n, uno, varios) => n + ' ' + (n === 1 ? uno : varios);
+
+  // «1 a 5, 11 a 13 y 15 a 20» a partir de [1, 2, 3, 4, 5, 11, …]
+  const unir = partes => (partes.length < 2 ? partes.join('') : partes.slice(0, -1).join(', ') + ' y ' + partes[partes.length - 1]);
+  function rangos(ns) {
+    const partes = [];
+    for (let i = 0; i < ns.length;) {
+      let j = i;
+      while (j + 1 < ns.length && ns[j + 1] === ns[j] + 1) j++;
+      if (j - i >= 2) partes.push(ns[i] + ' a ' + ns[j]); else for (let k = i; k <= j; k++) partes.push(String(ns[k]));
+      i = j + 1;
+    }
+    return unir(partes);
+  }
+
+  // ── Progreso guardado ───────────────────────────────────────────────────────────────────────────────────
+  const CLAVE = 'senales:progreso:v1';
+  const leerCrudo = () => { try { return localStorage.getItem(CLAVE); } catch (e) { return null; } };
+  function parsear(crudo) {
+    let d = null;
+    try { d = crudo ? JSON.parse(crudo) : null; } catch (e) { d = null; }
+    if (!d || typeof d !== 'object') d = {};
+    const obj = x => (x && typeof x === 'object' ? x : {});
+    return { lecciones: obj(d.lecciones), examenes: obj(d.examenes) };
+  }
+  const notaDe = e => (e && e.total && e.mejorAciertos != null ? e.mejorAciertos + ' de ' + e.total : e ? Math.round((e.mejor || 0) * 100) + ' %' : '');
+  // sin empezar · en curso (k de n retos) · superada (con su nota, la del examen de la lección)
+  function estadoDe(id, P) {
+    const l = P.lecciones[id] || {}, ex = P.examenes[id] || null;
+    const hechos = Object.values(l.retos || {}).filter(r => r && r.ok).length;
+    const total = Number(l.total) || 0;
+    const intentos = ex ? Number(ex.intentos) || 0 : 0;
+    const visitada = !!l.visita;
+    const aprobado = !!(ex && ex.aprobado);
+    const clave = aprobado ? 'superada' : (hechos > 0 || intentos > 0 || visitada) ? 'curso' : 'sin';
+    const p = aprobado ? 1 : clave === 'curso' ? Math.min(0.9, Math.max(0.1, total ? hechos / total : 0)) : 0;
+    return { clave, hechos, total, intentos, visitada, aprobado, p, nota: notaDe(ex) };
+  }
+  function textoEstado(s) {
+    if (s.clave === 'superada') return { corto: 'Superada · ' + s.nota, largo: 'Examen aprobado con ' + s.nota + (s.total ? '; retos: ' + s.hechos + ' de ' + s.total : '') };
+    if (s.clave === 'curso') {
+      const retos = s.total ? ' · ' + s.hechos + ' de ' + plural(s.total, 'reto', 'retos') : '';
+      return { corto: 'En curso' + retos, largo: 'En curso' + (s.total ? ': retos ' + s.hechos + ' de ' + s.total : '') + (s.intentos ? '; examen todavía sin aprobar, mejor nota ' + s.nota : '') };
+    }
+    return { corto: 'Sin empezar', largo: 'Todavía no has empezado esta lección' };
+  }
+  function estadoExamen(clave, P) {
+    const e = P.examenes[clave];
+    if (!e) return { clave: 'sin', corto: 'Sin hacer', largo: 'Todavía no has hecho este examen' };
+    const nota = notaDe(e), intentos = plural(Number(e.intentos) || 1, 'intento', 'intentos');
+    if (e.aprobado) return { clave: 'superada', corto: 'Aprobado · ' + nota, largo: 'Aprobado. Tu mejor nota, ' + nota + ', en ' + intentos };
+    return { clave: 'intento', corto: 'Mejor nota · ' + nota, largo: 'Todavía sin aprobar. Tu mejor nota, ' + nota + ', en ' + intentos };
+  }
+  // Por dónde seguir: la lección de mayor número con avance de verdad (retos o examen); si ya está superada, la
+  // siguiente en orden. Sin avance, la última que hayas abierto; sin nada, la primera.
+  function siguiente(est) {
+    let real = null, vista = null;
+    for (const l of lecciones) {
+      const s = est[l.id];
+      if (s.hechos > 0 || s.intentos > 0) real = l;
+      if (s.visitada) vista = l;
+    }
+    if (real) {
+      if (est[real.id].clave !== 'superada') return { leccion: real };
+      const sig = lecciones[lecciones.indexOf(real) + 1];
+      return sig ? { leccion: sig, tras: real } : { fin: true };
+    }
+    if (vista) return { leccion: vista };
+    return { leccion: lecciones[0], nueva: true };
+  }
+
+  // ── Arriba: la noria dibujando su onda ──────────────────────────────────────────────────────────────────
+  function hero() {
+    const e = { theta: 0.75, f: 0.8, A: 0.85, t: 0 };
+    const hist = G.historia({ segundos: 2 });
+    const rellenar = () => hist.llenar(e.t, tp => e.A * Math.sin(e.theta - TAU * e.f * (e.t - tp)));
+    rellenar();
+    const L = G.lienzo('#hero-escena', {
+      alto: w => G.altoNoria(w, { max: 300 }),
+      etiqueta: 'Una noria gira y la altura de su cabina verde dibuja una sinusoide a la derecha: lo reciente junto a la noria y lo de hace dos segundos, al fondo.',
+      dibujar: (ctx, w, h, C) => G.escenaNoria(ctx, w, h, { C, angulo: e.theta, radio: e.A, cabinas: [{ desfase: 0, color: C.senal }], trazas: [{ puntos: hist.puntos(0), color: C.senal }], segundos: 2 }),
+    });
+    // Con «movimiento reducido» arranca parada, con la onda ya dibujada, y el botón la pone en marcha.
+    Curso.animar(L, (t, dt) => {
+      if (dt > 0) { e.t += dt; e.theta += TAU * e.f * dt; hist.anotar(e.t, e.A * Math.sin(e.theta)); }
+      L.dibujar();
+    }, { boton: $('hero-botones') });
+  }
+
+  function cifras() {
+    const ul = $('hero-cifras');
+    for (const t of [plural(N, 'lección', 'lecciones'), plural(T.niveles.length, 'nivel', 'niveles'), plural(T.temporadas.length, 'temporada', 'temporadas')]) ul.appendChild(crear('li', {}, t));
+    $('titulo').textContent = T.titulo;
+    $('subtitulo').textContent = T.subtitulo;
+    const ruta = lecciones.filter(l => l.ruta).map(l => l.n);
+    $('n-ruta').textContent = String(ruta.length);
+    $('txt-ruta').textContent = rangos(ruta);
+  }
+
+  function ideas() {
+    const ol = $('lista-ideas');
+    for (const i of T.ideas) ol.appendChild(crear('li', {}, crear('span', { class: 'idea-titulo' }, i.titulo), crear('span', { class: 'idea-texto' }, i.texto)));
+  }
+
+  // ── El mapa: el curso como una señal muestreada ─────────────────────────────────────────────────────────
+  // Una columna por lección, todas del mismo ancho: así la onda continua y las muestras casan en cualquier tamaño.
+  // Las alturas van en tanto por ciento del plano (la línea de reposo está al 50 %).
+  const AMP = 36, PERIODO = 7.4;
+  const yDe = x => 50 - AMP * Math.sin(TAU * x / PERIODO);
+  function mapa() {
+    const dibujo = $('mapa-dibujo');
+    dibujo.style.setProperty('--n', String(N));
+    const puntos = [];
+    for (let x = 0; x <= N + 1e-9; x += 0.25) puntos.push(x.toFixed(2) + ' ' + yDe(x).toFixed(2));
+    const d = 'M' + puntos.join(' L');
+    $('mapa-senal').insertAdjacentHTML('afterbegin', '<svg class="mapa-onda" viewBox="0 0 ' + N + ' 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">'
+      + '<line class="eje" x1="0" y1="50" x2="' + N + '" y2="50" vector-effect="non-scaling-stroke"/>'
+      + '<path class="halo" d="' + d + '" vector-effect="non-scaling-stroke"/><path class="onda" d="' + d + '" vector-effect="non-scaling-stroke"/></svg>');
+    const ol = $('mapa-muestras');
+    lecciones.forEach((l, k) => {
+      const y = yDe(k + 0.5);
+      ol.appendChild(crear('li', {}, crear('a', {
+        class: 'm' + (l.ruta ? ' ruta' : ''), href: l.id + '.html', 'data-id': l.id, tabindex: '-1',
+        style: '--y:' + y.toFixed(2) + '%;--t:' + Math.min(50, y).toFixed(2) + '%;--a:' + Math.abs(50 - y).toFixed(2) + '%',
+      }, crear('span', { class: 'plano-m' }, crear('i', { class: 'tallo' }), crear('i', { class: 'glifo' })), crear('span', { class: 'n' }, l.n < 10 ? crear('span', { class: 'cero' }, '0') : null, String(l.n)))));
+    });
+    // Niveles: los grupos de lecciones seguidas con el mismo nivel
+    const grupos = [];
+    lecciones.forEach((l, k) => {
+      const g = grupos[grupos.length - 1];
+      if (g && g.nivel === l.nivel) g.n++; else grupos.push({ nivel: l.nivel, desde: k + 1, n: 1 });
+    });
+    grupos.forEach((g, i) => {
+      const nv = T.niveles.find(x => x.n === g.nivel);
+      $('mapa-niveles').appendChild(crear('div', { class: 'nivel-rot', style: 'grid-column:' + g.desde + ' / span ' + g.n },
+        crear('b', {}, crear('span', { class: 'pal' }, 'Nivel '), String(g.nivel)), crear('span', {}, nv ? nv.titulo : '')));
+      if (i) dibujo.appendChild(crear('i', { class: 'corte', style: 'left:' + ((g.desde - 1) / N * 100).toFixed(3) + '%' }));
+    });
+  }
+
+  // ── La lista, por niveles ───────────────────────────────────────────────────────────────────────────────
+  function lista() {
+    const cont = $('lista-niveles');
+    for (const nv of T.niveles) {
+      const ol = crear('ol', { class: 'lecciones' });
+      for (const id of nv.lecciones) {
+        const l = T.porId[id];
+        if (!l) continue;
+        ol.appendChild(crear('li', { class: 'fila-leccion' + (l.ruta ? ' ruta' : '') + (l.desvio ? ' desvio' : ''), 'data-id': l.id },
+          crear('span', { class: 'fl-num' }, crear('i', { class: 'glifo', 'aria-hidden': 'true' }), pad(l.n)),
+          crear('h4', { class: 'fl-titulo' }, crear('a', { href: l.id + '.html' }, l.titulo)),
+          crear('p', { class: 'fl-pregunta' }, l.pregunta),
+          crear('div', { class: 'fl-marcas' },
+            crear('span', { class: 'estado' }),
+            l.ruta ? crear('span', { class: 'marca ruta', title: 'Está en la ruta corta al sincrosqueezing' }, 'ruta corta') : null,
+            l.desvio ? crear('span', { class: 'marca desvio', title: 'Desvío opcional: no hace falta para llegar al sincrosqueezing' }, 'desvío') : null)));
+      }
+      cont.appendChild(crear('section', { class: 'nivel', 'aria-labelledby': 'nivel-' + nv.n },
+        crear('h3', { id: 'nivel-' + nv.n }, crear('span', { class: 'nivel-n' }, 'Nivel ' + nv.n), nv.titulo, crear('span', { class: 'nivel-resumen', id: 'resumen-nivel-' + nv.n })), ol));
+    }
+  }
+
+  // ── Exámenes: las cuatro temporadas y el final ──────────────────────────────────────────────────────────
+  const EXAMENES = [
+    ...T.temporadas.map(t => ({ clave: t.id, kicker: 'Temporada ' + t.n, titulo: t.titulo, lecciones: t.lecciones, preguntas: t.lecciones.length * 2 })),
+    { clave: 'final', kicker: 'Final', titulo: 'Todo el curso', lecciones: lecciones.map(l => l.id), preguntas: N },
+  ];
+  function examenes() {
+    const ul = $('lista-examenes');
+    for (const x of EXAMENES) {
+      const ns = x.lecciones.map(id => T.porId[id].n);
+      ul.appendChild(crear('li', {}, crear('a', { class: 'ex-tarjeta', href: 'examenes.html#' + x.clave, 'data-examen': x.clave },
+        crear('span', { class: 'kicker' }, x.kicker),
+        crear('span', { class: 'titulo' }, x.titulo),
+        crear('span', { class: 'meta-ex' }, crear('span', {}, x.clave === 'final' ? plural(N, 'lección', 'lecciones') : 'Lecciones ' + rangos(ns)), crear('span', {}, plural(x.preguntas, 'pregunta', 'preguntas'))),
+        crear('span', { class: 'estado' }))));
+    }
+  }
+
+  // ── Pintar el progreso ──────────────────────────────────────────────────────────────────────────────────
+  let porDefecto = null;      // lo que dice la lectura bajo el mapa cuando no hay nada señalado
+  let estadosAhora = {};
+  function pintar(crudo) {
+    const P = parsear(crudo);
+    const est = {};
+    for (const l of lecciones) est[l.id] = estadoDe(l.id, P);
+    estadosAhora = est;
+    const sig = siguiente(est);
+    const sigId = sig.leccion ? sig.leccion.id : null;
+    for (const l of lecciones) {
+      const s = est[l.id], t = textoEstado(s);
+      for (const el of document.querySelectorAll('[data-id="' + l.id + '"]')) {
+        el.setAttribute('data-estado', s.clave);
+        el.style.setProperty('--p', Math.round(s.p * 100) + '%');
+        el.classList.toggle('siguiente', l.id === sigId);
+      }
+      const chip = document.querySelector('.fila-leccion[data-id="' + l.id + '"] .estado');
+      if (chip) { chip.className = 'estado ' + s.clave; chip.textContent = t.corto; chip.title = t.largo; }
+      const m = document.querySelector('.m[data-id="' + l.id + '"]');
+      if (m) m.title = 'Lección ' + l.n + ' · ' + l.titulo + ' · ' + t.corto;
+    }
+    for (const nv of T.niveles) {
+      const hechas = nv.lecciones.filter(id => est[id] && est[id].clave === 'superada').length;
+      const r = $('resumen-nivel-' + nv.n);
+      if (r) r.textContent = hechas + ' de ' + nv.lecciones.length + ' superadas';
+    }
+    for (const x of EXAMENES) {
+      const e = estadoExamen(x.clave, P), chip = document.querySelector('[data-examen="' + x.clave + '"] .estado');
+      if (chip) { chip.className = 'estado ' + e.clave; chip.textContent = e.corto; chip.title = e.largo; }
+    }
+    pintarBoton(sig, est, P);
+    const hayProgreso = Object.keys(P.lecciones).length > 0 || Object.keys(P.examenes).length > 0;
+    $('borrar').hidden = !hayProgreso;
+    $('aviso-almacen').hidden = Curso.progreso.disponible !== false;
+    mostrar(null);
+  }
+  function pintarBoton(sig, est, P) {
+    const cta = $('cta'), det = $('cta-detalle');
+    det.textContent = '';
+    if (sig.fin) {
+      const todas = lecciones.every(l => est[l.id].clave === 'superada');
+      const final = P.examenes.final;
+      if (final && final.aprobado) {
+        cta.textContent = 'Vuelve a la lección 1'; cta.href = lecciones[0].id + '.html';
+        det.textContent = 'Has aprobado el examen final' + (todas ? ' y superado las ' + N + ' lecciones.' : '.');
+      } else {
+        cta.textContent = 'Haz el examen final'; cta.href = 'examenes.html#final';
+        det.textContent = todas ? 'Has superado las ' + N + ' lecciones.' : 'Has llegado a la última lección.';
+      }
+      porDefecto = null;
+      return;
+    }
+    const l = sig.leccion, s = est[l.id];
+    cta.textContent = (sig.nueva ? 'Empieza por la lección ' : 'Sigue por la lección ') + l.n;
+    cta.href = l.id + '.html';
+    det.append(crear('b', {}, 'Lección ' + l.n + ' · '), l.titulo);
+    if (sig.tras) det.append('. Acabas de superar la lección ' + sig.tras.n + '.');
+    else if (s.clave === 'curso' && s.total) det.append(' · ' + s.hechos + ' de ' + plural(s.total, 'reto', 'retos'));
+    porDefecto = sig;
+  }
+
+  // La lectura bajo el mapa: lo que señalas, o por dónde seguir
+  function mostrar(id) {
+    const lectura = $('mapa-lectura');
+    if (!id) {
+      if (!porDefecto || !porDefecto.leccion) { lectura.textContent = 'Pasa el cursor por una muestra para ver su lección.'; return; }
+      const l = porDefecto.leccion;
+      lectura.replaceChildren(crear('b', {}, porDefecto.nueva ? 'Para empezar · ' : 'Por dónde seguir · '), 'Lección ' + l.n + ', ' + l.titulo);
+      return;
+    }
+    const l = T.porId[id], s = estadosAhora[id];
+    lectura.replaceChildren(crear('b', {}, 'Lección ' + l.n + ' · '), l.titulo + (s ? ' · ' + textoEstado(s).corto : ''));
+  }
+
+  // ── La ruta corta ───────────────────────────────────────────────────────────────────────────────────────
+  let botonRuta = null;
+  function ruta(on) {
+    $('mapa').classList.toggle('solo-ruta', !!on);
+    if (botonRuta) botonRuta.setAttribute('aria-pressed', on ? 'true' : 'false');
+    const n = lecciones.filter(l => l.ruta).length;
+    $('estado-ruta').textContent = on ? 'Se resalta la ruta corta: ' + n + ' lecciones de ' + N + '.' : 'Se muestran todas las lecciones por igual.';
+  }
+  function controles() {
+    const b = Curso.botones('#mapa-botones', [{ id: 'ruta', texto: 'Resaltar solo la ruta corta', pulsado: false, alPulsar: on => ruta(on) }]);
+    botonRuta = b.ruta;
+  }
+  function desdeEnlace() {
+    if (location.hash !== '#ruta') return;
+    ruta(true);
+    $('mapa').scrollIntoView({ block: 'start' });
+  }
+
+  // ── Interacción: señalar una lección en el mapa o en la lista las resalta en los dos sitios ──────────────
+  function señalar() {
+    const resaltar = (id, on) => { for (const el of document.querySelectorAll('.m[data-id="' + id + '"], .fila-leccion[data-id="' + id + '"]')) el.classList.toggle('resalte', on); mostrar(on ? id : null); };
+    const de = ev => { const e = ev.target.closest && ev.target.closest('[data-id]'); return e && e.closest('#mapa-muestras, .lecciones') ? e.getAttribute('data-id') : null; };
+    for (const sel of ['#mapa-muestras', '#lista-niveles']) {
+      const cont = document.querySelector(sel);
+      cont.addEventListener('pointerover', ev => { const id = de(ev); if (id) resaltar(id, true); });
+      cont.addEventListener('pointerout', ev => { const id = de(ev); if (id && !(ev.relatedTarget && ev.relatedTarget.closest && ev.relatedTarget.closest('[data-id="' + id + '"]'))) resaltar(id, false); });
+      cont.addEventListener('focusin', ev => { const id = de(ev); if (id) resaltar(id, true); });
+      cont.addEventListener('focusout', ev => { const id = de(ev); if (id) resaltar(id, false); });
+    }
+  }
+
+  // ── Borrar el progreso, con una confirmación en dos pasos (en el visor de claude.ai no hay confirm()) ────
+  function borrar() {
+    const b = $('borrar');
+    let armado = null;
+    const desarmar = () => { clearTimeout(armado); armado = null; b.classList.remove('seguro'); b.textContent = 'Borrar el progreso de este navegador'; };
+    b.addEventListener('click', () => {
+      if (!armado) {
+        b.classList.add('seguro');
+        b.textContent = '¿Seguro? Pulsa otra vez para borrarlo todo';
+        armado = setTimeout(desarmar, 6000);
+        return;
+      }
+      desarmar();
+      Curso.progreso.borrar();
+      ultimo = leerCrudo();
+      pintar(ultimo);
+      $('estado-borrado').textContent = 'Progreso borrado.';
+    });
+  }
+
+  // ── Actualizar al volver a la página o al cambiar el progreso en otra pestaña ────────────────────────────
+  let ultimo;
+  function refrescar() {
+    const crudo = leerCrudo();
+    if (crudo === ultimo) return;
+    ultimo = crudo;
+    pintar(crudo);
+  }
+
+  seguro('cifras', cifras);
+  seguro('ideas', ideas);
+  seguro('mapa', mapa);
+  seguro('lista', lista);
+  seguro('examenes', examenes);
+  seguro('controles', controles);
+  seguro('señalar', señalar);
+  seguro('borrar', borrar);
+  seguro('hero', hero);
+  ultimo = leerCrudo();
+  seguro('pintar', () => pintar(ultimo));
+  seguro('ruta', desdeEnlace);
+  window.addEventListener('hashchange', desdeEnlace);
+  window.addEventListener('pageshow', ev => { if (ev.persisted) refrescar(); });
+  window.addEventListener('storage', ev => { if (ev.key === CLAVE || ev.key === null) refrescar(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) refrescar(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1225 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mover la energía a su sitio: la fase y la reasignación · Señales</title>
+<meta name="description" content="Lección 18 del curso visual «Señales, de 0 a experto»: la fase que el espectrograma tira guarda dónde está de verdad cada trozo de energía, y la reasignación lo mueve hasta su centro de gravedad. Seis retos y tu propia melodía.">
+<link rel="stylesheet" href="comun/fuentes.css">
+<link rel="stylesheet" href="comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e18">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Nivel 5 · Lección 18</p>
+    <h1>Mover la energía a su sitio: la fase y la reasignación</h1>
+    <aside class="pregunta">
+      <p>Un espectrograma pinta una nota pura como una franja ancha y un golpe seco como una columna gruesa, y esa borrosidad se atribuye a que la señal se mira a través de una ventana. Para dibujarlo se hizo Fourier de cada trozo, y el resultado de cada trozo tiene dos datos, el tamaño y el punto de partida, de los que solo se pintó el tamaño. ¿Y si la información para afinar la imagen estaba justo en la mitad que tiramos?</p>
+    </aside>
+    <ul class="meta"><li>Unos 50 minutos</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>La idea en una imagen</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Cada punto es una casilla del espectrograma de una señal con una nota, un chirp que sube y un golpe, y su brillo es su energía. Al subir el control, cada punto viaja hasta el sitio donde su fase dice que está de verdad la energía, y las nubes se contraen hasta quedar en líneas: la horizontal es la nota, la diagonal es el chirp y la vertical es el golpe.</figcaption>
+    </figure>
+    <p>Un espectrograma, como el de la <a href="e11.html">lección 11</a>, reparte la energía en baldosas que no se pueden encoger (<a href="e12.html">lección 12</a>), y cada casilla pinta la media de lo que cae dentro de su baldosa. Esa energía no tiene por qué estar en el centro, y la fase de la casilla, que el espectrograma tira, dice dónde está en realidad.</p>
+    <p>Mueve el control a mano y fíjate en que los puntos no se desplazan todos igual: los de la nota solo suben o bajan hasta su línea, los del golpe se van hacia los lados y los del chirp viajan en diagonal. Cada uno va a su propio sitio, y la fase lo conoce.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Paso a paso</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>La mitad que tiramos</h3>
+      <p>El espectrograma de la <a href="e11.html">lección 11</a> se hace cortando la señal con una ventana que se desliza, haciendo Fourier de cada trozo y pintando una columna de color por trozo. Cada casilla de esa columna es el resultado de comparar el trozo con una noria de prueba, como en la <a href="e04.html">lección 4</a>, y una noria tiene dos datos: el tamaño, que es lo único que se pinta, y el punto de partida, que es la <b class="termino" data-termino="Fase de la STFT">fase de la casilla</b> y se tira.</p>
+      <p>¿Importa lo que se tira? Hay una demostración muy conocida con imágenes. Una imagen también se descompone en norias, en este caso en rayas, cada una con su tamaño y su punto de partida. Si tomas dos dibujos, calculas la transformada de cada uno y cruzas las mitades, de forma que un dibujo pone los tamaños y el otro los puntos de partida, ves el dibujo que puso la fase. A eso se le llama <b class="termino">intercambio de fase</b>, y es lo que hace el reto de abajo con dos dibujos sintéticos hechos en esta misma página.</p>
+      <p>Alan Oppenheim, Jae Lim y sus colegas estudiaron el asunto a finales de los años setenta. Una imagen hecha solo con la fase, con todos los tamaños iguales, conserva los bordes del original como una versión realzada y con algo de ruido, mientras que una hecha solo con los tamaños es una pequeña zona brillante en el centro, sin parecido con el original.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">Un matiz</span>
+        <p>La fase no es «más importante» que el tamaño en general. En una imagen entera o en un sonido largo guarda los bordes y las posiciones, pero en trozos cortos de voz el oído se fía sobre todo del tamaño de cada nota, como señalaron esos autores en el mismo trabajo de 1979. Lo que aprovecha la reasignación no es la fase en sí, sino cómo cambia.</p>
+      </aside>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Consigue una imagen que se parezca a las letras usando los tamaños de la noria. Elige de qué dibujo salen los tamaños y de cuál los puntos de partida; las lecturas dicen cuánto se parece el resultado a cada original.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="mandos" id="r1-mandos"></div>
+        <div class="fila" id="r1-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>La flecha que gira de más</h3>
+      <p>Mira cada casilla como una flecha cuya longitud es el tamaño y cuya dirección es la fase. Esa flecha sale de comparar el trozo con la noria de prueba de su fila, y se comporta como el estroboscopio de la <a href="e02.html">lección 2</a>: si la noria escondida en la señal gira exactamente a la velocidad de la noria de prueba, la flecha se queda quieta; si gira un poco más deprisa, la flecha avanza despacio, y si gira un poco más despacio, retrocede. La flecha gira, por tanto, a la velocidad de la diferencia.</p>
+      <p>Eso da un instrumento mucho más fino que la anchura de la mancha. Una casilla de la fila de 1.000 Hz pertenece a una mancha que ocupa decenas de hercios, pero si su flecha gira 36° de más en 2 milésimas de segundo, la noria que lleva dentro da 50 vueltas por segundo más que su fila. Es la frecuencia instantánea de la <a href="e15.html">lección 15</a>, leída dentro de cada casilla, y por eso se llama <b class="termino">frecuencia instantánea local</b>. Un truco equivalente ya se usaba en 1966 en el vocoder de fase de Flanagan y Golden, que calculaba así la frecuencia de cada canal.</p>
+      <p>La fase guarda también el instante. Si en lugar de comparar dos fotos seguidas comparas dos filas contiguas, cómo cambia la fase de una a la otra revela cuándo ocurrió de verdad lo que hay en esa casilla, el <b class="termino">retraso de grupo local</b>. Un golpe es el ejemplo más claro, porque su fase cambia de fila en fila al ritmo que marca el instante exacto en que cayó.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Calcula la velocidad real de la noria que lleva dentro la casilla de la fila de 1.000 Hz. La flecha se ha movido entre dos fotos separadas unos milisegundos, y lo que ha girado dice todo lo que necesitas.</p>
+        <div class="escena" id="r2-escena"></div>
+        <p class="nota-reto">Si quieres ver el giro en cámara lenta, pulsa el botón. Puedes escribir la frecuencia como «1050» o «1.050».</p>
+        <div class="mandos" id="r2-mandos"></div>
+        <div class="fila" id="r2-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>Cada punto, a su centro de gravedad</h3>
+      <p>Cada valor del espectrograma es una media: la energía de la señal que cae dentro de su baldosa, repartida de cualquier manera. El espectrograma lo cuelga siempre del centro de la baldosa, y eso es como pesar una tabla con las pesas amontonadas en un extremo y suponer que todo el peso está en el medio. El sitio que corresponde es el <b class="termino" data-termino="Centro de gravedad (centroide)">centro de gravedad</b>.</p>
+      <p>Las dos lecturas de la fase, la frecuencia local y el instante local, son justo las dos coordenadas de ese centro de gravedad. Llevar cada valor del espectrograma hasta allí es la <b class="termino">reasignación</b>, y la imagen que resulta es el <b class="termino">espectrograma reasignado</b>: las nubes de energía se contraen hasta quedar en líneas.</p>
+      <p>La idea la publicaron a finales de los años setenta Kodera, Gendrin y de Villedary, en una revista de geofísica y con el nombre de «método de la ventana móvil modificado». Se usó poco durante años y, según Auger y sus colegas, por una razón concreta: de la imagen que daba no había forma de volver a la señal. En 1995, Auger y Flandrin le dieron el nombre de reasignación y una receta más barata: en lugar de derivar la fase se calculan tres transformadas, una con la ventana, otra con su derivada y otra con la ventana multiplicada por el tiempo.</p>
+      <p>Con un tono, un chirp lineal o un golpe, la imagen reasignada es en teoría una línea sin grosor, sea cual sea la ventana. El espectrograma, en cambio, obliga a elegir entre una ventana corta, que afina el golpe, y una a medida, que afina el chirp. Las ventanas de este capítulo son gaussianas y su anchura se da con un solo número, σ, la desviación en milisegundos, que es la que moverás en los retos.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Consigue que el golpe y el chirp salgan finos a la vez: el chirp con menos de 5 Hz de anchura y el golpe con menos de 1 ms. Mueve la ventana y cambia entre el espectrograma y el reasignado.</p>
+        <div class="escena" id="r3-escena"></div>
+        <div class="mandos" id="r3-mandos"></div>
+        <div class="fila" id="r3-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>Lo que la reasignación no arregla</h3>
+      <p>La reasignación no rompe el límite de la <a href="e12.html">lección 12</a>. Mueve cada valor a su centro de gravedad, pero si dos notas caben en la misma baldosa, la energía de las dos está mezclada dentro de cada casilla y el centro de gravedad de una mezcla cae entre ellas. Ninguna fase puede repartirlas. Para que salgan como dos líneas, la separación entre las notas tiene que ser mayor que lo que mide, a media altura, la mancha de una nota sola: unos 37 Hz con una ventana de 10 ms, y menos cuanto más larga es la ventana.</p>
+      <p>El ruido es el otro enemigo. Un valor casi sin energía también tiene fase, y la reasignación lo mueve igual que a los demás, de modo que el ruido se convierte en una lluvia de motas brillantes. Por eso se fija un <b class="termino">umbral de energía</b> y no se mueve lo que queda por debajo, con la idea de dejar fuera el ruido sin perder lo débil que importa. Podrás moverlo en «En tu voz».</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Las dos notas de la figura, de 1.000 y 1.040 Hz, tienen que salir como dos líneas finas: consigue que más del 90 % de la energía reasignada caiga a menos de 4 Hz de las notas. Solo puedes mover la ventana.</p>
+        <div class="columnas-2" id="r4-paneles"></div>
+        <div class="mandos" id="r4-mandos"></div>
+        <div class="fila" id="r4-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>Una imagen perfecta, con fantasmas</h3>
+      <p>Hay otra imagen del plano tiempo-frecuencia que clava un chirp sin el borrón del espectrograma: la <b class="termino" data-termino="Distribución de Wigner-Ville">distribución de Wigner-Ville</b>, que Wigner definió en 1932 en la física cuántica y Ville llevó a las señales en 1948. Su problema aparece en cuanto hay dos componentes. Además de dibujar las dos, dibuja una tercera, un <b class="termino" data-termino="Término cruzado (interferencia)">fantasma</b>, justo a medio camino entre ellas, que parpadea entre valores positivos y negativos, y una energía negativa no tiene sentido.</p>
+      <p>La relación con lo anterior es sencilla: el espectrograma es la imagen de Wigner-Ville suavizada con la de la propia ventana. Suavizar borra los fantasmas, pero emborrona todo lo demás, que es justo lo que le pasaba al espectrograma. La reasignación vuelve a afinar la imagen y, según Auger y sus colegas, se libra de la mayor parte de las interferencias.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Coloca la segunda nota para que el fantasma caiga en la diana naranja. Toca el plano para colocarla; la primera nota no se mueve.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>Un dibujo sin camino de vuelta</h3>
+      <p>La reasignación da un dibujo estupendo, pero solo un dibujo. Para volver al sonido harían falta tres cosas, y ha perdido las tres. Guarda energía y no números completos, así que la fase se ha ido. Mueve valores también en el tiempo, de manera que ya no están en el instante en que se midieron. Y apila en un mismo punto valores que venían de sitios distintos, que ya no se pueden separar. Como resumen Auger y sus colegas, con la imagen reasignada no hay una forma sencilla de reconstruir las componentes.</p>
+      <p>Se puede comprobar con el oído, deshaciendo cada imagen con lo que tiene: la transformada completa con su fase, el espectrograma, que solo guarda los tamaños, y el reasignado. La frase que suena es sintética. La lección siguiente empieza justo aquí, porque la fase tiene lo necesario para afinar la imagen y habrá que usarla sin perder el camino de vuelta.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">Una de estas tres imágenes guarda todo lo necesario para recuperar la grabación exacta. Escucha lo que sale de cada una y elige la buena.</p>
+        <div class="columnas-2" id="r6-tarjetas"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>En tu voz</h2>
+    <p><b>Qué grabar.</b> Una melodía corta, cantada o silbada: es el tramo 7 de la grabación de referencia de la serie. Con unos 6 segundos basta, y el laboratorio se queda con los 6 que tengan más sonido. Graba con el micrófono si tu navegador lo deja; si no, sube un audio grabado con el móvil o prueba con los ejemplos sintéticos.</p>
+    <p><b>Qué mirar.</b> A la izquierda, el espectrograma, y a la derecha, el reasignado con la misma ventana. En una melodía cantada, cada armónico debería ser una línea fina que sube y baja con tu entonación, y el vibrato, una ondulación limpia; los ataques bruscos, como las palmadas, pasan de columnas anchas a rayas verticales. Con ruido de fondo salen motas por todo el plano, y entonces conviene subir el umbral. Con una voz muy grave y una ventana muy corta, los armónicos se estorban entre sí y vuelven a salir como manchas.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>Lo que tienes que recordar</h2>
+    <ol class="tres">
+      <li>El espectrograma tira la fase, y la fase guarda dónde están las cosas: cuánto gira la flecha de cada casilla dice la frecuencia instantánea local, y cómo cambia de una fila a otra dice el instante.</li>
+      <li>La reasignación lleva cada valor del espectrograma a su centro de gravedad y las nubes de energía se contraen hasta quedar en líneas. Clava tonos, chirps lineales y golpes, pero no rompe la incertidumbre: dos notas dentro de la misma baldosa siguen estorbándose y el ruido también se mueve.</li>
+      <li>La imagen reasignada no tiene camino de vuelta, porque ha tirado la fase, ha movido valores de instante y ha apilado puntos. La pregunta que queda es si se puede afinar sin perder la vuelta.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Errores típicos</h2>
+    <ul class="errores">
+      <li><b>«El espectrograma lo tiene todo; la fase es ruido que se puede tirar.»</b> La fase guarda dónde están las cosas: en una imagen, los bordes, y en el espectrograma, la frecuencia local y el instante de cada mancha.</li>
+      <li><b>«La reasignación vence a la incertidumbre.»</b> Solo afina cuando en cada baldosa domina una componente. Dos notas más próximas de lo que mide la mancha de una sola se siguen estorbando, por mucha fase que haya.</li>
+      <li><b>«La reasignación lleva cada punto al máximo de su mancha, sin salir de su columna.»</b> Lo lleva a su centro de gravedad, calculado con la fase, que puede estar en otro instante. En un tono el punto solo sube o baja hasta la línea, pero en un chirp viaja en diagonal hasta la recta, y por eso queda perfecto.</li>
+      <li><b>«La imagen de Wigner-Ville es la perfecta.»</b> Lo es con una sola componente. Con dos, dibuja un fantasma a medio camino que oscila y puede ser negativo.</li>
+      <li><b>«Desde el espectrograma reasignado puedo volver a oír la señal.»</b> No: ha tirado la fase, ha movido valores de instante y ha apilado puntos que venían de sitios distintos.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Abrir</span>
+      <h2>Rincón matemático</h2>
+      <span class="resumen">Las fórmulas, para quien las quiera. Cada una va después de su lectura en palabras.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>La transformada de tiempo corto y el espectrograma</h3>
+      <p>Cada casilla compara la señal, recortada por una ventana <span class="tex">g</span> centrada en el instante <span class="tex">t</span>, con una noria de prueba de frecuencia <span class="tex">f</span>, y el espectrograma se queda con el tamaño al cuadrado:</p>
+      <div class="tex">V_x(t,f) = \int x(s)\,g(s-t)\,e^{-i2\pi f s}\,ds, \qquad S_x(t,f) = \left|V_x(t,f)\right|^2</div>
+
+      <h3>La fase dice la frecuencia y el instante</h3>
+      <p>Si la casilla se refiere al centro de su ventana, <span class="tex">\tilde V_x</span>, la velocidad con que gira su fase en el tiempo es la frecuencia instantánea local, y cómo cambia su fase con la frecuencia da el retraso de grupo, que corrige el instante:</p>
+      <div class="tex">\tilde V_x(t,f) = e^{i2\pi f t}\,V_x(t,f), \qquad \hat f(t,f) = \frac{1}{2\pi}\,\frac{\partial}{\partial t}\arg \tilde V_x(t,f), \qquad \hat t(t,f) = t - \frac{1}{2\pi}\,\frac{\partial}{\partial f}\arg \tilde V_x(t,f)</div>
+
+      <h3>La receta de Auger y Flandrin</h3>
+      <p>Las mismas coordenadas, sin derivar la fase: se calculan tres transformadas, con la ventana, con su derivada, en 1/s, y con la ventana multiplicada por el tiempo, en s, y se dividen entre sí:</p>
+      <div class="tex">\hat f(t,f) = f - \frac{1}{2\pi}\,\operatorname{Im}\!\left\{\frac{V_x^{g'}(t,f)}{V_x^{g}(t,f)}\right\}, \qquad \hat t(t,f) = t + \operatorname{Re}\!\left\{\frac{V_x^{t g}(t,f)}{V_x^{g}(t,f)}\right\}</div>
+
+      <h3>La flecha entre dos fotos</h3>
+      <p>Si la flecha de la fila <span class="tex">f_k</span> gira <span class="tex">\Delta\varphi</span> radianes de más en <span class="tex">\Delta t</span> segundos, la noria que lleva dentro va a esta frecuencia, con el giro medido entre <span class="tex">-\pi</span> y <span class="tex">\pi</span>:</p>
+      <div class="tex">\hat f \approx f_k + \frac{\Delta\varphi}{2\pi\,\Delta t}, \qquad \Delta\varphi \in (-\pi, \pi]</div>
+      <p>Con los números del texto, 36° son <span class="tex">0{,}2\pi</span> radianes y, en 2 ms, la noria de dentro va a esta distancia de su fila:</p>
+      <div class="tex">\frac{0{,}2\pi}{2\pi\cdot 0{,}002} = 50\ \text{Hz}</div>
+
+      <h3>El espectrograma reasignado</h3>
+      <p>Cada valor del espectrograma se suma en el punto al que apuntan sus coordenadas reasignadas:</p>
+      <div class="tex">\hat S_x(t',f') = \iint S_x(t,f)\,\delta\big(t' - \hat t(t,f)\big)\,\delta\big(f' - \hat f(t,f)\big)\,dt\,df</div>
+
+      <h3>Un chirp queda sobre su recta</h3>
+      <p>Si la frecuencia sube <span class="tex">\alpha</span> hercios por segundo, cada punto reasignado cumple la ley del chirp, y por eso la imagen queda como una recta perfecta:</p>
+      <div class="tex">x(t) = e^{i2\pi\left(f_0 t + \alpha t^2/2\right)} \;\Rightarrow\; \hat f = f_0 + \alpha\,\hat t</div>
+
+      <h3>El centro de gravedad</h3>
+      <p>Cada valor del espectrograma es una media de la distribución de Wigner-Ville de la señal, pesada con la de la ventana alrededor de <span class="tex">(t,f)</span>, y las coordenadas reasignadas son el centro de masas de esa media:</p>
+      <div class="tex">\hat t(t,f) = \frac{\iint s\,W_x(s,\xi)\,W_g(s-t,\xi-f)\,ds\,d\xi}{S_x(t,f)}, \qquad \hat f(t,f) = \frac{\iint \xi\,W_x(s,\xi)\,W_g(s-t,\xi-f)\,ds\,d\xi}{S_x(t,f)}</div>
+
+      <h3>La distribución de Wigner-Ville y sus fantasmas</h3>
+      <p>Compara la señal un poco hacia delante con la señal un poco hacia atrás, para todos los retrasos, y hace Fourier de ese producto:</p>
+      <div class="tex">W_x(t,f) = \int x\!\left(t + \tfrac{\tau}{2}\right)\,x^{*}\!\left(t - \tfrac{\tau}{2}\right)\,e^{-i2\pi f\tau}\,d\tau</div>
+      <p>La de una suma no es la suma de las de cada parte, porque sobra un término cruzado:</p>
+      <div class="tex">W_{x_1+x_2} = W_{x_1} + W_{x_2} + 2\,\operatorname{Re}\,W_{x_1,x_2}</div>
+      <p>Con dos notas en <span class="tex">(t_1, f_1)</span> y <span class="tex">(t_2, f_2)</span>, el término cruzado está en el punto medio y oscila con una frecuencia que crece con la distancia entre las notas:</p>
+      <div class="tex">(t_m, f_m) = \left(\tfrac{t_1+t_2}{2},\, \tfrac{f_1+f_2}{2}\right), \qquad 2\,\operatorname{Re}\,W_{x_1,x_2} \propto \cos\!\big(2\pi\left[(f_1-f_2)(t-t_m) - (t_1-t_2)(f-f_m)\right] + \phi\big)</div>
+      <p>El espectrograma es esa imagen suavizada con la de la ventana, y por eso borra los fantasmas a costa de emborronar:</p>
+      <div class="tex">S_x(t,f) = \iint W_x(s,\xi)\,W_g(s-t,\ \xi-f)\,ds\,d\xi</div>
+
+      <h3>Separación mínima entre dos notas</h3>
+      <p>Con una ventana gaussiana de desviación <span class="tex">\sigma</span>, la mancha de una nota sola mide a media altura la cantidad siguiente, que es la separación mínima en hercios para que dos notas salgan como dos líneas:</p>
+      <div class="tex">\Delta f_{\min} = \frac{\sqrt{2\ln 2}}{\pi\,\sigma}</div>
+      <p>Con <span class="tex">\sigma = 10</span> ms son unos 37 Hz, y con 12 ms, unos 31 Hz.</p>
+
+      <h3>El intercambio de fase</h3>
+      <p>Se toma el tamaño de la transformada de una imagen <span class="tex">A</span> y la fase de la de otra imagen <span class="tex">B</span>, y se deshace la transformada:</p>
+      <div class="tex">I_{AB} = \mathcal{F}^{-1}\!\left\{\,\left|\mathcal{F}\{A\}\right|\;e^{\,i\arg \mathcal{F}\{B\}}\right\}</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Para saber más</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Libro abierto · inglés</span>Auger, Flandrin, Gonçalvès y Lemoine, <a href="https://tftb.nongnu.org/tutorial.pdf"><i>Time-Frequency Toolbox. Tutorial</i></a> (licencia GNU FDL). El capítulo 4 explica la Wigner-Ville, la geometría de sus fantasmas y la reasignación con la analogía del centro de gravedad.</li>
+      <li><span class="tipo">Artículo abierto · inglés</span>Auger, F., Flandrin, P., Lin, Y.-T., McLaughlin, S., Meignen, S., Oberlin, T. y Wu, H.-T. (2013). <a href="https://membres-ljk.imag.fr/Sylvain.Meignen/recherche/IEEESPM.pdf"><i>Time-frequency reassignment and synchrosqueezing: an overview</i></a>. <i>IEEE Signal Processing Magazine</i>. La historia y las fórmulas de la reasignación y el sincrosqueezing, en nueve páginas.</li>
+      <li><span class="tipo">Artículo abierto · inglés</span>Fitz, K. R. y Fulop, S. A. (2009). <a href="https://arxiv.org/abs/0903.3080"><i>A unified theory of time-frequency reassignment</i></a>. La reasignación contada desde el audio y la voz, con su historia y sus métodos de cálculo.</li>
+      <li><span class="tipo">Artículo abierto · inglés</span>Oppenheim, A. V., Lim, J. S., Kopec, G. y Pohlig, S. (1979). <a href="https://dsp-group.mit.edu/wp-content/uploads/2024/11/Proc_Phase_1979.pdf"><i>Phase in speech and pictures</i></a>. ICASSP '79. Imágenes y voz reconstruidas solo con la fase, y por qué la escala importa.</li>
+      <li><span class="tipo">Traducción histórica · inglés</span>Ville, J. (1948), traducción de RAND de 1958, <a href="https://www.rand.org/pubs/translations/T92.html"><i>Theory and Applications of the Notion of Complex Signal</i></a>. El origen de la señal analítica y de la distribución de Wigner-Ville en señales.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>Términos nuevos</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Examen</h2>
+  </section>
+
+</main>
+
+<script src="comun/temario.js"></script>
+<script src="comun/graficas.js"></script>
+<script src="comun/senal.js"></script>
+<script src="comun/curso.js"></script>
+<script src="datos/e18.js"></script>
+<script>
+// Lección 18 · Mover la energía a su sitio: la fase y la reasignación.
+// La imagen ancla (las nubes que se contraen), los seis retos y el laboratorio «En tu voz».
+// Todo el cálculo sale de Senal (fft2, stft, reasignacion, wignerVille, istft…). Lo común (barra, progreso, términos,
+// examen y pie) lo monta Curso solo; aquí solo va lo de esta lección.
+(function () {
+  'use strict';
+  const G = Graficas, S = Senal, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const pot2 = n => { let p = 1; while (p < n) p *= 2; return p; };
+  const suave = u => u * u * (3 - 2 * u);
+  const envolver = a => Math.atan2(Math.sin(a), Math.cos(a));                 // ángulo en (−π, π]
+  const altoEscena = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  // Una fila de botones dentro de un contenedor (para el botón de pausa de las animaciones).
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); (typeof contenedor === 'string' ? document.querySelector(contenedor) : contenedor).appendChild(f); return f; };
+  const unidad = (v, dec) => num(v, dec);
+
+  // ── Utilidades locales de los mapas tiempo-frecuencia (convendría subirlas a comun/) ─────────────────────────
+  // La escala magma en una tabla de 256 colores.
+  const LUT = new Uint8ClampedArray(768);
+  for (let i = 0; i < 256; i++) { const c = G.magma(i / 255); LUT[i * 3] = c[0]; LUT[i * 3 + 1] = c[1]; LUT[i * 3 + 2] = c[2]; }
+
+  // La ventana gaussiana de σ milisegundos: n = 10σ muestras (±5σ), con nfft potencia de 2 para la FFT.
+  function ventanaGauss(sigmaMs, fs, nMin = 256) {
+    const sigma = sigmaMs / 1000 * fs, n = Math.max(nMin, Math.ceil(10 * sigma));
+    return { sigma, n, nfft: pot2(n) };
+  }
+
+  // Las casillas con energía de un espectrograma reasignado, listas para moverlas: de dónde salen (x0, y0), adónde
+  // van (x1, y1) y cuánta energía llevan (w). dbPiso: lo que queda por debajo del máximo (en dB) se ignora.
+  function celdas(R, dbPiso) {
+    const { nT, nF, potencia, t, f, tHat, fHat } = R;
+    let pmax = 0;
+    for (let i = 0; i < potencia.length; i++) if (potencia[i] > pmax) pmax = potencia[i];
+    const umbral = pmax * Math.pow(10, -dbPiso / 10);
+    let n = 0;
+    for (let i = 0; i < potencia.length; i++) if (potencia[i] > umbral) n++;
+    const M = { n, pmax, x0: new Float32Array(n), y0: new Float32Array(n), x1: new Float32Array(n), y1: new Float32Array(n), w: new Float32Array(n) };
+    let q = 0;
+    for (let k = 0; k < nF; k++) for (let j = 0; j < nT; j++) {
+      const p = k * nT + j;
+      if (potencia[p] > umbral) { M.x0[q] = t[j]; M.y0[q] = f[k]; M.x1[q] = tHat[p]; M.y1[q] = fHat[p]; M.w[q] = potencia[p]; q++; }
+    }
+    return M;
+  }
+
+  // Suma la energía de cada casilla en una rejilla nx × ny, en el punto que va de (x0, y0) a (x1, y1) según u (de 0 a 1).
+  // La frecuencia va hacia arriba. caja: { xa, xb, ya, yb }. minW: las casillas con menos energía no se mueven (umbral).
+  function acumular(M, u, caja, nx, ny, acc, minW = 0) {
+    acc.fill(0);
+    const sx = nx / (caja.xb - caja.xa), sy = ny / (caja.yb - caja.ya);
+    for (let i = 0; i < M.n; i++) {
+      const w = M.w[i];
+      if (w < minW) continue;
+      const x = M.x0[i] + (M.x1[i] - M.x0[i]) * u, y = M.y0[i] + (M.y1[i] - M.y0[i]) * u;
+      const px = (x - caja.xa) * sx - 0.5, py = (caja.yb - y) * sy - 0.5;
+      const ix = Math.floor(px), iy = Math.floor(py);
+      if (ix < -1 || iy < -1 || ix >= nx || iy >= ny) continue;
+      const fx = px - ix, fy = py - iy;
+      if (ix >= 0 && iy >= 0) acc[iy * nx + ix] += w * (1 - fx) * (1 - fy);
+      if (ix + 1 < nx && iy >= 0) acc[iy * nx + ix + 1] += w * fx * (1 - fy);
+      if (ix >= 0 && iy + 1 < ny) acc[(iy + 1) * nx + ix] += w * (1 - fx) * fy;
+      if (ix + 1 < nx && iy + 1 < ny) acc[(iy + 1) * nx + ix + 1] += w * fx * fy;
+    }
+    return acc;
+  }
+
+
+  // El espectrograma tal cual, muestreado con interpolación bilinear en una rejilla de nx × ny píxeles (la frecuencia va
+  // hacia arriba). P: { potencia, nT, nF, t0, dt, df }. Se usa para que una zona ampliada no salga a rayas, una por fila.
+  function muestrear(P, caja, nx, ny, acc, minW = 0) {
+    const { potencia, nT, nF, t0, dt, df } = P;
+    for (let iy = 0; iy < ny; iy++) {
+      const f = caja.yb - (iy + 0.5) * (caja.yb - caja.ya) / ny, kf = f / df, k0 = Math.floor(kf), fk = kf - k0;
+      for (let ix = 0; ix < nx; ix++) {
+        const t = caja.xa + (ix + 0.5) * (caja.xb - caja.xa) / nx, jf = (t - t0) / dt, j0 = Math.floor(jf), fj = jf - j0;
+        let v = 0;
+        for (let a = 0; a < 2; a++) for (let b = 0; b < 2; b++) {
+          const k = k0 + a, j = j0 + b;
+          if (k < 0 || k >= nF || j < 0 || j >= nT) continue;
+          v += potencia[k * nT + j] * (a ? fk : 1 - fk) * (b ? fj : 1 - fj);
+        }
+        acc[iy * nx + ix] = v >= minW ? v : 0;
+      }
+    }
+    return acc;
+  }
+  const datosEsp = R => ({ potencia: R.potencia, nT: R.nT, nF: R.nF, t0: R.t[0], dt: R.nT > 1 ? R.t[1] - R.t[0] : 1, df: R.nF > 1 ? R.f[1] - R.f[0] : 1 });
+
+  // Un lienzo fuera de pantalla donde se pinta un mapa (en magma, con un rango en dB bajo el máximo) para luego
+  // dibujarlo ajustado a la caja de los ejes.
+  function imagenTF() {
+    const c = document.createElement('canvas');
+    const I = { c, nx: 0, ny: 0, g: null, img: null, acc: null, max: 0 };
+    I.ajustar = (nx, ny) => {
+      if (I.nx === nx && I.ny === ny && I.acc) return false;
+      I.nx = nx; I.ny = ny; c.width = nx; c.height = ny;
+      I.g = c.getContext('2d');
+      I.img = I.g.createImageData(nx, ny);
+      I.acc = new Float32Array(nx * ny);
+      return true;
+    };
+    // Pinta I.acc: 0 dB es el máximo (o «ref»); rango: dB que se ven por debajo.
+    I.pintar = (rango, ref) => {
+      const a = I.acc, d = I.img.data;
+      let mx = ref || 0;
+      if (!ref) for (let i = 0; i < a.length; i++) if (a[i] > mx) mx = a[i];
+      I.max = mx;
+      const k = mx > 0 ? 1 / mx : 0, esc = 255 / rango;
+      for (let i = 0, o = 0; i < a.length; i++, o += 4) {
+        let t = 0;
+        if (a[i] > 0 && mx > 0) { t = 255 + 10 * Math.log10(a[i] * k) * esc; t = t < 0 ? 0 : t > 255 ? 255 : t; }
+        const c3 = (t | 0) * 3;
+        d[o] = LUT[c3]; d[o + 1] = LUT[c3 + 1]; d[o + 2] = LUT[c3 + 2]; d[o + 3] = 255;
+      }
+      I.g.putImageData(I.img, 0, 0);
+    };
+    I.dibujar = (ctx, caja) => {
+      ctx.save();
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(I.c, caja.x, caja.y, caja.w, caja.h);
+      ctx.restore();
+    };
+    return I;
+  }
+
+  // Los ejes de un mapa: tiempo hacia la derecha, frecuencia hacia arriba, y sitio a la derecha para la leyenda.
+  function marcoMapa(ctx, w, h, C, o) {
+    const m = { izquierda: o.izq ?? 52, derecha: o.der ?? 60, arriba: o.arriba ?? 26, abajo: o.abajo ?? 30 };
+    return G.ejes(ctx, {
+      x: o.x, y: o.y, margen: m, etiquetaX: o.etiquetaX ?? 'tiempo (s)', etiquetaY: o.etiquetaY ?? 'frecuencia (Hz)',
+      marcasX: o.marcasX, marcasY: o.marcasY, formatoX: o.formatoX, formatoY: o.formatoY ?? (v => num(v)), rejilla: false, C,
+    });
+  }
+  // La barra de color en dB, a la derecha del mapa, y un trazo fino alrededor.
+  function leyendaMapa(ctx, esc, C, rango, x) {
+    const c = esc.caja;
+    ctx.save();
+    ctx.strokeStyle = G.alfa(C.eje, 0.9);
+    ctx.lineWidth = 1;
+    ctx.strokeRect(Math.round(c.x) + 0.5, Math.round(c.y) + 0.5, Math.round(c.w) - 1, Math.round(c.h) - 1);
+    ctx.restore();
+    G.leyenda(ctx, { x: x ?? c.x + c.w + 14, y: c.y, ancho: 10, alto: c.h, rango: [-rango, 0], etiqueta: 'dB', C });
+  }
+  const sinSonido = (ctx, w, h, C, txt) => G.texto(ctx, w / 2, h / 2, txt || 'calculando…', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C });
+
+  // ── La idea en una imagen: las nubes de energía que se contraen hacia líneas ───────────────────────────
+  // Una señal de un segundo con una nota, un chirp y un golpe. Senal.reasignacion da, para cada casilla del espectrograma,
+  // el instante y la frecuencia de su centro de gravedad; el control las lleva de un sitio al otro.
+  (function () {
+    const FS = 8000, DUR = 1, FMAX = FS / 2, SIGMA_MS = 7, RANGO = 60;
+    const A = { M: null, v: 0, u: 0, dir: 1, espera: 1.2, trayectos: true, I: imagenTF(), clave: '', sub: [] };
+    function senal() {
+      const N = FS * DUR, x = new Float64Array(N);
+      for (let i = 0; i < N; i++) {
+        const t = i / FS, fundido = Math.min(1, t / 0.03, (DUR - t) / 0.03);
+        x[i] += 0.4 * fundido * Math.cos(TAU * 700 * t);                              // la nota
+        if (t >= 0.15 && t <= 0.85) {                                                // el chirp: de 1.200 a 3.400 Hz
+          const tt = t - 0.15, al = 2200 / 0.7, w = Math.min(1, tt / 0.03, (0.7 - tt) / 0.03);
+          x[i] += 0.4 * w * Math.cos(TAU * (1200 * tt + 0.5 * al * tt * tt));
+        }
+      }
+      x[Math.round(0.5 * FS)] += 1.5;                                                // el golpe
+      return x;
+    }
+    function calcular() {
+      const vt = ventanaGauss(SIGMA_MS, FS, 512);
+      const R = S.reasignacion(senal(), FS, { n: vt.n, salto: 16, nfft: vt.nfft, sigma: vt.sigma, ventana: 'gauss', umbral: 1e-4 });
+      A.M = celdas(R, RANGO + 10);
+      // Unos cuantos puntos fuertes, para dibujar su trayecto.
+      const az = S.azar(5), M = A.M, fuerte = M.pmax * Math.pow(10, -2.4);
+      A.sub = [];
+      for (let i = 0; i < M.n; i++) if (M.w[i] > fuerte && az.real() < 0.012) A.sub.push(i);
+    }
+    calcular();
+    const L = G.lienzo('#ancla-escena', {
+      alto: altoEscena(250, 310),
+      etiqueta: 'Espectrograma de una señal con una nota, un chirp que sube y un golpe. Al subir el control, cada punto viaja hasta su centro de gravedad y las nubes de energía se contraen hasta quedar en líneas finas: una horizontal, una diagonal y una vertical.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = marcoMapa(ctx, w, h, C, { x: [0, DUR], y: [0, FMAX], marcasY: [0, 1000, 2000, 3000, 4000], marcasX: [0, 0.25, 0.5, 0.75, 1] });
+        const caja = esc.caja, I = A.I;
+        const nx = Math.min(Math.round(caja.w), 520), ny = Math.min(Math.round(caja.h), 260);
+        const nuevo = I.ajustar(nx, ny), clave = A.u.toFixed(4) + '|' + nx + 'x' + ny;
+        if (nuevo || clave !== A.clave) {
+          A.clave = clave;
+          acumular(A.M, A.u, { xa: 0, xb: DUR, ya: 0, yb: FMAX }, nx, ny, I.acc);
+          I.pintar(RANGO);
+        }
+        I.dibujar(ctx, caja);
+        if (A.trayectos && A.u > 0.01) {
+          ctx.save();
+          ctx.beginPath(); ctx.rect(caja.x, caja.y, caja.w, caja.h); ctx.clip();
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+          ctx.beginPath();
+          const M = A.M, pos = [];
+          for (const i of A.sub) {
+            const x0 = esc.x(M.x0[i]), y0 = esc.y(M.y0[i]);
+            const x = esc.x(M.x0[i] + (M.x1[i] - M.x0[i]) * A.u), y = esc.y(M.y0[i] + (M.y1[i] - M.y0[i]) * A.u);
+            if (Math.abs(x - x0) + Math.abs(y - y0) < 3) continue;
+            ctx.moveTo(x0, y0); ctx.lineTo(x, y);
+            pos.push(x, y);
+          }
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(255,255,255,0.9)';
+          for (let k = 0; k < pos.length; k += 2) ctx.fillRect(pos[k] - 1.2, pos[k + 1] - 1.2, 2.4, 2.4);
+          ctx.restore();
+        }
+        leyendaMapa(ctx, esc, C, RANGO);
+        G.texto(ctx, caja.x + 6, caja.y + caja.h - 8, 'nota', { color: 'rgba(255,255,255,0.8)', tam: 10, C });
+        G.texto(ctx, esc.x(0.5) + 6, caja.y + 13, 'golpe', { color: 'rgba(255,255,255,0.8)', tam: 10, C });
+        G.texto(ctx, esc.x(0.12), esc.y(3250), 'chirp', { color: 'rgba(255,255,255,0.8)', tam: 10, C });
+      },
+    });
+    const mandos = document.getElementById('ancla-mandos');
+    let anim = null, mando = null;
+    mando = Curso.mando(mandos, {
+      etiqueta: 'Reasignar', min: 0, max: 100, paso: 1, valor: 0, formato: v => num(Math.round(v)) + ' %',
+      alCambiar: v => { A.v = v / 100; A.u = suave(A.v); A.espera = 0; if (anim && anim.corriendo) anim.pausar(); L.dibujar(); },
+    });
+    const fila = crear('div', { class: 'botones' });
+    mandos.appendChild(fila);
+    Curso.botones(fila, [{ id: 'tray', texto: 'Ver los trayectos', icono: 'ojo', pulsado: true, alPulsar: on => { A.trayectos = on; L.dibujar(); } }]);
+    anim = Curso.animar(L, (t, dt) => {
+      if (dt > 0) {
+        if (A.espera > 0) A.espera -= dt;
+        else {
+          A.v += A.dir * dt / 2.8;
+          if (A.v >= 1) { A.v = 1; A.dir = -1; A.espera = 2.4; }
+          else if (A.v <= 0) { A.v = 0; A.dir = 1; A.espera = 1.2; }
+        }
+        A.u = suave(A.v);
+        mando.fijar(A.v * 100, false);
+      }
+      L.dibujar();
+    }, { boton: fila });
+  })();
+
+
+  // ── Reto 1 · ¿De quién es la fase? (elegir) ───────────────────────────────────────────────────────────
+  // Dos dibujos sintéticos de 128 × 128 (una noria y la palabra FASE), su transformada con Senal.fft2 y el cruce de
+  // mitades: los tamaños de uno con los puntos de partida del otro, o con todos los tamaños iguales o todos los
+  // puntos de partida a cero. El parecido es la correlación del resultado con cada original.
+  (function () {
+    const N = 128;
+    const lim = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+    const nueva = () => new Float64Array(N * N);
+    const distSeg = (px, py, x0, y0, x1, y1) => {
+      const dx = x1 - x0, dy = y1 - y0, l2 = dx * dx + dy * dy;
+      const t = l2 ? lim(((px - x0) * dx + (py - y0) * dy) / l2) : 0;
+      return Math.hypot(px - (x0 + t * dx), py - (y0 + t * dy));
+    };
+    function trazo(im, x0, y0, x1, y1, w) {
+      const xa = Math.max(0, Math.floor(Math.min(x0, x1) - w - 2)), xb = Math.min(N - 1, Math.ceil(Math.max(x0, x1) + w + 2));
+      const ya = Math.max(0, Math.floor(Math.min(y0, y1) - w - 2)), yb = Math.min(N - 1, Math.ceil(Math.max(y0, y1) + w + 2));
+      for (let y = ya; y <= yb; y++) for (let x = xa; x <= xb; x++) {
+        const v = lim(w / 2 + 0.5 - distSeg(x + 0.5, y + 0.5, x0, y0, x1, y1));
+        if (v > im[y * N + x]) im[y * N + x] = v;
+      }
+    }
+    function anillo(im, cx, cy, r, w) {
+      for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+        const v = lim(w / 2 + 0.5 - Math.abs(Math.hypot(x + 0.5 - cx, y + 0.5 - cy) - r));
+        if (v > im[y * N + x]) im[y * N + x] = v;
+      }
+    }
+    function disco(im, cx, cy, r) {
+      for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+        const v = lim(r + 0.5 - Math.hypot(x + 0.5 - cx, y + 0.5 - cy));
+        if (v > im[y * N + x]) im[y * N + x] = v;
+      }
+    }
+    function dibujoNoria() {
+      const im = nueva(), cx = 64, cy = 58, R = 40;
+      anillo(im, cx, cy, R, 3); anillo(im, cx, cy, R - 8, 2);
+      for (let k = 0; k < 8; k++) {
+        const a = k * Math.PI / 4 + Math.PI / 8, b = k * Math.PI / 4;
+        trazo(im, cx, cy, cx + (R - 8) * Math.cos(a), cy + (R - 8) * Math.sin(a), 2);
+        disco(im, cx + (R + 5) * Math.cos(b), cy + (R + 5) * Math.sin(b), 5);
+      }
+      disco(im, cx, cy, 5);
+      trazo(im, cx, cy, 30, 120, 3); trazo(im, cx, cy, 98, 120, 3); trazo(im, 18, 121, 110, 121, 3);
+      return im;
+    }
+    function dibujoLetras() {
+      const im = nueva(), w = 5, y0 = 38, y1 = 90, ym = 64, ancho = 20, paso = 29, x00 = 14;
+      const L = {
+        F: x => { trazo(im, x, y0, x, y1, w); trazo(im, x, y0, x + ancho, y0, w); trazo(im, x, ym, x + ancho * 0.8, ym, w); },
+        A: x => { trazo(im, x, y1, x + ancho / 2, y0, w); trazo(im, x + ancho / 2, y0, x + ancho, y1, w); trazo(im, x + ancho * 0.22, y0 + (y1 - y0) * 0.65, x + ancho * 0.78, y0 + (y1 - y0) * 0.65, w); },
+        S: x => { trazo(im, x + ancho, y0, x, y0, w); trazo(im, x, y0, x, ym, w); trazo(im, x, ym, x + ancho, ym, w); trazo(im, x + ancho, ym, x + ancho, y1, w); trazo(im, x + ancho, y1, x, y1, w); },
+        E: x => { trazo(im, x, y0, x, y1, w); trazo(im, x, y0, x + ancho, y0, w); trazo(im, x, ym, x + ancho * 0.8, ym, w); trazo(im, x, y1, x + ancho, y1, w); },
+      };
+      'FASE'.split('').forEach((c, i) => L[c](x00 + i * paso));
+      return im;
+    }
+    const ORIG = { noria: dibujoNoria(), letras: dibujoLetras() };
+    function transformar(im) {
+      const re = Float64Array.from(im), imag = new Float64Array(N * N);
+      S.fft2(re, imag, N, N);
+      const mag = new Float64Array(N * N), fase = new Float64Array(N * N);
+      for (let i = 0; i < N * N; i++) { mag[i] = Math.hypot(re[i], imag[i]); fase[i] = Math.atan2(imag[i], re[i]); }
+      return { mag, fase };
+    }
+    const F = { noria: transformar(ORIG.noria), letras: transformar(ORIG.letras) };
+    const UNO = new Float64Array(N * N).fill(1), CERO = new Float64Array(N * N);
+    const corr = (a, b) => {
+      let ma = 0, mb = 0;
+      for (let i = 0; i < a.length; i++) { ma += a[i]; mb += b[i]; }
+      ma /= a.length; mb /= a.length;
+      let sab = 0, saa = 0, sbb = 0;
+      for (let i = 0; i < a.length; i++) { const u = a[i] - ma, v = b[i] - mb; sab += u * v; saa += u * u; sbb += v * v; }
+      return saa > 0 && sbb > 0 ? sab / Math.sqrt(saa * sbb) : 0;
+    };
+    const e = { mag: 'noria', fase: 'noria', res: null, cN: 0, cL: 0 };
+    function recalcular() {
+      const M = e.mag === 'plano' ? UNO : F[e.mag].mag, P = e.fase === 'cero' ? CERO : F[e.fase].fase;
+      const re = new Float64Array(N * N), im = new Float64Array(N * N);
+      for (let i = 0; i < N * N; i++) { re[i] = M[i] * Math.cos(P[i]); im[i] = M[i] * Math.sin(P[i]); }
+      S.ifft2(re, im, N, N);
+      e.res = re;
+      e.cN = Math.max(0, corr(re, ORIG.noria)); e.cL = Math.max(0, corr(re, ORIG.letras));
+    }
+    // Un dibujo en gris sobre un lienzo propio; el resultado se normaliza con su desviación para que se vea igual de bien.
+    const hojas = {};
+    function hoja(id, datos, modo) {
+      const c = hojas[id] || (hojas[id] = (() => { const k = document.createElement('canvas'); k.width = k.height = N; return k; })());
+      const g = c.getContext('2d'), img = g.createImageData(N, N);
+      let s = 0;
+      if (modo === 'rms') { for (let i = 0; i < datos.length; i++) s += datos[i] * datos[i]; s = Math.sqrt(s / datos.length) || 1; }
+      for (let i = 0, o = 0; i < datos.length; i++, o += 4) {
+        const v = Math.round(255 * lim(modo === 'rms' ? 0.5 + datos[i] / (6 * s) : datos[i]));
+        img.data[o] = img.data[o + 1] = img.data[o + 2] = v; img.data[o + 3] = 255;
+      }
+      g.putImageData(img, 0, 0);
+      return c;
+    }
+    const NOMBRE = { noria: 'la noria', letras: 'las letras', plano: 'todos iguales', cero: 'todos a cero' };
+    const L = G.lienzo('#r1-escena', {
+      alto: w => (w < 560 ? 170 : 260),
+      etiqueta: 'Tres dibujos en blanco y negro: una noria, la palabra FASE y el resultado de combinar los tamaños de uno con los puntos de partida de otro',
+      dibujar: (ctx, w, h, C) => {
+        const lado = Math.min((w - 44) / 3, h - 48), sep = (w - 3 * lado) / 4, y = 26;
+        const paneles = [
+          { id: 'noria', titulo: 'Noria', img: hoja('noria', ORIG.noria), tam: e.mag === 'noria', fas: e.fase === 'noria' },
+          { id: 'letras', titulo: 'Letras', img: hoja('letras', ORIG.letras), tam: e.mag === 'letras', fas: e.fase === 'letras' },
+          { id: 'res', titulo: 'Resultado', img: e.res ? hoja('res', e.res, 'rms') : null },
+        ];
+        paneles.forEach((p, i) => {
+          const x = sep + i * (lado + sep);
+          if (p.img) { ctx.save(); ctx.imageSmoothingEnabled = true; ctx.drawImage(p.img, x, y, lado, lado); ctx.restore(); }
+          ctx.save(); ctx.strokeStyle = p.id === 'res' ? C.respuesta : C.eje; ctx.lineWidth = p.id === 'res' ? 2 : 1;
+          ctx.strokeRect(Math.round(x) + 0.5, y + 0.5, Math.round(lado) - 1, Math.round(lado) - 1); ctx.restore();
+          G.texto(ctx, x + lado / 2, 16, p.titulo, { alinear: 'center', color: p.id === 'res' ? C.respuesta : C.suave, tam: 11, peso: 600, C });
+          const m = [p.tam ? 'tamaños' : '', p.fas ? 'partida' : ''].filter(Boolean).join(' y ');
+          if (m) G.texto(ctx, x + lado / 2, y + lado + 14, 'pone: ' + m, { alinear: 'center', color: C.tenue, tam: 10, C });
+        });
+      },
+    });
+    const lect = Curso.lecturas('#r1-fila', [
+      { id: 'noria', nombre: 'Se parece a la noria' },
+      { id: 'letras', nombre: 'Se parece a las letras', clase: 'respuesta' },
+    ]);
+    function pintar() {
+      recalcular();
+      lect.fijar('noria', num(e.cN, 2));
+      lect.fijar('letras', num(e.cL, 2));
+      L.etiquetar('Tres dibujos en blanco y negro: la noria, la palabra FASE y el resultado de combinar los tamaños de ' + NOMBRE[e.mag] + ' con los puntos de partida de ' + NOMBRE[e.fase] + '. Se parece a la noria ' + num(e.cN, 2) + ' y a las letras ' + num(e.cL, 2));
+      L.dibujar();
+    }
+    const mandos = document.getElementById('r1-mandos');
+    const eMag = Curso.eleccion(mandos, { etiqueta: 'Los tamaños salen de', valor: e.mag, reto: 'reto-1',
+      opciones: [{ valor: 'noria', texto: 'La noria' }, { valor: 'letras', texto: 'Las letras' }, { valor: 'plano', texto: 'Todos iguales' }],
+      alCambiar: v => { e.mag = v; pintar(); } });
+    const eFase = Curso.eleccion(mandos, { etiqueta: 'Los puntos de partida salen de', valor: e.fase, reto: 'reto-1',
+      opciones: [{ valor: 'noria', texto: 'La noria' }, { valor: 'letras', texto: 'Las letras' }, { valor: 'cero', texto: 'Todos a cero' }],
+      alCambiar: v => { e.fase = v; pintar(); } });
+    pintar();
+    Curso.reto('reto-1', {
+      titulo: '¿De quién es la fase?', nivel: 'fácil',
+      comprobar: () => {
+        if (e.mag === 'noria' && e.cL >= 0.6 && e.cL > e.cN) return { ok: true, mensaje: 'Se ve la palabra FASE (' + num(e.cL, 2) + ' de parecido) aunque todos los tamaños son los de la noria.' };
+        if (e.mag !== 'noria') return { ok: false, mensaje: e.mag === 'plano' ? 'Con todos los tamaños iguales también se reconoce algo, pero el reto pide los tamaños de la noria.' : 'Los tamaños tienen que ser los de la noria: es lo que hace la prueba difícil.' };
+        if (e.fase === 'cero') return { ok: false, mensaje: 'Sin puntos de partida, todas las rayas empiezan a la vez y el dibujo se deshace. Prueba con los de otro dibujo.' };
+        if (e.fase === 'noria') return { ok: false, mensaje: 'Eso es la noria entera, con sus tamaños y sus puntos de partida. Los puntos de partida tienen que ser los de las letras.' };
+        return { ok: false, mensaje: 'Casi: se parece a las letras ' + num(e.cL, 2) + ' y hace falta al menos 0,60.' };
+      },
+      resolver: () => { eMag.fijar('noria'); eFase.fijar('letras'); },
+      pista: [
+        'Los tamaños dicen cuánta energía hay de cada raya, y los puntos de partida, dónde empieza cada una. ¿Cuál de las dos cosas coloca los bordes de un dibujo?',
+        'Quédate con los tamaños de la noria y pon los puntos de partida de las letras.',
+      ],
+      exito: '<p>Se lee la palabra aunque todos los tamaños son los de la noria: la fase guarda dónde están las cosas. Alan Oppenheim y Jae Lim popularizaron esta demostración en 1981. Fíjate también en lo que pasa con los puntos de partida a cero, que es lo que queda al tirar la fase: el dibujo se deshace, y eso es justo lo que hace un espectrograma.</p>',
+    });
+  })();
+
+  // ── Reto 2 · ¿Cuánto gira la flecha? (escribir un número) ─────────────────────────────────────────────
+  // La flecha de la casilla de la fila de 1.000 Hz, ya descontado lo que giraría la noria de prueba de su fila, en dos
+  // fotos seguidas. Si la noria de dentro va a f Hz, la flecha gira 360·(f − 1.000)·Δt grados entre las dos fotos
+  // (comprobado con Senal.stft). Los casos se eligen para que las cuentas salgan redondas.
+  (function () {
+    const FILA = 1000;
+    const CASOS = [
+      { dt: 2, giro: 18 }, { dt: 2, giro: 54 }, { dt: 4, giro: -36 }, { dt: 2, giro: -54 }, { dt: 4, giro: 36 }, { dt: 4, giro: 72 },
+    ];
+    const caso = Curso.azar().elegir(CASOS);
+    const respuesta = FILA + caso.giro / (360 * caso.dt / 1000);
+    const th1 = 35 * Math.PI / 180, giro = caso.giro * Math.PI / 180;
+    const e = { u: 1 };
+    let raf = 0, reto = null;
+    const grados = v => (v > 0 ? '+' : v < 0 ? '−' : '') + num(Math.abs(v)) + '°';
+    const L = G.lienzo('#r2-escena', {
+      alto: w => (w < 560 ? 230 : 250),
+      etiqueta: 'La flecha de una casilla de la fila de ' + num(FILA) + ' hercios en dos fotos separadas ' + num(caso.dt) + ' milisegundos: en la segunda ha girado ' + num(Math.abs(caso.giro)) + ' grados ' + (caso.giro > 0 ? 'hacia delante' : 'hacia atrás') + ' respecto a la primera',
+      dibujar: (ctx, w, h, C) => {
+        const ancho = w >= 560, r = Math.min(h / 2 - 26, ancho ? 96 : w * 0.3), cx = ancho ? Math.max(r + 40, w * 0.3) : w / 2, cy = h / 2;
+        const punta = (a, k = 1) => [cx + k * r * Math.cos(a), cy - k * r * Math.sin(a)];
+        // El dial, con una marca arriba, abajo, a la izquierda y a la derecha.
+        ctx.save();
+        ctx.strokeStyle = C.eje; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.stroke();
+        ctx.beginPath();
+        for (let k = 0; k < 4; k++) { const a = k * Math.PI / 2, p = punta(a), q = punta(a, 0.9); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); }
+        ctx.stroke();
+        ctx.restore();
+        // El arco del giro de más, entre la primera flecha y la segunda.
+        const a2 = th1 + giro * e.u;
+        if (Math.abs(giro * e.u) > 0.01) {
+          ctx.save();
+          ctx.strokeStyle = C.respuesta; ctx.lineWidth = 3; ctx.globalAlpha = 0.55;
+          ctx.beginPath(); ctx.arc(cx, cy, r * 0.6, -th1, -a2, giro > 0); ctx.stroke();
+          ctx.restore();
+        }
+        // Foto 1 y foto 2 (la que gira), cada una con su rótulo fuera del dial.
+        const p1 = punta(th1), p2 = punta(a2), l1 = punta(th1, 1.16), l2 = punta(a2, 1.16);
+        G.flecha(ctx, cx, cy, p1[0], p1[1], { color: C.cuerpo, ancho: 2, C });
+        G.flecha(ctx, cx, cy, p2[0], p2[1], { color: C.respuesta, ancho: 3, C });
+        G.texto(ctx, l1[0], l1[1], 'foto 1', { alinear: Math.cos(th1) >= 0 ? 'left' : 'right', base: 'middle', color: C.suave, tam: 10.5, C });
+        if (Math.abs(giro * e.u) > 0.2) G.texto(ctx, l2[0], l2[1], 'foto 2', { alinear: Math.cos(a2) >= 0 ? 'left' : 'right', base: 'middle', color: C.respuesta, tam: 10.5, C });
+        // El giro de más, en grande.
+        G.texto(ctx, cx, cy + r + 18, 'giro de más: ' + grados(caso.giro * e.u), { alinear: 'center', color: C.respuesta, tam: 13, peso: 600, C });
+        if (ancho) {
+          const x0 = Math.max(cx + r + 90, w * 0.55);
+          G.texto(ctx, x0, cy - 30, 'fila de ' + num(FILA) + ' Hz', { color: C.suave, tam: 12, peso: 600, C });
+          G.texto(ctx, x0, cy - 8, 'foto 1: 0 ms', { color: C.suave, tam: 12, C });
+          G.texto(ctx, x0, cy + 14, 'foto 2: ' + num(caso.dt) + ' ms después', { color: C.respuesta, tam: 12, C });
+        }
+      },
+    });
+    const lect = Curso.lecturas('#r2-fila', [
+      { id: 'fila', nombre: 'Fila' },
+      { id: 'dt', nombre: 'Entre fotos' },
+      { id: 'giro', nombre: 'Giro de más', clase: 'respuesta' },
+    ]);
+    lect.fijar('fila', num(FILA) + ' Hz');
+    lect.fijar('dt', num(caso.dt) + ' ms');
+    lect.fijar('giro', grados(caso.giro) + (caso.giro > 0 ? ' (hacia delante)' : ' (hacia atrás)'));
+    const bots = crear('div', { class: 'botones' });
+    document.getElementById('r2-fila').appendChild(bots);
+    function reproducir() {
+      cancelAnimationFrame(raf);
+      const t0 = performance.now();
+      const paso = ahora => {
+        const v = Math.min(1, (ahora - t0) / 2400);
+        e.u = v * v * (3 - 2 * v);
+        L.dibujar();
+        if (v < 1) raf = requestAnimationFrame(paso);
+      };
+      e.u = 0; L.dibujar();
+      raf = requestAnimationFrame(paso);
+    }
+    Curso.botones(bots, [{ id: 'ver', texto: 'Ver el giro', icono: 'play', tipo: 'discreto', alPulsar: reproducir }]);
+    const campo = Curso.campo('#r2-mandos', { etiqueta: 'Frecuencia de la noria que hay dentro', unidad: 'Hz', marcador: '¿cuántos hercios?', ancho: 8, alEnviar: () => reto.revisar() });
+    reto = Curso.reto('reto-2', {
+      titulo: '¿Cuánto gira la flecha?', nivel: 'medio', auto: false,
+      comprobar: () => {
+        const v = campo.valor;
+        if (!Number.isFinite(v)) return { ok: false, mensaje: 'Escribe un número de hercios, por ejemplo 1.050.' };
+        if (Math.abs(v - respuesta) <= 1) { campo.marcar('bien'); return { ok: true, mensaje: num(respuesta) + ' Hz: ' + num(Math.abs(respuesta - FILA)) + ' Hz ' + (respuesta > FILA ? 'más' : 'menos') + ' que su fila.' }; }
+        campo.marcar('mal');
+        if (Math.abs(v - (respuesta - FILA)) <= 1) return { ok: false, mensaje: 'Eso es lo que la noria de dentro se aparta de su fila, y falta sumarlo a la frecuencia de la fila.' };
+        if (Math.abs(v - (FILA - (respuesta - FILA))) <= 1) return { ok: false, mensaje: 'La cuenta está bien, pero al revés: si la flecha va hacia ' + (caso.giro > 0 ? 'delante' : 'atrás') + ', la noria de dentro va ' + (caso.giro > 0 ? 'más deprisa' : 'más despacio') + ' que su fila.' };
+        return { ok: false, mensaje: v > respuesta ? 'Te pasas: la noria no va tan deprisa.' : 'Te quedas corto: la noria va más deprisa.' };
+      },
+      resolver: () => campo.fijar(respuesta),
+      pista: [
+        'Una vuelta entera son 360°. Pasa el giro de más a vueltas, y divide por el tiempo que ha pasado entre las dos fotos.',
+        'Con ' + num(Math.abs(caso.giro)) + '° en ' + num(caso.dt) + ' ms, la fracción de vuelta es ' + num(Math.abs(caso.giro) / 360, 3) + ', y en un segundo caben ' + num(1000 / caso.dt) + ' intervalos de esos. Esas son las vueltas por segundo de más; súmalas o réstalas a la fila.',
+      ],
+      exito: '<p>La flecha de cada casilla gira al ritmo de la noria de verdad que lleva dentro, no al de su fila, y por eso la fase afina mucho más que la anchura de la mancha. Un truco parecido se usaba ya en 1966 en el vocoder de fase de Flanagan y Golden.</p>',
+    });
+  })();
+
+  // ── Reto 3 · Golpe y chirp a la vez (elegir y deslizador) ─────────────────────────────────────────────
+  // 1 s a 8 kHz: un chirp lineal de 500 a 2.500 Hz entre 0,2 y 0,8 s y un golpe en 0,5 s. Las anchuras son la desviación
+  // típica de la energía alrededor de la verdad (la recta del chirp y el instante del golpe), medidas lejos de donde se
+  // tocan: el chirp, en 0,25–0,40 y 0,60–0,75 s; el golpe, entre 3.000 y 3.800 Hz.
+  (function () {
+    const FS3 = 8000, DUR = 1, T0 = 0.2, T1 = 0.8, F0 = 500, F1 = 2500, AL = (F1 - F0) / (T1 - T0), TG = 0.5, FMAX = 3000;
+    const e = { sigma: 10, vista: 'esp', R: null, M: null, memo: {}, I: imagenTF(), med: null, clave: '' };
+    function senal() {
+      const x = new Float64Array(FS3 * DUR);
+      for (let i = 0; i < x.length; i++) {
+        const t = i / FS3;
+        if (t >= T0 && t <= T1) { const w = Math.min(1, (t - T0) / 0.02, (T1 - t) / 0.02); x[i] = 0.5 * w * Math.cos(TAU * (F0 * (t - T0) + 0.5 * AL * (t - T0) * (t - T0))); }
+      }
+      x[Math.round(TG * FS3)] += 1.5;
+      return x;
+    }
+    const X3 = senal();
+    function medir(R, reas) {
+      const { nT, nF, t, f, potencia, tHat, fHat } = R;
+      let pmax = 0;
+      for (let i = 0; i < potencia.length; i++) if (potencia[i] > pmax) pmax = potencia[i];
+      const umbral = pmax * 1e-6;
+      let sw = 0, sd = 0, cw = 0, cd = 0;
+      for (let k = 0; k < nF; k++) for (let j = 0; j < nT; j++) {
+        const p = k * nT + j, P = potencia[p];
+        if (P <= umbral) continue;
+        const tp = reas ? tHat[p] : t[j], fp = reas ? fHat[p] : f[k];
+        if ((tp > 0.25 && tp < 0.4) || (tp > 0.6 && tp < 0.75)) {
+          const fi = F0 + AL * (tp - T0);
+          if (Math.abs(fp - fi) < 600) { sw += P; sd += P * (fp - fi) * (fp - fi); }
+        }
+        if (fp > 3000 && fp < 3800 && Math.abs(tp - TG) < 0.1) { cw += P; cd += P * (tp - TG) * (tp - TG); }
+      }
+      return { chirp: sw > 0 ? Math.sqrt(sd / sw) : NaN, golpe: cw > 0 ? 1000 * Math.sqrt(cd / cw) : NaN };
+    }
+    function recalcular() {
+      const clave = e.sigma.toFixed(2);
+      let m = e.memo[clave];
+      if (!m) {
+        const vt = ventanaGauss(e.sigma, FS3, 512);
+        const R = S.reasignacion(X3, FS3, { n: vt.n, salto: 16, nfft: vt.nfft, sigma: vt.sigma, ventana: 'gauss', umbral: 1e-4 });
+        m = e.memo[clave] = { M: celdas(R, 70), P: datosEsp(R), esp: medir(R, false), reas: medir(R, true) };
+        const claves = Object.keys(e.memo);
+        if (claves.length > 8) delete e.memo[claves[0]];
+      }
+      e.M = m.M; e.P = m.P; e.esp = m.esp; e.reas = m.reas; e.med = e.vista === 'esp' ? m.esp : m.reas;
+    }
+    const fmtHz = v => (Number.isFinite(v) ? (v < 0.05 ? '0' : num(v, 1)) : '—') + ' Hz';
+    const fmtMs = v => (Number.isFinite(v) ? (v < 0.005 ? '0' : num(v, 2)) : '—') + ' ms';
+    const L = G.lienzo('#r3-escena', {
+      alto: w => (w < 560 ? 250 : 300),
+      etiqueta: 'Espectrograma, o espectrograma reasignado, de un segundo con un chirp que sube de 500 a 2.500 hercios y un golpe seco a mitad. Frecuencia hacia arriba y tiempo hacia la derecha.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = marcoMapa(ctx, w, h, C, { x: [0, DUR], y: [0, FMAX], marcasY: [0, 1000, 2000, 3000], marcasX: [0, 0.25, 0.5, 0.75, 1] });
+        if (!e.M) { sinSonido(ctx, w, h, C); return; }
+        const caja = esc.caja, I = e.I, nx = Math.min(Math.round(caja.w), 520), ny = Math.min(Math.round(caja.h), 260);
+        const nuevo = I.ajustar(nx, ny), clave = e.vista + '|' + e.sigma.toFixed(2) + '|' + nx + 'x' + ny;
+        if (nuevo || clave !== e.clave) {
+          e.clave = clave;
+          const caja3 = { xa: 0, xb: DUR, ya: 0, yb: FMAX };
+          if (e.vista === 'esp') muestrear(e.P, caja3, nx, ny, I.acc); else acumular(e.M, 1, caja3, nx, ny, I.acc);
+          I.pintar(60);
+        }
+        I.dibujar(ctx, caja);
+        leyendaMapa(ctx, esc, C, 60);
+      },
+    });
+    const lect = Curso.lecturas('#r3-fila', [
+      { id: 'chirp', nombre: 'Chirp · meta < 5 Hz', clase: 'respuesta' },
+      { id: 'golpe', nombre: 'Golpe · meta < 1 ms', clase: 'respuesta' },
+    ]);
+    function pintar() {
+      if (!e.med) recalcular();
+      lect.fijar('chirp', fmtHz(e.med.chirp));
+      lect.fijar('golpe', fmtMs(e.med.golpe));
+      lect.clase('chirp', e.med.chirp < 5 ? 'destacada respuesta' : 'respuesta');
+      lect.clase('golpe', e.med.golpe < 1 ? 'destacada respuesta' : 'respuesta');
+      L.dibujar();
+    }
+    const mandos = document.getElementById('r3-mandos');
+    const eVista = Curso.eleccion(mandos, { etiqueta: 'Imagen', valor: e.vista, reto: 'reto-3',
+      opciones: [{ valor: 'esp', texto: 'Espectrograma' }, { valor: 'reas', texto: 'Reasignado' }],
+      alCambiar: v => { e.vista = v; recalcular(); pintar(); } });
+    const mSigma = Curso.mando(mandos, { etiqueta: 'Anchura de la ventana (σ)', escala: 'log', min: 2, max: 20, paso: 0.5, valor: e.sigma, formato: v => num(v, 1) + ' ms', clase: 'respuesta', reto: 'reto-3',
+      alCambiar: v => { e.sigma = v; recalcular(); pintar(); } });
+    const bots = crear('div', { class: 'botones' });
+    document.getElementById('r3-fila').appendChild(bots);
+    Curso.audio.boton(bots, () => ({ x: X3, fs: FS3, volumen: 0.6 }), 'Oír la señal');
+    Curso.alVerse(L.canvas, () => { recalcular(); pintar(); });
+    Curso.reto('reto-3', {
+      titulo: 'Golpe y chirp a la vez', nivel: 'medio',
+      comprobar: () => {
+        if (!e.med) recalcular();
+        const { chirp, golpe } = e.med;
+        if (e.vista === 'reas' && chirp < 5 && golpe < 1) return { ok: true, mensaje: 'Chirp de ' + fmtHz(chirp) + ' y golpe de ' + fmtMs(golpe) + ': los dos finos a la vez.' };
+        if (e.vista === 'esp') return { ok: false, mensaje: 'El chirp mide ' + fmtHz(chirp) + ' y el golpe ' + fmtMs(golpe) + '. Mueve la ventana: lo que afina uno ensancha el otro. Cuando te canses, cambia de imagen.' };
+        if (golpe >= 1) return { ok: false, mensaje: 'El golpe sigue en ' + fmtMs(golpe) + ': con una ventana tan larga se contamina. Acórtala un poco.' };
+        return { ok: false, mensaje: 'El chirp mide ' + fmtHz(chirp) + ': prueba con otra anchura de ventana.' };
+      },
+      resolver: () => { eVista.fijar('reas'); mSigma.fijar(7); },
+      pista: [
+        'Empieza con el espectrograma y recorre el control de la ventana. ¿Hay algún punto en que los dos números bajen de su meta a la vez?',
+        'Ninguna ventana deja finos a la vez el chirp y el golpe en el espectrograma. Cambia a la imagen reasignada.',
+      ],
+      exito: '<p>En el espectrograma, lo que afina el golpe ensancha el chirp, y lo mejor que se consigue es unos 23 Hz y unos 5 ms con una ventana de 7 ms. Reasignada, la imagen deja los dos finos con casi cualquier ventana, porque chirps lineales y golpes son justo los casos que la reasignación localiza a la perfección.</p>',
+    });
+  })();
+
+  // ── Reto 4 · Afina dos notas (deslizador) ─────────────────────────────────────────────────────────────
+  // 1 s a 8 kHz con dos notas de 1.000 y 1.040 Hz. La concentración es la parte de la energía que cae a menos de 4 Hz de
+  // alguna de las notas (entre 0,15 y 0,85 s, lejos de los bordes), con el espectrograma tal cual y con la reasignación.
+  (function () {
+    const FS4 = 8000, NOTAS = [1000, 1040], TOL = 4, T0 = 0.15, T1 = 0.85, FA = 900, FB = 1150;
+    const e = { sigma: 5, memo: {}, M: null, conc: null, Ie: imagenTF(), Ir: imagenTF(), claveE: '', claveR: '' };
+    const X4 = (() => {
+      const x = new Float64Array(FS4);
+      for (let i = 0; i < FS4; i++) x[i] = 0.5 * Math.sin(TAU * NOTAS[0] * i / FS4) + 0.5 * Math.sin(TAU * NOTAS[1] * i / FS4 + 0.7);
+      return x;
+    })();
+    function concentracion(R, reas) {
+      const { nT, nF, t, f, potencia, fHat } = R;
+      let tot = 0, dentro = 0;
+      for (let k = 0; k < nF; k++) for (let j = 0; j < nT; j++) {
+        if (t[j] < T0 || t[j] > T1) continue;
+        const p = k * nT + j, P = potencia[p];
+        tot += P;
+        const fp = reas ? fHat[p] : f[k];
+        if (Math.abs(fp - NOTAS[0]) < TOL || Math.abs(fp - NOTAS[1]) < TOL) dentro += P;
+      }
+      return tot > 0 ? dentro / tot : 0;
+    }
+    function recalcular() {
+      const clave = e.sigma.toFixed(2);
+      let m = e.memo[clave];
+      if (!m) {
+        const vt = ventanaGauss(e.sigma, FS4, 512);
+        const R = S.reasignacion(X4, FS4, { n: vt.n, salto: 32, nfft: vt.nfft, sigma: vt.sigma, ventana: 'gauss', umbral: 1e-4 });
+        m = e.memo[clave] = { M: celdas(R, 70), P: datosEsp(R), esp: concentracion(R, false), reas: concentracion(R, true) };
+        const claves = Object.keys(e.memo);
+        if (claves.length > 10) delete e.memo[claves[0]];
+      }
+      e.M = m.M; e.P = m.P; e.conc = m;
+    }
+    const cont = document.getElementById('r4-paneles');
+    function panel(titulo, reas) {
+      const p = crear('div', { class: 'panel-mini' });
+      p.appendChild(crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, titulo)));
+      const escena = crear('div', { class: 'escena' });
+      p.appendChild(escena);
+      cont.appendChild(p);
+      const I = reas ? e.Ir : e.Ie;
+      return G.lienzo(escena, {
+        alto: altoEscena(210, 250),
+        etiqueta: (reas ? 'Espectrograma reasignado' : 'Espectrograma') + ' de dos notas de 1.000 y 1.040 hercios, entre 900 y 1.150 hercios',
+        dibujar: (ctx, w, h, C) => {
+          const esc = marcoMapa(ctx, w, h, C, { x: [T0, T1], y: [FA, FB], izq: 48, der: 52, marcasY: [900, 1000, 1040, 1100], marcasX: [0.2, 0.4, 0.6, 0.8], etiquetaY: 'frecuencia (Hz)' });
+          if (!e.M) { sinSonido(ctx, w, h, C); return; }
+          const caja = esc.caja, nx = Math.min(Math.round(caja.w), 300), ny = Math.min(Math.round(caja.h), 240);
+          const nuevo = I.ajustar(nx, ny), clave = e.sigma.toFixed(2) + '|' + nx + 'x' + ny;
+          if (nuevo || clave !== (reas ? e.claveR : e.claveE)) {
+            if (reas) e.claveR = clave; else e.claveE = clave;
+            const caja4 = { xa: T0, xb: T1, ya: FA, yb: FB };
+            if (reas) acumular(e.M, 1, caja4, nx, ny, I.acc); else muestrear(e.P, caja4, nx, ny, I.acc);
+            I.pintar(60);
+          }
+          I.dibujar(ctx, caja);
+          leyendaMapa(ctx, esc, C, 60);
+          ctx.save();
+          ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          for (const f of NOTAS) { const y = esc.y(f); ctx.moveTo(caja.x, y); ctx.lineTo(caja.x + 7, y); ctx.moveTo(caja.x + caja.w - 7, y); ctx.lineTo(caja.x + caja.w, y); }
+          ctx.stroke();
+          ctx.restore();
+        },
+      });
+    }
+    const Le = panel('Espectrograma', false), Lr = panel('Reasignado', true);
+    const lect = Curso.lecturas('#r4-fila', [
+      { id: 'mancha', nombre: 'Mancha de una nota' },
+      { id: 'esp', nombre: 'Espectrograma junto a las notas' },
+      { id: 'reas', nombre: 'Reasignado · meta > 90 %', clase: 'respuesta' },
+    ]);
+    function pintar() {
+      if (!e.M) recalcular();
+      lect.fijar('mancha', num(Math.sqrt(2 * Math.LN2) / (Math.PI * e.sigma / 1000), 1) + ' Hz');
+      lect.fijar('esp', num(100 * e.conc.esp, 0) + ' %');
+      lect.fijar('reas', num(100 * e.conc.reas, 0) + ' %');
+      lect.clase('reas', e.conc.reas >= 0.9 ? 'destacada respuesta' : 'respuesta');
+      Le.dibujar(); Lr.dibujar();
+    }
+    const mSigma = Curso.mando('#r4-mandos', { etiqueta: 'Anchura de la ventana (σ)', min: 2, max: 30, paso: 0.5, valor: e.sigma, formato: v => num(v, 1) + ' ms', clase: 'respuesta', reto: 'reto-4',
+      alCambiar: v => { e.sigma = v; recalcular(); pintar(); } });
+    const bots = crear('div', { class: 'botones' });
+    document.getElementById('r4-fila').appendChild(bots);
+    Curso.audio.boton(bots, () => ({ x: X4, fs: FS4, volumen: 0.5 }), 'Oír las dos notas');
+    Curso.alVerse(Le.canvas, () => { recalcular(); pintar(); });
+    Curso.reto('reto-4', {
+      titulo: 'Afina dos notas', nivel: 'medio',
+      comprobar: () => {
+        if (!e.conc) recalcular();
+        const c = e.conc.reas, sep = Math.sqrt(2 * Math.LN2) / (Math.PI * e.sigma / 1000);
+        if (c >= 0.9) return { ok: true, mensaje: num(100 * c, 0) + ' % de la energía junto a las notas, con una mancha de ' + num(sep, 0) + ' Hz.' };
+        if (sep > 40) return { ok: false, mensaje: 'La mancha de una sola nota mide ' + num(sep, 0) + ' Hz y las notas distan 40: caben en la misma baldosa y se estorban. Alarga la ventana.' };
+        return { ok: false, mensaje: 'Va mejorando (' + num(100 * c, 0) + ' %), pero la mancha mide ' + num(sep, 0) + ' Hz y casi toca a la otra nota. Un poco más de ventana.' };
+      },
+      resolver: () => mSigma.fijar(14),
+      pista: [
+        'Si las dos notas caben en la misma mancha, ninguna fase puede repartirlas. Compara la anchura de la mancha con lo que separa las notas.',
+        'Con una ventana más larga, la mancha de cada nota se hace más estrecha en frecuencia. Prueba por encima de 12 ms.',
+      ],
+      exito: '<p>La reasignación afina lo que la ventana ya separa, pero no hace milagros: para dos notas a 40 Hz hace falta una ventana bastante larga. La incertidumbre sigue ahí; lo que hace la fase es aprovecharla mejor.</p>',
+    });
+  })();
+
+  // ── Reto 5 · Caza el fantasma (tocar para colocar) ────────────────────────────────────────────────────
+  // 0,5 s a 4 kHz con dos notas cortas (campanas de 15 ms): una fija en (0,15 s; 600 Hz) y otra que se coloca con un
+  // toque. La distribución de Wigner-Ville (Senal.wignerVille, ventana rectangular de 1.024 retardos, sobre la señal
+  // analítica) dibuja un fantasma a medio camino, que se calcula en cada toque (unos 5 ms). En azul, lo negativo.
+  (function () {
+    const FS5 = 4000, N5 = 2000, SIG = 0.015, DUR5 = 0.5, FMAX5 = 2000, NV = 1024, SALTO = 8, RG = 30;
+    const A1 = { t: 0.15, f: 600 }, OBJ = { t: 0.25, f: 1000 }, TOLT = 0.02, TOLF = 40;
+    const e = { t: 0.4, f: 1800, W: null, mx: 1, cv: document.createElement('canvas'), esc: null, tocado: false };
+    const fantasma = () => ({ t: (A1.t + e.t) / 2, f: (A1.f + e.f) / 2 });
+    function senal() {
+      const x = new Float64Array(N5);
+      for (const a of [A1, { t: e.t, f: e.f }]) {
+        const tc = a.t * FS5;
+        for (let i = 0; i < N5; i++) { const d = (i - tc) / (SIG * FS5); if (Math.abs(d) < 6) x[i] += Math.exp(-0.5 * d * d) * Math.cos(TAU * a.f * (i - tc) / FS5); }
+      }
+      return x;
+    }
+    function recalcular() {
+      const W = S.wignerVille(senal(), FS5, { n: NV, salto: SALTO, ventana: 'rect' });
+      e.W = W;
+      let mx = 0;
+      for (let i = 0; i < W.re.length; i++) if (W.re[i] > mx) mx = W.re[i];
+      e.mx = mx || 1;
+      const nT = W.nT, nF = W.nF, cv = e.cv;
+      if (cv.width !== nT || cv.height !== nF) { cv.width = nT; cv.height = nF; }
+      const g = cv.getContext('2d'), img = g.createImageData(nT, nF), d = img.data;
+      for (let k = 0; k < nF; k++) for (let j = 0; j < nT; j++) {
+        const v = W.re[k * nT + j], o = ((nF - 1 - k) * nT + j) * 4;
+        const t = Math.max(0, 1 + 10 * Math.log10(Math.abs(v) / mx + 1e-12) / RG);
+        if (v >= 0) { const c = (Math.round(t * 255)) * 3; d[o] = LUT[c]; d[o + 1] = LUT[c + 1]; d[o + 2] = LUT[c + 2]; }
+        else { d[o] = Math.round(40 * t); d[o + 1] = Math.round(150 * t); d[o + 2] = Math.round(255 * t); }
+        d[o + 3] = 255;
+      }
+      g.putImageData(img, 0, 0);
+    }
+    const L = G.lienzo('#r5-escena', {
+      alto: altoEscena(270, 330), rol: 'slider',
+      etiqueta: 'Distribución de Wigner-Ville de dos notas: una fija en 0,15 segundos y 600 hercios y otra que colocas tocando. Aparece un fantasma a medio camino. La diana naranja está en 0,25 segundos y 1.000 hercios.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = marcoMapa(ctx, w, h, C, { x: [0, DUR5], y: [0, FMAX5], marcasX: [0, 0.1, 0.2, 0.3, 0.4, 0.5], marcasY: [0, 500, 1000, 1500, 2000], formatoX: v => num(v, 1), der: 84 });
+        e.esc = esc;
+        const caja = esc.caja;
+        if (!e.W) { sinSonido(ctx, w, h, C); return; }
+        ctx.save();
+        ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(e.cv, caja.x, caja.y, caja.w, caja.h);
+        ctx.restore();
+        leyendaMapa(ctx, esc, C, RG);
+        const lx = caja.x + caja.w + 14;
+        ctx.fillStyle = 'rgb(40,150,255)'; ctx.fillRect(lx, caja.y + caja.h + 8, 10, 8);
+        G.texto(ctx, lx + 14, caja.y + caja.h + 16, 'negativo', { color: C.suave, tam: 10, C });
+        // La diana, las dos notas y el fantasma que resulta.
+        const fondo = G.alfa(C.pantalla, 0.85);
+        ctx.save();
+        ctx.strokeStyle = C.respuesta; ctx.lineWidth = 2;
+        for (const r of [6, 12]) { ctx.beginPath(); ctx.arc(esc.x(OBJ.t), esc.y(OBJ.f), r, 0, TAU); ctx.stroke(); }
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.6;
+        for (const a of [A1, e]) { ctx.beginPath(); ctx.arc(esc.x(a.t), esc.y(a.f), 5, 0, TAU); ctx.stroke(); }
+        ctx.restore();
+        G.texto(ctx, esc.x(A1.t) + 9, esc.y(A1.f) - 8, 'nota fija', { color: '#ffffff', tam: 10.5, peso: 600, C });
+        G.texto(ctx, esc.x(e.t) + 9, esc.y(e.f) - 8, e.tocado ? 'tu nota' : 'toca aquí', { color: '#ffffff', tam: 10.5, peso: 600, C, alinear: esc.x(e.t) > caja.x + caja.w - 70 ? 'right' : 'left' });
+        G.texto(ctx, esc.x(OBJ.t) + 17, esc.y(OBJ.f) + 4, 'diana', { color: C.respuesta, tam: 10.5, peso: 600, fondo, C });
+      },
+    });
+    const lect = Curso.lecturas('#r5-fila', [
+      { id: 'nota', nombre: 'Tu nota', clase: 'senal' },
+      { id: 'fan', nombre: 'Fantasma, a medio camino', clase: 'respuesta' },
+    ]);
+    function pintar() {
+      const q = fantasma();
+      lect.fijar('nota', num(e.t, 2) + ' s · ' + num(Math.round(e.f)) + ' Hz');
+      lect.fijar('fan', num(q.t, 2) + ' s · ' + num(Math.round(q.f)) + ' Hz');
+      const ok = Math.abs(q.t - OBJ.t) <= TOLT && Math.abs(q.f - OBJ.f) <= TOLF;
+      lect.clase('fan', ok ? 'destacada respuesta' : 'respuesta');
+      L.canvas.setAttribute('aria-valuetext', 'Tu nota en ' + num(e.t, 2) + ' segundos y ' + num(Math.round(e.f)) + ' hercios; el fantasma, en ' + num(q.t, 2) + ' segundos y ' + num(Math.round(q.f)) + ' hercios');
+    }
+    function colocar(t, f) {
+      e.t = limitar(Math.round(t * 100) / 100, 0.04, 0.46);
+      e.f = limitar(Math.round(f / 10) * 10, 150, 1850);
+      e.tocado = true;
+      recalcular(); pintar(); L.dibujar();
+      Curso.cambio('reto-5');
+    }
+    L.canvas.classList.add('tocable');
+    L.canvas.addEventListener('click', ev => {
+      if (!e.esc) return;
+      const r = L.canvas.getBoundingClientRect();
+      colocar(e.esc.xi(ev.clientX - r.left), e.esc.yi(ev.clientY - r.top));
+    });
+    L.canvas.tabIndex = 0;
+    L.canvas.addEventListener('keydown', ev => {
+      const d = { ArrowRight: [0.01, 0], ArrowLeft: [-0.01, 0], ArrowUp: [0, 50], ArrowDown: [0, -50] }[ev.key];
+      if (!d) return;
+      ev.preventDefault();
+      colocar(e.t + d[0], e.f + d[1]);
+    });
+    const bots = crear('div', { class: 'botones' });
+    document.getElementById('r5-fila').appendChild(bots);
+    Curso.audio.boton(bots, () => ({ x: senal(), fs: FS5, volumen: 0.5 }), 'Oír las dos notas');
+    Curso.alVerse(L.canvas, () => { recalcular(); pintar(); L.dibujar(); });
+    Curso.reto('reto-5', {
+      titulo: 'Caza el fantasma', nivel: 'difícil',
+      comprobar: () => {
+        const q = fantasma(), dt = q.t - OBJ.t, df = q.f - OBJ.f;
+        if (Math.abs(dt) <= TOLT && Math.abs(df) <= TOLF) return { ok: true, mensaje: 'El fantasma cae en la diana: está justo a medio camino entre tus dos notas.' };
+        if (!e.tocado) return { ok: false, mensaje: '' };
+        const partes = [];
+        if (Math.abs(df) > TOLF) partes.push(df > 0 ? 'demasiado alto' : 'demasiado bajo');
+        if (Math.abs(dt) > TOLT) partes.push(dt > 0 ? 'demasiado tarde' : 'demasiado pronto');
+        return { ok: false, mensaje: 'El fantasma cae ' + partes.join(' y ') + '. Recuerda que está a medio camino entre las dos notas.' };
+      },
+      resolver: () => colocar(0.35, 1400),
+      pista: [
+        'El fantasma aparece justo en el punto medio entre las dos notas, tanto en el tiempo como en la frecuencia.',
+        'La diana está en 0,25 s y 1.000 Hz y la nota fija en 0,15 s y 600 Hz: la otra nota tiene que estar tan lejos de la diana como la fija, pero al otro lado.',
+      ],
+      exito: '<p>El fantasma está a medio camino y parpadea entre positivo y negativo, el azul de la imagen. El espectrograma lo borra suavizando, y por eso emborrona; la reasignación vuelve a afinar sin traerlo de vuelta.</p>',
+    });
+  })();
+
+  // ── Reto 6 · ¿Se puede volver? (escuchar y elegir) ────────────────────────────────────────────────────
+  // La frase sintética de Senal.ejemplos (3 s a 8 kHz) deshecha desde tres imágenes: la STFT completa (istft exacta), el
+  // espectrograma con la fase a cero (lo que guarda: solo los tamaños) y el reasignado con la fase al azar (además, con
+  // la energía ya movida de instante y apilada). El cálculo se hace al llegar al reto o al pulsar un ▶.
+  (function () {
+    const FS6 = 8000, N6 = 512, SALTO6 = 128;
+    const e = { D: null, memo: {} };
+    function datos() {
+      if (e.D) return e.D;
+      const x = S.ejemplos.frase(FS6, { dur: 3 });
+      const T = S.stft(x, FS6, { n: N6, salto: SALTO6, ventana: 'hann' });
+      const R = S.reasignacion(x, FS6, { n: N6, salto: SALTO6, ventana: 'hann', umbral: 1e-4 });
+      e.D = { x, T, R, M: celdas(R, 70) };
+      return e.D;
+    }
+    function audio(id) {
+      if (e.memo[id]) return e.memo[id];
+      const { T, R } = datos(), copia = { ...T, re: new Float32Array(T.re.length), im: new Float32Array(T.im.length) };
+      if (id === 'completa') { copia.re.set(T.re); copia.im.set(T.im); }
+      else if (id === 'esp') { for (let i = 0; i < T.re.length; i++) copia.re[i] = Math.hypot(T.re[i], T.im[i]); }
+      else {
+        const az = S.azar(11), esc = T.escala || 1;
+        for (let i = 0; i < T.re.length; i++) { const m = Math.sqrt(Math.max(0, R.reasignada[i])) / esc, f = az.real() * TAU; copia.re[i] = m * Math.cos(f); copia.im[i] = m * Math.sin(f); }
+      }
+      return (e.memo[id] = S.istft(copia));
+    }
+    const TARJETAS = [
+      { id: 'completa', titulo: 'Transformada completa', nota: 'Los tamaños y también la fase de cada casilla.', reas: false },
+      { id: 'esp', titulo: 'Espectrograma', nota: 'Solo los tamaños: la fase se ha tirado.', reas: false },
+      { id: 'reas', titulo: 'Espectrograma reasignado', nota: 'Solo energía, ya movida de sitio y de instante.', reas: true },
+    ];
+    const cont = document.getElementById('r6-tarjetas');
+    const lienzos = [];
+    for (const t of TARJETAS) {
+      const p = crear('div', { class: 'panel-mini' });
+      const cabeza = crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, t.titulo));
+      p.appendChild(cabeza);
+      Curso.audio.boton(cabeza, () => ({ x: audio(t.id), fs: FS6, volumen: 0.6 }), 'Oír', { clase: 'peque' });
+      const escena = crear('div', { class: 'escena' });
+      p.appendChild(escena);
+      p.appendChild(crear('p', { class: 'nota-reto' }, t.nota));
+      cont.appendChild(p);
+      const I = imagenTF();
+      let clave = '';
+      lienzos.push(G.lienzo(escena, {
+        alto: 150,
+        etiqueta: t.titulo + ' de una frase sintética de tres segundos',
+        dibujar: (ctx, w, h, C) => {
+          const esc = G.ejes(ctx, { x: [0, 3], y: [0, 4000], marcasX: [0, 1, 2, 3], marcasY: [0, 2000, 4000], formatoY: v => num(v / 1000) + 'k', rejilla: false,
+            margen: { izquierda: 34, derecha: 8, arriba: 6, abajo: 22 }, etiquetaX: 'tiempo (s)', C });
+          if (!e.D) { sinSonido(ctx, w, h, C); return; }
+          const caja = esc.caja, nx = Math.min(Math.round(caja.w), 300), ny = Math.min(Math.round(caja.h), 120);
+          const nuevo = I.ajustar(nx, ny), k = nx + 'x' + ny;
+          if (nuevo || k !== clave) { clave = k; acumular(e.D.M, t.reas ? 1 : 0, { xa: 0, xb: 3, ya: 0, yb: 4000 }, nx, ny, I.acc); I.pintar(60); }
+          I.dibujar(ctx, caja);
+        },
+      }));
+    }
+    Curso.alVerse(cont, () => { datos(); lienzos.forEach(l => l.dibujar()); });
+    const eleccion = Curso.eleccion('#r6-fila', { etiqueta: 'La grabación exacta se recupera desde', valor: '', reto: 'reto-6',
+      opciones: [{ valor: 'completa', texto: 'La transformada completa' }, { valor: 'esp', texto: 'El espectrograma' }, { valor: 'reas', texto: 'El reasignado' }] });
+    Curso.reto('reto-6', {
+      titulo: '¿Se puede volver?', nivel: 'medio',
+      comprobar: () => {
+        const v = eleccion.valor;
+        if (v === 'completa') return { ok: true, mensaje: 'Sí: con la fase y cada valor en su instante, la transformada se deshace sin perder nada.' };
+        if (v === 'esp') return { ok: false, mensaje: 'Escúchalo: con la fase a cero suena áspero y metálico. Al espectrograma le falta la mitad de los datos.' };
+        if (v === 'reas') return { ok: false, mensaje: 'Escúchalo: con fase al azar es un ruido con la forma de la frase. Además de la fase, ha movido los valores de instante.' };
+        return { ok: false, mensaje: '' };
+      },
+      resolver: () => eleccion.fijar('completa'),
+      pista: [
+        'Pulsa los tres ▶ y compara con la grabación que esperarías: una de ellas se entiende y las otras dos no.',
+        'Para volver hacen falta los números completos, con su fase, y que cada valor siga en el instante en que se midió.',
+      ],
+      exito: '<p>El espectrograma tira la fase, y el reasignado, además, cambia los valores de instante y apila los que venían de sitios distintos. Cada una de esas pérdidas impide el camino de vuelta. Queda una pregunta para la lección siguiente: ¿se puede afinar la imagen sin perder la vuelta?</p>',
+    });
+  })();
+
+  // ── En tu voz: el espectrograma y el reasignado del mismo audio, lado a lado ──────────────────────────
+  // El audio llega a 8 kHz y con 6 s como máximo. Senal.reasignacion con ventana gaussiana (σ en ms) y salto de 32
+  // muestras (4 ms); el umbral decide qué casillas se mueven, y las que quedan por debajo no se dibujan en ninguna imagen.
+  (function () {
+    const st = { x: null, fs: 8000, dur: 1, sigma: 12, umbral: -50, M: null, f0: null, v: 0 };
+    const RANGO_VOZ = 60;
+    const lab = Curso.voz('#voz-lab', {
+      ejemplos: ['melodia', 'palmadas', 'silbidoQueSube'],
+      fsAnalisis: 8000, maxSegundos: 6,
+      alCargar: (x, fs) => { st.x = x; st.fs = fs; st.dur = Math.max(0.1, x.length / fs); analizar(true); },
+    });
+    const dos = crear('div', { class: 'columnas-2' });
+    lab.panel.appendChild(dos);
+    const paneles = [false, true].map(reas => {
+      const panel = crear('div', { class: 'panel-mini' });
+      panel.appendChild(crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, reas ? 'Reasignado' : 'Espectrograma')));
+      const escena = crear('div', { class: 'escena' });
+      panel.appendChild(escena);
+      dos.appendChild(panel);
+      const I = imagenTF();
+      let clave = '';
+      const mapa = G.lienzo(escena, {
+        alto: altoEscena(230, 280),
+        etiqueta: (reas ? 'Espectrograma reasignado' : 'Espectrograma') + ' del audio cargado, de 0 a 4.000 hercios, con la misma ventana y la misma escala de color',
+        dibujar: (ctx, w, h, C) => {
+          const esc = marcoMapa(ctx, w, h, C, { x: [0, st.dur], y: [0, 4000], marcasY: [0, 1000, 2000, 3000, 4000], formatoX: v => num(v, 1), izq: 46, der: 52 });
+          if (!st.M) { sinSonido(ctx, w, h, C, 'Graba, sube un audio o elige un ejemplo'); return; }
+          const caja = esc.caja, nx = Math.min(Math.round(caja.w), 640), ny = Math.min(Math.round(caja.h), 240);
+          const nuevo = I.ajustar(nx, ny), k = st.v + '|' + nx + 'x' + ny;
+          if (nuevo || k !== clave) {
+            clave = k;
+            const caja = { xa: 0, xb: st.dur, ya: 0, yb: 4000 }, minW = st.M.pmax * Math.pow(10, st.umbral / 10);
+            if (reas) acumular(st.M, 1, caja, nx, ny, I.acc, minW); else muestrear(st.P, caja, nx, ny, I.acc, minW);
+            I.pintar(RANGO_VOZ);
+          }
+          I.dibujar(ctx, caja);
+          leyendaMapa(ctx, esc, C, RANGO_VOZ);
+        },
+      });
+      return mapa;
+    });
+    const fila = crear('div', { class: 'fila' });
+    lab.panel.appendChild(fila);
+    const lect = Curso.lecturas(fila, [
+      { id: 'ancho', nombre: 'Mancha de una nota (a media altura)' },
+      { id: 'f0', nombre: 'Tu nota, aproximadamente', clase: 'senal' },
+    ]);
+    const mandos = crear('div', { class: 'mandos' });
+    lab.panel.appendChild(mandos);
+    Curso.mando(mandos, { etiqueta: 'Anchura de la ventana (σ)', min: 6, max: 20, paso: 0.5, valor: st.sigma, formato: v => num(v, 1) + ' ms', clase: 'respuesta',
+      alCambiar: v => { st.sigma = v; analizar(true); } });
+    Curso.mando(mandos, { etiqueta: 'Umbral de energía', min: -80, max: -20, paso: 1, valor: st.umbral, formato: v => num(v) + ' dB', clase: 'senal',
+      alCambiar: v => { st.umbral = v; analizar(false); } });
+    const nota = crear('p', { class: 'nota-reto' }, 'Elige un audio o graba el tuyo para ver las dos imágenes.');
+    lab.panel.appendChild(nota);
+
+    function analizar(rehacer) {
+      if (!st.x || !st.x.length) return;
+      if (rehacer || !st.M) {
+        const vt = ventanaGauss(st.sigma, st.fs, 256);
+        const R = S.reasignacion(st.x, st.fs, { n: vt.n, salto: 32, nfft: vt.nfft, sigma: vt.sigma, ventana: 'gauss', umbral: 1e-4 });
+        st.M = celdas(R, 80); st.P = datosEsp(R);
+        let f0 = null;
+        try {
+          const y = S.yin(st.x, st.fs, { fmin: 80, fmax: 1000 }), v = Array.from(y.f0).filter(Number.isFinite).sort((a, b) => a - b);
+          if (v.length >= 3) f0 = v[v.length >> 1];
+        } catch (err) { f0 = null; }
+        st.f0 = f0;
+      }
+      st.v++;
+      const sep = Math.sqrt(2 * Math.LN2) / (Math.PI * st.sigma / 1000);
+      lect.fijar('ancho', num(sep, 0) + ' Hz');
+      lect.fijar('f0', st.f0 ? num(st.f0, 0) + ' Hz' : 'no la encuentro');
+      nota.textContent = st.f0
+        ? 'Con esta ventana, dos notas tienen que distar al menos unos ' + num(sep, 0) + ' Hz para salir como dos líneas. ' + 'Si tu nota tiene armónicos, estarán separados unos ' + num(st.f0, 0) + ' Hz entre sí: ' + (st.f0 > sep ? 'cada uno debería salir en su línea.' : 'con esta ventana se estorban, así que alárgala.')
+        : 'No he encontrado una nota sostenida, así que no puedo decirte si tus armónicos se separan. Mira igualmente qué pasa con los ataques bruscos, si los hay: de columnas anchas pasan a rayas.';
+      paneles.forEach(m => m.dibujar());
+    }
+  })();
+})();
+</script>
+</body>
+</html>

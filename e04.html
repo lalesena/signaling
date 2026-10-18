@@ -1,0 +1,1127 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La transformada de Fourier, sin ecuaciones · Señales</title>
+<meta name="description" content="Lección 4 del curso visual «Señales, de 0 a experto»: cómo se averigua qué norias forman una señal, con una noria de prueba, el área del producto, seis retos y tu propia voz.">
+<link rel="stylesheet" href="comun/fuentes.css">
+<link rel="stylesheet" href="comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e04">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Nivel 2 · Lección 4</p>
+    <h1>La transformada de Fourier, sin ecuaciones</h1>
+    <aside class="pregunta">
+      <p>Alguien toca un acorde con una guitarra y tú lo grabas con el móvil. En la pantalla aparece una curva enrevesada que sube y baja sin orden aparente, y por muchas vueltas que le des no hay forma de leer ninguna nota en ella. Sin embargo, tu oído distingue sin esfuerzo las notas que suenan a la vez, y un programa que no sabe de música las saca de esa misma curva. Si solo te doy la curva final de un acorde, ¿cómo averiguas qué notas lo forman?</p>
+    </aside>
+    <ul class="meta"><li>Unos 45 minutos</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>La idea en una imagen</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Arriba, en verde, la señal: la suma de dos norias que no ves. La noria de prueba, en púrpura, gira a la velocidad que elijas. En el centro se multiplican las dos alturas instante a instante, y el área de ese producto, verde si es positiva y naranja si es negativa, mide cuánto se parecen. Abajo se apunta esa área para cada velocidad probada: el espectro, en ámbar.</figcaption>
+    </figure>
+    <p>En la <a href="e03.html">lección 3</a> viste que sumar norias es fácil: se suman sus alturas en cada instante y sale la curva de un acorde, de una vocal o de un violín. Esta lección recorre el camino contrario. Te dan solo la curva final y hay que averiguar cuántas norias la forman, a qué velocidad gira cada una y de qué tamaño es, cosa que a simple vista no se lee.</p>
+    <p>Lo que se hace es preguntar. Junto a la señal se coloca una noria de prueba que gira a la velocidad que elijas, y se multiplican las dos alturas en cada instante. Si la señal lleva una noria que gira igual, las dos suben y bajan a la vez, el producto casi siempre es positivo y el área crece. Con cualquier otra velocidad, unas veces coinciden y otras se llevan la contraria, y lo positivo se compensa con lo negativo hasta dejar el área en cero. Repetir la pregunta con todas las velocidades y apuntar cada área es la idea maestra del curso: transformar es medir el parecido con una plantilla.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Paso a paso</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>Preguntar a una noria de prueba</h3>
+      <p>Imagina que una señal esconde una sola noria y que quieres saber a qué velocidad gira. Pruebas con una noria de prueba y comparas las dos de una manera muy concreta: multiplicas sus alturas, instante a instante, y sumas el resultado, que se ve como el área entre la curva del producto y la línea del cero. Esa operación se llama <b class="termino" data-termino="Correlación (parecido)">correlación</b>, y mide cuánto se parecen dos señales.</p>
+      <p>Cuando las dos suben a la vez, o bajan a la vez, el producto es positivo, y cuando una sube y la otra baja, es negativo. Si la noria de prueba gira como la escondida, el producto queda casi siempre por encima de cero y el área se hace grande. Con cualquier otra velocidad, los aciertos y los desencuentros se reparten por igual y el área se queda en torno a cero.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">La señal verde esconde una noria. Mueve la velocidad de la noria de prueba hasta encontrar la que da más área.</p>
+        <div class="escena" id="r1-escena"></div>
+        <p class="nota-reto">El área se muestra de modo que una noria del mismo tamaño que gira igual dé exactamente 1.</p>
+        <div class="mandos" id="r1-mandos"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>Cuando el área se anula del todo</h3>
+      <p>Para que el área se anule por completo hace falta que, en el trozo de señal que miras, quepan vueltas completas de las dos norias. Entonces lo positivo y lo negativo del producto son idénticos y se compensan sin dejar resto. Esa propiedad de las norias que dan vueltas completas, la de dar área cero al multiplicarse cuando no giran igual, se llama <b class="termino">ortogonalidad</b>, y es lo que permite sacar una noria de la señal sin que se mezclen las demás.</p>
+      <p>Si en el trozo sobra un pedazo de vuelta, el producto ya no se compensa y queda un resto. Ese resto se llama fuga y es el tema de la <a href="e05.html">lección 5</a>; por ahora basta con saber que existe y que explica por qué un área a veces no se anula del todo.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">La señal dura un segundo y es una noria de 3 Hz. Encuentra una velocidad de prueba distinta de 3 Hz que deje el área en cero.</p>
+        <div class="escena" id="r2-escena"></div>
+        <div class="mandos" id="r2-mandos"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>Dos sombras para no perder ninguna noria</h3>
+      <p>Queda un problema. Una noria de la señal puede empezar en cualquier punto de su vuelta, y hay puntos de partida con los que la noria de prueba no la ve. Si la noria escondida gira igual que la de prueba pero empieza un cuarto de vuelta antes, una está en lo más alto justo cuando la otra pasa por el centro, el producto reparte lo positivo y lo negativo a partes iguales y el área sale cero aunque la noria esté ahí. Es lo que ocurre al multiplicar un seno por un coseno.</p>
+      <p>La solución es mirar cada noria de prueba con sus dos sombras, las de la <a href="e01.html">lección 1</a>: la de la pared, que es la altura y dibuja un seno, y la del suelo, que es la posición de lado y dibuja un coseno. Se hace la pregunta dos veces y salen dos áreas. Esas dos áreas son los catetos de un triángulo rectángulo: la hipotenusa es el tamaño de la noria escondida, que se llama <b class="termino">magnitud</b>, y el ángulo del triángulo es su punto de partida. Hecho con todas las velocidades, el conjunto de puntos de partida es el <b class="termino" data-termino="Espectro de fase">espectro de fase</b>.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Hay una noria escondida de 4 Hz. Enciende las dos sombras y averigua su tamaño y su punto de partida.</p>
+        <div class="columnas-2" id="r3-escena"></div>
+        <div class="mandos" id="r3-mandos"></div>
+        <div class="fila" id="r3-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>Barrer todas las velocidades</h3>
+      <p>Falta repetir la pregunta con todas las velocidades de prueba y apuntar el tamaño que sale en cada una. El resultado es una curva con la velocidad, es decir, la frecuencia, en horizontal y el tamaño de la noria en vertical: el <b class="termino">espectro</b>. Cada barra es una noria de la señal. La operación entera, comparar la señal con norias de prueba de todas las velocidades, es la <b class="termino">transformada de Fourier</b>.</p>
+      <p>Una misma señal se puede describir de dos maneras. En el <b class="termino" data-termino="Dominio del tiempo">dominio del tiempo</b> se cuenta cómo cambia instante a instante, y eso es la curva verde. En el <b class="termino" data-termino="Dominio de la frecuencia">dominio de la frecuencia</b> se cuenta qué norias lleva, y eso es el espectro. Son dos descripciones de lo mismo, y pasar de una a otra no pierde nada mientras se guarden también los puntos de partida.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">La palabra «espectro»</span>
+        <p>En 1666 Isaac Newton consiguió un prisma de vidrio y, en su carta de 1672, llamó <i>spectrum</i> a la banda de colores que proyectaba en la pared, unas cinco veces más larga que ancha. Defendía que la luz blanca es una mezcla de colores que el prisma separa y ordena. De ahí viene la palabra que usamos para las frecuencias. Es una analogía y no la misma operación, porque el prisma separa los colores al desviar cada uno un ángulo distinto.</p>
+      </aside>
+      <aside class="nota al-margen">
+        <span class="antetitulo">Un piano que te contesta</span>
+        <p>Helmholtz describió en el siglo XIX un experimento que cualquiera con un piano puede repetir. Con los apagadores levantados, por ejemplo pisando el pedal de la derecha, cantas fuerte una «aaa» hacia las cuerdas, y el piano te devuelve una «aaa» algo fantasmal. Se ponen a vibrar las cuerdas que coinciden con alguna de las norias de tu voz, y las demás se quedan quietas: es la <b class="termino" data-termino="Resonancia por simpatía">resonancia por simpatía</b>. El eco es imperfecto, y su propio traductor ya lo decía, porque el piano está afinado de otra manera y las cuerdas también responden a sus armónicos.</p>
+      </aside>
+      <aside class="nota al-margen">
+        <span class="antetitulo">Dentro del oído</span>
+        <p>En la <b class="termino">cóclea</b>, el caracol del oído interno, hay una tira que se llama <b class="termino" data-termino="Membrana basilar">membrana basilar</b>. Ante un sonido, por ella corre una onda que crece y se apaga en un sitio que depende de la frecuencia, con los agudos cerca de la entrada y los graves al fondo, un orden que se llama <b class="termino">tonotopía</b>. Es un reparto del sonido en sus frecuencias, pero no una transformada de Fourier exacta: los filtros del oído se solapan, son más anchos en los agudos y, en un oído vivo, unas células amplifican y afinan la respuesta. Además, el cerebro también cuenta el ritmo de los impulsos nerviosos para saber la nota.</p>
+      </aside>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">La señal es un acorde de tres notas. Barre las velocidades de la noria de prueba y marca la velocidad de cada una de las tres.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="mandos" id="r4-mandos"></div>
+        <div class="fila" id="r4-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>Lo que el tamaño no cuenta</h3>
+      <p>El espectro de tamaños es la lista de ingredientes, pero no dice en qué orden se echan. Con las mismas norias, del mismo tamaño y a las mismas velocidades, se pueden dibujar ondas muy distintas si cambia el punto de partida de cada una, y por eso la transformada guarda dos números por noria: la magnitud y la fase.</p>
+      <p>En un sonido sostenido el oído apenas nota la diferencia, pero no es sordo a la fase: cuando hay un golpe, el punto de partida de las norias decide cuándo ocurre cada cosa. De ahí saldrán el espectrograma de la <a href="e11.html">lección 11</a> y las fases que aprovecha el sincrosqueezing al final del curso.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Cuatro norias del mismo tamaño empiezan con las cabinas arriba y suman una onda con un pico de 4. Cambia sus puntos de partida, sin tocar sus tamaños, hasta que el pico baje de 2,5.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>Leer un espectro de verdad</h3>
+      <p>Un espectro se lee como una receta: cada barra es una noria, con su velocidad y su tamaño. La voz y los instrumentos dibujan una fila de picos a distancias iguales, la fundamental y sus armónicos de la <a href="e03.html">lección 3</a>, y la nota que oyes es esa distancia y no el pico más alto. El más alto puede ser el segundo o el tercer armónico, y a veces el primero ni siquiera está: por teléfono, que no deja pasar los graves, una voz grave se sigue oyendo en su nota aunque su primera noria no llegue.</p>
+      <p>Fíjate también en que los picos no son agujas, sino montañas con algo de anchura. Por qué ocurre, y cuánto tiempo necesita una noria de prueba para decidir su velocidad, es la pregunta de la <a href="e05.html">lección 5</a>.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">Este sonido tiene una nota, pero su primera noria no está en el espectro. Averigua cuál es esa nota, en hercios.</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>En tu voz</h2>
+    <p><b>Qué grabar.</b> Una «aaa» sostenida de unos segundos y, para comparar, un silbido: son los tramos 3 y 2 de la grabación de referencia de la serie. Si quieres, añade una «iii» en la misma nota. Graba con el micrófono si tu navegador lo deja; si no, sube un audio grabado con el móvil o prueba con los ejemplos sintéticos.</p>
+    <p><b>Qué mirar.</b> El laboratorio se queda con medio segundo en el que tu nota está más estable y lanza norias de prueba de 50 a 2.000 Hz: verás crecer tu espectro a medida que gira cada una. Después enseña el espectro completo con sus picos marcados. En tu «aaa» deberían aparecer picos a distancias iguales, múltiplos de tu nota, y el más alto no tiene por qué ser el primero. El silbido deja casi un solo pico. Si ves líneas fijas en 50 Hz y sus múltiplos, no son armónicos tuyos, sino el zumbido de la red eléctrica. Todos los picos tienen unos pocos hercios de anchura, un adelanto de la lección 5.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>Lo que tienes que recordar</h2>
+    <ol class="tres">
+      <li>Transformar es medir el parecido: se multiplica la señal por una noria de prueba y se mira el área. Si la noria está en la señal, el área crece; repetido con todas las velocidades, el resultado es el espectro, la lista de las norias de la señal.</li>
+      <li>Cada noria de prueba se mira con dos sombras, la del seno y la del coseno, para que no se escape ninguna sea cual sea su punto de partida. De las dos áreas salen el tamaño de la noria, la magnitud, y su punto de partida, la fase.</li>
+      <li>El espectro de tamaños no basta para dibujar la onda, porque con otros puntos de partida cambia la forma, y tampoco dice cuándo suena cada cosa, solo qué norias hay en el trozo que se analiza. La nota se lee en la separación entre picos.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Errores típicos</h2>
+    <ul class="errores">
+      <li><b>«La transformada de Fourier te dice cuándo suena cada nota.»</b> Dice qué norias hay en el trozo entero que se analiza. El cuándo queda escondido en las fases, que el espectro de tamaños no enseña, y para verlo a simple vista hace falta el espectrograma de la <a href="e11.html">lección 11</a>.</li>
+      <li><b>«Si la noria de prueba no coincide, el área es siempre cero.»</b> Solo cuando en el trozo caben vueltas completas de las dos. Si sobra un pedazo de vuelta, queda un resto, la fuga de la <a href="e05.html">lección 5</a>.</li>
+      <li><b>«Basta con una sombra, la del seno.»</b> Una noria que empieza en lo alto de su vuelta, un coseno, da área cero contra el seno aunque gire igual. Con las dos sombras no se escapa ninguna, y además se averigua su punto de partida.</li>
+      <li><b>«El pico más alto es la nota.»</b> El más alto puede ser un armónico, y la fundamental puede faltar del todo. La nota es la distancia entre picos vecinos.</li>
+      <li><b>«El oído interno hace exactamente una transformada de Fourier.»</b> Reparte el sonido por lugares con filtros que se solapan, más anchos en los agudos, no lineales y activos, y el cerebro usa también el ritmo de los impulsos nerviosos.</li>
+    </ul>
+  </section>
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Abrir</span>
+      <h2>Rincón matemático</h2>
+      <span class="resumen">Las fórmulas, para quien las quiera. Cada una va después de su lectura en palabras.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>La pregunta a la noria de prueba</h3>
+      <p>La pregunta a la noria de prueba de frecuencia <span class="tex">f</span> se hace con sus dos sombras: se multiplica la señal por el seno y por el coseno de esa frecuencia, se suma el producto durante el tiempo <span class="tex">T</span> que dura el trozo y se normaliza para que una noria de tamaño 1 que gira igual dé área 1:</p>
+      <div class="tex">S(f) = \frac{2}{T}\int_0^T x(t)\,\sin(2\pi f t)\,dt, \qquad C(f) = \frac{2}{T}\int_0^T x(t)\,\cos(2\pi f t)\,dt</div>
+
+      <h3>Tamaño y punto de partida</h3>
+      <p>Si la señal es una sola noria <span class="tex">A\,\sin(2\pi f t + \varphi)</span>, con la altura medida como en la lección 1, y la prueba gira igual y da vueltas completas en el trozo, las dos áreas valen:</p>
+      <div class="tex">S = A\,\cos\varphi, \qquad C = A\,\sin\varphi</div>
+      <p>De ahí salen el tamaño, por Pitágoras, y el punto de partida, por el ángulo del triángulo que forman las dos áreas:</p>
+      <div class="tex">A = \sqrt{S^2 + C^2}, \qquad \varphi = \operatorname{atan2}(C,\ S)</div>
+
+      <h3>Ortogonalidad</h3>
+      <p>Dos norias cuyas velocidades son números enteros de vueltas en el tiempo <span class="tex">T</span> se anulan al multiplicarse, y con la misma velocidad dan 1 una vez normalizadas. Se escribe, con <span class="tex">m</span> y <span class="tex">n</span> enteros positivos:</p>
+      <div class="tex">\frac{2}{T}\int_0^T \sin\!\left(\frac{2\pi m t}{T}\right)\sin\!\left(\frac{2\pi n t}{T}\right)dt = \begin{cases} 1 &amp; m = n \\ 0 &amp; m \neq n \end{cases}</div>
+
+      <h3>La noria compleja</h3>
+      <p>Las dos sombras juntas forman una sola noria que gira en sentido contrario, y el resultado de la pregunta es un número complejo cuyo tamaño y ángulo llevan la magnitud y la fase:</p>
+      <div class="tex">X(f) = \int_0^T x(t)\,e^{-i 2\pi f t}\,dt = \frac{T}{2}\,(C - i\,S)</div>
+      <p>Como aquí la altura se mide con el seno, la fase que sale de esta fórmula queda un cuarto de vuelta desplazada respecto a la de la lección. Es solo un cambio de origen: el módulo, el tamaño de la noria, es el mismo.</p>
+
+      <h3>La transformada de Fourier y su inversa</h3>
+      <p>La transformada mira la señal entera, de menos infinito a infinito, y su inversa vuelve a sumar las norias, cada una con su tamaño y su punto de partida:</p>
+      <div class="tex">X(f) = \int_{-\infty}^{\infty} x(t)\,e^{-i 2\pi f t}\,dt, \qquad x(t) = \int_{-\infty}^{\infty} X(f)\,e^{\,i 2\pi f t}\,df</div>
+
+      <h3>Con muestras</h3>
+      <p>Con <span class="tex">N</span> muestras, la noria de prueba solo se mira en los instantes de las muestras (la lección 5 lo desarrolla), y el tamaño de cada noria se recupera multiplicando por <span class="tex">2/N</span>:</p>
+      <div class="tex">X[k] = \sum_{n=0}^{N-1} x[n]\,e^{-i 2\pi k n / N}, \qquad A_k \approx \frac{2}{N}\,\big|X[k]\big|</div>
+
+      <h3>Las notas del piano</h3>
+      <p>En un piano afinado en temperamento igual, cada tecla multiplica la frecuencia por la raíz duodécima de 2. Contando <span class="tex">m</span> semitonos desde el La de 440 Hz:</p>
+      <div class="tex">f = 440\cdot 2^{m/12}\ \text{Hz} \qquad (\text{Do}_4:\ m=-9 \Rightarrow 261{,}63\ \text{Hz})</div>
+
+      <h3>El mapa de la cóclea</h3>
+      <p>Según el modelo de Greenwood (1990), la frecuencia a la que mejor responde un punto de la membrana situado a una fracción <span class="tex">x</span> de su longitud, contada desde el vértice, es:</p>
+      <div class="tex">f(x) = 165{,}4\left(10^{\,2{,}1\,x} - 0{,}88\right)\ \text{Hz}</div>
+
+      <h3>Lo que miden los filtros del oído</h3>
+      <p>El ancho equivalente de los filtros del oído (Glasberg y Moore, 1990) crece con la frecuencia, que aquí va en kHz. A 1 kHz da unos 133 Hz:</p>
+      <div class="tex">\mathrm{ERB}(f) = 24{,}7\,\big(4{,}37\,f + 1\big)\ \text{Hz}</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Para saber más</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Libro abierto · inglés</span>Steven W. Smith, <i>The Scientist and Engineer's Guide to Digital Signal Processing</i>, <a href="https://www.dspguide.com/ch8.htm">capítulo 8, «The Discrete Fourier Transform»</a>, con el apartado «DFT by Correlation»: la transformada como «multiplicar y sumar» con senos y cosenos, con figuras.</li>
+      <li><span class="tipo">Interactivo · inglés</span>Jack Schaedler, <i>Seeing circles, sines and signals</i>: <a href="https://jackschaedler.github.io/circles-sines-signals/dotproduct4.html">«Correlation With Sine and Cosine»</a> y <a href="https://jackschaedler.github.io/circles-sines-signals/dft_introduction.html">«The Fourier Transform»</a>. Las dos sombras, en interactivo.</li>
+      <li><span class="tipo">Vídeo · inglés</span>3Blue1Brown (2018), <a href="https://www.3blue1brown.com/lessons/fourier-transforms">«But what is the Fourier Transform? A visual introduction»</a>. La transformada como un enrollado que pesa cada frecuencia, otra imagen para la misma idea.</li>
+      <li><span class="tipo">Libro clásico · inglés</span>Hermann von Helmholtz, <i>On the Sensations of Tone</i>, traducción de A. J. Ellis, <a href="https://www.saltire.com/helmholtz/dev/Chapter4.html">capítulo IV</a>. El experimento del piano y las vocales, contado por quien lo hizo.</li>
+      <li><span class="tipo">Artículo abierto · inglés</span>Andrew J. Oxenham (2012), <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3481156/">«Pitch perception»</a>, <i>Journal of Neuroscience</i>. Breve: tonotopía, filtros del oído y por qué oímos la nota aunque falte la fundamental.</li>
+      <li><span class="tipo">App gratuita</span>phyphox, de la Universidad RWTH de Aquisgrán: su experimento <a href="https://phyphox.org/wiki/index.php/Experiment:_Audio_Spectrum">Audio Spectrum</a> enseña el espectro del micrófono de tu móvil y su frecuencia de pico.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>Términos nuevos</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Examen</h2>
+  </section>
+
+</main>
+
+<script src="comun/temario.js"></script>
+<script src="comun/graficas.js"></script>
+<script src="comun/senal.js"></script>
+<script src="comun/curso.js"></script>
+<script src="datos/e04.js"></script>
+<script>
+// Lección 4 · La transformada de Fourier, sin ecuaciones: la imagen ancla, los seis retos y el laboratorio «En tu voz».
+// Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo; aquí solo va lo de esta lección.
+// Convenios: el tiempo va a la derecha; las alturas se miden con el seno (como en la lección 1); el área de un producto
+// se normaliza como (2/n)·Σ, de modo que una noria de tamaño A que gira igual que la de prueba da área A.
+(function () {
+  'use strict';
+  const G = Graficas, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const envolver = a => Math.atan2(Math.sin(a), Math.cos(a));
+  const aGrados = a => ((a * 180 / Math.PI) % 360 + 360) % 360;
+  const difGrados = g => ((g % 360) + 540) % 360 - 180;
+  const altoEscena = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); document.querySelector(contenedor).appendChild(f); return f; };
+  const signo = (v, d) => (Math.abs(v) < 0.5 * Math.pow(10, -d) ? '' : v > 0 ? '+' : '') + num(Math.abs(v) < 0.5 * Math.pow(10, -d) ? 0 : v, d);
+
+  // Una tira de dibujo: fondo tenue, línea del cero punteada y su escala (la que devuelve Graficas.ejes).
+  function tira(ctx, caja, T, ym, C) {
+    ctx.save();
+    ctx.fillStyle = G.alfa(C.cuerpo, C.oscuro ? 0.04 : 0.035);
+    ctx.fillRect(caja.x, caja.y, caja.w, caja.h);
+    ctx.strokeStyle = G.alfa(C.eje, 0.6);
+    ctx.setLineDash([2, 4]);
+    const y = Math.round(caja.y + caja.h / 2) + 0.5;
+    ctx.beginPath(); ctx.moveTo(caja.x, y); ctx.lineTo(caja.x + caja.w, y); ctx.stroke();
+    ctx.restore();
+    return G.ejes(ctx, { caja, x: [0, T], y: [-ym, ym], soloEscala: true, C });
+  }
+  // El producto de dos funciones del tiempo en n puntos, y su área normalizada (2/n)·Σ.
+  function producto(x, p, T, n) {
+    const ts = [], ys = [];
+    let s = 0;
+    for (let i = 0; i < n; i++) { const t = T * i / n, v = x(t) * p(t); ts.push(t); ys.push(v); s += v; }
+    ts.push(T); ys.push(x(T) * p(T));
+    return { ts, ys, area: 2 * s / n };
+  }
+  // Las dos tiras de la comparación: arriba, la señal (verde) y la noria de prueba (púrpura); debajo, su producto con el
+  // área sombreada (verde si es positiva, naranja si es negativa) y el valor del área.
+  function tirasProducto(ctx, C, cajaA, cajaB, T, ym, sig, prueba, o = {}) {
+    const ymP = o.ymProd || 1.2, escA = tira(ctx, cajaA, T, ym, C), escB = tira(ctx, cajaB, T, ymP, C);
+    G.curva(ctx, escA, sig, { color: C.senal, ancho: 2, n: 500, C });
+    G.curva(ctx, escA, prueba, { color: C.plantilla, ancho: 1.7, guiones: [5, 3], halo: false, n: 500, C });
+    const r = producto(sig, prueba, T, o.n || Math.round(T * 500));
+    const ys = r.ys.map(v => limitar(v, -0.99 * ymP, 0.99 * ymP));
+    G.area(ctx, escB, r.ts, ys, { alfa: 0.42, C });
+    G.linea(ctx, escB, r.ts, ys, { color: C.cuerpo, ancho: 1.2, alfa: 0.85, halo: false, C });
+    G.texto(ctx, cajaB.x + cajaB.w - 6, cajaB.y + 14, 'área ' + signo(r.area, o.decimales ?? 2), { alinear: 'right', color: C.texto, tam: 12, peso: 600, fondo: G.alfa(C.pantalla, 0.9), C });
+    if (o.rotulos !== false) {
+      G.texto(ctx, cajaA.x + 6, cajaA.y + 13, 'señal (verde) y noria de prueba (púrpura)', { color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+      G.texto(ctx, cajaB.x + 6, cajaB.y + 13, 'producto', { color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+    }
+    return { area: r.area, escA, escB };
+  }
+  const ejeTiempo = (ctx, caja, T, C) => {
+    G.texto(ctx, caja.x, caja.y + caja.h + 14, '0 s', { color: C.tenue, tam: 10, C });
+    G.texto(ctx, caja.x + caja.w, caja.y + caja.h + 14, num(T) + ' s', { alinear: 'right', color: C.tenue, tam: 10, C });
+  };
+
+  // ── La idea en una imagen: la noria de prueba y el área ──────────────────────────────────────────────────────
+  // La señal esconde dos norias, de 3 Hz (tamaño 1) y de 5 Hz (tamaño 0,6), y dura 2 s. Con las velocidades de prueba que
+  // son múltiplos de 0,5 Hz caben vueltas completas, así que el área vale 0 salvo en 3 Hz y 5 Hz.
+  (function () {
+    const T = 2, FS = 500;
+    const sig = t => Math.sin(TAU * 3 * t) + 0.6 * Math.sin(TAU * 5 * t);
+    const FREQS = Array.from({ length: 16 }, (_, i) => 0.5 + 0.5 * i);
+    const muestras = Float64Array.from({ length: T * FS }, (_, i) => sig(i / FS));
+    const mags = Senal.dft(muestras, FS, FREQS).map(r => r.mag);          // el espectro completo, calculado con Senal
+    const e = { f: 3, t: 0.3, visitadas: new Set([3]), barrido: false, acum: 0 };
+    const L = G.lienzo('#ancla-escena', {
+      alto: altoEscena(322, 356),
+      etiqueta: 'A la izquierda, la noria de prueba; a la derecha, tres gráficas: la señal con la curva de la noria de prueba, el producto de las dos con su área sombreada, y el espectro que se va apuntando con cada velocidad',
+      dibujar: (ctx, w, h, C) => {
+        const estrecho = w < 560, wn = estrecho ? 92 : 132, x0 = wn + 8, ancho = w - x0 - 10, hueco = 8, etq = 20, abajo = 36, h1 = (h - 6 - abajo - etq - 2 * hueco) / 3;
+        const cA = { x: x0, y: 6, w: ancho, h: h1 }, cB = { x: x0, y: 6 + h1 + hueco, w: ancho, h: h1 }, cS = { x: x0, y: 6 + 2 * (h1 + hueco) + etq, w: ancho, h: h1 };
+        const prueba = t => Math.sin(TAU * e.f * t);
+        const r = tirasProducto(ctx, C, cA, cB, T, 1.75, sig, prueba, { rotulos: false, ymProd: 1.75 });
+        for (const [c, txt] of [[cA, 'señal y noria de prueba'], [cB, 'producto']]) G.texto(ctx, c.x + 6, c.y + 13, txt, { color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+        // El instante actual: una línea vertical y un punto en la curva de prueba.
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.acento, 0.8); ctx.lineWidth = 1.2;
+        for (const [esc, c] of [[r.escA, cA], [r.escB, cB]]) { const x = esc.x(e.t); ctx.beginPath(); ctx.moveTo(x, c.y); ctx.lineTo(x, c.y + c.h); ctx.stroke(); }
+        ctx.restore();
+        G.puntos(ctx, r.escA, [e.t], [prueba(e.t)], { color: C.plantilla, radio: 4.5, C });
+        ejeTiempo(ctx, cB, T, C);
+        // La noria de prueba, a la izquierda, con la cabina en el ángulo que toca a este instante.
+        const R = (wn - 20) / 2 - 2, cx = 8 + wn / 2 - 4, cy = cA.y + cA.h + hueco / 2 - 6;
+        G.noria(ctx, { cx, cy, r: R, angulo: TAU * e.f * e.t, cabinas: [{ desfase: 0, color: C.plantilla }], radios: 8, patas: false, C });
+        G.texto(ctx, cx, cy + R + 26, 'noria de prueba', { alinear: 'center', color: C.tenue, tam: 10, C });
+        G.texto(ctx, cx, cy + R + 40, num(e.f, 1) + ' vueltas/s', { alinear: 'center', color: C.plantilla, tam: 11, peso: 600, C });
+        // El espectro apuntado hasta ahora.
+        const esc = G.ejes(ctx, { caja: cS, x: [0, 8.5], y: [0, 1.25], marcasX: [0, 1, 2, 3, 4, 5, 6, 7, 8], marcasY: false, formatoX: v => num(v), etiquetaX: 'velocidad de la noria de prueba (Hz)', rejilla: false, C });
+        const xs = [], ys = [];
+        FREQS.forEach((f, i) => { if (e.visitadas.has(f)) { xs.push(f); ys.push(mags[i]); } });
+        if (xs.length) G.barras(ctx, esc, xs, ys, { color: C.espectro, anchoPx: estrecho ? 7 : 10, C });
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.plantilla, 0.75); ctx.setLineDash([3, 3]);
+        const xf = esc.x(e.f); ctx.beginPath(); ctx.moveTo(xf, cS.y); ctx.lineTo(xf, cS.y + cS.h); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, cS.x + 6, cS.y + 13, e.visitadas.size === 1 && !e.barrido ? 'espectro: prueba más velocidades' : 'espectro: área de cada velocidad', { color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+      },
+    });
+    const mandos = document.getElementById('ancla-mandos');
+    let anim = null;
+    const cambiar = () => L.dibujar();
+    const mando = Curso.mando(mandos, {
+      etiqueta: 'Velocidad de la noria de prueba', min: 0.5, max: 8, paso: 0.5, valor: e.f, formato: v => num(v, 1) + ' Hz',
+      alCambiar: v => { e.f = v; e.visitadas.add(v); cambiar(); },
+    });
+    const fila = crear('div', { class: 'botones' });
+    mandos.appendChild(fila);
+    Curso.botones(fila, [
+      { id: 'barrer', texto: 'Barrer todas', icono: 'play', alPulsar: () => { e.visitadas.clear(); e.f = 0.5; e.visitadas.add(0.5); mando.fijar(0.5, false); e.barrido = true; e.acum = 0; if (anim && !anim.corriendo) anim.reanudar(); cambiar(); } },
+      { id: 'borrar', texto: 'Borrar el espectro', tipo: 'discreto', alPulsar: () => { e.barrido = false; e.visitadas.clear(); e.visitadas.add(e.f); cambiar(); } },
+    ]);
+    anim = Curso.animar(L, (t, dt) => {
+      if (dt > 0) {
+        e.t = (e.t + dt * 0.5) % T;
+        if (e.barrido) {
+          e.acum += dt;
+          if (e.acum >= 0.42) {
+            e.acum = 0;
+            const sig2 = e.f + 0.5;
+            if (sig2 > 8) e.barrido = false;
+            else { e.f = sig2; e.visitadas.add(sig2); mando.fijar(sig2, false); }
+          }
+        }
+      }
+      L.dibujar();
+    }, { boton: fila });
+  })();
+
+  // ── Reto 1 · Encuentra la noria escondida (deslizador) ───────────────────────────────────────────────────────
+  (function () {
+    const T = 2, azar = Curso.azar();
+    const e = { f: 1, escondida: 3 };
+    const nueva = previa => { let f; do { f = azar.elegir([2, 3, 4, 5, 6, 7]); } while (f === previa); return f; };
+    e.escondida = nueva(0);
+    const sig = t => Math.sin(TAU * e.escondida * t);
+    let medido = 0;
+    const L = G.lienzo('#r1-escena', {
+      alto: altoEscena(230, 262),
+      etiqueta: 'Arriba, la señal, que esconde una noria, y la curva de la noria de prueba; abajo, el producto de las dos con su área sombreada',
+      dibujar: (ctx, w, h, C) => {
+        const hh = (h - 6 - 8 - 24) / 2;
+        const cA = { x: 12, y: 6, w: w - 24, h: hh }, cB = { x: 12, y: 6 + hh + 8, w: w - 24, h: hh };
+        medido = tirasProducto(ctx, C, cA, cB, T, 1.25, sig, t => Math.sin(TAU * e.f * t)).area;
+        ejeTiempo(ctx, cB, T, C);
+      },
+    });
+    const lect = Curso.lecturas('#r1-mandos', [{ id: 'area', nombre: 'Área', clase: 'destacada' }]);
+    const estado = () => lect.fijar('area', signo(medido, 2));
+    const mando = Curso.mando('#r1-mandos', {
+      etiqueta: 'Velocidad de la noria de prueba', clase: 'senal', min: 0.5, max: 8, paso: 0.5, valor: e.f, formato: v => num(v, 1) + ' Hz', reto: 'reto-1',
+      alCambiar: v => { e.f = v; L.dibujar(); estado(); },
+    });
+    let reto = null;
+    Curso.botones('#r1-mandos', [{ id: 'otra', texto: 'Otra noria escondida', icono: 'otra', alPulsar: () => { e.escondida = nueva(e.escondida); L.dibujar(); estado(); reto.reiniciar(); } }]);
+    L.dibujar(); estado();
+    reto = Curso.reto('reto-1', {
+      titulo: 'Encuentra la noria escondida', nivel: 'fácil',
+      comprobar: () => {
+        if (Math.abs(e.f - e.escondida) < 0.01 && medido > 0.95) return { ok: true, mensaje: 'Ahí está: la noria escondida gira a ' + num(e.escondida) + ' Hz y el área llega a ' + num(medido, 2) + '.' };
+        if (Math.abs(medido) < 0.05) return { ok: false, mensaje: 'Con esta velocidad el área es cero: lo positivo y lo negativo del producto se compensan. Prueba otra.' };
+        return { ok: false, mensaje: 'Sube un poco el área.' };
+      },
+      resolver: () => mando.fijar(e.escondida),
+      pista: [
+        'Recorre las velocidades de menos a más y fíjate en el producto de abajo: casi siempre es una nube con la mitad verde y la mitad naranja, que se compensan.',
+        'La velocidad buena es la que deja el producto casi todo por encima de cero, con casi todo el relleno verde.',
+      ],
+      exito: '<p>Si la noria de prueba gira como la escondida, suben y bajan a la vez y el producto queda casi siempre por encima de cero: el área crece. Con cualquier otra velocidad, lo que suma se compensa con lo que resta. Acabas de usar la correlación para encontrar una noria dentro de una señal.</p>',
+    });
+  })();
+
+  // ── Reto 2 · Haz desaparecer el área (deslizador) ────────────────────────────────────────────────────────────
+  (function () {
+    const T = 1, FASE = Math.PI / 4;
+    const e = { f: 3.5 };
+    const sig = t => Math.sin(TAU * 3 * t + FASE);                        // la noria escondida, de 3 Hz
+    let medido = 0;
+    const L = G.lienzo('#r2-escena', {
+      alto: altoEscena(230, 262),
+      etiqueta: 'Arriba, un segundo de una noria de 3 Hz y la curva de la noria de prueba; abajo, el producto de las dos con su área sombreada',
+      dibujar: (ctx, w, h, C) => {
+        const hh = (h - 6 - 8 - 24) / 2;
+        const cA = { x: 12, y: 6, w: w - 24, h: hh }, cB = { x: 12, y: 6 + hh + 8, w: w - 24, h: hh };
+        medido = tirasProducto(ctx, C, cA, cB, T, 1.25, sig, t => Math.sin(TAU * e.f * t), { decimales: 3 }).area;
+        ejeTiempo(ctx, cB, T, C);
+      },
+    });
+    const lect = Curso.lecturas('#r2-mandos', [{ id: 'vueltas', nombre: 'Vueltas de la prueba en 1 s' }, { id: 'area', nombre: 'Área', clase: 'destacada' }]);
+    const estado = () => { lect.fijar('vueltas', num(e.f, 2)); lect.fijar('area', signo(medido, 3)); };
+    const mando = Curso.mando('#r2-mandos', {
+      etiqueta: 'Velocidad de la noria de prueba', clase: 'senal', min: 0.5, max: 8, paso: 0.25, valor: e.f, formato: v => num(v, 2) + ' Hz', reto: 'reto-2',
+      alCambiar: v => { e.f = v; L.dibujar(); estado(); },
+    });
+    L.dibujar(); estado();
+    Curso.reto('reto-2', {
+      titulo: 'Haz desaparecer el área', nivel: 'fácil',
+      comprobar: () => {
+        if (Math.abs(e.f - 3) < 0.2) return { ok: false, mensaje: 'Esa es la velocidad de la propia señal: ahí el área es de las mayores. Busca una que la deje en cero.' };
+        if (Math.abs(medido) < 0.01) return { ok: true, mensaje: 'Área cero: la prueba da ' + num(e.f, 2) + ' vueltas completas en el segundo.' };
+        if (Math.abs(medido) < 0.2) return { ok: false, mensaje: 'Casi, pero queda un resto de ' + signo(medido, 3) + '. Mira cuántas vueltas da la prueba en el segundo: si le sobra un pedazo de vuelta, el producto no se compensa.' };
+        return { ok: false, mensaje: 'Todavía hay área (' + signo(medido, 3) + '). Prueba velocidades que den vueltas completas en el segundo que dura la señal.' };
+      },
+      resolver: () => mando.fijar(2),
+      pista: [
+        'Cuenta cuántas vueltas da la noria de prueba en el segundo que dura la señal; la lectura de abajo te las dice.',
+        'Las velocidades que dan un número entero de vueltas, como 1, 2 o 4 Hz, compensan lo positivo con lo negativo sin dejar resto.',
+      ],
+      exito: '<p>Con vueltas completas, lo positivo y lo negativo del producto se compensan del todo, y por eso la noria escondida no se mezcla con las demás: es la ortogonalidad. Con 2,75 vueltas sobra un pedazo, el área no se anula y aparece el resto que la <a href="e05.html">lección 5</a> llama fuga.</p>',
+    });
+  })();
+
+  // ── Reto 3 · Las dos sombras (botones de encendido y deslizadores) ───────────────────────────────────────────
+  // La noria escondida es x(t) = A·sen(2π·4·t + φ), de un segundo. Con la prueba de seno el área es S = A·cos φ y con
+  // la de coseno es C = A·sen φ (las calcula Senal.dft: S = −im, C = re). El tamaño es √(S² + C²) y φ = atan2(C, S).
+  (function () {
+    const F = 4, T = 1, FS = 1000, azar = Curso.azar();
+    const nuevo = previo => {
+      let o;
+      do { o = { A: azar.elegir([0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4]), fase: azar.elegir([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]) }; }
+      while (previo && o.A === previo.A && o.fase === previo.fase);
+      return o;
+    };
+    let obj = { A: 1, fase: 90 };            // la primera vez, con el seno solo el área sale cero y la noria «se escapa»
+    const st = { seno: false, coseno: false, A: 1, fase: 0 };
+    let S = 0, Cc = 0;
+    const calcular = () => {
+      const x = Senal.seno({ f: F, fs: FS, dur: T, amp: obj.A, fase: obj.fase * Math.PI / 180 });
+      const r = Senal.dft(x, FS, [F])[0];
+      S = -r.im; Cc = r.re;
+    };
+    calcular();
+    const sig = t => obj.A * Math.sin(TAU * F * t + obj.fase * Math.PI / 180);
+    const cont = document.getElementById('r3-escena');
+    const panel = titulo => {
+      const p = crear('div', { class: 'panel-mini' });
+      p.appendChild(crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, titulo)));
+      const es = crear('div', { class: 'escena' });
+      p.appendChild(es);
+      cont.appendChild(p);
+      return es;
+    };
+    const lect = Curso.lecturas('#r3-fila', [
+      { id: 'S', nombre: 'Área con el seno (S)', clase: 'destacada' },
+      { id: 'C', nombre: 'Área con el coseno (C)', clase: 'destacada' },
+    ]);
+    const estado = () => {
+      lect.fijar('S', st.seno ? signo(S, 2) : '—');
+      lect.fijar('C', st.coseno ? signo(Cc, 2) : '—');
+    };
+    const Lp = G.lienzo(panel('Los productos'), {
+      alto: altoEscena(216, 282),
+      etiqueta: 'Tres tiras: la señal escondida y, debajo, su producto con la sombra del seno y con la sombra del coseno de la noria de prueba, cada uno con su área, si está encendida',
+      dibujar: (ctx, w, h, C) => {
+        const hh = (h - 6 - 2 * 8 - 22) / 3, x0 = 8, ancho = w - 16;
+        const cA = { x: x0, y: 6, w: ancho, h: hh }, cB = { x: x0, y: 6 + hh + 8, w: ancho, h: hh }, cC = { x: x0, y: 6 + 2 * (hh + 8), w: ancho, h: hh };
+        const escA = tira(ctx, cA, T, 1.5, C);
+        G.curva(ctx, escA, sig, { color: C.senal, ancho: 2, n: 500, C });
+        G.texto(ctx, cA.x + 6, cA.y + 13, 'la noria escondida', { color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+        for (const [caja, activa, f, rotulo, nombre] of [[cB, st.seno, t => Math.sin(TAU * F * t), 'con la sombra de la pared (seno)', 'S'], [cC, st.coseno, t => Math.cos(TAU * F * t), 'con la sombra del suelo (coseno)', 'C']]) {
+          const esc = tira(ctx, caja, T, 1.5, C);
+          if (activa) {
+            const r = producto(sig, f, T, 500);
+            G.area(ctx, esc, r.ts, r.ys, { alfa: 0.42, C });
+            G.linea(ctx, esc, r.ts, r.ys, { color: C.cuerpo, ancho: 1.2, alfa: 0.85, halo: false, C });
+            G.texto(ctx, caja.x + caja.w - 6, caja.y + 14, 'área ' + nombre + ' = ' + signo(r.area, 2), { alinear: 'right', color: C.texto, tam: 12, peso: 600, fondo: G.alfa(C.pantalla, 0.9), C });
+          } else {
+            G.texto(ctx, caja.x + caja.w / 2, caja.y + caja.h / 2 + 5, 'apagada', { alinear: 'center', color: C.tenue, tam: 11, C });
+          }
+          G.texto(ctx, caja.x + 6, caja.y + 13, rotulo, { color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+        }
+        ejeTiempo(ctx, cC, T, C);
+      },
+    });
+    // El plano de las dos áreas: S en horizontal y C en vertical. El punto escondido es (S, C); tu noria es la flecha.
+    const Lq = G.lienzo(panel('El plano de las dos áreas'), {
+      alto: altoEscena(240, 282),
+      etiqueta: 'Un plano con el área con el seno en horizontal y el área con el coseno en vertical: el punto de la noria escondida, el triángulo que forman sus áreas y una flecha que representa tu noria',
+      dibujar: (ctx, w, h, C) => {
+        const R = 1.6, k = (Math.min(w, h) / 2 - 22) / R, cx = w / 2, cy = h / 2;
+        const X = v => cx + v * k, Y = v => cy - v * k;
+        ctx.save();
+        ctx.strokeStyle = C.rejilla; ctx.lineWidth = 1;
+        ctx.beginPath(); for (const r of [0.5, 1, 1.5]) { ctx.moveTo(cx + r * k, cy); ctx.arc(cx, cy, r * k, 0, TAU); } ctx.stroke();
+        ctx.strokeStyle = C.eje;
+        ctx.beginPath(); ctx.moveTo(X(-R), cy); ctx.lineTo(X(R), cy); ctx.moveTo(cx, Y(-R)); ctx.lineTo(cx, Y(R)); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, X(R) - 2, cy - 6, 'S', { alinear: 'right', color: C.suave, tam: 11, peso: 600, C });
+        G.texto(ctx, cx + 6, Y(R) + 10, 'C', { color: C.suave, tam: 11, peso: 600, C });
+        // Lo que enseñan las sombras encendidas.
+        ctx.save();
+        ctx.setLineDash([4, 3]); ctx.strokeStyle = G.alfa(C.tenue, 0.95); ctx.lineWidth = 1.2;
+        if (st.seno && st.coseno) {
+          ctx.beginPath(); ctx.moveTo(X(S), cy); ctx.lineTo(X(S), Y(Cc)); ctx.moveTo(cx, Y(Cc)); ctx.lineTo(X(S), Y(Cc)); ctx.stroke();
+          ctx.setLineDash([]); ctx.strokeStyle = C.cuerpo; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(X(S), Y(Cc)); ctx.stroke();
+        } else if (st.seno) {
+          ctx.beginPath(); ctx.moveTo(X(S), Y(-R)); ctx.lineTo(X(S), Y(R)); ctx.stroke();
+        } else if (st.coseno) {
+          ctx.beginPath(); ctx.moveTo(X(-R), Y(Cc)); ctx.lineTo(X(R), Y(Cc)); ctx.stroke();
+        }
+        ctx.restore();
+        if (st.seno && st.coseno) G.puntos(ctx, { x: X, y: Y, caja: { x: 0, y: 0, w, h }, C }, [S], [Cc], { color: C.senal, radio: 6, C });
+        else if (st.seno || st.coseno) G.texto(ctx, cx, h - 8, 'la noria está en algún punto de la línea', { alinear: 'center', color: C.tenue, tam: 10, fondo: G.alfa(C.superficie, 0.85), C });
+        else G.texto(ctx, cx, h - 8, 'enciende una sombra para empezar', { alinear: 'center', color: C.tenue, tam: 10, fondo: G.alfa(C.superficie, 0.85), C });
+        // Tu noria: una flecha del centro al punto (A·cos φ, A·sen φ).
+        const fa = st.fase * Math.PI / 180, gx = st.A * Math.cos(fa), gy = st.A * Math.sin(fa);
+        G.flecha(ctx, cx, cy, X(gx), Y(gy), { color: C.acento, ancho: 2, C });
+        G.texto(ctx, X(gx) + (gx >= 0 ? 8 : -8), Y(gy) + (gy >= 0 ? -6 : 14), 'tu noria', { alinear: gx >= 0 ? 'left' : 'right', color: C.acento, tam: 11, peso: 600, fondo: G.alfa(C.superficie, 0.85), C });
+      },
+    });
+    const redibujar = () => { Lp.dibujar(); Lq.dibujar(); estado(); };
+    const b = Curso.botones('#r3-mandos', [
+      { id: 'seno', texto: 'Sombra de la pared (seno)', pulsado: false, alPulsar: on => { st.seno = on; redibujar(); Curso.cambio('reto-3'); } },
+      { id: 'coseno', texto: 'Sombra del suelo (coseno)', pulsado: false, alPulsar: on => { st.coseno = on; redibujar(); Curso.cambio('reto-3'); } },
+    ]);
+    const mA = Curso.mando('#r3-mandos', { etiqueta: 'Tamaño de tu noria', clase: 'respuesta', min: 0, max: 2, paso: 0.05, valor: st.A, decimales: 2, reto: 'reto-3', alCambiar: v => { st.A = v; redibujar(); } });
+    const mP = Curso.mando('#r3-mandos', { etiqueta: 'Punto de partida de tu noria', clase: 'respuesta', min: 0, max: 355, paso: 5, valor: st.fase, formato: v => num(v) + '°', reto: 'reto-3', alCambiar: v => { st.fase = v; redibujar(); } });
+    let reto = null;
+    Curso.botones('#r3-fila', [{ id: 'otra', texto: 'Otra noria escondida', icono: 'otra', alPulsar: () => { obj = nuevo(obj); calcular(); redibujar(); reto.reiniciar(); } }]);
+    redibujar();
+    const poner = (el, on) => el.setAttribute('aria-pressed', String(on));
+    reto = Curso.reto('reto-3', {
+      titulo: 'Las dos sombras', nivel: 'medio',
+      comprobar: () => {
+        const dA = st.A - obj.A, dP = difGrados(st.fase - obj.fase);
+        if (Math.abs(dA) <= 0.1 && Math.abs(dP) <= 15 && st.seno && st.coseno) return { ok: true, mensaje: 'Tamaño ' + num(obj.A, 1) + ' y punto de partida de ' + num(obj.fase) + '°: tu flecha cae sobre el punto.' };
+        if (!st.seno && !st.coseno) return { ok: false, mensaje: 'Enciende las sombras: cada una te da un área de la noria escondida.' };
+        if (!(st.seno && st.coseno)) {
+          const unica = st.seno ? S : Cc;
+          return { ok: false, mensaje: Math.abs(unica) < 0.04
+            ? 'Con una sola sombra el área sale cero. ¿Significa que no hay noria? Enciende también la otra y compara.'
+            : 'Con una sola sombra solo sabes en qué línea está la noria. Enciende también la otra para encontrar el punto.' };
+        }
+        if (Math.abs(dP) > 15) return { ok: false, mensaje: (Math.abs(dA) <= 0.1 ? 'El tamaño ya está. ' : '') + 'Tu flecha no apunta al punto: te falta girar unos ' + num(Math.round(Math.abs(dP) / 5) * 5) + '° ' + (dP > 0 ? 'hacia atrás' : 'hacia delante') + '.' };
+        return { ok: false, mensaje: 'Apunta bien, pero tu flecha ' + (dA > 0 ? 'se pasa del punto' : 'se queda corta') + ': ajusta el tamaño.' };
+      },
+      resolver: () => { st.seno = st.coseno = true; poner(b.seno, true); poner(b.coseno, true); mA.fijar(obj.A, false); mP.fijar(obj.fase, false); st.A = obj.A; st.fase = obj.fase; redibujar(); Curso.cambio('reto-3'); },
+      pista: [
+        'Enciende las dos sombras. Cada una da un área, y las dos áreas son las coordenadas del punto en el plano de la derecha.',
+        'El tamaño de la noria es la distancia del centro al punto, la hipotenusa del triángulo, y el punto de partida es el ángulo de esa línea, contado desde la derecha y hacia arriba. Mueve tu flecha hasta que llegue al punto.',
+      ],
+      exito: '<p>Cada noria de prueba se mira con dos sombras, la del suelo y la de la pared. Así no se escapa ninguna, esté donde esté su cabina, y de las dos áreas salen su tamaño y su punto de partida. Matemáticamente, esa pareja de números es un número complejo, y por eso la transformada de Fourier devuelve a la vez una magnitud y una fase para cada velocidad.</p>',
+    });
+  })();
+
+  // ── Reto 4 · Las notas del acorde (barrer, tocar para marcar y escuchar) ────────────────────────────────────
+  (function () {
+    const FS = 4000, T = 1, F0 = 200, F1 = 700, PASO = 0.5, N = Math.round((F1 - F0) / PASO) + 1;
+    const GRID = Array.from({ length: N }, (_, i) => F0 + PASO * i);
+    const AMPS = [0.5, 0.4, 0.3];
+    const NOMBRES = { '-9': 'Do', '-7': 'Re', '-5': 'Mi', '-4': 'Fa', '-2': 'Sol' };
+    const azar = Curso.azar();
+    const acorde = m => [0, 4, 7].map(s => 440 * Math.pow(2, (m + s) / 12));
+    let m = -9;                                    // Do mayor: Do4, Mi4 y Sol4
+    let notas = acorde(m), mags = null, xAudio = null;
+    const e = { f: F0, marcas: [], visto: new Uint8Array(N), barre: false, ult: 0 };
+    const idx = f => limitar(Math.round((f - F0) / PASO), 0, N - 1);
+    const sig = t => notas.reduce((s, f, i) => s + AMPS[i] * Math.sin(TAU * f * t), 0);
+    function preparar() {
+      notas = acorde(m);
+      const x = Float64Array.from({ length: T * FS }, (_, i) => sig(i / FS));
+      mags = Senal.dft(x, FS, GRID).map(r => r.mag);          // el espectro entero; solo se enseña lo que ya has visitado
+      xAudio = Senal.suma(...notas.map((f, i) => Senal.seno({ f, fs: 16000, dur: 1.2, amp: AMPS[i] })));
+      e.visto.fill(0); e.marcas = []; e.barre = false;
+    }
+    preparar();
+    const visita = (a, b) => { for (let i = Math.min(a, b); i <= Math.max(a, b); i++) e.visto[i] = 1; };
+    visita(0, 0);
+    let esc2 = null;
+    const L = G.lienzo('#r4-escena', {
+      alto: altoEscena(260, 292),
+      etiqueta: 'Arriba, treinta milisegundos del acorde y la curva de la noria de prueba; abajo, el espectro que se va apuntando al barrer las velocidades, con las marcas que pongas',
+      dibujar: (ctx, w, h, C) => {
+        const h1 = Math.round((h - 6 - 8 - 40) * 0.36), h2 = h - 6 - 8 - 40 - h1;
+        const cA = { x: 12, y: 6, w: w - 24, h: h1 }, cB = { x: 12, y: 6 + h1 + 8, w: w - 24, h: h2 };
+        const Tv = 0.03;
+        const escA = tira(ctx, cA, Tv, 1.3, C);
+        G.curva(ctx, escA, sig, { color: C.senal, ancho: 2, n: 500, C });
+        G.curva(ctx, escA, t => Math.sin(TAU * e.f * t), { color: C.plantilla, ancho: 1.6, guiones: [5, 3], halo: false, n: 500, C });
+        G.texto(ctx, cA.x + 6, cA.y + 13, 'acorde (verde) y noria de prueba (púrpura)', { color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+        esc2 = G.ejes(ctx, { caja: cB, x: [F0, F1], y: [0, 0.62], marcasX: [200, 300, 400, 500, 600, 700], marcasY: false, formatoX: v => num(v), etiquetaX: 'velocidad de la noria de prueba (Hz)', rejilla: false, C });
+        // El espectro apuntado: una línea que solo existe donde ya has pasado.
+        ctx.save();
+        ctx.beginPath();
+        let abierto = false;
+        for (let i = 0; i < N; i++) {
+          if (e.visto[i]) { const x = esc2.x(GRID[i]), y = esc2.y(mags[i]); if (!abierto) { ctx.moveTo(x, esc2.y(0)); ctx.lineTo(x, y); abierto = true; } else ctx.lineTo(x, y); }
+          else if (abierto) { ctx.lineTo(esc2.x(GRID[i - 1]), esc2.y(0)); abierto = false; }
+        }
+        if (abierto) ctx.lineTo(esc2.x(GRID[N - 1]), esc2.y(0));
+        ctx.fillStyle = G.alfa(C.espectro, 0.28); ctx.fill();
+        ctx.strokeStyle = C.espectro; ctx.lineWidth = 1.6; ctx.lineJoin = 'round'; ctx.stroke();
+        ctx.restore();
+        // La velocidad actual y las marcas.
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.plantilla, 0.85); ctx.setLineDash([3, 3]); ctx.lineWidth = 1.3;
+        const xf = esc2.x(e.f); ctx.beginPath(); ctx.moveTo(xf, cB.y); ctx.lineTo(xf, cB.y + cB.h); ctx.stroke();
+        ctx.restore();
+        for (const mk of e.marcas) {
+          const x = esc2.x(mk);
+          ctx.save();
+          ctx.strokeStyle = C.acento; ctx.fillStyle = C.acento; ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.moveTo(x, cB.y + 14); ctx.lineTo(x, cB.y + cB.h); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(x - 5, cB.y + 4); ctx.lineTo(x + 5, cB.y + 4); ctx.lineTo(x, cB.y + 13); ctx.closePath(); ctx.fill();
+          ctx.restore();
+          G.texto(ctx, x + (x > cB.x + cB.w - 50 ? -8 : 8), cB.y + 12, num(mk, 1), { alinear: x > cB.x + cB.w - 50 ? 'right' : 'left', color: C.acento, tam: 10, peso: 600, fondo: G.alfa(C.pantalla, 0.85), C });
+        }
+        if (!e.visto.some((v, i) => v && i > 0) && !e.marcas.length) G.texto(ctx, cB.x + cB.w / 2, cB.y + cB.h / 2 + 4, 'mueve la velocidad o pulsa «Barrer solo»', { alinear: 'center', color: C.tenue, tam: 11, fondo: G.alfa(C.pantalla, 0.85), C });
+      },
+    });
+    L.canvas.classList.add('tocable');
+    const lect = Curso.lecturas('#r4-mandos', [
+      { id: 'area', nombre: 'Área con esa velocidad', clase: 'destacada' },
+      { id: 'marcas', nombre: 'Marcas' },
+    ]);
+    const estado = () => {
+      lect.fijar('area', num(mags[idx(e.f)], 2));
+      lect.fijar('marcas', e.marcas.length ? [...e.marcas].sort((a, b) => a - b).map(v => num(v, 1)).join(' · ') + ' Hz' : 'ninguna');
+    };
+    let anim = null;
+    const mando = Curso.mando('#r4-mandos', {
+      etiqueta: 'Velocidad de la noria de prueba', clase: 'senal', min: F0, max: F1, paso: PASO, valor: e.f, formato: v => num(v, 1) + ' Hz', reto: 'reto-4',
+      alCambiar: v => { visita(idx(e.f), idx(v)); e.f = v; e.barre = false; L.dibujar(); estado(); },
+    });
+    // Tocar o arrastrar sobre el espectro lleva la noria de prueba a esa velocidad.
+    Curso.arrastre(L, {
+      eje: 'x',
+      alBajar: p => { if (!esc2) return false; mando.fijar(limitar(Math.round(esc2.xi(p.x) / PASO) * PASO, F0, F1)); },
+      alMover: p => mando.fijar(limitar(Math.round(esc2.xi(p.x) / PASO) * PASO, F0, F1)),
+    });
+    const fila = document.getElementById('r4-fila');
+    Curso.audio.boton(fila, () => ({ x: xAudio, fs: 16000, volumen: 0.5 }), 'Escuchar el acorde');
+    Curso.audio.boton(fila, () => ({ f: e.f, dur: 0.9, volumen: 0.3 }), 'Escuchar la noria de prueba');
+    let reto = null;
+    const bt = Curso.botones(fila, [
+      { id: 'marcar', texto: 'Marcar esta velocidad', tipo: 'principal', alPulsar: () => { if (!e.marcas.some(v => Math.abs(v - e.f) < 1)) e.marcas.push(e.f); L.dibujar(); estado(); Curso.cambio('reto-4'); } },
+      { id: 'borrar', texto: 'Borrar las marcas', tipo: 'discreto', alPulsar: () => { e.marcas = []; L.dibujar(); estado(); Curso.cambio('reto-4'); } },
+      { id: 'barrer', texto: 'Barrer solo', icono: 'play', tipo: 'discreto', alPulsar: () => { e.f = F0; mando.fijar(F0, false); visita(0, 0); e.barre = true; if (anim && !anim.corriendo) anim.reanudar(); estado(); L.dibujar(); } },
+      { id: 'otro', texto: 'Otro acorde', icono: 'otra', tipo: 'discreto', alPulsar: () => { let n; do { n = azar.elegir([-9, -7, -5, -4, -2]); } while (n === m); m = n; preparar(); e.f = F0; mando.fijar(F0, false); visita(0, 0); L.dibujar(); estado(); reto.reiniciar(); } },
+    ]);
+    anim = Curso.animar(L, (t, dt) => {
+      if (dt > 0 && e.barre) {
+        const nf = Math.min(F1, e.f + 150 * dt);
+        visita(idx(e.f), idx(nf));
+        e.f = nf;
+        mando.fijar(Math.round(nf / PASO) * PASO, false);
+        estado();
+        if (nf >= F1) e.barre = false;
+      }
+      L.dibujar();
+    }, { boton: fila });
+    estado();
+    reto = Curso.reto('reto-4', {
+      titulo: 'Las notas del acorde', nivel: 'medio',
+      comprobar: () => {
+        const cubiertas = new Set(), fuera = [];
+        for (const mk of e.marcas) {
+          const k = notas.findIndex(n => Math.abs(n - mk) <= 3);
+          if (k < 0) fuera.push(mk); else cubiertas.add(k);
+        }
+        if (cubiertas.size === 3 && !fuera.length) return { ok: true, mensaje: 'Las tres notas: ' + notas.map(n => num(n, 1) + ' Hz').join(', ') + '.' };
+        if (!e.marcas.length) return { ok: false, mensaje: 'Cuando el área se dispare, pulsa «Marcar esta velocidad».' };
+        if (fuera.length) return { ok: false, mensaje: 'Hay una marca (' + num(fuera[0], 1) + ' Hz) que no cae en ninguna nota. Bórralas y marca solo donde el área se dispare.' };
+        return { ok: false, mensaje: 'Llevas ' + cubiertas.size + ' de las 3 notas. Sigue barriendo: hay picos que todavía no has visitado.' };
+      },
+      resolver: () => { e.marcas = notas.map(n => Math.round(n / PASO) * PASO); visita(0, N - 1); e.f = e.marcas[0]; mando.fijar(e.f, false); L.dibujar(); estado(); },
+      pista: [
+        'Barre las velocidades de menos a más, o pulsa «Barrer solo»: el área es casi cero casi siempre y se dispara en tres sitios.',
+        'Pulsa «Escuchar la noria de prueba» y compárala con el acorde: cuando suena igual que una de sus notas, el área es máxima. Para afinar, usa las flechas del teclado en el deslizador.',
+      ],
+      exito: '<p>Barrer todas las velocidades y apuntar el área de cada una es hacer la transformada de Fourier, y el resultado, el espectro, es la lista de ingredientes del acorde: tres picos, uno por nota. Cada pico es estrecho porque la señal dura un segundo; en la <a href="e05.html">lección 5</a> verás qué manda en esa anchura.</p>',
+    });
+  })();
+
+  // ── Reto 5 · Aplana la onda sin tocar el espectro (arrastrar las cabinas) ────────────────────────────────────
+  // Cuatro norias de tamaño 1 que dan 1, 2, 3 y 4 vueltas en un segundo: x(t) = Σ sen(2π·k·t + φk). Empiezan con las
+  // cabinas arriba (φ = 90°) y suman un pico de 4. Los tamaños no se tocan; solo cambian los puntos de partida.
+  (function () {
+    const N = 4, SX = Math.cos(0.32);
+    const e = { fases: [90, 90, 90, 90], sel: 0 };
+    const rad = g => g * Math.PI / 180;
+    const suma = t => e.fases.reduce((s, g, i) => s + Math.sin(TAU * (i + 1) * t + rad(g)), 0);
+    const pico = () => { let m = 0; for (let i = 0; i < 1000; i++) m = Math.max(m, Math.abs(suma(i / 1000))); return m; };
+    let geos = [];
+    const L = G.lienzo('#r5-escena', {
+      alto: altoEscena(350, 400), rol: 'slider',
+      etiqueta: 'Cuatro norias pequeñas, una por velocidad, con su cabina que puedes arrastrar; debajo de cada una, una barra con su tamaño, que no cambia; abajo, la onda que suman las cuatro',
+      dibujar: (ctx, w, h, C) => {
+        const celda = (w - 16) / N, r = Math.min(celda / 2 - 10, 42), top = 8;
+        const hFilaWheel = top + 2 * r + r * 0.2 + 14, hBarra = 30;
+        geos = [];
+        for (let i = 0; i < N; i++) {
+          const cx = 8 + celda * (i + 0.5), cy = top + r;
+          if (i === e.sel) {
+            ctx.save(); ctx.strokeStyle = G.alfa(C.acento, 0.9); ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]);
+            ctx.beginPath(); ctx.ellipse(cx, cy, (r + 7) * SX, r + 7, 0, 0, TAU); ctx.stroke(); ctx.restore();
+          }
+          const info = G.noria(ctx, { cx, cy, r, angulo: rad(e.fases[i]), cabinas: [{ desfase: 0, color: C.senal }], radios: 6, patas: false, C });
+          geos.push({ cx, cy, r });
+          G.texto(ctx, cx, cy + r + r * 0.2 + 12, (i + 1) + (i ? ' vueltas/s' : ' vuelta/s'), { alinear: 'center', color: C.tenue, tam: 10, C });
+          // El tamaño de esta noria: una barra ámbar, igual en las cuatro y que nunca cambia.
+          const by = hFilaWheel + hBarra;
+          ctx.fillStyle = C.espectro;
+          ctx.fillRect(cx - 28, by - 16, 11, 16);
+          G.texto(ctx, cx - 13, by - 4, 'tamaño 1', { color: C.tenue, tam: 10, C });
+        }
+        const y0 = hFilaWheel + hBarra + 8, cajaS = { x: 12, y: y0, w: w - 24, h: h - y0 - 24 };
+        const esc = tira(ctx, cajaS, 1, 4.4, C);
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.ruido, 0.8); ctx.setLineDash([5, 4]); ctx.lineWidth = 1.2;
+        for (const s of [1, -1]) { const y = Math.round(esc.y(s * 2.5)) + 0.5; ctx.beginPath(); ctx.moveTo(cajaS.x, y); ctx.lineTo(cajaS.x + cajaS.w, y); ctx.stroke(); }
+        ctx.restore();
+        G.curva(ctx, esc, suma, { color: C.senal, ancho: 2.2, n: 600, C });
+        G.texto(ctx, cajaS.x + cajaS.w - 6, esc.y(2.5) - 4, 'límite 2,5', { alinear: 'right', color: C.ruido, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+        G.texto(ctx, cajaS.x + 6, cajaS.y + 13, 'la suma de las cuatro (un segundo)', { color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+        ejeTiempo(ctx, cajaS, 1, C);
+      },
+    });
+    const lect = Curso.lecturas('#r5-fila', [
+      { id: 'pico', nombre: 'Pico de la onda', clase: 'destacada' },
+      { id: 'sel', nombre: 'Noria elegida' },
+      { id: 'fase', nombre: 'Su punto de partida' },
+    ]);
+    const estado = () => {
+      lect.fijar('pico', num(pico(), 2));
+      lect.fijar('sel', (e.sel + 1) + (e.sel ? ' vueltas/s' : ' vuelta/s'));
+      lect.fijar('fase', num(e.fases[e.sel]) + '°');
+      L.canvas.setAttribute('aria-valuenow', String(e.fases[e.sel]));
+      L.canvas.setAttribute('aria-valuetext', 'Noria de ' + (e.sel + 1) + ' vueltas por segundo con la cabina a ' + e.fases[e.sel] + ' grados; el pico de la onda vale ' + num(pico(), 2));
+    };
+    const cambio = () => { estado(); L.dibujar(); Curso.cambio('reto-5'); };
+    const mas = p => { // la noria más cercana al dedo
+      let mejor = -1, d = Infinity;
+      geos.forEach((g, i) => { const dd = Math.hypot((p.x - g.cx) / SX, p.y - g.cy); if (dd < d) { d = dd; mejor = i; } });
+      return d < geos[mejor].r * 1.9 ? mejor : -1;
+    };
+    const apuntar = p => {
+      const g = geos[e.sel];
+      const a = Math.atan2(g.cy - p.y, (p.x - g.cx) / SX);
+      e.fases[e.sel] = Math.round(aGrados(a) / 5) * 5 % 360;
+      cambio();
+    };
+    Curso.arrastre(L, {
+      alBajar: p => { const i = mas(p); if (i < 0) return false; e.sel = i; apuntar(p); },
+      alMover: apuntar,
+    });
+    L.canvas.tabIndex = 0;
+    L.canvas.setAttribute('aria-valuemin', '0');
+    L.canvas.setAttribute('aria-valuemax', '355');
+    L.canvas.addEventListener('keydown', ev => {
+      if (ev.key === 'ArrowLeft' || ev.key === 'ArrowRight') { ev.preventDefault(); e.sel = (e.sel + (ev.key === 'ArrowRight' ? 1 : N - 1)) % N; estado(); L.dibujar(); return; }
+      const d = { ArrowUp: 5, ArrowDown: -5 }[ev.key];
+      if (!d) return;
+      ev.preventDefault();
+      e.fases[e.sel] = ((e.fases[e.sel] + d) % 360 + 360) % 360;
+      cambio();
+    });
+    Curso.botones('#r5-fila', [
+      { id: 'arriba', texto: 'Todas arriba', icono: 'otra', tipo: 'discreto', alPulsar: () => { e.fases = [90, 90, 90, 90]; cambio(); } },
+      { id: 'azar', texto: 'Puntos de partida al azar', tipo: 'discreto', alPulsar: () => { const az = Curso.azar(); e.fases = e.fases.map(() => az.entero(0, 71) * 5); cambio(); } },
+    ]);
+    estado();
+    Curso.reto('reto-5', {
+      titulo: 'Aplana la onda', nivel: 'difícil',
+      comprobar: () => {
+        const p = pico();
+        if (p < 2.5) return { ok: true, mensaje: 'Pico de ' + num(p, 2) + ': la onda ya no pasa de 2,5 y las cuatro barras de tamaño siguen igual.' };
+        if (p > 3.8) return { ok: false, mensaje: 'Las cabinas todavía suben casi a la vez y el pico es ' + num(p, 2) + '. Sepáralas.' };
+        return { ok: false, mensaje: 'Pico de ' + num(p, 2) + ': vas bien. Sigue moviendo cabinas hasta pasar por debajo de 2,5, la línea punteada.' };
+      },
+      resolver: () => { e.fases = [90, 345, 150, 195]; cambio(); },
+      pista: [
+        'Toca una noria para elegirla y arrastra su cabina alrededor de la rueda. El pico es alto cuando las cuatro cabinas están arriba a la vez, así que sepáralas.',
+        'Deja la primera noria como está y prueba con las otras tres, de una en una, mirando cómo se mueve el pico. Con el teclado: flechas izquierda y derecha para elegir la noria y arriba y abajo para girarla.',
+      ],
+      exito: '<p>Las mismas cuatro norias, con otros puntos de partida, dibujan otra onda. El espectro de tamaños no ha cambiado ni un pelo, y la diferencia está en las fases. Por eso la transformada de Fourier guarda dos números por noria, y por eso la fase es la que esconde el cuándo ocurren las cosas.</p>',
+    });
+  })();
+
+  // ── Reto 6 · La nota que falta (escribir un número, tocar el espectro y escuchar) ───────────────────────────
+  // Un sonido de un segundo con los armónicos 2 a 10 de f0 (tamaño 1/k) y sin la fundamental. Se mide con Senal.espectro.
+  (function () {
+    const FS = 16000, azar = Curso.azar();
+    const e = { f0: 150, x: null, picos: [], cursor: null, ancla: null, escala: null };
+    function generar(previa) {
+      let f0;
+      do { f0 = azar.entero(100, 250); } while (previa && Math.abs(f0 - previa) < 15);
+      e.f0 = f0; e.cursor = null; e.ancla = null;
+      const partes = [];
+      for (let k = 2; k <= 10; k++) partes.push(Senal.seno({ f: k * f0, fs: FS, dur: 1, amp: 1 / k }));
+      e.x = Senal.suma(...partes);
+      const S = Senal.espectro(e.x, FS, { ventana: 'rect' });       // 1 s: un bin por hercio, sin fuga
+      e.picos = [];
+      for (let i = 0; i < S.f.length && S.f[i] <= 3000; i++) if (S.mag[i] > 0.02) e.picos.push([S.f[i], S.mag[i]]);
+    }
+    generar(0);
+    const L = G.lienzo('#r6-escena', {
+      alto: altoEscena(215, 245), rol: 'slider',
+      etiqueta: 'El espectro de un sonido, de 0 a 3.000 hercios: una fila de picos a distancias iguales a la que le falta el primero. Toca un pico para leer su frecuencia',
+      dibujar: (ctx, w, h, C) => {
+        e.escala = G.ejes(ctx, { margen: { izquierda: 14, derecha: 14, arriba: 30, abajo: 34 }, x: [0, 3000], y: [0, 0.62], marcasX: [0, 500, 1000, 1500, 2000, 2500, 3000], marcasY: false, formatoX: v => num(v), etiquetaX: 'frecuencia (Hz)', rejilla: false, C });
+        const esc = e.escala;
+        G.barras(ctx, esc, e.picos.map(p => p[0]), e.picos.map(p => p[1]), { color: C.espectro, anchoPx: w < 560 ? 6 : 8, C });
+        const lin = (f, color, etiqueta, arriba) => {
+          const x = esc.x(f);
+          ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 1.4; ctx.setLineDash([4, 3]);
+          ctx.beginPath(); ctx.moveTo(x, esc.caja.y); ctx.lineTo(x, esc.caja.y + esc.caja.h); ctx.stroke(); ctx.restore();
+          G.texto(ctx, limitar(x, 36, w - 36), esc.caja.y - (arriba ? 16 : 4), etiqueta, { alinear: 'center', color, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.9), C });
+        };
+        if (e.ancla != null) lin(e.ancla, C.tenue, num(e.ancla) + ' Hz', true);
+        if (e.cursor != null) lin(e.cursor, C.acento, num(e.cursor) + ' Hz', false);
+        if (e.cursor == null) G.texto(ctx, esc.caja.x + esc.caja.w / 2, esc.caja.y + 16, 'toca o arrastra para leer una frecuencia', { alinear: 'center', color: C.tenue, tam: 11, C });
+      },
+    });
+    const lect = Curso.lecturas('#r6-mandos', [
+      { id: 'cursor', nombre: 'Último toque', clase: 'destacada' },
+      { id: 'dist', nombre: 'Distancia con el toque anterior' },
+    ]);
+    const estado = () => {
+      lect.fijar('cursor', e.cursor == null ? '—' : num(e.cursor) + ' Hz');
+      lect.fijar('dist', e.cursor == null || e.ancla == null ? '—' : num(Math.abs(e.cursor - e.ancla)) + ' Hz');
+      if (e.cursor != null) { L.canvas.setAttribute('aria-valuenow', String(Math.round(e.cursor))); L.canvas.setAttribute('aria-valuetext', num(e.cursor) + ' hercios'); }
+    };
+    // El cursor se pega al pico más cercano si hay uno a menos de 30 Hz.
+    const poner = f => {
+      let mejor = null, d = 30;
+      for (const [fp] of e.picos) if (Math.abs(fp - f) < d) { d = Math.abs(fp - f); mejor = fp; }
+      e.cursor = mejor != null ? mejor : Math.round(limitar(f, 0, 3000));
+      estado(); L.dibujar();
+    };
+    Curso.arrastre(L, {
+      eje: 'x',
+      alBajar: p => { if (!e.escala) return false; e.ancla = e.cursor; poner(e.escala.xi(p.x)); },
+      alMover: p => poner(e.escala.xi(p.x)),
+    });
+    L.canvas.tabIndex = 0;
+    L.canvas.setAttribute('aria-valuemin', '0');
+    L.canvas.setAttribute('aria-valuemax', '3000');
+    L.canvas.addEventListener('keydown', ev => {
+      const d = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[ev.key];
+      if (!d) return;
+      ev.preventDefault();
+      const i = e.cursor == null ? -1 : e.picos.findIndex(p => p[0] === e.cursor);
+      e.ancla = e.cursor;
+      const sig = e.picos[limitar(i + d, 0, e.picos.length - 1)];
+      e.cursor = sig ? sig[0] : e.cursor;
+      estado(); L.dibujar();
+    });
+    const fila = document.getElementById('r6-fila');
+    let reto = null;
+    const campo = Curso.campo(fila, { etiqueta: 'Nota del sonido', unidad: 'Hz', ancho: 8, marcador: '¿cuál?', alEnviar: () => reto.revisar() });
+    Curso.audio.boton(fila, () => ({ x: e.x, fs: FS, volumen: 0.5 }), 'Escuchar el sonido');
+    Curso.audio.boton(fila, () => { const v = campo.valor; return Number.isFinite(v) && v >= 40 && v <= 1000 ? { f: v, dur: 1, volumen: 0.35 } : null; }, 'Escuchar un tono puro con tu número');
+    Curso.botones(fila, [{ id: 'otro', texto: 'Otro sonido', icono: 'otra', alPulsar: () => { generar(e.f0); campo.fijar(''); estado(); L.dibujar(); reto.reiniciar(); } }]);
+    L.dibujar(); estado();
+    reto = Curso.reto('reto-6', {
+      titulo: 'La nota que falta', nivel: 'difícil', auto: false,
+      comprobar: () => {
+        const v = campo.valor;
+        if (!Number.isFinite(v)) return { ok: false, mensaje: 'Escribe la nota en hercios, por ejemplo 180.' };
+        if (Math.abs(v - e.f0) <= 2) { campo.marcar('bien'); return { ok: true, mensaje: 'La nota es ' + num(e.f0) + ' Hz, aunque en el espectro no haya ningún pico ahí.' }; }
+        campo.marcar('mal');
+        if (Math.abs(v - 2 * e.f0) <= 3) return { ok: false, mensaje: 'Esa es la frecuencia del primer pico que se ve. Mira cuánto hay de un pico al siguiente: la nota es esa distancia.' };
+        if (Math.abs(v - e.f0) <= 12) return { ok: false, mensaje: 'Casi: mide con más cuidado la distancia entre dos picos vecinos.' };
+        return { ok: false, mensaje: 'No. Toca dos picos vecinos y mira la distancia que hay entre ellos.' };
+      },
+      resolver: () => campo.fijar(e.f0),
+      pista: [
+        'Toca dos picos vecinos, uno detrás de otro: la lectura de abajo te dice la distancia entre ellos.',
+        'Compara el sonido con un tono puro del número que has escrito: si es la nota buena, los dos suenan a la misma nota, aunque el timbre sea distinto.',
+      ],
+      exito: '<p>La nota es el ritmo al que se repite la onda, y ese ritmo es la separación entre armónicos, así que el oído la reconstruye aunque falte la primera noria. Por teléfono pasa lo mismo con las voces graves, y por eso la nota no es nunca el pico más alto sin más.</p>',
+    });
+  })();
+
+  // ── En tu voz: el barrido de norias de prueba y el espectro completo ────────────────────────────────────────
+  // Se queda con medio segundo de lo que cargues, lanza norias de prueba de 50 a 2.000 Hz con Senal.dft y enseña cómo
+  // sale el espectro; después, el espectro entero (Hann, 16.384 puntos) con los picos marcados y la nota de dos maneras.
+  (function () {
+    const FSA = 16000, N = 8000;
+    const FREQS = Array.from({ length: 976 }, (_, i) => 50 + 2 * i);
+    const st = { x: null, fs: FSA, nombre: '', inicio: 0, trozo: null, mags: null, mx: 1, k: FREQS.length, barre: false, acum: 0, espec: null, picos: [], notaSep: null, notaAC: null, ref: null };
+    const lab = Curso.voz('#voz-lab', { ejemplos: ['aaa', 'silbido', 'acorde'], fsAnalisis: FSA, alCargar: cargar });
+    const nombreNota = f => { const n = Curso.nota(f); return n ? n.nombre + n.octava : '—'; };
+
+    // 1 · Qué trozo se analiza: el de más energía, y se puede mover.
+    const mandos = crear('div', { class: 'mandos' });
+    lab.panel.appendChild(mandos);
+    let temporizador = null;
+    const pos = Curso.mando(mandos, {
+      etiqueta: 'Dónde empieza el trozo de medio segundo', min: 0, max: 100, paso: 0.5, valor: 0,
+      formato: v => (st.x ? num(v / 100 * Math.max(0, st.x.length / st.fs - N / st.fs), 2) + ' s' : '—'),
+      alCambiar: v => {
+        if (!st.x) return;
+        st.inicio = Math.round(v / 100 * Math.max(0, st.x.length - N));
+        clearTimeout(temporizador);
+        temporizador = setTimeout(() => analizar(false), 140);
+      },
+    });
+
+    // 2 · El barrido de norias de prueba.
+    const escena1 = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena1);
+    const L1 = G.lienzo(escena1, {
+      alto: altoEscena(250, 280),
+      etiqueta: 'Arriba, cuarenta milisegundos de tu grabación con la curva de la noria de prueba; abajo, el espectro que se va apuntando al probar cada velocidad, de 50 a 2.000 hercios',
+      dibujar: (ctx, w, h, C) => {
+        const h1 = Math.round((h - 6 - 8 - 44) * 0.36), h2 = h - 6 - 8 - 44 - h1;
+        const cA = { x: 12, y: 6, w: w - 24, h: h1 }, cB = { x: 12, y: 6 + h1 + 8, w: w - 24, h: h2 };
+        const ind = Math.min(st.k, FREQS.length - 1), f = FREQS[ind];
+        const escA = tira(ctx, cA, 0.04, 1.15, C);
+        if (st.trozo) {
+          const n = Math.min(st.trozo.length, Math.round(0.04 * st.fs));
+          let pico = 1e-9;
+          for (let i = 0; i < n; i++) pico = Math.max(pico, Math.abs(st.trozo[i]));
+          const ys = new Float64Array(n);
+          for (let i = 0; i < n; i++) ys[i] = st.trozo[i] / pico;
+          G.linea(ctx, escA, null, ys, { dt: 1 / st.fs, color: C.senal, ancho: 1.8, C });
+          G.curva(ctx, escA, t => Math.sin(TAU * f * t), { color: C.plantilla, ancho: 1.5, guiones: [5, 3], halo: false, n: 500, C });
+        }
+        G.texto(ctx, cA.x + 6, cA.y + 13, 'tu grabación (verde) y la noria de prueba (púrpura), 40 ms', { color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+        const esc = G.ejes(ctx, { caja: cB, x: [0, 2000], y: [0, 1.12], marcasX: [0, 500, 1000, 1500, 2000], marcasY: false, formatoX: v => num(v), etiquetaX: 'velocidad de la noria de prueba (Hz)', rejilla: false, C });
+        if (st.mags) {
+          const n = st.barre ? Math.min(st.k, FREQS.length) : FREQS.length;
+          G.linea(ctx, esc, FREQS.slice(0, n), Array.from(st.mags.slice(0, n), v => v / st.mx), { color: C.espectro, ancho: 1.6, C });
+        }
+        const xf = esc.x(f);
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.plantilla, 0.85); ctx.setLineDash([3, 3]); ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(xf, cB.y); ctx.lineTo(xf, cB.y + cB.h); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, cB.x + 6, cB.y + 13, 'espectro: tamaño de cada velocidad probada', { color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+        if (!st.x) G.texto(ctx, cB.x + cB.w / 2, cB.y + cB.h / 2, 'Graba, sube un audio o elige un ejemplo', { alinear: 'center', color: C.tenue, tam: 12, C });
+      },
+    });
+    const fila1 = crear('div', { class: 'fila' });
+    lab.panel.appendChild(fila1);
+    const lect1 = Curso.lecturas(fila1, [
+      { id: 'f', nombre: 'Noria de prueba', clase: 'senal' },
+      { id: 'tam', nombre: 'Tamaño, frente al mayor', clase: 'destacada' },
+    ]);
+    let anim = null;
+    Curso.botones(fila1, [{ id: 'barrer', texto: 'Barrer norias de prueba', icono: 'play', tipo: 'principal', alPulsar: () => {
+      if (!st.mags) return;
+      st.k = 0; st.acum = 0; st.barre = true;
+      if (anim && !anim.corriendo) anim.reanudar();
+    } }]);
+    anim = Curso.animar(L1, (t, dt) => {
+      if (dt > 0 && st.barre) {
+        st.acum += dt * 200;
+        st.k = Math.min(FREQS.length, Math.floor(st.acum));
+        if (st.k >= FREQS.length) st.barre = false;
+      }
+      leer1();
+      L1.dibujar();
+    }, { boton: fila1 });
+    function leer1() {
+      if (!st.mags) { lect1.fijar('f', '—'); lect1.fijar('tam', '—'); return; }
+      const ind = Math.min(st.k, FREQS.length - 1);
+      lect1.fijar('f', num(FREQS[ind]) + ' Hz');
+      lect1.fijar('tam', num(Math.round(100 * st.mags[ind] / st.mx)) + ' %');
+    }
+
+    // 3 · El espectro completo, con picos y nota.
+    const escena2 = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena2);
+    const L2 = G.lienzo(escena2, {
+      alto: altoEscena(240, 270),
+      etiqueta: 'El espectro completo del trozo, de 0 a 5.000 hercios, en decibelios respecto al pico más alto, con los picos marcados',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { izquierda: 48, derecha: 12, arriba: 26, abajo: 34 }, x: [0, 5000], y: [-70, 8], marcasX: [0, 1000, 2000, 3000, 4000, 5000], marcasY: [-60, -40, -20, 0], formatoX: v => num(v), formatoY: v => num(v), etiquetaX: 'frecuencia (Hz)', etiquetaY: 'dB', C });
+        if (!st.espec) { G.texto(ctx, w / 2, h / 2, 'Graba, sube un audio o elige un ejemplo', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+        const E = st.espec;
+        if (st.ref) {
+          G.linea(ctx, esc, st.ref.f, st.ref.db, { color: C.cuerpo, ancho: 1.4, guiones: [5, 4], alfa: 0.7, halo: false, C });
+          G.texto(ctx, esc.caja.x + esc.caja.w - 6, esc.caja.y + esc.caja.h - 24, 'referencia: ' + st.ref.nombre, { alinear: 'right', color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+        }
+        G.linea(ctx, esc, E.f, E.db, { color: C.espectro, ancho: 1.6, C });
+        let ultimo = -1e9;
+        for (const [fp, dbp] of st.picos) {
+          const x = esc.x(fp), y = esc.y(dbp);
+          ctx.save(); ctx.fillStyle = C.acento;
+          ctx.beginPath(); ctx.moveTo(x - 4, y - 10); ctx.lineTo(x + 4, y - 10); ctx.lineTo(x, y - 3); ctx.closePath(); ctx.fill(); ctx.restore();
+          if (x - ultimo >= 40) { G.texto(ctx, x, y - 14, num(fp), { alinear: 'center', color: C.acento, tam: 10, peso: 600, fondo: G.alfa(C.pantalla, 0.85), C }); ultimo = x; }
+        }
+        G.texto(ctx, esc.caja.x + esc.caja.w - 6, esc.caja.y + esc.caja.h - 8, 'espectro (ámbar) y picos (triángulos)', { alinear: 'right', color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+      },
+    });
+    const fila2 = crear('div', { class: 'fila' });
+    lab.panel.appendChild(fila2);
+    const lect2 = Curso.lecturas(fila2, [
+      { id: 'sep', nombre: 'Tu nota, por la separación entre picos', clase: 'destacada' },
+      { id: 'ac', nombre: 'Tu nota, por autocorrelación' },
+      { id: 'nota', nombre: 'Nota más cercana' },
+    ]);
+    const bot = Curso.botones(fila2, [
+      { id: 'ref', texto: 'Guardar como referencia', alPulsar: () => { if (!st.espec) return; st.ref = { f: st.espec.f, db: st.espec.db, nombre: st.nombre }; bot.quitar.hidden = false; L2.dibujar(); } },
+      { id: 'quitar', texto: 'Quitar referencia', tipo: 'discreto', alPulsar: () => { st.ref = null; bot.quitar.hidden = true; L2.dibujar(); } },
+    ]);
+    bot.quitar.hidden = true;
+    const ayuda = crear('p', { class: 'nota-reto' }, 'Para comparar tu «aaa» con tu «iii», guarda una como referencia, carga la otra y mira cómo cambia la altura de los picos con la misma nota.');
+    lab.panel.appendChild(ayuda);
+
+    // El trozo con más energía de la grabación (ventanas de medio segundo, cada 50 ms).
+    function mejorInicio(x, fs) {
+      if (x.length <= N) return 0;
+      const paso = Math.round(0.05 * fs);
+      let mejor = 0, emax = -1;
+      for (let i = 0; i + N <= x.length; i += paso) {
+        let s = 0;
+        for (let k = i; k < i + N; k += 4) s += x[k] * x[k];
+        if (s > emax) { emax = s; mejor = i; }
+      }
+      return mejor;
+    }
+    function cargar(x, fs, nombre) {
+      st.x = x; st.fs = fs; st.nombre = nombre || 'grabación';
+      st.inicio = mejorInicio(x, fs);
+      const rec = Math.max(0, x.length - N);
+      pos.fijar(rec > 0 ? 100 * st.inicio / rec : 0, false);
+      analizar(true);
+    }
+    function analizar(entero) {
+      const x = st.x;
+      if (!x || !x.length) return;
+      const fin = Math.min(x.length, st.inicio + N);
+      st.trozo = Float64Array.from(x.subarray(st.inicio, fin));
+      // El barrido, con Senal.dft: una noria de prueba cada 2 Hz, de 50 a 2.000 Hz.
+      st.mags = Float64Array.from(Senal.dft(st.trozo, st.fs, FREQS).map(r => r.mag));
+      st.mx = Math.max(1e-9, ...st.mags);
+      st.barre = false;
+      st.k = 0;                                   // en reposo, la noria de prueba se queda en el pico mayor
+      for (let i = 1; i < st.mags.length; i++) if (st.mags[i] > st.mags[st.k]) st.k = i;
+      // El espectro completo, con ventana Hann y relleno hasta 16.384 puntos.
+      const S = Senal.espectro(st.trozo, st.fs, { ventana: 'hann', nfft: 16384, escala: 'amplitud' });
+      let lim = S.f.length;
+      while (lim > 0 && S.f[lim - 1] > 5000) lim--;
+      let mx = 1e-12;
+      for (let i = 0; i < lim; i++) mx = Math.max(mx, S.mag[i]);
+      const f = S.f.slice(0, lim), db = new Float64Array(lim);
+      for (let i = 0; i < lim; i++) db[i] = Math.max(-80, 20 * Math.log10(Math.max(S.mag[i], 1e-12) / mx));
+      st.espec = { f, db, df: lim > 1 ? f[1] - f[0] : 1, nivel: 20 * Math.log10(mx) };
+      st.picos = buscarPicos(st.espec);
+      notas();
+      leer1(); L1.dibujar(); L2.dibujar();
+    }
+    // Picos: máximos locales que sobresalen al menos 10 dB sobre el fondo a 25 Hz a cada lado y no más de 45 dB por
+    // debajo del mayor; entre dos picos a menos de 25 Hz se queda el más alto.
+    function buscarPicos(E) {
+      if (E.nivel < -80) return [];
+      const w = Math.max(2, Math.round(25 / E.df)), n = E.db.length, cand = [];
+      for (let i = w; i < n - w; i++) {
+        const v = E.db[i];
+        if (v < -45 || v < E.db[i - 1] || v <= E.db[i + 1]) continue;
+        let a = 1e9, b = 1e9;
+        for (let j = i - w; j <= i; j++) a = Math.min(a, E.db[j]);
+        for (let j = i; j <= i + w; j++) b = Math.min(b, E.db[j]);
+        if (v - Math.max(a, b) >= 10) {
+          // El pico, afinado entre bins con una parábola.
+          const p = E.db[i - 1], q = E.db[i + 1], den = p - 2 * v + q, d = den < 0 ? limitar(0.5 * (p - q) / den, -0.5, 0.5) : 0;
+          cand.push([E.f[i] + d * E.df, v - 0.25 * (p - q) * d]);
+        }
+      }
+      const out = [];
+      for (const c of cand) {
+        const u = out[out.length - 1];
+        if (u && c[0] - u[0] < 25) { if (c[1] > u[1]) out[out.length - 1] = c; } else out.push(c);
+      }
+      return out.slice(0, 40);
+    }
+    function notas() {
+      const ps = st.picos.map(p => p[0]).filter(f => f < 3000);
+      st.notaSep = null;
+      if (ps.length >= 2) {
+        const d = [];
+        for (let i = 1; i < Math.min(ps.length, 14); i++) d.push(ps[i] - ps[i - 1]);
+        d.sort((a, b) => a - b);
+        const med = d[Math.floor(d.length / 2)];
+        if (med >= 55 && med <= 900) st.notaSep = med;
+      }
+      st.notaAC = null;
+      try {
+        const r = Senal.tonoAutocorrelacion(st.trozo, st.fs, { fmin: 60, fmax: 1000 });
+        if (r && Number.isFinite(r.f0)) st.notaAC = r.f0;
+      } catch (err) { /* sin tono claro */ }
+      lect2.fijar('sep', st.notaSep ? num(st.notaSep) + ' Hz' : st.picos.length === 1 ? 'un solo pico: ' + num(st.picos[0][0]) + ' Hz' : '—');
+      lect2.fijar('ac', st.notaAC ? num(st.notaAC) + ' Hz' : '—');
+      const ref = st.notaSep || st.notaAC || (st.picos.length === 1 ? st.picos[0][0] : null);
+      lect2.fijar('nota', ref ? nombreNota(ref) : '—');
+    }
+  })();
+})();
+</script>
+</body>
+</html>

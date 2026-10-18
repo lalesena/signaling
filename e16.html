@@ -1,0 +1,1372 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La sombra que falta: la señal analítica · Señales</title>
+<meta name="description" content="Lección 16 del curso visual «Señales, de 0 a experto»: cómo saber en qué punto de su vuelta está una onda con la señal analítica, la transformada de Hilbert, la envolvente y la frecuencia instantánea, con seis retos y tu propia voz.">
+<link rel="stylesheet" href="comun/fuentes.css">
+<link rel="stylesheet" href="comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e16">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Nivel 5 · Lección 16</p>
+    <h1>La sombra que falta: la señal analítica</h1>
+    <aside class="pregunta">
+      <p>Desde la pared, una cabina de noria que está a media altura puede estar subiendo o bajando, y las dos situaciones proyectan exactamente la misma sombra. Una radio de AM, sin embargo, saca una voz de una onda que sube y baja a toda velocidad, y para eso necesita saber en cada instante qué tamaño tiene la noria que la produce. ¿Cómo se averigua en qué punto de su vuelta está una onda cuando solo se ve su sombra?</p>
+    </aside>
+    <ul class="meta"><li>Unos 50 minutos</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>La idea en una imagen</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Si una noria gira mientras el tiempo avanza hacia la derecha, su cabina dibuja un sacacorchos. Su sombra en la pared (verde) es la onda que mide un micrófono, y su sombra en el suelo (naranja) es la misma onda un cuarto de vuelta más tarde, justo la que el micrófono no recoge. Gira la cámara hasta ponerte delante del sacacorchos y verás la noria de siempre, con las dos sombras deslizándose por sus guías.</figcaption>
+    </figure>
+    <p>En la <a href="e01.html">lección 1</a> una onda era la sombra de una noria en la pared, y con esa sombra bastaba para leer el tamaño, la velocidad y el punto de partida. Para saber en qué punto de la vuelta está la cabina en cada instante se queda corta, y hace falta la segunda sombra, la del suelo. Juntas devuelven la noria entera: su radio, que dice cuánto mide la onda ahora, y su ángulo, que dice cuánto ha girado.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Paso a paso</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>Una sola sombra no basta</h3>
+      <p>Imagina que solo ves la sombra de la pared. Si está a media altura, la cabina puede ir subiendo por un lado de la rueda o bajando por el otro, y las dos situaciones dan la misma altura. En lo más alto o en lo más bajo no hay duda, pero en cualquier otro punto hay dos sitios posibles, y una onda pasa por todos ellos.</p>
+      <p>Para decidir hace falta otra pieza de información, y la noria la trae gratis: si se la ilumina desde arriba, la cabina proyecta una segunda sombra en el suelo, que dice en qué lado de la rueda está. Con la altura y el lado, el sitio queda fijado. Esa pareja de números es lo que los matemáticos llaman un <b class="termino">número complejo</b>, y juntos dan un radio, el tamaño de la noria, y un ángulo, el punto de la vuelta en que se encuentra la cabina.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Hay una cabina escondida y solo ves su sombra en la pared, la marca verde. Arrastra tu cabina por la rueda hasta ponerla donde está de verdad; si la altura sola no te lo dice, enciende la luz del suelo.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="fila" id="r1-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>Fabricar la sombra que falta</h3>
+      <p>El micrófono solo entrega la sombra de la pared, así que la del suelo hay que fabricarla a partir de ella. Para una noria sola es fácil, porque su sombra del suelo es la misma onda un cuarto de vuelta más tarde: cuando la cabina está en lo más alto, su sombra del suelo pasa por el centro, y cuando la del suelo llega a su extremo, la de la pared pasa por cero. Retrasando la onda un cuarto de su periodo, las dos sombras dibujan juntas un círculo perfecto, y su radio no cambia aunque la sombra de la pared suba y baje.</p>
+      <p>Con varias norias a la vez, el truco del retraso falla. Un retraso fijo, por ejemplo un octavo de segundo, es un cuarto de vuelta para una noria que da dos vueltas por segundo, pero para otra que da seis son tres cuartos. Cada noria necesita girarse un cuarto de su propia vuelta, sea lenta o rápida, y la operación que lo consigue se llama <b class="termino">transformada de Hilbert</b>, que lleva el nombre del matemático David Hilbert. Se calcula en el espectro, donde cada noria está por separado, y deja intacto el tamaño de cada una.</p>
+      <p>La señal original junto con su sombra de Hilbert forma la <b class="termino">señal analítica</b>: la noria completa, con sus dos sombras, que se lee con un radio y un ángulo en cada instante.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Fabrica la sombra naranja para una noria sola (izquierda) y para dos norias juntas (derecha). El camino que dibujan las dos sombras, en línea continua, tiene que coincidir con el camino de verdad, punteado. Prueba con el retraso y con la otra forma de fabricarla.</p>
+        <div class="columnas-2" id="r2-paneles"></div>
+        <div class="mandos" id="r2-mandos"></div>
+        <div class="fila" id="r2-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>Las norias que giran al revés</h3>
+      <p>Falta cerrar un cabo suelto: la sombra de la pared no sabe hacia dónde gira la noria. Una noria que gira al derecho y otra idéntica que gira al revés proyectan exactamente la misma sombra en la pared, y solo se distinguen por la del suelo, que cambia de lado. Por eso el espectro de cualquier señal real sale simétrico: cada noria real aparece como dos medias norias que giran en sentidos opuestos, y sus sombras en el suelo se anulan. La que gira al revés es una <b class="termino">frecuencia negativa</b>, que no tiene nada de misterioso, porque es una noria dando vueltas en sentido contrario y, en una señal real, va siempre emparejada con otra al derecho.</p>
+      <p>En 1946, Dennis Gabor buscaba una forma precisa de decir «la frecuencia en este instante», y su receta cabe en una línea: en el espectro, borra las norias que giran al revés y dobla las que giran al derecho. Al volver al tiempo salen las dos sombras a la vez, la señal que mediste y la que faltaba, sin ninguna frecuencia negativa. Es la misma señal analítica de antes, vista desde el espectro en vez de desde el tiempo.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Esta señal es una onda de AM, como las de la <a href="e15.html">lección 15</a>: una portadora de 20 Hz cuyo tamaño respira dos veces por segundo. Su espectro tiene tres norias que giran al derecho y tres que giran al revés. Arrastra la cuchilla para borrar solo las que giran al revés y dobla las que quedan, hasta que el radio de la hélice coincida con el punteado.</p>
+        <div class="columnas-2" id="r3-paneles"></div>
+        <div class="fila" id="r3-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>El radio y el ángulo</h3>
+      <p>Con la señal analítica en la mano, la noria tiene un radio y un ángulo en cada instante. El radio es la <b class="termino">envolvente</b>: el tamaño de la noria, o el volumen de la señal sin los vaivenes de cada vuelta. En una campana que se apaga es una curva suave que va bajando, y en una frase hablada suele verse una joroba por sílaba.</p>
+      <p>El ángulo es la <b class="termino">fase instantánea</b>, el punto de la vuelta en que está la cabina. Como un ángulo se mide entre −180° y 180°, cada vez que la cabina completa una vuelta el valor salta de un extremo al otro, y para contar las vueltas hay que <b class="termino">desenrollar la fase</b>, sumando una vuelta entera cada vez que salta. Lo deprisa que crece ese ángulo desenrollado es la frecuencia instantánea de la <a href="e15.html">lección 15</a>, la noria que acelera y frena, calculada ahora en cada muestra.</p>
+      <p>Con el radio y el ángulo se puede recuperar un mensaje escondido en una onda, y a eso se le llama <b class="termino">demodular</b>. En una emisora de AM el mensaje viaja en el tamaño de la noria y se lee en el radio, mientras que en una de FM viaja en lo deprisa que gira y se lee en el ritmo del ángulo. Un receptor de radio hace algo parecido con circuitos en lugar de con cálculos.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Cada emisora esconde una melodía de tres notas, una en el tamaño de la noria y otra en su velocidad. Para cada una, elige qué mirar, el radio de la señal analítica o el ritmo de su ángulo, y comprueba si sale la melodía.</p>
+        <div class="columnas-2" id="r4-emisoras"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>Un rodamiento que se delata</h3>
+      <p>El radio de la señal analítica sirve para mucho más que para la radio. Un rodamiento es una corona de bolas que ruedan entre dos pistas, y cada vez que una bola pisa una grieta da un golpecito. A velocidad constante, el ritmo de esos golpes depende solo de la geometría del rodamiento, de manera que su valor delata dónde está la grieta: en la pista de fuera, en la de dentro, en una bola o en la jaula.</p>
+      <p>El problema es que el golpe es muy débil. Cuando un fallo empieza a desarrollarse, sus vibraciones quedan tapadas por las del eje y los engranajes, y en el espectro de la máquina solo se ve el eje. Pero cada golpe hace sonar, con un tono muy agudo, el metal de alrededor, como una campanita que se apaga enseguida. Si filtras la vibración y te quedas solo con la franja de esa resonancia, su envolvente late al ritmo de los golpes.</p>
+      <p>Esta técnica se llama <b class="termino">análisis de envolvente</b>, y la explican con detalle fabricantes de instrumentos y de software de mantenimiento, como Brüel &amp; Kjær y MathWorks (los enlaces están en «Para saber más»). Aquí la máquina es sintética, y elegir la franja es lo único difícil.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Una máquina sintética vibra con un eje que gira a 25 vueltas por segundo, y su rodamiento tiene una grieta que golpea a un ritmo que no conoces. Coloca la franja de filtro donde hace falta para que el espectro de su envolvente, abajo, delate ese ritmo con un pico claro.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="escena" id="r5-envolvente"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>Hasta dónde llega</h3>
+      <p>Todo lo anterior funciona porque hay una sola noria, y una que cambia de tamaño y de velocidad despacio comparado con su giro. Con una «aaa», que es una pila de armónicos, la frecuencia instantánea sale hecha un desastre mientras no te quedes con uno solo con un filtro, y en el laboratorio lo verás con tu voz. Con dos notas a la vez la cosa es más curiosa todavía: la frecuencia instantánea no es ninguna de las dos, sino que oscila alrededor de la nota más fuerte al ritmo del batido, y si las dos suenan casi igual de fuerte llega a salir negativa.</p>
+      <p>La imagen son los epiciclos de la <a href="e03.html">lección 3</a>: la cabina de la suma es la punta de la noria grande con la pequeña montada encima. Si la pequeña se acerca en tamaño a la grande, la punta pasa rozando el eje, y en ese momento el ángulo visto desde el eje da media vuelta de golpe, a veces hacia atrás. Esa media vuelta hacia atrás es la frecuencia negativa. Tampoco es un fallo del cálculo: con dos norias no hay una sola velocidad que medir, y por eso hace falta separar las norias antes de medirlas, que es el tema de la <a href="e17.html">lección 17</a>.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">Suenan dos notas a la vez, una de 220 Hz y otra de 264 Hz. Sube el volumen de la segunda hasta que la frecuencia instantánea de la suma baje por debajo de cero.</p>
+        <div class="escena" id="r6-onda"></div>
+        <div class="columnas-2" id="r6-paneles"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>En tu voz</h2>
+    <p><b>Qué grabar.</b> Tres tramos de la grabación de referencia de la serie: un silbido sostenido (tramo 2), una «aaa» en una nota (tramo 3) y una frase (tramo 5). Graba con el micrófono si tu navegador lo deja; si no, sube un audio grabado con el móvil o prueba con los ejemplos sintéticos.</p>
+    <p><b>Qué mirar.</b> Con la frase, la envolvente dibuja una joroba por sílaba y deja contar cuántas dices por segundo. Con el silbido, la frecuencia instantánea sale limpia, porque solo hay una noria. Con la «aaa» sale hecha un desastre hasta que aíslas un armónico, y al dividir ese armónico entre su número vuelve a salir tu nota.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>Lo que tienes que recordar</h2>
+    <ol class="tres">
+      <li>Una onda real es solo la sombra de una noria en la pared. Con la sombra que falta, la del suelo, que se fabrica girando cada noria un cuarto de su propia vuelta, se tiene la señal analítica: un radio y un ángulo en cada instante.</li>
+      <li>El radio es la envolvente, el volumen sin los vaivenes; el ángulo, desenrollado, es la fase, y su ritmo de cambio es la frecuencia instantánea. Con el radio se demodula una AM y con el ritmo del ángulo, una FM.</li>
+      <li>La frecuencia instantánea solo cuenta una historia clara si hay una sola noria. Con dos a la vez oscila y puede salir negativa, y por eso antes de medirla hay que separar las norias.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Errores típicos</h2>
+    <ul class="errores">
+      <li><b>«La transformada de Hilbert es la envolvente.»</b> La transformada de Hilbert es la otra sombra, la señal con cada noria girada un cuarto de vuelta. La envolvente es el radio, y sale de juntar las dos sombras.</li>
+      <li><b>«Las frecuencias negativas no significan nada.»</b> Son norias que giran al revés. En una señal real aparecen siempre a pares con las positivas, y por eso sus sombras en el suelo se anulan; borrarlas y doblar las positivas es justo lo que da la señal analítica.</li>
+      <li><b>«La frecuencia instantánea de un acorde es la nota que oyes.»</b> Con varias notas a la vez oscila alrededor de la más fuerte y puede salir negativa. Con dos notas iguales sale su media, que no suena: lo que oyes es un batido. Solo tiene sentido con una noria.</li>
+      <li><b>«En un rodamiento basta con calcular la envolvente de toda la vibración.»</b> Sin filtrar, la envolvente la domina el eje, y el pico sale en su frecuencia. Hay que quedarse antes con la franja de una resonancia, donde mandan los golpes del defecto.</li>
+      <li><b>«El ángulo se puede derivar tal cual.»</b> El ángulo calculado salta de 180° a −180° en cada vuelta, y hay que desenrollarlo o medir el giro entre dos muestras seguidas. Además, en los silencios el ángulo es ruido puro, y hay que taparlo.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Abrir</span>
+      <h2>Rincón matemático</h2>
+      <span class="resumen">Las fórmulas, para quien las quiera. Cada una va después de su lectura en palabras.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>La noria entera</h3>
+      <p>La noria entera es una flecha de longitud <span class="tex">A</span> que gira. Su sombra en la pared es el coseno y su sombra en el suelo, el seno, y juntas forman un número complejo:</p>
+      <div class="tex">A\,e^{i(\omega t + \varphi)} = A\,\cos(\omega t + \varphi) + i\,A\,\sin(\omega t + \varphi)</div>
+
+      <h3>Las frecuencias negativas</h3>
+      <p>Un coseno real es la suma de dos medias norias que giran en sentidos opuestos, y la que gira al revés es la frecuencia negativa:</p>
+      <div class="tex">\cos(\omega t) = \tfrac{1}{2}\,e^{i\omega t} + \tfrac{1}{2}\,e^{-i\omega t}</div>
+
+      <h3>La transformada de Hilbert</h3>
+      <p>La transformada de Hilbert multiplica cada frecuencia positiva por <span class="tex">-i</span> y cada negativa por <span class="tex">+i</span>, es decir, gira cada noria un cuarto de vuelta sin cambiar su tamaño:</p>
+      <div class="tex">\widehat{\mathcal{H}\{x\}}(f) = -i\,\operatorname{sgn}(f)\,\hat{x}(f), \qquad \mathcal{H}\{\cos\omega t\} = \sin\omega t</div>
+      <p>En el tiempo, es una convolución con uno partido por pi por t (con valor principal en el cero):</p>
+      <div class="tex">\mathcal{H}\{x\}(t) = \frac{1}{\pi}\;\mathrm{p.v.}\!\int_{-\infty}^{\infty} \frac{x(\tau)}{t - \tau}\, d\tau</div>
+
+      <h3>La señal analítica y la receta de Gabor</h3>
+      <p>La señal analítica es la señal más <span class="tex">i</span> por su transformada de Hilbert. En el espectro dobla las frecuencias positivas, deja la continua y borra las negativas, que es la receta de Gabor:</p>
+      <div class="tex">z(t) = x(t) + i\,\mathcal{H}\{x\}(t), \qquad \hat z(f) = \begin{cases} 2\,\hat x(f) &amp; f &gt; 0 \\ \hat x(0) &amp; f = 0 \\ 0 &amp; f &lt; 0 \end{cases}</div>
+      <p>Con <span class="tex">N</span> muestras (<span class="tex">N</span> par), se multiplica cada casilla de la FFT por este peso y se deshace la FFT:</p>
+      <div class="tex">h[k] = \begin{cases} 1 &amp; k = 0 \ \text{o}\ k = N/2 \\ 2 &amp; 1 \le k &lt; N/2 \\ 0 &amp; N/2 &lt; k \le N - 1 \end{cases}</div>
+
+      <h3>El radio, el ángulo y la frecuencia instantánea</h3>
+      <p>La envolvente es el módulo de la señal analítica, y la fase, su ángulo contando las vueltas:</p>
+      <div class="tex">A(t) = |z(t)| = \sqrt{x(t)^2 + \mathcal{H}\{x\}(t)^2}, \qquad \varphi(t) = \arg z(t) \ \ (\text{desenrollado})</div>
+      <p>La frecuencia instantánea es el ritmo de cambio de la fase. Con muestras, basta medir cuánto gira la flecha entre una muestra y la siguiente, y así no hace falta desenrollar:</p>
+      <div class="tex">f_i(t) = \frac{1}{2\pi}\,\frac{d\varphi}{dt}, \qquad f_i[n] \approx \frac{f_s}{2\pi}\,\arg\!\left(z[n+1]\,\overline{z[n]}\right)</div>
+
+      <h3>Demodular una AM</h3>
+      <p>Si el tamaño cambia despacio comparado con el giro, es decir, si su espectro queda por debajo de la frecuencia de la portadora, la señal analítica de una AM es el tamaño por la noria, y su módulo devuelve el mensaje:</p>
+      <div class="tex">x(t) = a(t)\,\cos(\omega_c t) \;\Longrightarrow\; z(t) \approx a(t)\,e^{i\omega_c t}, \qquad |z(t)| \approx a(t)</div>
+
+      <h3>Dos notas a la vez</h3>
+      <p>Con dos tonos, la frecuencia instantánea es la media de las dos más un término que oscila con el batido y pesa la diferencia de los cuadrados de las amplitudes (Cohen, Loughlin y Vakman, 1999):</p>
+      <div class="tex">\omega_i(t) = \tfrac{1}{2}(\omega_a + \omega_b) + \tfrac{1}{2}(\omega_a - \omega_b)\,\frac{A_a^2 - A_b^2}{A^2(t)}, \qquad A^2(t) = A_a^2 + A_b^2 + 2A_aA_b\cos\!\big((\omega_a - \omega_b)t\big)</div>
+      <p>Con amplitudes 1 y <span class="tex">a &lt; 1</span>, el valor más bajo llega cuando las dos norias apuntan en sentidos opuestos, y es negativo si <span class="tex">a</span> entre uno menos <span class="tex">a</span> supera la frecuencia de la primera entre la diferencia:</p>
+      <div class="tex">f_{\min} = f_1 - (f_2 - f_1)\,\frac{a}{1 - a}, \qquad f_{\min} &lt; 0 \iff \frac{a}{1-a} &gt; \frac{f_1}{f_2 - f_1}</div>
+      <p>Con <span class="tex">f_1 = 220</span> Hz y <span class="tex">f_2 = 264</span> Hz el cociente vale 5, de modo que sale negativa a partir de <span class="tex">a = 5/6 \approx 0{,}83</span>.</p>
+
+      <h3>Los golpes de un rodamiento</h3>
+      <p>Con <span class="tex">n</span> bolas de diámetro <span class="tex">d</span> en una circunferencia de diámetro <span class="tex">D</span>, ángulo de contacto <span class="tex">\phi</span> y eje a <span class="tex">f_r</span> vueltas por segundo, los ritmos de golpeo de un defecto en la pista de fuera, en la de dentro, en la jaula y en una bola son:</p>
+      <div class="tex">\text{BPFO} = \frac{n f_r}{2}\left(1 - \frac{d}{D}\cos\phi\right), \quad \text{BPFI} = \frac{n f_r}{2}\left(1 + \frac{d}{D}\cos\phi\right)</div>
+      <div class="tex">\text{FTF} = \frac{f_r}{2}\left(1 - \frac{d}{D}\cos\phi\right), \quad \text{BSF} = \frac{D f_r}{2d}\left[1 - \left(\frac{d}{D}\cos\phi\right)^{2}\right]</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Para saber más</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Artículo abierto · inglés</span>Lyons, R. (2008). <a href="https://dspguru.com/files/QuadSignals.pdf"><i>Quadrature Signals: Complex, But Not Complicated</i></a>. El sacacorchos, sus sombras y las frecuencias negativas, con dibujos en tres dimensiones.</li>
+      <li><span class="tipo">Libro abierto · inglés</span>Smith, J. O. III, <i>Mathematics of the DFT</i>: <a href="https://ccrma.stanford.edu/~jos/mdft/Analytic_Signals_Hilbert_Transform.html">«Analytic Signals and Hilbert Transform Filters»</a>. Cómo se fabrica la sombra que falta y por qué demodular una AM es tomar el módulo.</li>
+      <li><span class="tipo">Documentación · inglés</span>SciPy, <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.hilbert.html"><code>scipy.signal.hilbert</code></a>. Un ejemplo corto que saca la envolvente y la frecuencia instantánea de un chirp modulado en amplitud.</li>
+      <li><span class="tipo">Documentación · inglés</span>MathWorks, <a href="https://www.mathworks.com/help/signal/ug/hilbert-transform-and-instantaneous-frequency.html">«Hilbert Transform and Instantaneous Frequency»</a>. Qué pasa con dos tonos a la vez y por qué el método solo vale para una componente.</li>
+      <li><span class="tipo">Nota técnica · inglés</span>Konstantin-Hansen, H., Brüel &amp; Kjær, <a href="https://www.bksv.com/media/doc/bo0501.pdf"><i>Envelope Analysis for Diagnostics of Local Faults in Rolling Element Bearings</i></a>. El análisis de envolvente contado por un fabricante de instrumentos, con un ejemplo sintético y un caso real.</li>
+      <li><span class="tipo">Documentación · inglés</span>MathWorks, <a href="https://www.mathworks.com/help/predmaint/ug/Rolling-Element-Bearing-Fault-Diagnosis.html">«Rolling Element Bearing Fault Diagnosis»</a>. El mismo método paso a paso, con las fórmulas de los ritmos de golpeo.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>Términos nuevos</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Examen</h2>
+  </section>
+
+</main>
+
+<script src="comun/temario.js"></script>
+<script src="comun/graficas.js"></script>
+<script src="comun/senal.js"></script>
+<script src="comun/curso.js"></script>
+<script src="datos/e16.js"></script>
+<script>
+// Lección 16 · La sombra que falta: la imagen ancla (el sacacorchos y sus dos sombras), los seis retos y el
+// laboratorio «En tu voz». Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo.
+// Convenio: la sombra de la pared es la parte real de la señal analítica (lo que mide el micrófono, en verde);
+// la sombra del suelo, la parte imaginaria (la que falta, en naranja); la hélice y el plano de las dos sombras, en tinta.
+(function () {
+  'use strict';
+  const G = Graficas, S = Senal, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const altoEscena = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); document.querySelector(contenedor).appendChild(f); return f; };
+  const perezoso = fn => { let hecho = false, v; return () => { if (!hecho) { v = fn(); hecho = true; } return v; }; };
+  // Texto sobre el color de una serie: en papel se oscurece un poco para que se lea.
+  const textoDe = (C, color) => G.mezclar(color, C.texto, C.oscuro ? 0 : 0.4);
+  // Un trazo con halo en oscuro (la luz se suma), a partir de una lista de puntos [x, y].
+  function trazo(ctx, pts, color, ancho, C, guiones) {
+    if (pts.length < 2) return;
+    const p = new Path2D();
+    pts.forEach((q, i) => { if (i) p.lineTo(q[0], q[1]); else p.moveTo(q[0], q[1]); });
+    ctx.save();
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    if (C.oscuro && !guiones) {
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.strokeStyle = G.alfa(color, 0.07); ctx.lineWidth = ancho * 5.5; ctx.stroke(p);
+      ctx.strokeStyle = G.alfa(color, 0.16); ctx.lineWidth = ancho * 2.6; ctx.stroke(p);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    ctx.strokeStyle = color;
+    ctx.lineWidth = ancho;
+    ctx.setLineDash(guiones || []);
+    ctx.stroke(p);
+    ctx.restore();
+  }
+  function punto(ctx, x, y, r, color, C, hueco) {
+    ctx.save();
+    if (C.oscuro && !hueco) {
+      ctx.globalCompositeOperation = 'lighter';
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r * 3);
+      g.addColorStop(0, G.alfa(color, 0.5)); g.addColorStop(1, G.alfa(color, 0));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 3, 0, TAU); ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU);
+    if (hueco) { ctx.strokeStyle = color; ctx.lineWidth = 1.8; ctx.setLineDash([3, 2]); ctx.stroke(); }
+    else { ctx.fillStyle = color; ctx.fill(); ctx.strokeStyle = C.pantalla; ctx.lineWidth = 1.2; ctx.stroke(); }
+    ctx.restore();
+  }
+
+  // ── La idea en una imagen: el sacacorchos y sus dos sombras ─────────────────────────────────────────
+  // Tres dimensiones a mano: el tiempo (1 unidad = 1 s) va hacia la derecha, la altura (Z) es la sombra de la
+  // pared y la profundidad (Y), la del suelo. La cámara gira sobre la vertical; de frente, el sacacorchos es la noria.
+  (function () {
+    const e = { yaw: 30, f: 0.6, pared: true, suelo: true, u: 0.35 };
+    const WY = 1.4, WZ = 1.4;                                 // dónde están la pared (Y) y el suelo (Z), en radios
+    let lx = 2;                                               // medio largo del eje del tiempo (depende del ancho)
+    const L = G.lienzo('#ancla-escena', {
+      alto: altoEscena(300, 340),
+      etiqueta: 'Un sacacorchos en tres dimensiones: la cabina de una noria que gira mientras avanza el tiempo hacia la derecha. Su sombra en la pared, en verde, es la onda que mide un micrófono, y su sombra en el suelo, en naranja, es la misma onda un cuarto de vuelta más tarde. Con el deslizador de la cámara se pasa de verlo de lado a verlo de frente, como la noria de siempre.',
+      dibujar: (ctx, w, h, C) => {
+        const yaw = e.yaw * Math.PI / 180, el = 0.42 * Math.cos(yaw);
+        const co = Math.cos(yaw), si = Math.sin(yaw), ce = Math.cos(el), se = Math.sin(el);
+        const s0 = (h - 34) / (2 * WZ * Math.cos(0.42) + 2 * WY * Math.sin(0.42));
+        lx = limitar(((w - 24) / s0) / 2, 1.7, 5);
+        let minU = 1e9, maxU = -1e9, minV = 1e9, maxV = -1e9;
+        for (const X of [-lx, lx]) for (const Y of [-WY, WY]) for (const Z of [-WZ, WZ]) {
+          const u = X * co - Y * si, v = Z * ce + (X * si + Y * co) * se;
+          minU = Math.min(minU, u); maxU = Math.max(maxU, u); minV = Math.min(minV, v); maxV = Math.max(maxV, v);
+        }
+        const top = 12, bajo = 28, mx = 14;
+        const s = Math.min((w - 2 * mx) / (maxU - minU), (h - top - bajo) / (maxV - minV));
+        const ox = w / 2 - s * (minU + maxU) / 2, oy = top + (h - top - bajo) / 2 + s * (minV + maxV) / 2;
+        const P = (X, Y, Z) => { const u = X * co - Y * si, dep = X * si + Y * co; return [ox + s * u, oy - s * (Z * ce + dep * se), dep]; };
+        const th = X => TAU * e.f * (X + lx);
+        const verde = C.senal, naranja = C.respuesta;
+
+        // La pared y el suelo, con su línea central y una marca por segundo.
+        const plano = (a, b, c, d, relleno) => {
+          ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.lineTo(c[0], c[1]); ctx.lineTo(d[0], d[1]); ctx.closePath();
+          ctx.fillStyle = G.alfa(C.cuerpo, relleno); ctx.fill();
+          ctx.strokeStyle = G.alfa(C.eje, 0.75); ctx.lineWidth = 1; ctx.stroke();
+        };
+        plano(P(-lx, WY, -WZ), P(lx, WY, -WZ), P(lx, WY, WZ), P(-lx, WY, WZ), C.oscuro ? 0.05 : 0.04);
+        plano(P(-lx, -WY, -WZ), P(lx, -WY, -WZ), P(lx, WY, -WZ), P(-lx, WY, -WZ), C.oscuro ? 0.07 : 0.05);
+        ctx.save();
+        ctx.setLineDash([2, 4]);
+        ctx.strokeStyle = G.alfa(C.eje, 0.7);
+        ctx.beginPath();
+        let a = P(-lx, WY, 0), b = P(lx, WY, 0); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]);
+        a = P(-lx, 0, -WZ); b = P(lx, 0, -WZ); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        for (let k = 0; k <= 2 * lx + 1e-6; k++) {
+          const X = -lx + k;
+          a = P(X, -WY, -WZ); b = P(X, -WY - 0.12, -WZ - 0.1);
+          ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]);
+        }
+        ctx.stroke();
+        ctx.restore();
+
+        // Puntos del sacacorchos (y de sus sombras).
+        const pasos = Math.max(60, Math.ceil(e.f * 2 * lx * 36));
+        const hel = [], sp = [], ss = [];
+        for (let i = 0; i <= pasos; i++) {
+          const X = -lx + 2 * lx * i / pasos, t = th(X);
+          hel.push(P(X, Math.sin(t), Math.cos(t)));
+          sp.push(P(X, WY, Math.cos(t)));
+          ss.push(P(X, Math.sin(t), -WZ));
+        }
+        if (e.pared) trazo(ctx, sp, verde, 2.4, C);
+        if (e.suelo) trazo(ctx, ss, naranja, 2.4, C);
+
+        // El eje del tiempo y el sacacorchos, con los trozos de delante más fuertes que los de detrás.
+        a = P(-lx, 0, 0); b = P(lx, 0, 0);
+        trazo(ctx, [a, b], G.alfa(C.cuerpo, 0.4), 1, C, [4, 4]);
+        const orden = [];
+        let dmin = 1e9, dmax = -1e9;
+        for (let i = 0; i < pasos; i++) { const d = (hel[i][2] + hel[i + 1][2]) / 2; orden.push([d, i]); dmin = Math.min(dmin, d); dmax = Math.max(dmax, d); }
+        orden.sort((p, q) => q[0] - p[0]);
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.lineWidth = 1.9;
+        for (const [d, i] of orden) {
+          ctx.strokeStyle = G.alfa(C.cuerpo, 0.22 + 0.73 * (dmax - d) / (dmax - dmin + 1e-9));
+          ctx.beginPath(); ctx.moveTo(hel[i][0], hel[i][1]); ctx.lineTo(hel[i + 1][0], hel[i + 1][1]); ctx.stroke();
+        }
+        ctx.restore();
+
+        // La cabina, el círculo que dibuja ahora y sus dos sombras.
+        const Xc = -lx + 2 * lx * e.u, tc = th(Xc), yc = Math.sin(tc), zc = Math.cos(tc);
+        const aro = [];
+        for (let i = 0; i <= 48; i++) aro.push(P(Xc, Math.sin(TAU * i / 48), Math.cos(TAU * i / 48)));
+        trazo(ctx, aro, G.alfa(C.cuerpo, 0.35), 1, C);
+        const cab = P(Xc, yc, zc), sombraP = P(Xc, WY, zc), sombraS = P(Xc, yc, -WZ);
+        if (e.pared) { trazo(ctx, [cab, sombraP], G.alfa(verde, 0.75), 1.2, C, [3, 3]); punto(ctx, sombraP[0], sombraP[1], 4.6, verde, C); }
+        if (e.suelo) { trazo(ctx, [cab, sombraS], G.alfa(naranja, 0.75), 1.2, C, [3, 3]); punto(ctx, sombraS[0], sombraS[1], 4.6, naranja, C); }
+        ctx.save();
+        ctx.beginPath(); ctx.arc(cab[0], cab[1], 5.5, 0, TAU);
+        ctx.fillStyle = C.cuerpo; ctx.fill();
+        ctx.strokeStyle = C.pantalla; ctx.lineWidth = 2; ctx.stroke();
+        ctx.restore();
+
+        // Rótulos
+        const tp = P(-lx, WY, WZ), ts = P(-lx, -WY, -WZ), tt = P(0, -WY - 0.12, -WZ - 0.1);
+        if (e.pared) G.texto(ctx, Math.max(4, tp[0] + 6), tp[1] + 14, 'pared', { color: textoDe(C, verde), tam: 11, peso: 600, C });
+        if (e.suelo) G.texto(ctx, Math.max(4, ts[0] + 4), Math.min(h - 14, ts[1] + 14), 'suelo', { color: textoDe(C, naranja), tam: 11, peso: 600, C });
+        G.texto(ctx, limitar(tt[0], 40, w - 40), Math.min(h - 4, tt[1] + 14), 'tiempo →', { color: C.tenue, tam: 11, alinear: 'center', C });
+      },
+    });
+    const mandos = document.getElementById('ancla-mandos');
+    let anim = null;
+    const cambiar = () => { L.dibujar(); };
+    Curso.mando(mandos, { etiqueta: 'Giro de la cámara', min: 0, max: 90, paso: 1, valor: e.yaw, formato: v => (v < 4 ? 'de lado' : v > 86 ? 'de frente' : num(v) + '°'), alCambiar: v => { e.yaw = v; cambiar(); } });
+    Curso.mando(mandos, { etiqueta: 'Velocidad', min: 0.3, max: 1.2, paso: 0.05, valor: e.f, formato: v => num(v, 2) + ' vueltas/s', alCambiar: v => { e.f = v; cambiar(); } });
+    const fila = crear('div', { class: 'botones' });
+    mandos.appendChild(fila);
+    Curso.botones(fila, [
+      { id: 'pared', texto: 'Sombra de la pared', pulsado: true, alPulsar: on => { e.pared = on; cambiar(); } },
+      { id: 'suelo', texto: 'Sombra del suelo', pulsado: true, alPulsar: on => { e.suelo = on; cambiar(); } },
+    ]);
+    anim = Curso.animar(L, (t, dt) => {
+      if (dt > 0) { e.u += dt / (2 * lx); if (e.u > 1) e.u -= 1; }
+      L.dibujar();
+    }, { boton: fila });
+  })();
+
+  // ── Reto 1 · Encuentra la cabina (arrastrar sobre el lienzo y encender la luz del suelo) ───────────────
+  (function () {
+    const azar = Curso.azar();
+    const ANGULOS = [30, 50, 130, 150, 210, 230, 310, 330];
+    const e = { obj: 0, theta: 0, luz: false };
+    const SX = Math.cos(0.32);
+    let geo = null, luzBoton = null, lect = null;
+    const rad = g => g * Math.PI / 180;
+    function otra() {
+      let g;
+      do { g = azar.elegir(ANGULOS); } while (g === e.objG);
+      e.objG = g;
+      e.obj = rad(g);
+      e.theta = rad(azar.elegir([255, 270, 285]));
+      e.luz = false;
+      if (luzBoton) luzBoton.setAttribute('aria-pressed', 'false');
+    }
+    otra();
+    const L = G.lienzo('#r1-escena', {
+      alto: altoEscena(310, 340), rol: 'slider',
+      etiqueta: 'Una noria con tu cabina verde, que puedes arrastrar o mover con las flechas. A la derecha, la pared, con la marca de la altura buscada, y, si enciendes la luz, abajo el suelo, con la marca del lado buscado.',
+      dibujar: (ctx, w, h, C) => {
+        const R = Math.max(40, Math.min((h - 56) / 2.27, (w - 128) / (2.16 * SX)));
+        const colgar = R * 0.13;
+        const cx0 = 14 + 1.16 * R * SX + 4, cy = 14 + R, medio = cy + colgar;
+        const dx = Math.max(0, (w - (cx0 + R * SX + 56 + 64)) / 2), cx = cx0 + dx;
+        const xw = cx + R * SX + 56, yf = cy + 1.27 * R + 26;
+        const yAlt = v => medio - v * R, xLado = v => cx + v * R * SX;
+        geo = { cx, cy, R, colgar, medio };
+        const verde = C.senal, naranja = C.respuesta;
+        // La pared: una guía vertical con su marca (la altura buscada).
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.eje, 0.9); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(xw + 0.5, yAlt(1) - 6); ctx.lineTo(xw + 0.5, yAlt(-1) + 6);
+        for (const v of [-1, 0, 1]) { ctx.moveTo(xw - 5, Math.round(yAlt(v)) + 0.5); ctx.lineTo(xw + 5, Math.round(yAlt(v)) + 0.5); }
+        ctx.stroke();
+        // La línea punteada de la altura buscada: corta la rueda en dos sitios.
+        ctx.strokeStyle = G.alfa(verde, 0.6); ctx.setLineDash([4, 4]);
+        ctx.beginPath(); ctx.moveTo(cx - R * SX * 1.08, yAlt(Math.sin(e.obj))); ctx.lineTo(xw - 8, yAlt(Math.sin(e.obj))); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, xw + 10, yAlt(1) + 4, 'pared', { color: textoDe(C, verde), tam: 11, peso: 600, C });
+        punto(ctx, xw, yAlt(Math.sin(e.obj)), 7, verde, C, true);
+        // La noria con tu cabina
+        G.noria(ctx, { C, cx, cy, r: R, angulo: e.theta, cabinas: [{ desfase: 0, color: verde }], radios: 8, colgar });
+        const cabX = cx + R * SX * Math.cos(e.theta), cabY = medio - R * Math.sin(e.theta);
+        trazo(ctx, [[cabX + 8, cabY], [xw - 6, cabY]], G.alfa(verde, 0.75), 1.2, C, [3, 3]);
+        punto(ctx, xw, cabY, 4.6, verde, C);
+        // El suelo
+        if (e.luz) {
+          ctx.save();
+          ctx.strokeStyle = G.alfa(C.eje, 0.9); ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(xLado(-1) - 6, Math.round(yf) + 0.5); ctx.lineTo(xLado(1) + 6, Math.round(yf) + 0.5);
+          for (const v of [-1, 0, 1]) { ctx.moveTo(Math.round(xLado(v)) + 0.5, yf - 5); ctx.lineTo(Math.round(xLado(v)) + 0.5, yf + 5); }
+          ctx.stroke();
+          ctx.restore();
+          G.texto(ctx, xLado(-1) - 6, yf + 20, 'suelo', { color: textoDe(C, naranja), tam: 11, peso: 600, C });
+          trazo(ctx, [[cabX, cabY + 10], [cabX, yf - 6]], G.alfa(naranja, 0.75), 1.2, C, [3, 3]);
+          punto(ctx, xLado(Math.cos(e.obj)), yf, 7, naranja, C, true);
+          punto(ctx, cabX, yf, 4.6, naranja, C);
+        } else {
+          G.texto(ctx, cx, yf + 4, 'luz del suelo apagada', { color: C.tenue, tam: 11, alinear: 'center', C });
+        }
+      },
+    });
+    lect = Curso.lecturas('#r1-fila', [
+      { id: 'pared', nombre: 'Sombra de la pared', clase: 'senal' },
+      { id: 'suelo', nombre: 'Sombra del suelo', clase: 'respuesta' },
+    ]);
+    const botones = Curso.botones('#r1-fila', [
+      { id: 'luz', texto: 'Luz del suelo', icono: 'ojo', pulsado: false, alPulsar: on => { e.luz = on; estado(); Curso.cambio('reto-1'); } },
+      { id: 'otra', texto: 'Otra cabina', icono: 'otra', alPulsar: () => { otra(); estado(); reto.reiniciar(); } },
+    ]);
+    luzBoton = botones.luz;
+    let reto = null;
+    function estado() {
+      const a = Math.round(((e.theta * 180 / Math.PI) % 360 + 360) % 360);
+      lect.fijar('pared', num(Math.sin(e.theta), 2) + ' (buscada ' + num(Math.sin(e.obj), 2) + ')');
+      lect.fijar('suelo', e.luz ? num(Math.cos(e.theta), 2) + ' (buscada ' + num(Math.cos(e.obj), 2) + ')' : 'apagada');
+      L.canvas.setAttribute('aria-valuenow', String(a));
+      L.canvas.setAttribute('aria-valuetext', 'Cabina a ' + a + ' grados; altura ' + num(Math.sin(e.theta), 2) + (e.luz ? ', lado ' + num(Math.cos(e.theta), 2) : ''));
+      L.dibujar();
+    }
+    const angulo = p => Math.atan2(geo.cy - p.y, (p.x - geo.cx) / SX);
+    Curso.arrastre(L, {
+      alBajar: p => {
+        if (!geo || Math.hypot((p.x - geo.cx) / SX, geo.cy - p.y) > geo.R * 1.6) return false;
+        e.theta = angulo(p); estado(); Curso.cambio('reto-1');
+      },
+      alMover: p => { e.theta = angulo(p); estado(); Curso.cambio('reto-1'); },
+    });
+    L.canvas.tabIndex = 0;
+    L.canvas.setAttribute('aria-valuemin', '0');
+    L.canvas.setAttribute('aria-valuemax', '360');
+    L.canvas.addEventListener('keydown', ev => {
+      const s = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[ev.key];
+      if (!s) return;
+      ev.preventDefault();
+      e.theta += s * rad(5); estado(); Curso.cambio('reto-1');
+    });
+    estado();
+    reto = Curso.reto('reto-1', {
+      titulo: 'Encuentra la cabina', nivel: 'fácil',
+      comprobar: () => {
+        const dh = Math.sin(e.theta) - Math.sin(e.obj), dx = Math.cos(e.theta) - Math.cos(e.obj);
+        if (Math.abs(dh) > 0.07) return { ok: false, mensaje: dh > 0 ? 'Tu sombra de la pared está por encima de la marca: baja la cabina.' : 'Tu sombra de la pared está por debajo de la marca: sube la cabina.' };
+        if (!e.luz) return { ok: false, mensaje: 'La altura coincide, pero la línea punteada corta la rueda en dos sitios y la pared no dice cuál es el bueno. Enciende la luz del suelo.' };
+        if (Math.abs(dx) > 0.09) return { ok: false, mensaje: 'La altura coincide, pero estás en el lado equivocado: la sombra naranja del suelo tiene que caer sobre su marca.' };
+        return { ok: true, mensaje: 'Las dos sombras coinciden: tu cabina está justo donde estaba la escondida.' };
+      },
+      resolver: () => { e.theta = e.obj; e.luz = true; luzBoton.setAttribute('aria-pressed', 'true'); estado(); },
+      pista: [
+        'Arrastra la cabina hasta que el punto verde de la pared caiga sobre la marca. Verás que la línea punteada corta la rueda en dos sitios, y los dos dan la misma altura.',
+        'Enciende la luz del suelo: la marca naranja dice si la cabina escondida está en el lado derecho o en el izquierdo de la rueda.',
+      ],
+      exito: '<p>Con una sola sombra, la cabina podía estar en dos sitios; con las dos, solo en uno. La altura y el lado fijan el radio de la noria y el punto de la vuelta en que se encuentra la cabina, y esa pareja de sombras es lo que se llama un número complejo.</p>',
+    });
+  })();
+
+  // ── Reto 2 · Fabrica la sombra que falta (retraso o Hilbert; una noria y dos) ─────────────────────────
+  // Dos paneles con los mismos mandos. La señal de una noria es cos(2π·2t); la de dos, esa más 0,5·cos(2π·6t).
+  // El camino de verdad (punteado) es el de la señal junto a su sombra de Hilbert, calculada con Senal.hilbert
+  // sobre un periodo exacto (medio segundo caben enteras las dos).
+  (function () {
+    const PERIODO = 0.5, F1 = 2, F2 = 6, A2 = 0.5, N = 500, TOL = 0.12;
+    const xf1 = t => Math.cos(TAU * F1 * t);
+    const xf2 = t => xf1(t) + A2 * Math.cos(TAU * F2 * t);
+    const base = perezoso(() => {
+      const t = new Float64Array(N), x1 = new Float64Array(N), x2 = new Float64Array(N);
+      for (let i = 0; i < N; i++) { t[i] = PERIODO * i / N; x1[i] = xf1(t[i]); x2[i] = xf2(t[i]); }
+      return { t, x1, x2, h1: S.hilbert(x1).im, h2: S.hilbert(x2).im };
+    });
+    const e = { ms: 40, metodo: 'retraso', hecho1: false, hecho2: false, fase: 0 };
+    const paneles = [
+      { id: 1, titulo: 'Una noria sola', xf: xf1, clave: ['x1', 'h1'] },
+      { id: 2, titulo: 'Dos norias juntas', xf: xf2, clave: ['x2', 'h2'] },
+    ];
+    // La sombra naranja actual y lo lejos que está de la de verdad (error relativo, sobre el valor eficaz de la señal).
+    function sombra(P) {
+      const b = base(), x = b[P.clave[0]], hh = b[P.clave[1]], y = new Float64Array(N), tau = e.ms / 1000;
+      let d = 0, r = 0;
+      for (let i = 0; i < N; i++) {
+        y[i] = e.metodo === 'retraso' ? P.xf(b.t[i] - tau) : hh[i];
+        d += (y[i] - hh[i]) * (y[i] - hh[i]); r += x[i] * x[i];
+      }
+      return { x, h: hh, y, err: Math.sqrt(d / r), t: b.t };
+    }
+    function dibujarPanel(ctx, w, h, C, P) {
+      const s = sombra(P);
+      const hOnda = Math.round(h * 0.27);
+      const esc = G.ejes(ctx, { caja: { x: 12, y: 24, w: w - 24, h: hOnda }, x: [0, PERIODO], y: [-1.75, 1.75], marcasY: false, marcasX: [0, 0.25, 0.5], formatoX: v => num(v, 2) + ' s', rejilla: false, C });
+      G.linea(ctx, esc, s.t, s.x, { color: C.senal, ancho: 1.8, C });
+      G.linea(ctx, esc, s.t, s.y, { color: C.respuesta, ancho: 1.8, C });
+      const ok = s.err < TOL;
+      G.texto(ctx, 12, 14, P.titulo, { color: C.suave, tam: 11, peso: 600, C });
+      G.texto(ctx, w - 12, 14, ok ? 'coincide' : 'no coincide', { color: ok ? textoDe(C, C.ok) : C.tenue, alinear: 'right', tam: 11, peso: ok ? 600 : 400, C });
+      // El plano de las dos sombras: la de la pared a lo ancho y la del suelo a lo alto.
+      const y0 = 24 + hOnda + 30, lado = Math.min(h - y0 - 6, w - 24), cx = w / 2, cy = y0 + lado / 2, k = lado / 2 / 1.75;
+      ctx.save();
+      ctx.strokeStyle = G.alfa(C.eje, 0.6); ctx.lineWidth = 1; ctx.setLineDash([2, 4]);
+      ctx.beginPath(); ctx.moveTo(cx - lado / 2, cy + 0.5); ctx.lineTo(cx + lado / 2, cy + 0.5); ctx.moveTo(cx + 0.5, cy - lado / 2); ctx.lineTo(cx + 0.5, cy + lado / 2); ctx.stroke();
+      ctx.restore();
+      const aPx = (x, y) => [cx + k * x, cy - k * y];
+      const cierre = arr => arr.concat([arr[0]]);
+      const verdad = [], tuyo = [];
+      for (let i = 0; i < N; i += 2) { verdad.push(aPx(s.x[i], s.h[i])); tuyo.push(aPx(s.x[i], s.y[i])); }
+      trazo(ctx, cierre(verdad), C.plantilla, 1.6, C, [5, 4]);
+      trazo(ctx, cierre(tuyo), C.cuerpo, 2.2, C);
+      G.texto(ctx, cx + lado / 2, cy - 5, 'pared →', { color: textoDe(C, C.senal), tam: 10, alinear: 'right', C });
+      G.texto(ctx, cx + 6, cy - lado / 2 + 9, 'suelo ↑', { color: textoDe(C, C.respuesta), tam: 10, C });
+      // El punto que recorre el camino, y sus dos sombras sobre las ondas.
+      const i = Math.floor(e.fase * N) % N, q = aPx(s.x[i], s.y[i]);
+      ctx.save();
+      ctx.strokeStyle = G.alfa(C.eje, 0.7); ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(esc.x(s.t[i]) + 0.5, esc.caja.y); ctx.lineTo(esc.x(s.t[i]) + 0.5, esc.caja.y + esc.caja.h); ctx.stroke();
+      ctx.restore();
+      punto(ctx, esc.x(s.t[i]), esc.y(s.x[i]), 3.6, C.senal, C);
+      punto(ctx, esc.x(s.t[i]), esc.y(s.y[i]), 3.6, C.respuesta, C);
+      punto(ctx, q[0], q[1], 4.6, C.cuerpo, C);
+    }
+    const lienzos = paneles.map(P => {
+      const panel = crear('div', { class: 'panel-mini' });
+      const escena = crear('div', { class: 'escena' });
+      panel.appendChild(escena);
+      document.getElementById('r2-paneles').appendChild(panel);
+      return G.lienzo(escena, {
+        alto: altoEscena(310, 340),
+        etiqueta: P.titulo + ': arriba, la onda verde y su sombra naranja a lo largo de medio segundo; abajo, el camino que dibujan juntas (línea continua) y el camino de verdad (punteado).',
+        dibujar: (ctx, w, h, C) => dibujarPanel(ctx, w, h, C, P),
+      });
+    });
+    const redibujar = () => lienzos.forEach(L => L.dibujar());
+    const lect = Curso.lecturas('#r2-fila', [
+      { id: 'lenta', nombre: 'La noria lenta (2 Hz) se gira', clase: 'senal' },
+      { id: 'rapida', nombre: 'La noria rápida (6 Hz) se gira', clase: 'respuesta' },
+      { id: 'logro1', nombre: 'Una noria sola' },
+      { id: 'logro2', nombre: 'Dos norias juntas' },
+    ]);
+    const mRetraso = Curso.mando('#r2-mandos', { etiqueta: 'Retraso de la copia', clase: 'respuesta', min: 0, max: 500, paso: 5, valor: e.ms, formato: v => num(v) + ' ms', reto: 'reto-2', alCambiar: v => { e.ms = v; actualizar(); } });
+    const eleccion = Curso.eleccion('#r2-mandos', {
+      etiqueta: 'Cómo fabricas la sombra', valor: e.metodo, reto: 'reto-2',
+      opciones: [{ valor: 'retraso', texto: 'Retrasar toda la señal' }, { valor: 'hilbert', texto: 'Girar cada noria su cuarto de vuelta' }],
+      alCambiar: v => { e.metodo = v; mRetraso.input.disabled = v === 'hilbert'; actualizar(); },
+    });
+    function actualizar() {
+      const gr = k => num(Math.round(((360 * k * e.ms / 1000) % 360 + 360) % 360)) + '°';
+      lect.fijar('lenta', e.metodo === 'retraso' ? gr(F1) : '90°');
+      lect.fijar('rapida', e.metodo === 'retraso' ? gr(F2) : '90°');
+      const [e1, e2] = paneles.map(P => sombra(P).err);
+      if (e1 < TOL) e.hecho1 = true;
+      if (e2 < TOL) e.hecho2 = true;
+      lect.fijar('logro1', e.hecho1 ? 'conseguida' : 'pendiente');
+      lect.fijar('logro2', e.hecho2 ? 'conseguidas' : 'pendiente');
+      lect.clase('logro1', e.hecho1 ? 'destacada' : '');
+      lect.clase('logro2', e.hecho2 ? 'destacada' : '');
+      redibujar();
+    }
+    Curso.animar(lienzos[0], (t, dt) => { e.fase = (e.fase + dt * 0.25) % 1; redibujar(); }, { boton: filaBotones('#r2-fila') });
+    actualizar();
+    Curso.reto('reto-2', {
+      titulo: 'Fabrica la sombra que falta', nivel: 'medio',
+      comprobar: () => {
+        if (e.hecho1 && e.hecho2) return { ok: true, mensaje: 'Las dos sombras casan con el camino de verdad, para una noria sola y para dos.' };
+        if (!e.hecho1) return { ok: false, mensaje: 'Empieza por la noria sola: con el retraso justo, el camino se vuelve un círculo. Fíjate en cuántos grados se ha girado la noria lenta.' };
+        if (e.metodo === 'retraso') return { ok: false, mensaje: 'La noria sola ya está. Con dos norias ningún retraso casa: fíjate en cuántos grados se gira cada una y prueba la otra forma de fabricar la sombra.' };
+        return { ok: false, mensaje: 'Casi: con esta forma cada noria se gira su cuarto de vuelta, y el camino tiene que coincidir con el punteado.' };
+      },
+      resolver: () => { eleccion.fijar('retraso'); mRetraso.fijar(125); eleccion.fijar('hilbert'); },
+      pista: [
+        'Con una noria sola, mueve el retraso hasta que el camino sea un círculo. En ese momento la noria lenta se ha girado un cuarto de vuelta, 90°.',
+        'Con dos norias, el mismo retraso gira 90° a la lenta y 270° a la rápida, que va el triple de deprisa. Prueba la otra forma de fabricar la sombra: gira cada noria un cuarto de su propia vuelta.',
+      ],
+      exito: '<p>Con una noria sola, retrasar la onda un cuarto de su periodo basta. Con varias, un retraso fijo es un cuarto de vuelta para una y tres cuartos para otra, así que cada noria necesita girarse un cuarto de su propia vuelta, justo lo que hace la transformada de Hilbert. Por eso se calcula en el espectro, donde cada noria está por separado.</p>',
+    });
+  })();
+
+  // ── Reto 3 · La receta de Gabor (arrastrar la cuchilla del espectro y doblar) ─────────────────────────
+  // Señal de AM x = (1 + 0,5·cos 2π·2t)·cos 2π·20t: su espectro de dos caras tiene tres norias al derecho (18, 20 y 22 Hz,
+  // con 0,125; 0,5 y 0,125) y otras tres al revés. El radio de lo que queda es |Σ aₖ·e^{i2πfₖt}|.
+  (function () {
+    const BARRAS = [[-22, 0.125], [-20, 0.5], [-18, 0.125], [18, 0.125], [20, 0.5], [22, 0.125]];
+    const FMAX = 30, T = 0.5;
+    const e = { corte: -28, doble: false };
+    let esc1 = null, botones = null;
+    const quedan = () => BARRAS.filter(b => b[0] > e.corte);
+    const radio = t => {
+      let re = 0, im = 0;
+      for (const [f, a] of quedan()) { const k = a * (e.doble ? 2 : 1); re += k * Math.cos(TAU * f * t); im += k * Math.sin(TAU * f * t); }
+      return Math.hypot(re, im);
+    };
+    const verdad = t => 1 + 0.5 * Math.cos(TAU * 2 * t);
+    const cont = document.getElementById('r3-paneles');
+    const panel = (titulo) => {
+      const p = crear('div', { class: 'panel-mini' }, crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, titulo)));
+      const escena = crear('div', { class: 'escena' });
+      p.appendChild(escena);
+      cont.appendChild(p);
+      return escena;
+    };
+    const L1 = G.lienzo(panel('Espectro de dos caras'), {
+      alto: altoEscena(250, 270), rol: 'slider',
+      etiqueta: 'El espectro de la señal con seis barras, tres a la derecha del cero y tres a la izquierda, y una cuchilla vertical que se arrastra: lo que queda a su izquierda se borra.',
+      dibujar: (ctx, w, h, C) => {
+        esc1 = G.ejes(ctx, { margen: { izquierda: 10, derecha: 10, arriba: 30, abajo: 34 }, x: [-FMAX, FMAX], y: [0, 1.1], marcasX: [-30, -20, -10, 0, 10, 20, 30], marcasY: false, formatoX: v => num(v), etiquetaX: 'frecuencia (Hz)', C });
+        const c = esc1.caja;
+        // Lo borrado, apagado; las barras que quedan, en ámbar.
+        const xc = esc1.x(e.corte);
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.cuerpo, C.oscuro ? 0.08 : 0.06);
+        ctx.fillRect(c.x, c.y, Math.max(0, xc - c.x), c.h);
+        ctx.restore();
+        for (const [f, a] of BARRAS) {
+          const queda = f > e.corte, k = a * (e.doble && queda ? 2 : 1), x = esc1.x(f), y = esc1.y(k), ancho = Math.max(4, esc1.x(1.2) - esc1.x(0));
+          if (queda) { ctx.fillStyle = C.espectro; ctx.fillRect(x - ancho / 2, y, ancho, esc1.y(0) - y); }
+          else { ctx.save(); ctx.strokeStyle = G.alfa(C.cuerpo, 0.4); ctx.setLineDash([3, 3]); ctx.strokeRect(x - ancho / 2 + 0.5, esc1.y(a) + 0.5, ancho - 1, esc1.y(0) - esc1.y(a) - 1); ctx.restore(); }
+        }
+        G.texto(ctx, c.x + 4, 14, '← giran al revés', { color: C.tenue, tam: 10, C });
+        G.texto(ctx, c.x + c.w - 4, 14, 'giran al derecho →', { color: C.tenue, tam: 10, alinear: 'right', C });
+        // La cuchilla: una línea con un asa arriba.
+        ctx.save();
+        ctx.strokeStyle = C.acento; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(xc, c.y + 6); ctx.lineTo(xc, c.y + c.h); ctx.stroke();
+        ctx.fillStyle = C.acento;
+        ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(xc - 13, c.y - 4, 26, 12, 5); else ctx.rect(xc - 13, c.y - 4, 26, 12); ctx.fill();
+        ctx.strokeStyle = C.pantalla; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(xc - 4, c.y); ctx.lineTo(xc - 4, c.y + 4); ctx.moveTo(xc, c.y); ctx.lineTo(xc, c.y + 4); ctx.moveTo(xc + 4, c.y); ctx.lineTo(xc + 4, c.y + 4); ctx.stroke();
+        ctx.restore();
+        const derecha = xc > c.x + c.w - 70;
+        G.texto(ctx, derecha ? xc - 18 : xc + 18, c.y + 8, num(e.corte, 0) + ' Hz', { color: C.acento, tam: 10, peso: 600, alinear: derecha ? 'right' : 'left', C });
+      },
+    });
+    const L2 = G.lienzo(panel('Radio de la hélice'), {
+      alto: altoEscena(250, 270),
+      etiqueta: 'El radio de la hélice que forman las norias que quedan, a lo largo de medio segundo, en naranja, y el radio de verdad, punteado.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { izquierda: 34, derecha: 10, arriba: 30, abajo: 34 }, x: [0, T], y: [0, 2.2], marcasX: [0, 0.25, 0.5], marcasY: [0, 1, 2], formatoX: v => num(v, 2), formatoY: v => num(v), etiquetaX: 'tiempo (s)', C });
+        const ts = [], v = [], r = [];
+        for (let i = 0; i <= 600; i++) { const t = T * i / 600; ts.push(t); v.push(verdad(t)); r.push(radio(t)); }
+        G.linea(ctx, esc, ts, v, { color: C.plantilla, ancho: 1.8, guiones: [5, 4], halo: false, C });
+        G.linea(ctx, esc, ts, r, { color: C.respuesta, ancho: 2.6, C });
+        G.texto(ctx, esc.caja.x + 4, 14, 'radio', { color: textoDe(C, C.respuesta), tam: 11, peso: 600, C });
+        G.texto(ctx, esc.caja.x + esc.caja.w - 4, 14, 'de verdad (punteado)', { color: textoDe(C, C.plantilla), tam: 10, alinear: 'right', C });
+      },
+    });
+    const lect = Curso.lecturas('#r3-fila', [
+      { id: 'reves', nombre: 'Norias al revés que quedan', clase: 'respuesta' },
+      { id: 'tam', nombre: 'Tamaño de las que quedan' },
+    ]);
+    botones = Curso.botones('#r3-fila', [{ id: 'doble', texto: 'Doblar las que quedan (×2)', pulsado: false, alPulsar: on => { e.doble = on; cambio(); } }]);
+    function cambio() {
+      const q = quedan();
+      lect.fijar('reves', String(q.filter(b => b[0] < 0).length) + ' de 3');
+      lect.fijar('tam', e.doble ? '×2' : '×1');
+      L1.canvas.setAttribute('aria-valuenow', String(e.corte));
+      L1.canvas.setAttribute('aria-valuetext', 'Cuchilla en ' + num(e.corte, 0) + ' Hz');
+      L1.dibujar(); L2.dibujar();
+      Curso.cambio('reto-3');
+    }
+    const poner = p => { if (!esc1) return; e.corte = limitar(Math.round(esc1.xi(p.x) * 2) / 2, -FMAX, FMAX); cambio(); };
+    Curso.arrastre(L1, { eje: 'x', alBajar: p => { poner(p); }, alMover: poner });
+    L1.canvas.tabIndex = 0;
+    L1.canvas.setAttribute('aria-valuemin', String(-FMAX));
+    L1.canvas.setAttribute('aria-valuemax', String(FMAX));
+    L1.canvas.addEventListener('keydown', ev => {
+      const s = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[ev.key];
+      if (!s) return;
+      ev.preventDefault();
+      e.corte = limitar(e.corte + s, -FMAX, FMAX); cambio();
+    });
+    cambio();
+    Curso.reto('reto-3', {
+      titulo: 'La receta de Gabor', nivel: 'medio',
+      comprobar: () => {
+        const q = quedan(), alReves = q.filter(b => b[0] < 0).length, alDerecho = q.filter(b => b[0] > 0).length;
+        if (alDerecho < 3) return { ok: false, mensaje: 'Te has pasado: has borrado norias que giran al derecho. La cuchilla tiene que quedarse entre las dos mitades, cerca del 0.' };
+        if (alReves > 0) return { ok: false, mensaje: 'Todavía ' + (alReves === 1 ? 'queda una noria' : 'quedan ' + alReves + ' norias') + ' al revés, y el radio sigue retorcido. Lleva la cuchilla hacia el 0.' };
+        if (!e.doble) return { ok: false, mensaje: 'Ya no queda ninguna al revés y el radio es suave, pero ha quedado a la mitad de su tamaño: dobla las que quedan.' };
+        return { ok: true, mensaje: 'El radio coincide con el de verdad: es la envolvente de la señal.' };
+      },
+      resolver: () => { e.corte = 0; e.doble = true; botones.doble.setAttribute('aria-pressed', 'true'); cambio(); },
+      pista: [
+        'Cada noria real son dos medias norias que giran en sentidos opuestos, y las que giran al revés son las de la izquierda del 0. Lleva la cuchilla justo al 0: lo que queda a su izquierda se borra.',
+        'Al borrar la mitad, cada noria pierde la mitad de su tamaño, y por eso la receta manda doblar las que quedan.',
+      ],
+      exito: '<p>Esa es la receta de Dennis Gabor, de 1946. Lo que queda es la señal analítica: su sombra en la pared es la señal que medías, su sombra en el suelo es la que faltaba y su radio es la envolvente, la curva suave por la que va el tamaño de la onda sin sus vaivenes.</p>',
+    });
+  })();
+
+  // ── Reto 4 · Dos emisoras (escuchar y elegir: el radio o el ritmo del ángulo) ──────────────────────────
+  // A: AM con portadora de 3.000 Hz y profundidad 0,8; B: FM con portadora de 4.000 Hz y desviación de 600 Hz.
+  // El mensaje de cada una es una melodía de tres notas de 0,3 s. Todo sintético, a 16 kHz.
+  (function () {
+    const FS = 16000, DUR = 0.9, NOTAS_A = [262, 330, 392], NOTAS_B = [392, 330, 262];
+    const EMISORAS = [
+      { id: 'A', nombre: 'Emisora A', portadora: 3000, buena: 'radio', notas: 'do, mi, sol' },
+      { id: 'B', nombre: 'Emisora B', portadora: 4000, buena: 'velocidad', notas: 'sol, mi, do' },
+    ];
+    const melodia = notas => {
+      const n = Math.round(FS * DUR), m = new Float64Array(n), por = DUR / notas.length;
+      let fase = 0;
+      for (let i = 0; i < n; i++) { fase += TAU * notas[Math.min(notas.length - 1, Math.floor(i / FS / por))] / FS; m[i] = Math.sin(fase); }
+      return m;
+    };
+    // Demodulación de las dos emisoras de las dos maneras. La salida está en «unidades de mensaje» (la melodía vale ±1).
+    const datos = perezoso(() => {
+      const mA = melodia(NOTAS_A), mB = melodia(NOTAS_B), n = mA.length;
+      const xA = S.modulada({ fs: FS, dur: DUR, fi: 3000, amp: t => 1 + 0.8 * mA[Math.min(n - 1, Math.round(t * FS))] });
+      const xB = S.modulada({ fs: FS, dur: DUR, fi: t => 4000 + 600 * mB[Math.min(n - 1, Math.round(t * FS))], amp: 1 });
+      const borde = Math.round(0.03 * FS);
+      const suave = y => { for (let i = 0; i < borde; i++) { const w = 0.5 - 0.5 * Math.cos(Math.PI * i / borde); y[i] *= w; y[y.length - 1 - i] *= w; } return y; };
+      const salidas = (x, fc) => {
+        const env = S.envolvente(x), fi = S.frecuenciaInstantanea(x, FS), radio = new Float64Array(n), vel = new Float64Array(n);
+        let media = 0;
+        for (let i = 0; i < n; i++) media += env[i];
+        media /= n;
+        for (let i = 0; i < n; i++) { radio[i] = (env[i] - media) / 0.8; vel[i] = (fi[i] - fc) / 600; }
+        return { radio: suave(radio), velocidad: suave(vel) };
+      };
+      return { A: { x: xA, ...salidas(xA, 3000) }, B: { x: xB, ...salidas(xB, 4000) } };
+    });
+    const rms = y => { let s = 0; for (let i = 0; i < y.length; i++) s += y[i] * y[i]; return Math.sqrt(s / y.length); };
+    const e = { A: null, B: null };
+    const cont = document.getElementById('r4-emisoras');
+    const lienzos = {}, elecciones = {};
+    for (const E of EMISORAS) {
+      const panel = crear('div', { class: 'panel-mini' });
+      const cabeza = crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, E.nombre));
+      panel.appendChild(cabeza);
+      Curso.audio.boton(cabeza, () => ({ x: datos()[E.id].x, fs: FS, volumen: 0.25, normalizar: false }), 'Oír la emisora', { clase: 'peque' });
+      const mandos = crear('div', { class: 'mandos' });
+      panel.appendChild(mandos);
+      elecciones[E.id] = Curso.eleccion(mandos, {
+        etiqueta: 'Para sacar el mensaje, mira…', valor: 'ninguno', reto: 'reto-4',
+        opciones: [{ valor: 'radio', texto: 'el radio de la noria (la envolvente)' }, { valor: 'velocidad', texto: 'lo deprisa que gira (el ritmo del ángulo)' }],
+        alCambiar: v => { e[E.id] = v; lienzos[E.id].dibujar(); },
+      });
+      const escena = crear('div', { class: 'escena' });
+      panel.appendChild(escena);
+      const pie = crear('div', { class: 'fila' });
+      panel.appendChild(pie);
+      cont.appendChild(panel);
+      Curso.audio.boton(pie, () => (e[E.id] ? { x: datos()[E.id][e[E.id]], fs: FS, volumen: 0.5, normalizar: false } : null), 'Oír lo que sale', { clase: 'peque' });
+      lienzos[E.id] = G.lienzo(escena, {
+        alto: 110, etiqueta: E.nombre + ': lo que sale al mirar lo que has elegido, a lo largo de 0,9 segundos; con la elección buena se ve una melodía de tres notas, y con la mala, una línea casi plana.',
+        dibujar: (ctx, w, h, C) => {
+          const caja = { x: 8, y: 8, w: w - 16, h: h - 24 };
+          const esc = G.ejes(ctx, { caja, x: [0, DUR], y: [-1.4, 1.4], marcasX: [0, 0.3, 0.6, 0.9], marcasY: false, formatoX: v => num(v, 1) + ' s', rejilla: false, C });
+          ctx.save();
+          ctx.strokeStyle = G.alfa(C.eje, 0.5); ctx.setLineDash([2, 4]);
+          ctx.beginPath(); for (const t of [0.3, 0.6]) { ctx.moveTo(esc.x(t) + 0.5, caja.y); ctx.lineTo(esc.x(t) + 0.5, caja.y + caja.h); } ctx.stroke();
+          ctx.restore();
+          if (!e[E.id]) { G.texto(ctx, w / 2, caja.y + caja.h / 2, 'elige qué mirar', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, fondo: G.alfa(C.pantalla, 0.9), C }); return; }
+          const y = datos()[E.id][e[E.id]], sale = rms(y) > 0.25;
+          G.linea(ctx, esc, null, y, { dt: 1 / FS, color: C.respuesta, ancho: 1.6, C });
+          G.texto(ctx, caja.x + caja.w - 4, caja.y + 12, sale ? 'sale una melodía' : 'no sale nada', { alinear: 'right', color: sale ? textoDe(C, C.respuesta) : C.tenue, tam: 11, peso: sale ? 600 : 400, fondo: G.alfa(C.pantalla, 0.85), C });
+        },
+      });
+    }
+    Curso.alVerse(cont, () => { datos(); Object.values(lienzos).forEach(L => L.dibujar()); });
+    Curso.reto('reto-4', {
+      titulo: 'Dos emisoras', nivel: 'medio',
+      comprobar: () => {
+        if (!e.A || !e.B) return { ok: false, mensaje: 'Elige qué mirar en las dos emisoras y comprueba en la gráfica si sale una melodía.' };
+        const malas = EMISORAS.filter(E => e[E.id] !== E.buena).map(E => E.id);
+        if (malas.length === 2) return { ok: false, mensaje: 'En ninguna de las dos sale nada: prueba con la otra opción en cada emisora.' };
+        if (malas.length === 1) return { ok: false, mensaje: 'En la emisora ' + malas[0] + ' no sale nada: el mensaje no viaja ahí. Prueba con la otra opción.' };
+        return { ok: true, mensaje: 'Salen las dos melodías: la de A, do-mi-sol, del radio; la de B, sol-mi-do, del ritmo del ángulo.' };
+      },
+      resolver: () => { elecciones.A.fijar('radio'); elecciones.B.fijar('velocidad'); },
+      pista: [
+        'En una emisora de AM, el mensaje viaja en el tamaño de la noria.',
+        'En una de FM, el mensaje viaja en lo deprisa que gira la noria, es decir, en el ritmo de su ángulo.',
+      ],
+      exito: '<p>La señal analítica es una radio entera: con el radio de la hélice se escucha la AM y con el ritmo de su ángulo, la FM. Sin ella, las dos emisoras solo sonarían como un pitido agudo, porque el mensaje no está en la onda a simple vista, sino en el tamaño de su noria o en su velocidad.</p>',
+    });
+  })();
+
+  // ── Reto 5 · Un rodamiento que se delata (arrastrar la franja sobre el espectro, ver el espectro de la envolvente) ─────
+  // Máquina sintética a 16.384 Hz durante 1 s (1 Hz por casilla): un eje a 25 vueltas por segundo con sus siete primeros
+  // armónicos (amplitud 3/k), ruido blanco de 0,2 y los golpes de una grieta, a un ritmo que cambia en cada máquina, que hacen
+  // sonar una resonancia aguda (se apaga con una constante de 1,5 ms). Los golpes son el 7 % del valor eficaz del eje.
+  // La franja se aplica en el espectro: se queda con las casillas de la franja y las dobla (la receta de Gabor), y el módulo de lo
+  // que sale es la envolvente de esa franja. Con eso se saca el espectro de la envolvente entre 0 y 300 Hz.
+  (function () {
+    const FS = 16384, N = 16384, EJE = 25, FMAXENV = 300;
+    const RITMOS = [63.7, 71.2, 87.3, 96.8, 108.4, 119.6], RESONANCIAS = [2400, 3000, 3600, 4200];
+    const azar = Curso.azar();
+    const e = { bpfo: 0, fres: 0, centro: 1200, ancho: 1200, lo: 600, hi: 1800, x: null, X: null, W: null, env: null, esp: null, pico: 0, ratio: 0, fpico: 0 };
+    let reto = null, lect = null, mCentro = null, mAncho = null, escA = null, listo = false;
+
+    function maquina() {
+      let r;
+      do { r = azar.elegir(RITMOS); } while (r === e.bpfo);
+      e.bpfo = r;
+      e.fres = azar.elegir(RESONANCIAS);
+      const x = new Float64Array(N);
+      for (let k = 1; k <= 7; k++) {
+        const a = 3 / k, fase = azar.real(0, TAU);
+        for (let i = 0; i < N; i++) x[i] += a * Math.sin(TAU * EJE * k * i / FS + fase);
+      }
+      const ejeRms = S.rms(x), g = new Float64Array(N), tau = 0.0015;
+      for (let t0 = 0.01; t0 < N / FS; t0 += 1 / e.bpfo) {
+        const i0 = Math.round(t0 * FS);
+        for (let j = 0; j < 400 && i0 + j < N; j++) g[i0 + j] += Math.exp(-j / FS / tau) * Math.sin(TAU * e.fres * j / FS);
+      }
+      const escala = 0.07 * ejeRms / S.rms(g);
+      for (let i = 0; i < N; i++) x[i] += g[i] * escala + 0.2 * azar.normal();
+      e.x = x;
+      e.X = S.fftReal(x, N);
+      e.W = S.welch(x, FS, { n: 512 });
+      calcular();
+    }
+    // La envolvente de la franja y el espectro de esa envolvente.
+    function calcular() {
+      const lo = limitar(e.centro - e.ancho / 2, 100, FS / 2 - 100), hi = limitar(e.centro + e.ancho / 2, lo + 50, FS / 2 - 20);
+      e.lo = lo; e.hi = hi;
+      const re = new Float64Array(N), im = new Float64Array(N);
+      for (let k = Math.round(lo * N / FS); k <= Math.round(hi * N / FS); k++) { re[k] = 2 * e.X.re[k]; im[k] = 2 * e.X.im[k]; }
+      S.ifft(re, im);
+      const env = new Float64Array(N), v = new Float64Array(N), w = S.ventana('hann', N);
+      let media = 0;
+      for (let i = 0; i < N; i++) { env[i] = Math.hypot(re[i], im[i]); media += env[i]; }
+      media /= N;
+      for (let i = 0; i < N; i++) v[i] = (env[i] - media) * w[i];
+      const E = S.espectro(v, FS, { ventana: 'rect', nfft: N });
+      const f = [], m = [];
+      for (let i = 0; i < E.f.length && E.f[i] <= FMAXENV; i++) { f.push(E.f[i]); m.push(E.mag[i]); }
+      const vals = [];
+      let mejor = 0, im_ = 0;
+      for (let i = 0; i < f.length; i++) if (f[i] >= 20) { vals.push(m[i]); if (m[i] > mejor) { mejor = m[i]; im_ = i; } }
+      vals.sort((a, b) => a - b);
+      const mediana = vals[vals.length >> 1] || 1e-12;
+      e.env = env; e.esp = { f, m, mediana }; e.fpico = f[im_]; e.pico = mejor; e.ratio = mejor / mediana;
+    }
+
+    const L1 = G.lienzo('#r5-escena', {
+      alto: altoEscena(190, 210), rol: 'slider',
+      etiqueta: 'El espectro de la vibración de una máquina, de 0 a 8.000 hercios, con una franja púrpura que se arrastra para colocarla donde quieras filtrar. Se ve una joroba ancha en alguna zona aguda.',
+      dibujar: (ctx, w, h, C) => {
+        if (!listo) { G.texto(ctx, w / 2, h / 2, 'calculando la máquina…', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+        const db = Array.from(e.W.psdDb), f = Array.from(e.W.f);
+        let tope = -1e9, suelo = 1e9;
+        for (let i = 0; i < f.length; i++) { if (f[i] > 200) tope = Math.max(tope, db[i]); suelo = Math.min(suelo, db[i]); }
+        escA = G.ejes(ctx, { margen: { izquierda: 14, derecha: 14, arriba: 24, abajo: 34 }, x: [0, FS / 2], y: [suelo - 2, tope + 8], marcasX: [0, 2000, 4000, 6000, 8000], marcasY: false, formatoX: v => num(v), etiquetaX: 'frecuencia (Hz)', C });
+        const c = escA.caja;
+        // La franja
+        const x0 = escA.x(e.lo), x1 = escA.x(e.hi);
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.plantilla, C.oscuro ? 0.28 : 0.2); ctx.fillRect(x0, c.y, Math.max(2, x1 - x0), c.h);
+        ctx.strokeStyle = C.plantilla; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(x0 + 0.5, c.y); ctx.lineTo(x0 + 0.5, c.y + c.h); ctx.moveTo(x1 - 0.5, c.y); ctx.lineTo(x1 - 0.5, c.y + c.h); ctx.stroke();
+        ctx.beginPath(); ctx.rect(c.x, c.y, c.w, c.h); ctx.clip();
+        G.linea(ctx, escA, f, db, { color: C.espectro, ancho: 2, C });
+        ctx.restore();
+        G.texto(ctx, c.x + 4, 14, 'vibración de la máquina', { color: C.suave, tam: 11, peso: 600, C });
+        G.texto(ctx, (x0 + x1) / 2, c.y + c.h - 8, 'franja', { color: textoDe(C, C.plantilla), tam: 11, peso: 600, alinear: 'center', fondo: G.alfa(C.pantalla, 0.7), C });
+      },
+    });
+    const L2 = G.lienzo('#r5-envolvente', {
+      alto: altoEscena(190, 210),
+      etiqueta: 'El espectro de la envolvente de lo que deja pasar la franja, de 0 a 300 hercios, medido en veces la mediana. Se rotula el pico mayor.',
+      dibujar: (ctx, w, h, C) => {
+        if (!listo) return;
+        const esc = G.ejes(ctx, { margen: { izquierda: 40, derecha: 14, arriba: 24, abajo: 34 }, x: [0, FMAXENV], y: [0, 80], marcasX: [0, 50, 100, 150, 200, 250, 300], marcasY: [0, 20, 40, 60, 80], formatoX: v => num(v), etiquetaX: 'frecuencia de la envolvente (Hz)', C });
+        const c = esc.caja;
+        ctx.save();
+        ctx.beginPath(); ctx.rect(c.x, c.y, c.w, c.h); ctx.clip();
+        const q = e.esp, ancho = Math.max(2, esc.x(1.1) - esc.x(0));
+        ctx.fillStyle = C.espectro;
+        for (let i = 0; i < q.f.length; i++) { if (q.f[i] < 8) continue; const y = esc.y(Math.min(80, q.m[i] / q.mediana)); ctx.fillRect(esc.x(q.f[i]) - ancho / 2, y, ancho, esc.y(0) - y); }
+        ctx.restore();
+        // Los múltiplos del eje, como marcas pequeñas
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.cuerpo, 0.55); ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let k = 1; k * EJE <= FMAXENV; k++) { const x = Math.round(esc.x(k * EJE)) + 0.5; ctx.moveTo(x, c.y + c.h); ctx.lineTo(x, c.y + c.h - 6); }
+        ctx.stroke();
+        ctx.restore();
+        if (w >= 560) G.texto(ctx, c.x + c.w - 4, c.y + 12, 'marcas de abajo: el eje (25 Hz y sus múltiplos)', { alinear: 'right', color: C.tenue, tam: 10, C });
+        G.texto(ctx, c.x + 4, 14, 'espectro de la envolvente', { color: C.suave, tam: 11, peso: 600, C });
+        const xp = esc.x(e.fpico), yp = esc.y(Math.min(80, e.ratio));
+        punto(ctx, xp, yp, 4, C.respuesta, C);
+        const derecha = xp > c.x + c.w - 70;
+        G.texto(ctx, derecha ? xp - 8 : xp + 8, Math.max(yp + 4, c.y + 12), num(e.fpico, 0) + ' Hz', { color: textoDe(C, C.respuesta), tam: 11, peso: 600, alinear: derecha ? 'right' : 'left', fondo: G.alfa(C.pantalla, 0.85), C });
+      },
+    });
+    lect = Curso.lecturas('#r5-fila', [
+      { id: 'franja', nombre: 'Franja', clase: 'cuerpo' },
+      { id: 'pico', nombre: 'Pico mayor de la envolvente', clase: 'respuesta' },
+      { id: 'veces', nombre: 'Veces la mediana' },
+    ]);
+    const redibujar = () => {
+      if (!listo) { lect.fijar('franja', num(e.lo, 0) + ' a ' + num(e.hi, 0) + ' Hz'); lect.fijar('pico', '—'); lect.fijar('veces', '—'); L1.dibujar(); L2.dibujar(); return; }
+      lect.fijar('franja', num(e.lo, 0) + ' a ' + num(e.hi, 0) + ' Hz');
+      lect.fijar('pico', num(e.fpico, 0) + ' Hz');
+      lect.fijar('veces', num(e.ratio, 0));
+      if (L1.canvas) {
+        L1.canvas.setAttribute('aria-valuenow', String(Math.round(e.centro)));
+        L1.canvas.setAttribute('aria-valuetext', 'Franja de ' + num(e.lo, 0) + ' a ' + num(e.hi, 0) + ' hercios');
+      }
+      L1.dibujar(); L2.dibujar();
+    };
+    const poner = (centro, ancho) => {
+      if (centro != null) e.centro = limitar(centro, 400, 7600);
+      if (ancho != null) e.ancho = ancho;
+      if (listo) calcular();
+      redibujar();
+      Curso.cambio('reto-5');
+    };
+    mCentro = Curso.mando('#r5-mandos', { etiqueta: 'Centro de la franja', clase: 'senal', min: 400, max: 7600, paso: 50, valor: e.centro, formato: v => num(v) + ' Hz', alCambiar: v => { if (v !== e.centro) poner(v, null); } });
+    mAncho = Curso.mando('#r5-mandos', { etiqueta: 'Anchura de la franja', min: 200, max: 2400, paso: 100, valor: e.ancho, formato: v => num(v) + ' Hz', alCambiar: v => { if (v !== e.ancho) poner(null, v); } });
+    const arrastrar = p => { if (!escA) return false; const c = limitar(Math.round(escA.xi(p.x) / 50) * 50, 400, 7600); mCentro.fijar(c, false); poner(c, null); };
+    Curso.arrastre(L1, { eje: 'x', alBajar: arrastrar, alMover: arrastrar });
+    L1.canvas.tabIndex = 0;
+    L1.canvas.setAttribute('aria-valuemin', '400');
+    L1.canvas.setAttribute('aria-valuemax', '7600');
+    L1.canvas.addEventListener('keydown', ev => {
+      const s = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[ev.key];
+      if (!s) return;
+      ev.preventDefault();
+      const c = limitar(e.centro + s * 100, 400, 7600);
+      mCentro.fijar(c, false); poner(c, null);
+    });
+    const fila = filaBotones('#r5-fila');
+    Curso.audio.boton(fila, () => (e.x ? { x: e.x, fs: FS, volumen: 0.35 } : null), 'Oír la vibración', { clase: 'peque' });
+    Curso.audio.boton(fila, () => (e.env ? { x: Float64Array.from(e.env, v => v - 1), fs: FS, volumen: 0.5 } : null), 'Oír la envolvente', { clase: 'peque' });
+    Curso.botones(fila, [{
+      id: 'otra', texto: 'Otra máquina', icono: 'otra', peque: true,
+      alPulsar: () => { maquina(); reto.reiniciar(); redibujar(); },
+    }]);
+    // La máquina se calcula al acercarse; en la autoprueba, al primer comprobar.
+    function asegurar() { if (!listo) { maquina(); listo = true; calcular(); redibujar(); } }
+    Curso.alVerse(L1.canvas, asegurar);
+    reto = Curso.reto('reto-5', {
+      titulo: 'El rodamiento que se delata', nivel: 'difícil',
+      comprobar: () => {
+        asegurar();
+        const cerca = Math.abs(e.fpico - e.bpfo) <= 2;
+        if (cerca && e.ratio >= 15) return { ok: true, mensaje: 'El pico de ' + num(e.fpico, 0) + ' Hz destaca ' + num(e.ratio, 0) + ' veces sobre la mediana: la grieta golpea ' + num(e.bpfo, 1) + ' veces por segundo.' };
+        const multEje = Math.abs(e.fpico / EJE - Math.round(e.fpico / EJE)) < 0.1;
+        if (multEje && e.fpico < 200) return { ok: false, mensaje: 'El pico mayor está en ' + num(e.fpico, 0) + ' Hz, un múltiplo del eje (25 Hz): esa franja todavía recoge sobre todo la vibración del eje. Busca donde suena el metal, en los agudos.' };
+        if (cerca) return { ok: false, mensaje: 'Casi: el ritmo de la grieta ya asoma, pero se mezcla con el resto. Céntrate mejor en la joroba o ajusta la anchura de la franja.' };
+        return { ok: false, mensaje: 'El pico mayor (' + num(e.fpico, 0) + ' Hz) solo destaca ' + num(e.ratio, 0) + ' veces sobre la mediana. Prueba a mover la franja hasta la joroba ancha del espectro.' };
+      },
+      resolver: () => { asegurar(); mCentro.fijar(e.fres, false); mAncho.fijar(1200, false); e.centro = e.fres; e.ancho = 1200; calcular(); redibujar(); },
+      pista: [
+        'Busca en el espectro de arriba una joroba ancha en los agudos: ahí suena el metal de la máquina cada vez que una bola pisa la grieta.',
+        'Pon la franja sobre esa joroba, con una anchura de mil o dos mil hercios. Abajo, cerca de los 25 Hz y sus múltiplos, solo vas a ver el eje.',
+      ],
+      exito: '<p>El golpe era demasiado débil para verse en el espectro, pero cada uno hacía sonar una resonancia aguda de la máquina. La envolvente de esa franja late al ritmo de los golpes, y ese ritmo depende de la geometría del rodamiento, de modo que dice si la grieta está en la pista de fuera, en la de dentro, en una bola o en la jaula. Esta máquina es sintética: con las máquinas reales, elegir la franja es lo difícil, y hay programas que la buscan solos.</p>',
+    });
+  })();
+
+  // ── Reto 6 · Haz que la frecuencia salga negativa (deslizador; dos notas a la vez) ───────────────────────
+  // x(t) = cos(2π·220·t) + a·cos(2π·264·t). La frecuencia instantánea sale de la fórmula de Cohen, Loughlin y Vakman (1999),
+  // exacta, y no de la FFT: el valle negativo dura menos de un milisegundo y una estimación por muestras lo pierde.
+  (function () {
+    const F1 = 220, F2 = 264, VENT = 0.06, FS6 = 16000;
+    const e = { a: 0.3, fase: 0 };
+    const A2 = (t, a) => 1 + a * a + 2 * a * Math.cos(TAU * (F2 - F1) * t);
+    const fi = (t, a) => 0.5 * (F1 + F2) + 0.5 * (F1 - F2) * (1 - a * a) / A2(t, a);
+    const minimo = a => F1 - (F2 - F1) * a / (1 - a), maximo = a => F1 + (F2 - F1) * a / (1 + a);
+    const suma = (t, a) => Math.cos(TAU * F1 * t) + a * Math.cos(TAU * F2 * t);
+    let lect = null, mando = null, reto = null;
+    const alto = altoEscena(190, 220);
+    const L0 = G.lienzo('#r6-onda', {
+      alto: altoEscena(130, 150),
+      etiqueta: 'La suma de dos notas, de 220 y de 264 hercios, a lo largo de 60 milisegundos. La segunda nota tiene el volumen que marca el deslizador. En punteado, el tamaño de la noria de la suma.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { izquierda: 14, derecha: 14, arriba: 22, abajo: 32 }, x: [0, VENT], y: [-2.1, 2.1], marcasX: [0, 0.02, 0.04, 0.06], marcasY: false, formatoX: v => num(v * 1000) + ' ms', etiquetaX: 'tiempo', rejilla: false, C });
+        const ts = [], ys = [], sup = [], inf = [];
+        for (let i = 0; i <= 900; i++) { const t = VENT * i / 900, a_ = Math.sqrt(A2(t, e.a)); ts.push(t); ys.push(suma(t, e.a)); sup.push(a_); inf.push(-a_); }
+        G.linea(ctx, esc, ts, sup, { color: C.respuesta, ancho: 1.4, guiones: [5, 4], halo: false, alfa: 0.9, C });
+        G.linea(ctx, esc, ts, inf, { color: C.respuesta, ancho: 1.4, guiones: [5, 4], halo: false, alfa: 0.9, C });
+        G.linea(ctx, esc, ts, ys, { color: C.senal, ancho: 1.8, C });
+        G.texto(ctx, esc.caja.x + 4, 13, 'las dos notas sumadas', { color: C.suave, tam: 11, peso: 600, C });
+      },
+    });
+    const panel = (titulo) => {
+      const p = crear('div', { class: 'panel-mini' }, crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, titulo)));
+      const escena = crear('div', { class: 'escena' });
+      p.appendChild(escena);
+      document.getElementById('r6-paneles').appendChild(p);
+      return escena;
+    };
+    const L1 = G.lienzo(panel('Frecuencia instantánea'), {
+      alto,
+      etiqueta: 'La frecuencia instantánea de la suma de las dos notas a lo largo de 60 milisegundos. Líneas de referencia en 0, 220 y 264 hercios. Cuando el volumen de la segunda nota se acerca al de la primera, la curva se hunde y puede bajar de cero.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { izquierda: 44, derecha: 12, arriba: 22, abajo: 32 }, x: [0, VENT], y: [-300, 540], marcasX: [0, 0.02, 0.04, 0.06], marcasY: [-200, 0, 220, 440], formatoX: v => num(v * 1000) + ' ms', formatoY: v => num(v), etiquetaX: 'tiempo', etiquetaY: 'Hz', C });
+        const c = esc.caja;
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.cuerpo, 0.8); ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(c.x, Math.round(esc.y(0)) + 0.5); ctx.lineTo(c.x + c.w, Math.round(esc.y(0)) + 0.5); ctx.stroke();
+        ctx.setLineDash([2, 4]); ctx.strokeStyle = G.alfa(C.eje, 0.8);
+        ctx.beginPath(); for (const v of [F1, F2]) { ctx.moveTo(c.x, Math.round(esc.y(v)) + 0.5); ctx.lineTo(c.x + c.w, Math.round(esc.y(v)) + 0.5); } ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, c.x + c.w - 3, esc.y(F2) - 3, '264', { alinear: 'right', color: C.tenue, tam: 10, C });
+        G.texto(ctx, c.x + c.w - 3, esc.y(F1) + 11, '220', { alinear: 'right', color: C.tenue, tam: 10, C });
+        const pts = [];
+        for (let i = 0; i <= 1800; i++) { const t = VENT * i / 1800; pts.push([esc.x(t), esc.y(fi(t, e.a))]); }
+        ctx.save();
+        ctx.beginPath(); ctx.rect(c.x, c.y, c.w, c.h); ctx.clip();
+        trazo(ctx, pts, C.respuesta, 2.2, C);
+        ctx.restore();
+        if (minimo(e.a) < 0) G.texto(ctx, c.x + c.w - 4, 13, 'sale negativa', { color: textoDe(C, C.respuesta), tam: 11, peso: 600, alinear: 'right', C });
+      },
+    });
+    const L2 = G.lienzo(panel('La punta de la suma, desde el eje'), {
+      alto,
+      etiqueta: 'La punta de la noria pequeña montada sobre la grande, vista desde el eje, en un plano que gira con la noria grande. Dibuja un círculo de radio igual al volumen de la segunda nota, centrado a una distancia 1 del eje. Cuanto más grande el círculo, más cerca pasa del eje.',
+      dibujar: (ctx, w, h, C) => {
+        const k = Math.min((w - 24) / 2.5, (h - 30) / 2.3), cx0 = 12 + 0.3 * k, cy = 14 + (h - 30) / 2 + 2;
+        const X = v => cx0 + k * v, Y = v => cy - k * v;
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.eje, 0.6); ctx.lineWidth = 1; ctx.setLineDash([2, 4]);
+        ctx.beginPath(); ctx.moveTo(X(-0.3), Math.round(Y(0)) + 0.5); ctx.lineTo(X(2.2), Math.round(Y(0)) + 0.5); ctx.moveTo(Math.round(X(0)) + 0.5, Y(1.15)); ctx.lineTo(Math.round(X(0)) + 0.5, Y(-1.15)); ctx.stroke();
+        ctx.restore();
+        const aro = [];
+        for (let i = 0; i <= 90; i++) aro.push([X(1 + e.a * Math.cos(TAU * i / 90)), Y(e.a * Math.sin(TAU * i / 90))]);
+        trazo(ctx, aro, C.plantilla, 1.6, C, [5, 4]);
+        // El punto, en el sitio que toca ahora
+        const ang = TAU * e.fase, px = 1 + e.a * Math.cos(ang), py = e.a * Math.sin(ang);
+        trazo(ctx, [[X(0), Y(0)], [X(px), Y(py)]], C.respuesta, 1.8, C);
+        punto(ctx, X(px), Y(py), 5, C.senal, C);
+        punto(ctx, X(0), Y(0), 5, C.cuerpo, C);
+        G.texto(ctx, X(0) + 8, Y(0) + 15, 'eje', { color: C.suave, tam: 10, peso: 600, C });
+        G.texto(ctx, X(1), Y(-1.15) + 10, 'círculo de la noria pequeña', { alinear: 'center', color: textoDe(C, C.plantilla), tam: 10, C });
+      },
+    });
+    lect = Curso.lecturas('#r6-fila', [
+      { id: 'min', nombre: 'Mínimo', clase: 'respuesta' },
+      { id: 'max', nombre: 'Máximo' },
+      { id: 'media', nombre: 'Media' },
+    ]);
+    function actualizar() {
+      const a = e.a;
+      lect.fijar('min', num(minimo(a), 0) + ' Hz');
+      lect.fijar('max', num(maximo(a), 0) + ' Hz');
+      lect.fijar('media', num(F1, 0) + ' Hz');
+      L0.dibujar(); L1.dibujar(); L2.dibujar();
+    }
+    mando = Curso.mando('#r6-mandos', { etiqueta: 'Volumen de la nota de 264 Hz', clase: 'respuesta', min: 0, max: 0.99, paso: 0.01, valor: e.a, formato: v => num(v, 2) + ' del volumen de la primera', reto: 'reto-6', alCambiar: v => { e.a = v; actualizar(); } });
+    const fila = filaBotones('#r6-fila');
+    Curso.audio.boton(fila, () => ({ x: S.suma(S.seno({ f: F1, fs: FS6, dur: 1, amp: 1 }), S.seno({ f: F2, fs: FS6, dur: 1, amp: e.a })), fs: FS6, volumen: 0.4, normalizar: false }), 'Oír las dos notas', { clase: 'peque' });
+    Curso.animar(L1, (t, dt) => { e.fase = (e.fase + dt * 0.18) % 1; L2.dibujar(); }, { boton: fila });
+    actualizar();
+    reto = Curso.reto('reto-6', {
+      titulo: 'Haz que la frecuencia salga negativa', nivel: 'difícil',
+      comprobar: () => {
+        const m = minimo(e.a);
+        if (m < 0) return { ok: true, mensaje: 'El mínimo baja a ' + num(m, 0) + ' Hz: la punta de la suma pasa tan cerca del eje que su ángulo da media vuelta hacia atrás.' };
+        if (e.a < 0.5) return { ok: false, mensaje: 'La frecuencia solo oscila entre ' + num(minimo(e.a), 0) + ' y ' + num(maximo(e.a), 0) + ' Hz. Mira el círculo: tiene que acercarse al eje.' };
+        return { ok: false, mensaje: 'Cada vez más cerca: el mínimo está en ' + num(m, 0) + ' Hz. Hace falta que la segunda nota casi iguale a la primera.' };
+      },
+      resolver: () => mando.fijar(0.9),
+      pista: [
+        'Mira la figura de la derecha: el círculo que dibuja la punta. ¿Cuándo pasa cerca del eje, el punto negro?',
+        'Cuanto más se parecen los dos volúmenes, más grande es el círculo y más se acerca al eje. Sube la segunda nota hasta cerca del máximo.',
+      ],
+      exito: '<p>Con dos norias, la punta de la suma da vueltas alrededor del eje, pero a veces pasa rozándolo, y ahí su ángulo puede dar media vuelta hacia atrás en un instante: una frecuencia negativa. Fíjate en la media, que siempre es la de la nota más fuerte. La frecuencia instantánea solo cuenta una historia clara cuando hay una sola noria, y por eso hay que separar las norias antes de medirlas.</p>',
+    });
+  })();
+
+  // ── En tu voz · la envolvente y la frecuencia instantánea de tu audio ────────────────────────────────────
+  // Todo se calcula sobre el audio cargado (mono, a 16 kHz, hasta 10 s): la señal analítica por FFT, la envolvente suavizada
+  // 20 ms, las jorobas de la envolvente (sílabas) y la frecuencia instantánea muestra a muestra, tapada donde la envolvente cae
+  // por debajo del 10 % de su máximo y sin los 50 ms de los extremos. Con «un armónico aislado» se filtra antes alrededor
+  // de k·f0 (paso banda de Butterworth de orden 4, sin retraso) y se divide entre k.
+  (function () {
+    const FS = 16000;
+    var mandoK = null, lect = null, nota = null, V1 = null, V2 = null;
+    const st = { x: null, fs: FS, dur: 0, base: null, modo: 'sin', k: 1, cache: new Map(), mapa: null, rango: [-90, 0] };
+    const pot2 = n => S.siguientePotencia2(n);
+    const lab = Curso.voz('#voz-lab', {
+      ejemplos: ['silbido', 'aaa', 'frase'],
+      fsAnalisis: FS,
+      alCargar: (x, fs) => { st.x = x; st.fs = fs; st.dur = x.length / fs; analizar(); },
+    });
+
+    // La frecuencia de giro en cada muestra: cuánto gira la flecha entre una muestra y la siguiente, en Hz.
+    function giro(z, fs) {
+      const n = z.re.length, f = new Float64Array(n);
+      for (let i = 0; i < n - 1; i++) {
+        const re = z.re[i + 1] * z.re[i] + z.im[i + 1] * z.im[i], im = z.im[i + 1] * z.re[i] - z.re[i + 1] * z.im[i];
+        f[i] = fs / TAU * Math.atan2(im, re);
+      }
+      if (n > 1) f[n - 1] = f[n - 2];
+      return f;
+    }
+    // La envolvente, el máximo y la frecuencia instantánea de una señal (con la máscara y los bordes tapados).
+    function analitica(x, fs, k) {
+      const z = S.hilbert(x), n = x.length, env = new Float64Array(n);
+      let mx = 1e-12;
+      for (let i = 0; i < n; i++) { env[i] = Math.hypot(z.re[i], z.im[i]); if (env[i] > mx) mx = env[i]; }
+      const fi = giro(z, fs), borde = Math.min(Math.round(0.05 * fs), n >> 3);
+      for (let i = 0; i < n; i++) fi[i] = (env[i] < 0.1 * mx || i < borde || i >= n - borde) ? NaN : fi[i] / k;
+      return { env, mx, fi };
+    }
+    function estadistica(fi) {
+      const v = [];
+      let neg = 0;
+      for (let i = 0; i < fi.length; i++) if (Number.isFinite(fi[i])) { v.push(fi[i]); if (fi[i] < 0) neg++; }
+      if (v.length < 10) return null;
+      v.sort((a, b) => a - b);
+      return { mediana: v[v.length >> 1], p5: v[Math.floor(0.05 * v.length)], p95: v[Math.floor(0.95 * v.length)], neg: 100 * neg / v.length };
+    }
+    // Las jorobas de la envolvente: máximos por encima del 30 % del máximo, a más de 120 ms y que sobresalgan al menos un 20 %.
+    function jorobas(env, fs) {
+      const paso = Math.max(1, Math.round(0.01 * fs)), ent = Math.max(1, Math.round(0.04 * fs));
+      const suave = S.mediaMovil(env, ent, { centrada: true });
+      const n = Math.floor(suave.length / paso), d = new Float64Array(n);
+      let mx = 1e-12;
+      for (let i = 0; i < n; i++) { d[i] = suave[i * paso]; if (d[i] > mx) mx = d[i]; }
+      for (let i = 0; i < n; i++) d[i] /= mx;
+      const minD = Math.round(0.12 / (paso / fs)), res = [];
+      for (let i = 1; i < n - 1; i++) {
+        if (!(d[i] >= d[i - 1] && d[i] > d[i + 1]) || d[i] < 0.3) continue;
+        let l = i, mnl = d[i], r = i, mnr = d[i];
+        while (l > 0 && d[l - 1] <= d[i]) { l--; mnl = Math.min(mnl, d[l]); }
+        while (r < n - 1 && d[r + 1] <= d[i]) { r++; mnr = Math.min(mnr, d[r]); }
+        if (d[i] - Math.max(mnl, mnr) < 0.2) continue;
+        if (res.length && i - res[res.length - 1] < minD) { if (d[i] > d[res[res.length - 1]]) res[res.length - 1] = i; continue; }
+        res.push(i);
+      }
+      return res.map(i => i * paso / fs);
+    }
+    function analizar() {
+      st.cache = new Map();
+      const x = st.x, fs = st.fs, n = x.length;
+      if (!n) return;
+      const b = analitica(x, fs, 1);
+      b.lisa = S.mediaMovil(b.env, Math.max(1, Math.round(0.02 * fs)), { centrada: true });
+      b.pico = Math.max(1e-9, S.pico(x));
+      b.joro = jorobas(b.env, fs);
+      let f0 = null;
+      try {
+        const y = S.yin(x, fs, { fmin: 60, fmax: 1200 }), v = Array.from(y.f0).filter(Number.isFinite).sort((p, q) => p - q);
+        if (v.length >= 3) f0 = v[v.length >> 1];
+      } catch (err) { f0 = null; }
+      b.f0 = f0;
+      b.kBueno = 1;
+      if (f0) {
+        let mejor = 0;
+        try {
+          const sp = S.espectro(x, fs, { ventana: 'hann' });
+          for (let k = 1; k <= 10 && k * f0 < 1500; k++) {
+            const i = Math.round(k * f0 / sp.df);
+            let m = 0;
+            for (let j = Math.max(0, i - 2); j <= Math.min(sp.mag.length - 1, i + 2); j++) m = Math.max(m, sp.mag[j]);
+            if (m > mejor) { mejor = m; b.kBueno = k; }
+          }
+        } catch (err) { b.kBueno = 1; }
+      }
+      b.sin = estadistica(b.fi);
+      st.base = b;
+      st.k = Math.min(10, b.kBueno);
+      if (mandoK) mandoK.fijar(st.k, false);
+      // El espectrograma para dibujar la curva encima (hasta 4.000 Hz).
+      try {
+        const nv = Math.max(128, Math.min(Math.floor(n / 2), 1024)), salto = Math.max(32, nv >> 2);
+        const E = S.espectrograma(x, fs, { n: nv, salto, ventana: 'hann', nfft: Math.max(512, pot2(2 * nv)), suelo: -120 });
+        st.mapa = { E, vista: recortar(E, 0, st.dur, 0, 4000), salto };
+        st.rango = [E.max - 75, E.max];
+      } catch (err) { st.mapa = null; }
+      refrescar();
+    }
+    // Una vez por k: filtra alrededor del armónico k, saca su frecuencia instantánea y la divide entre k.
+    function aislado(k) {
+      const b = st.base, fs = st.fs;
+      if (!b || !b.f0) return null;
+      const kmax = Math.max(1, Math.floor(0.45 * fs / b.f0 - 0.4));
+      const kk = Math.min(k, kmax);
+      if (st.cache.has(kk)) return st.cache.get(kk);
+      let r = null;
+      try {
+        const sos = S.butterworth(4, [(kk - 0.4) * b.f0, (kk + 0.4) * b.f0], fs, 'pasoBanda');
+        const xf = S.filtfilt(sos, st.x), a = analitica(xf, fs, 1);
+        // La máscara y los bordes se heredan de la señal entera, para que se compare lo mismo.
+        const fiK = new Float64Array(a.fi.length);
+        for (let i = 0; i < fiK.length; i++) fiK[i] = Number.isFinite(b.fi[i]) ? a.fi[i] / kk : NaN;
+        r = { k: kk, kmax, x: xf, fi: fiK, fiCruda: a.fi, est: estadistica(fiK) };
+      } catch (err) { r = null; }
+      st.cache.set(kk, r);
+      return r;
+    }
+    function recortar(E, t0, t1, f0, f1) {
+      const dt = E.nT > 1 ? E.t[1] - E.t[0] : 1, df = E.nF > 1 ? E.f[1] - E.f[0] : 1;
+      const j0 = limitar(Math.floor(t0 / dt), 0, E.nT - 1), j1 = limitar(Math.ceil(t1 / dt), j0, E.nT - 1);
+      const k0 = limitar(Math.floor(f0 / df), 0, E.nF - 1), k1 = limitar(Math.ceil(f1 / df), k0, E.nF - 1);
+      const nT = j1 - j0 + 1, nF = k1 - k0 + 1, datos = new Float32Array(nF * nT);
+      for (let k = 0; k < nF; k++) for (let j = 0; j < nT; j++) datos[k * nT + j] = E.db[(k + k0) * E.nT + j + j0];
+      return { datos, nF, nT, t: E.t.subarray(j0, j1 + 1), f: E.f.subarray(k0, k1 + 1) };
+    }
+
+    // ── La vista ──
+    const grupo = crear('div', { class: 'mandos' });
+    lab.panel.appendChild(grupo);
+    Curso.eleccion(grupo, {
+      etiqueta: 'Frecuencia instantánea de…', valor: st.modo,
+      opciones: [{ valor: 'sin', texto: 'toda la señal, sin filtrar' }, { valor: 'aislado', texto: 'un armónico aislado' }],
+      alCambiar: v => { st.modo = v; refrescar(); },
+    });
+    mandoK = Curso.mando(grupo, { etiqueta: 'Armónico que aíslas (k)', clase: 'respuesta', min: 1, max: 10, paso: 1, valor: st.k, formato: v => 'el ' + num(v, 0), alCambiar: v => { st.k = v; refrescar(); } });
+
+    const escena1 = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena1);
+    V1 = G.lienzo(escena1, {
+      alto: altoEscena(150, 170),
+      etiqueta: 'La grabación en verde y su envolvente en naranja, con un punto en cada joroba de la envolvente (una por sílaba si hablas).',
+      dibujar: (ctx, w, h, C) => {
+        const b = st.base;
+        if (!b) { G.texto(ctx, w / 2, h / 2, 'Graba, sube un audio o elige un ejemplo', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+        const esc = G.ejes(ctx, { margen: { izquierda: 14, derecha: 14, arriba: 24, abajo: 32 }, x: [0, Math.max(0.1, st.dur)], y: [-1.1, 1.1], marcasY: false, formatoX: v => num(v, 1), etiquetaX: 'tiempo (s)', rejilla: false, C });
+        const escala = 1 / b.pico;
+        const y = new Float64Array(st.x.length);
+        for (let i = 0; i < y.length; i++) y[i] = st.x[i] * escala;
+        G.linea(ctx, esc, null, y, { t0: 0, dt: 1 / st.fs, color: C.senal, ancho: 1, alfa: 0.4, halo: false, C });
+        const lisa = new Float64Array(b.lisa.length);
+        for (let i = 0; i < lisa.length; i++) lisa[i] = b.lisa[i] * escala;
+        G.linea(ctx, esc, null, lisa, { t0: 0, dt: 1 / st.fs, color: C.respuesta, ancho: 2.4, C });
+        for (const t of b.joro) {
+          const v = b.lisa[Math.min(b.lisa.length - 1, Math.round(t * st.fs))] * escala;
+          punto(ctx, esc.x(t), esc.y(v) - 8, 3.5, C.cuerpo, C);
+        }
+        G.texto(ctx, esc.caja.x + 4, 13, 'señal y envolvente', { color: C.suave, tam: 11, peso: 600, C });
+      },
+    });
+    const escena2 = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena2);
+    V2 = G.lienzo(escena2, {
+      alto: altoEscena(230, 270),
+      etiqueta: 'El espectrograma de la grabación, de 0 a 4.000 hercios, con la frecuencia instantánea encima en naranja, tapada donde casi no hay sonido.',
+      dibujar: (ctx, w, h, C) => {
+        const margen = { izquierda: w < 380 ? 44 : 52, derecha: w < 380 ? 52 : 60, arriba: 14, abajo: 32 };
+        const esc = G.ejes(ctx, { x: [0, Math.max(0.1, st.dur)], y: [0, 4000], marcasY: [0, 1000, 2000, 3000, 4000], formatoX: v => num(v, 1), etiquetaX: 'tiempo (s)', etiquetaY: 'frecuencia (Hz)', rejilla: false, margen, C });
+        const M = st.mapa;
+        if (M) G.mapa(ctx, esc, { datos: M.vista.datos, nF: M.vista.nF, nT: M.vista.nT, t: M.vista.t, f: M.vista.f, rango: st.rango });
+        ctx.save();
+        ctx.strokeStyle = C.eje; ctx.strokeRect(Math.round(esc.caja.x) + 0.5, Math.round(esc.caja.y) + 0.5, Math.round(esc.caja.w), Math.round(esc.caja.h));
+        ctx.restore();
+        G.leyenda(ctx, { x: w - margen.derecha + 14, y: esc.caja.y + 14, ancho: 9, alto: Math.max(40, esc.caja.h - 14), rango: st.rango, etiqueta: 'dB', C });
+        const curva = curvaActual();
+        if (!M || !curva) { if (!M) G.texto(ctx, w / 2, h / 2, 'Graba, sube un audio o elige un ejemplo', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+        // Mediana de la curva en cada columna del espectrograma; se corta donde falta
+        const c = esc.caja, paso = Math.max(1, Math.round(M.salto)), puntos = [];
+        let tramo = [];
+        const vaciar = () => { if (tramo.length > 1) puntos.push(tramo); tramo = []; };
+        ctx.save();
+        ctx.beginPath(); ctx.rect(c.x, c.y, c.w, c.h); ctx.clip();
+        for (let j = 0; j < M.vista.nT; j++) {
+          const i0 = Math.max(0, Math.round(M.vista.t[j] * st.fs) - (paso >> 1)), i1 = Math.min(curva.length, i0 + paso), v = [];
+          for (let i = i0; i < i1; i++) if (Number.isFinite(curva[i])) v.push(curva[i]);
+          if (v.length < 0.3 * paso) { vaciar(); continue; }
+          v.sort((p, q) => p - q);
+          tramo.push([esc.x(M.vista.t[j]), esc.y(v[v.length >> 1])]);
+        }
+        vaciar();
+        for (const t of puntos) trazo(ctx, t, C.respuesta, 2.2, C);
+        ctx.restore();
+        G.texto(ctx, c.x + c.w - 4, c.y + 12, 'frecuencia instantánea', { alinear: 'right', color: C.respuesta, tam: 10, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+      },
+    });
+    // La curva que se enseña (sin filtrar, o la del armónico sin dividir, para que caiga sobre su raya del espectrograma).
+    function curvaActual() {
+      const b = st.base;
+      if (!b) return null;
+      if (st.modo === 'sin') return b.fi;
+      const a = aislado(st.k);
+      return a ? a.fiCruda.map((v, i) => (Number.isFinite(b.fi[i]) ? v : NaN)) : null;
+    }
+    lect = Curso.lecturas(lab.panel, [
+      { id: 'jorobas', nombre: 'Jorobas de la envolvente', clase: 'respuesta' },
+      { id: 'ritmo', nombre: 'Ritmo' },
+      { id: 'f0', nombre: 'Tu nota', clase: 'senal' },
+      { id: 'sin', nombre: 'Sin filtrar' },
+      { id: 'neg', nombre: 'Tiempo negativo' },
+      { id: 'con', nombre: 'Armónico aislado, entre k' },
+    ]);
+    nota = crear('p', { class: 'nota-reto' }, 'Elige un audio o graba el tuyo.');
+    lab.panel.appendChild(nota);
+    const fila = crear('div', { class: 'botones' });
+    lab.panel.appendChild(fila);
+    Curso.audio.boton(fila, () => (st.x ? { x: st.x, fs: st.fs, volumen: 0.6 } : null), 'Oír la grabación', { clase: 'peque' });
+    Curso.audio.boton(fila, () => {
+      const b = st.base;
+      if (!b) return null;
+      // La envolvente como un zumbido que sube y baja: un tono de 200 Hz con su volumen.
+      const y = new Float64Array(b.lisa.length);
+      for (let i = 0; i < y.length; i++) y[i] = b.lisa[i] * Math.sin(TAU * 200 * i / st.fs);
+      return { x: y, fs: st.fs, volumen: 0.5 };
+    }, 'Oír la envolvente', { clase: 'peque' });
+    Curso.audio.boton(fila, () => {
+      const a = st.base && st.base.f0 ? aislado(st.k) : null;
+      return a ? { x: a.x, fs: st.fs, volumen: 0.5 } : null;
+    }, 'Oír el armónico aislado', { clase: 'peque' });
+
+    const hz = v => num(v, 0) + ' Hz';
+    function refrescar() {
+      const b = st.base;
+      if (!lect || !V1 || !V2) return;
+      V1.dibujar(); V2.dibujar();
+      if (!b) return;
+      const nj = b.joro.length;
+      lect.fijar('jorobas', String(nj));
+      if (nj >= 3) {
+        const r = (nj - 1) / (b.joro[nj - 1] - b.joro[0]);
+        lect.fijar('ritmo', num(r, 1) + ' por segundo');
+      } else lect.fijar('ritmo', '—');
+      lect.fijar('f0', b.f0 ? hz(b.f0) : 'no la encuentro');
+      lect.fijar('sin', b.sin ? hz(b.sin.mediana) + ' (de ' + num(b.sin.p5, 0) + ' a ' + hz(b.sin.p95) + ')' : '—');
+      lect.fijar('neg', b.sin ? num(b.sin.neg, 1) + ' %' : '—');
+      const a = b.f0 ? aislado(st.k) : null;
+      lect.fijar('con', a && a.est ? hz(a.est.mediana) + ' (de ' + num(a.est.p5, 0) + ' a ' + hz(a.est.p95) + '), k = ' + a.k : '—');
+      if (!b.sin) nota.textContent = 'Casi no hay sonido en este audio: sin voz o sin un tono, la envolvente es plana y el ángulo es ruido. Prueba con otro.';
+      else if (!b.f0) nota.textContent = 'No he encontrado una nota sostenida, así que no puedo aislar un armónico. Si dices una frase, la envolvente sí enseña tus sílabas.';
+      else nota.textContent = 'Si dices una «aaa», la frecuencia sin filtrar sale hecha un desastre (mira la franja y el tiempo negativo), y al aislar un armónico y dividir entre k vuelve a salir tu nota: ' + hz(b.f0) + ', más o menos. Con un silbido sale limpia desde el principio. Cada lectura de frecuencia da la mediana y, entre paréntesis, la franja que ocupa el 90 % central de los valores.';
+    }
+  })();
+})();
+</script>
+</body>
+</html>

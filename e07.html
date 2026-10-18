@@ -1,0 +1,1119 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La convolución: cada sonido deja su eco · Señales</title>
+<meta name="description" content="Lección 7 del curso visual «Señales, de 0 a experto»: la respuesta al impulso y la convolución como una suma de sellos, con salas, ecos, la media móvil y fotos desenfocadas, seis retos y tu propia palmada.">
+<link rel="stylesheet" href="comun/fuentes.css">
+<link rel="stylesheet" href="comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e07">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Nivel 3 · Lección 7</p>
+    <h1>La convolución: cada sonido deja su eco</h1>
+    <aside class="pregunta">
+      <p>Una palmada en el salón suena seca, y la misma palmada en el baño se queda sonando un buen rato. Un estudio puede hacer que tu voz suene como si la cantaras dentro de una catedral, sin que te muevas de casa, y le basta con una grabación de un globo que alguien hizo estallar allí una vez. Un globo es un ruido de un instante, no se parece en nada a una voz, y aun así sirve para saber cómo sonaría cualquier cosa en esa sala. ¿Cómo?</p>
+    </aside>
+    <ul class="meta"><li>Unos 50 minutos</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>La idea en una imagen</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Siete palitos de entrada, en verde, que puedes subir y bajar arrastrándolos. Cada uno estampa una copia del sello, en naranja, tan grande como su altura y colocada en su sitio. Abajo, en tinta, la suma de todos los sellos: la salida.</figcaption>
+    </figure>
+    <p>Una señal digital es, como viste en la <a href="e02.html">lección 2</a>, una fila de palitos, uno por cada muestra y con la altura que tenga la señal en ese instante. Imagina que, al pasar por un sistema, cada palito deja de ser un palito y estampa una copia de una forma fija, el sello, del tamaño de su altura y puesta en su instante. Un palito grande estampa un sello grande, uno pequeño lo estampa pequeño y uno que apunta hacia abajo lo estampa dado la vuelta. Lo que sale es la suma de todos los sellos, que se pisan unos a otros, y esa suma es la <b class="termino">convolución</b>.</p>
+    <p>Arrastra los palitos de la entrada y mira cómo cambian sus sellos y la salida. Prueba con un solo palito: la salida es entonces el sello tal cual, y ahí está casi toda la idea, porque un sistema queda descrito del todo por el sello que deja un palito solo. Cambia después la forma del sello: una cola larga empasta lo que entra, una media móvil lo emborrona y un eco lo repite.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Paso a paso</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>Un sello por cada palito</h3>
+      <p>Da una palmada en el salón y otra en el baño. La del salón se apaga enseguida y la del baño se queda sonando, como una cola que va muriendo, porque el sonido rebota en las paredes duras y llega a tus oídos una y otra vez, cada vez más flojo. Esa cola no depende de cómo des la palmada: es una característica de la sala. Un <b class="termino">impulso</b> es un sonido tan breve que casi no le da tiempo a tener forma, un palito solo, y el más corto del audio digital es una sola muestra; una palmada se le parece, un globo que revienta todavía más. Lo que la sala devuelve ante un impulso, su huella, es la <b class="termino">respuesta al impulso</b>, y es exactamente el sello de la imagen.</p>
+      <p>Que esa huella baste para saber qué hará la sala con cualquier sonido se debe a dos reglas. La primera es que, si das la palmada el doble de fuerte, la cola sale el doble de fuerte, y que si juntas dos sonidos, la sala responde a cada uno por su lado y suma las respuestas. La segunda es que, si das la palmada un segundo más tarde, sale la misma cola un segundo más tarde, porque la sala no cambia con el tiempo. Un sistema que cumple las dos es un <b class="termino">sistema lineal e invariante</b>, y lo son, al menos de forma aproximada, las salas, los filtros de la <a href="e06.html">lección 6</a>, las lentes y la media móvil. Con esas dos reglas, tu voz es una fila de palitos y la sala responde a cada palito con su sello.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Esta es la entrada: tres palitos verdes. Consigue la salida que dibuja la línea discontinua estampando un sello por cada palito en el carril de abajo.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="fila" id="r1-fila"></div>
+        <p class="nota-reto">Toca una de las columnas del carril: la altura de tu toque es el tamaño del sello, y por debajo del cero sale dado la vuelta. Toca un sello por su cabeza para quitarlo, o toca a otra altura para cambiarlo. Con el teclado, pulsa sobre el lienzo con el tabulador, elige columna con las flechas izquierda y derecha, cambia el tamaño con las de arriba y abajo (con Mayúsculas, a saltos) y quita el sello con Suprimir.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>La huella de una sala</h3>
+      <p>La respuesta al impulso de una sala se ve a simple vista: un golpe al principio, algunas reflexiones tempranas contra las paredes más cercanas y una cola que se apaga. Lo que distingue un salón de un baño o de una catedral es sobre todo cuánto tarda en apagarse. Esa cola es la <b class="termino">reverberación</b>, y se mide con el <b class="termino" data-termino="Tiempo de reverberación (T60)">tiempo de reverberación</b>, el T60: lo que tarda en bajar 60 dB, los decibelios de la <a href="e05.html">lección 5</a>, que es llegar a la millonésima parte de la potencia.</p>
+      <p>Para ponerle a tu voz la huella de una catedral hace falta su respuesta al impulso, y para tenerla hay que medirla. Los acústicos usan un golpe breve y fuerte, como una pistola de fogueo o un globo que revienta, o un barrido de tonos que sube por un altavoz y que luego se deshace con un cálculo; el barrido es lo más preciso y el golpe, lo más práctico. Tu palmada es la versión casera: imperfecta, pero suficiente para oír la idea. En los estudios, la reverberación por convolución llegó como aparato en 1999, con el Sony DRE-S777, que la revista <i>Sound On Sound</i> presentó como el primer reverberador comercial por convolución en tiempo real, y como programa en 2001, con Altiverb, según su propio fabricante.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">Santa Sofía, con globos</span>
+        <p>En 2010, la investigadora de Stanford Bissera Pentcheva entró en Santa Sofía, en Estambul, con unos globos: un ayudante los reventaba con un alfiler atado a una pértiga bajo la cúpula, y se grababa la cola, de más de diez segundos de reverberación, según el proyecto <i>Icons of Sound</i> del CCRMA. Un globo no sirve tal cual, porque no radia igual en todas direcciones y su espectro tiene huecos que colorean el sonido, así que el equipo procesó las grabaciones. Con ellas, un coro pudo cantar en directo en Stanford como si estuviera dentro de la basílica.</p>
+      </aside>
+      <p>Cuánto puede durar una cola lo dice el récord de Guinness: 75 segundos, medidos en 2012 en un tanque de petróleo abandonado en Inchindown, en Escocia, con una pistola de fogueo. Guinness lo llama «eco», pero es reverberación.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Escucha la misma palmada en tres salas misteriosas, A, B y C, y di en qué sala suena cada una. Arriba tienes la respuesta al impulso de cada sala.</p>
+        <div class="escena" id="r2-escena"></div>
+        <div class="fila" id="r2-fila"></div>
+        <div class="mandos" id="r2-mandos"></div>
+        <p class="nota-reto">Si no puedes oír los sonidos, fíjate solo en los dibujos: cada sonido es una palmada convolucionada con una de las tres respuestas.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>El eco, el sello más sencillo</h3>
+      <p>El sello más sencillo que se puede imaginar tiene solo dos palitos: uno en el instante cero, que es el sonido directo, y otro más flojo y más tarde, que es una copia. Eso es un eco de montaña: tu voz sale, y un rato después vuelve, más débil. Convolucionar con ese sello suma tu voz con una copia de ella misma, retrasada y más flojita. Una sala es lo mismo, pero con miles de palitos, uno por cada reflexión posible, y por eso un eco claro se oye como un eco y una sala con miles de ellos, como una cola continua.</p>
+      <p>La convolución no distingue quién es la voz y quién es la sala: da lo mismo meter la voz en el sello que meter el sello en la voz. Es lo que aprovechan algunos programas de reverberación, que admiten como «sala» cualquier sonido, por ejemplo un acorde de piano.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Esta sílaba ha pasado por un eco. Arrastra el palito naranja del eco hasta que tu salida tape a la discontinua: a la derecha, el eco llega más tarde, y arriba, suena más fuerte.</p>
+        <div class="escena" id="r3-escena"></div>
+        <div class="fila" id="r3-fila"></div>
+        <p class="nota-reto">Arrastra la cabeza del palito naranja, o toca donde quieras ponerla. Con el teclado, pulsa sobre el lienzo con el tabulador, cambia el retraso con las flechas izquierda y derecha y la fuerza con las de arriba y abajo.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>La media móvil, otra vez</h3>
+      <p>En la <a href="e06.html">lección 6</a> la media móvil era el filtro más sencillo de todos: sustituir cada dato por la media de los últimos <i>N</i>. Vista con sellos es un rectángulo: cada palito de la entrada estampa <i>N</i> palitos iguales, de altura 1/<i>N</i>, y la salida es la suma de todos ellos. Cuanto más largo es el sello, más muestras se promedian y más baja el ruido aleatorio, que lo hace con la raíz cuadrada de <i>N</i>. A cambio, un salto se emborrona: tarda en subir tantas muestras como mide el sello.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Hay un escalón enterrado en ruido. Alarga el sello rectangular hasta que el ruido baje a la tercera parte, sin que el escalón tarde más de 20 muestras en subir.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="fila" id="r4-fila"></div>
+        <p class="nota-reto">Arrastra el borde derecho del rectángulo naranja, o toca donde quieras ponerlo. Con el teclado, pulsa sobre el lienzo con el tabulador y usa las flechas izquierda y derecha.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>Las fotos también tienen sello</h3>
+      <p>En una foto desenfocada, cada punto de luz se ha convertido en un disco; si se movió la cámara, en una raya, y con la turbulencia del aire, en una mancha suave. Ese sello de luz se llama <b class="termino">función de dispersión de punto</b>, y la foto borrosa es la suma de los sellos de todos sus puntos, igual que la salida de una sala es la suma de las colas de todos los sonidos. La única diferencia es que el sello tiene dos dimensiones y los palitos son píxeles.</p>
+      <p>En 1990, el telescopio Hubble mandó fotos borrosas porque el borde de su espejo principal era 2 micras demasiado plano, según la ESA. Como se conocía el sello que dejaba cada estrella, los astrónomos intentaron despegarlo con cálculos, y a eso se le llama <b class="termino">deconvolución</b>: deshacer la convolución para recuperar la imagen original. Funcionó solo a medias, porque donde el sello borra algo esa información se ha perdido, y al intentar recuperarla el ruido se dispara. La solución definitiva llegó en diciembre de 1993, con unos espejos correctores instalados por astronautas.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Esta foto de una ciudad de noche ha salido borrosa y su sello es desconocido. Encuentra la forma y el tamaño del sello que da la foto borrosa de la derecha.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>Sumar sellos es multiplicar espectros</h3>
+      <p>Hay un puente entre esta lección y la anterior. Cuando el ecualizador multiplicaba el espectro por una curva, lo hacía en frecuencia, y cuando una sala suma sellos, lo hace en el tiempo, pero son la misma operación vista de dos maneras. El <b class="termino">teorema de la convolución</b> dice que convolucionar en el tiempo es multiplicar los espectros, de modo que la respuesta en frecuencia de un filtro es el espectro de su sello. Por eso una sala no puede crear notas: solo sube, baja y retrasa las que ya había. Si aparecen frecuencias nuevas, hay algo que no es lineal, como una saturación.</p>
+      <p>También explica por qué un eco es un filtro. Un sello de dos palitos suma la señal con una copia retrasada, y esa suma refuerza las frecuencias en las que la copia llega en fase con el original y apaga aquellas en las que llega a contrafase, lo que dibuja en frecuencias un peine. El puente tiene además un uso práctico: estampar sellos a mano es carísimo, porque con un sello de 2 s a 48.000 muestras por segundo cada muestra de salida pide 96.000 multiplicaciones, unos 4.600 millones por segundo y por canal. Por eso los programas de reverberación pasan a frecuencias con la FFT de la <a href="e05.html">lección 5</a>, multiplican y vuelven.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">Tienes una nota de 2.000 Hz que quieres conservar y un pitido de 1.000 Hz que quieres apagar. Elige el retraso y la fuerza de un sello de dos palitos que apague del todo el pitido sin tocar la nota.</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>En tu voz</h2>
+    <p><b>Qué grabar.</b> Las palmadas de la grabación de referencia, el tramo 6: tres palmadas fuertes y secas en tu habitación y otras tres en el baño o en la escalera, con un par de segundos entre una y otra. Graba con el micrófono si tu navegador lo deja; si no, sube un audio grabado con el móvil o prueba con los ejemplos sintéticos.</p>
+    <p><b>Qué mirar.</b> El laboratorio busca las palmadas y recorta, de la que elijas, su sello: desde un poco antes del golpe hasta que la cola se hunde en el ruido de fondo. Te enseña ese sello y cuánto tarda en apagarse, con una estimación del tiempo de reverberación, y convoluciona con él una frase sintética para que la oigas dentro de tu sala. Compara una palmada de la habitación con otra del baño: con paredes duras y alicatadas, la cola suele ser más larga y más densa. Ten en cuenta que la palmada tiene su propio color y que algunas aplicaciones del móvil recortan las colas, así que lo que sale no es exactamente lo que mediría un acústico.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>Lo que tienes que recordar</h2>
+    <ol class="tres">
+      <li>Cada muestra de la entrada estampa una copia del sello, escalada a su altura y colocada en su instante, y la salida es la suma de todos los sellos: eso es la convolución.</li>
+      <li>La respuesta al impulso es la huella completa de un sistema lineal e invariante, como una sala, un filtro o una lente: lo que devuelve ante un impulso sirve para predecir lo que hará con cualquier señal.</li>
+      <li>Sumar sellos en el tiempo es multiplicar espectros en frecuencia, y por eso el sello visto en frecuencias es la curva de un ecualizador: un sistema así sube, baja y retrasa notas, pero no las crea.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Errores típicos</h2>
+    <ul class="errores">
+      <li><b>«Convolucionar es multiplicar las dos señales punto a punto.»</b> Eso es lo que pasa con sus espectros. En el tiempo, convolucionar es sumar sellos desplazados y escalados.</li>
+      <li><b>«Una palmada es un impulso perfecto.»</b> Es breve, pero tiene su propio color y lleva ruido, y la respuesta que se obtiene es la de la sala vista a través de la palmada.</li>
+      <li><b>«La reverberación añade notas nuevas.»</b> Un sistema lineal e invariante solo multiplica las frecuencias que ya había y las retrasa. Si aparecen frecuencias nuevas, hay algo no lineal, como una saturación.</li>
+      <li><b>«Si conozco el sello, recupero la foto perfecta.»</b> Donde el sello borra una frecuencia, la información se ha perdido, y al intentar recuperarla el ruido se dispara. El Hubble solo se corrigió en parte con cálculos.</li>
+      <li><b>«No es lo mismo pasar la voz por la sala que la sala por la voz.»</b> La convolución es conmutativa: da igual cuál se llame señal y cuál sello, y por eso un programa de reverberación puede usar como sala un acorde de piano.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Abrir</span>
+      <h2>Rincón matemático</h2>
+      <span class="resumen">Las fórmulas, para quien las quiera. Cada una va después de su lectura en palabras.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>Lineal e invariante</h3>
+      <p>Un sistema es lineal si la respuesta a una mezcla es la mezcla de las respuestas, e invariante si retrasar la entrada solo retrasa la salida:</p>
+      <div class="tex">\mathcal{S}\{a\,x_1 + b\,x_2\} = a\,\mathcal{S}\{x_1\} + b\,\mathcal{S}\{x_2\}, \qquad \mathcal{S}\{x[n - n_0]\} = y[n - n_0]</div>
+
+      <h3>La señal, como una fila de palitos</h3>
+      <p>Toda señal es la suma de impulsos desplazados, cada uno con la altura de su muestra, donde <span class="tex">\delta[n]</span> es el impulso, un palito de altura 1 en el instante cero:</p>
+      <div class="tex">x[n] = \sum_{k} x[k]\, \delta[n - k]</div>
+
+      <h3>La suma de sellos</h3>
+      <p>La salida es la suma de sellos: cada muestra <span class="tex">x[k]</span> estampa la respuesta al impulso <span class="tex">h</span>, escalada por su altura y desplazada a <span class="tex">k</span>. Esa suma se escribe con un asterisco:</p>
+      <div class="tex">y[n] = (x * h)[n] = \sum_{k} x[k]\, h[n - k]</div>
+
+      <h3>Longitud y orden</h3>
+      <p>Si la entrada tiene <span class="tex">L</span> muestras y el sello <span class="tex">M</span>, el resultado tiene <span class="tex">L + M - 1</span>, porque el último palito estampa un sello que sobresale <span class="tex">M - 1</span> muestras. Y da igual quién es la señal y quién el sello:</p>
+      <div class="tex">\text{longitud}(x * h) = L + M - 1, \qquad x * h = h * x</div>
+
+      <h3>El puente con la frecuencia</h3>
+      <p>Convolucionar en el tiempo es multiplicar en frecuencia:</p>
+      <div class="tex">Y(f) = X(f)\, H(f)</div>
+
+      <h3>El eco, un sello de dos palitos</h3>
+      <p>Un eco es un sello de dos palitos, el directo y una copia de fuerza <span class="tex">g</span> retrasada <span class="tex">D</span> muestras. En frecuencia es un peine que refuerza y apaga frecuencias alternas:</p>
+      <div class="tex">h[n] = \delta[n] + g\,\delta[n - D], \qquad H(f) = 1 + g\, e^{-i 2\pi f D / f_s}</div>
+      <p>Su tamaño es el siguiente, y con <span class="tex">g = 1</span> se anula del todo en las frecuencias en las que el retraso es media vuelta, una vuelta y media, y así sucesivamente:</p>
+      <div class="tex">|H(f)| = \sqrt{1 + g^2 + 2g\,\cos\!\left(2\pi f D / f_s\right)}, \qquad f = \frac{f_s}{D}\left(m + \tfrac{1}{2}\right),\; m = 0, 1, 2, \dots</div>
+
+      <h3>La media móvil</h3>
+      <p>La media móvil es un sello rectangular de <span class="tex">N</span> muestras, todas de altura <span class="tex">1/N</span>, que se estudió en la <a href="e06.html">lección 6</a>:</p>
+      <div class="tex">h[n] = \frac{1}{N} \quad (0 \le n \le N-1), \qquad h[n] = 0 \ \text{en otro caso}</div>
+
+      <h3>Una foto borrosa</h3>
+      <p>Una foto borrosa es la foto nítida <span class="tex">f</span> convolucionada en dos dimensiones con el sello de luz <span class="tex">p</span>, la función de dispersión de punto:</p>
+      <div class="tex">g[m, n] = \sum_{k}\sum_{l} f[k, l]\; p[m - k,\, n - l]</div>
+
+      <h3>Convolucionar con la FFT</h3>
+      <p>Con la FFT se rellena con ceros hasta al menos <span class="tex">L + M - 1</span>, se multiplican los espectros y se vuelve. Sin el relleno, los sellos que sobresalen darían la vuelta y se pisarían:</p>
+      <div class="tex">x * h = \mathrm{IFFT}\big(\mathrm{FFT}(x_{\text{relleno}}) \cdot \mathrm{FFT}(h_{\text{relleno}})\big), \qquad N_{\text{FFT}} \ge L + M - 1</div>
+
+      <h3>Deshacer un sello</h3>
+      <p>Deshacer un sello es dividir espectros, y donde <span class="tex">H</span> es casi cero el ruido se dispara, y por eso se añade un freno <span class="tex">K</span>:</p>
+      <div class="tex">\hat{X}(f) = \frac{Y(f)}{H(f)} \quad\longrightarrow\quad \hat{X}(f) = \frac{H^{*}(f)\, Y(f)}{|H(f)|^{2} + K}</div>
+      <p>Y para quitar un eco basta con restar a la grabación una copia retrasada de lo ya limpiado, un filtro que usa su propia salida y que se estudia en la <a href="e08.html">lección 8</a>:</p>
+      <div class="tex">\hat{x}[n] = y[n] - g\, \hat{x}[n - D]</div>
+
+      <h3>El tiempo de reverberación</h3>
+      <p>El tiempo de reverberación es lo que tarda la energía de la cola en caer 60 dB. Se estima con la energía que queda desde cada instante hasta el final:</p>
+      <div class="tex">E(t) = \int_t^{\infty} h^2(\tau)\, d\tau, \qquad T_{60} = \text{tiempo en que } 10\log_{10}\frac{E(t)}{E(0)} \text{ baja } 60\ \text{dB}</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Para saber más</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Libro abierto · inglés</span>Steven W. Smith, <i>The Scientist and Engineer's Guide to Digital Signal Processing</i>, <a href="http://www.dspguide.com/CH6.PDF">capítulo 6</a>. La convolución explicada como suma de respuestas al impulso escaladas y desplazadas: los sellos.</li>
+      <li><span class="tipo">Libro abierto · inglés</span>Allen B. Downey, <i>Think DSP</i>, <a href="https://greenteapress.com/thinkdsp/html/thinkdsp011.html">capítulo 10</a>. Sistemas lineales e invariantes con un disparo grabado en una sala y un violín metido dentro, con código.</li>
+      <li><span class="tipo">Libro abierto · inglés</span>Steven W. Smith, <i>dspguide</i>, capítulos <a href="http://www.dspguide.com/CH24.PDF">24</a> y <a href="http://www.dspguide.com/CH18.PDF">18</a>. El primero trata las imágenes: la función de dispersión de punto, el desenfoque y la convolución en dos dimensiones. El segundo, cómo se convoluciona con la FFT y por qué es más rápido.</li>
+      <li><span class="tipo">Proyecto · inglés</span>CCRMA (Stanford), <i>Icons of Sound</i>: <a href="https://ccrma.stanford.edu/groups/iconsofsound/auralization">«Auralization»</a>. Los globos de Santa Sofía y la convolución en directo con un coro.</li>
+      <li><span class="tipo">Divulgación · inglés</span>ESA/Hubble, <a href="https://esahubble.org/about/history/servicing_mission_1/">«Servicing Mission 1»</a>. El espejo defectuoso de 1990 y la reparación de 1993.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>Términos nuevos</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Examen</h2>
+  </section>
+
+</main>
+
+<script src="comun/temario.js"></script>
+<script src="comun/graficas.js"></script>
+<script src="comun/senal.js"></script>
+<script src="comun/curso.js"></script>
+<script src="datos/e07.js"></script>
+<script>
+// Lección 7 · La convolución: cada sonido deja su eco. La imagen ancla (los sellos), los seis retos y el laboratorio
+// «En tu voz». Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo.
+// Convenios de color: la entrada, en verde; el sello (la respuesta al impulso), en naranja; la salida, en tinta; el
+// ruido y el pitido que se quiere apagar, en coral; lo que sirve de objetivo, discontinuo.
+(function () {
+  'use strict';
+  const G = Graficas, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const altoMov = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  const fHz = v => (v >= 1000 ? num(v / 1000, Math.abs(v / 1000 - Math.round(v / 1000)) < 1e-9 ? 0 : 1) + ' kHz' : num(v) + ' Hz');
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); (typeof contenedor === 'string' ? document.querySelector(contenedor) : contenedor).appendChild(f); return f; };
+  const pico = x => { let m = 0; for (let i = 0; i < x.length; i++) { const a = Math.abs(x[i]); if (a > m) m = a; } return m; };
+  const separador = (ctx, w, C) => { ctx.save(); ctx.strokeStyle = C.linea; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, 0.5); ctx.lineTo(w, 0.5); ctx.stroke(); ctx.restore(); };
+  const redondear = (v, paso) => Math.round(v / paso) * paso;
+  // ── La idea en una imagen: los sellos ───────────────────────────────────────────────────────────────────
+  // Siete palitos de entrada que se arrastran, tres formas de sello y la salida, que es la suma de los sellos. Una
+  // animación va estampando los sellos de uno en uno y, al terminar, los deja todos a la vista unos segundos; con
+  // movimiento reducido arranca parada y enseña la imagen completa.
+  (function () {
+    const N = 7, NT = N + 6 - 1;
+    const SELLOS = {
+      cola: { texto: 'Cola de una sala', h: [1, 0.54, 0.29, 0.16, 0.09, 0.05] },
+      media: { texto: 'Media móvil', h: [0.5, 0.5, 0.5, 0.5] },
+      eco: { texto: 'Eco', h: [1, 0, 0, 0.6] },
+    };
+    const st = { x: [0.9, 0, 0.5, 0, -0.7, 0.3, 0], forma: 'cola', hasta: N, quieto: 0, sel: 0, enfocada: false, arrastrando: false };
+    const cont = document.getElementById('ancla-escena');
+    const MX = { izquierda: 44, derecha: 12 };
+    const EJE_X = [-0.8, NT - 0.2], MARCAS = Array.from({ length: NT }, (_, i) => i);
+    let escA = null;
+    // Cuánto de cada sello está ya estampado: 1 los que ya están, una fracción el que se está estampando.
+    const visible = (i, hasta) => { const k = Math.floor(hasta); return i < k ? 1 : i === k ? hasta - k : 0; };
+    const salida = hasta => Senal.convolucion(Float64Array.from(st.x, (v, i) => v * visible(i, hasta)), Float64Array.from(SELLOS[st.forma].h));
+    const LA = G.lienzo(cont, {
+      alto: altoMov(104, 118), rol: 'slider',
+      etiqueta: 'Siete palitos de entrada, en verde, que se arrastran hacia arriba o hacia abajo',
+      dibujar: (ctx, w, h, C) => {
+        const esc = escA = G.ejes(ctx, { margen: { ...MX, arriba: 8, abajo: 4 }, x: EJE_X, y: [-1.35, 1.35], marcasX: MARCAS, formatoX: () => '', marcasY: [-1, 0, 1], formatoY: v => num(v), cero: true, C });
+        if (st.enfocada || st.arrastrando) {
+          const x = esc.x(st.sel), y = esc.y(st.x[st.sel]);
+          ctx.save(); ctx.strokeStyle = C.acento; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 11, 0, TAU); ctx.stroke(); ctx.restore();
+        }
+        G.tallos(ctx, esc, MARCAS.slice(0, N), st.x, { color: C.senal, radio: 5.5, C });
+        G.texto(ctx, esc.caja.x + esc.caja.w - 6, esc.caja.y + 12, 'entrada', { alinear: 'right', color: C.tenue, tam: 11, C });
+      },
+    });
+    const LB = G.lienzo(cont, {
+      alto: altoMov(104, 118),
+      etiqueta: 'Los sellos naranjas que estampa cada palito de la entrada, con su tamaño y su sitio',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 8, abajo: 4 }, x: EJE_X, y: [-1.35, 1.35], marcasX: MARCAS, formatoX: () => '', marcasY: [-1, 0, 1], formatoY: v => num(v), cero: true, C });
+        separador(ctx, w, C);
+        const sello = SELLOS[st.forma].h;
+        for (let i = 0; i < N; i++) {
+          const v = visible(i, st.hasta);
+          if (!v || !st.x[i]) continue;
+          const xs = [], ys = [], d = (i - (N - 1) / 2) * 0.07;
+          sello.forEach((a, j) => { if (a) { xs.push(i + j + d); ys.push(st.x[i] * a); } });
+          ctx.save(); ctx.globalAlpha = 0.9 * v;
+          G.tallos(ctx, esc, xs, ys, { color: C.respuesta, radio: 3.6, ancho: 1.4, C });
+          ctx.restore();
+        }
+        G.texto(ctx, esc.caja.x + esc.caja.w - 6, esc.caja.y + 12, 'sellos', { alinear: 'right', color: C.tenue, tam: 11, C });
+      },
+    });
+    const LC = G.lienzo(cont, {
+      alto: altoMov(130, 150),
+      etiqueta: 'La salida, en tinta: la suma de todos los sellos, muestra a muestra',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 8, abajo: 22 }, x: EJE_X, y: [-2.9, 2.9], marcasX: MARCAS, formatoX: v => num(v), marcasY: [-2, 0, 2], formatoY: v => num(v), cero: true, C });
+        separador(ctx, w, C);
+        const y = salida(st.hasta);
+        G.tallos(ctx, esc, MARCAS, Array.from({ length: NT }, (_, i) => y[i] || 0), { color: C.cuerpo, radio: 4.4, C });
+        G.texto(ctx, esc.caja.x + esc.caja.w - 6, esc.caja.y + 12, 'salida (por muestra)', { alinear: 'right', color: C.tenue, tam: 11, C });
+      },
+    });
+    const todos = () => { LA.dibujar(); LB.dibujar(); LC.dibujar(); };
+    const tocado = () => { st.hasta = N; st.quieto = performance.now() + 4500; todos(); };
+
+    const mandos = document.getElementById('ancla-mandos');
+    Curso.eleccion(mandos, { etiqueta: 'Forma del sello', opciones: Object.entries(SELLOS).map(([valor, s]) => ({ valor, texto: s.texto })), valor: st.forma, alCambiar: v => { st.forma = v; tocado(); } });
+    const fila = filaBotones(mandos);
+    Curso.botones(fila, [
+      { id: 'solo', texto: 'Un solo palito', alPulsar: () => { st.x = [0, 0, 1, 0, 0, 0, 0]; tocado(); } },
+      { id: 'azar', texto: 'Entrada al azar', alPulsar: () => {
+        const az = Curso.azar();
+        do { st.x = Array.from({ length: N }, () => (az.real() < 0.45 ? 0 : redondear(az.real(-1, 1), 0.1) + 0)); } while (!st.x.some(v => v));
+        tocado();
+      } },
+    ]);
+    Curso.animar(LB, t => { st.hasta = performance.now() < st.quieto ? N : Math.min(N, (N + 1.2 * t) % (N + 2.5)); todos(); }, { boton: fila });
+
+    const aria = () => {
+      LA.canvas.setAttribute('aria-valuenow', String(st.x[st.sel]));
+      LA.canvas.setAttribute('aria-valuetext', 'Palito ' + (st.sel + 1) + ' de ' + N + ': altura ' + num(st.x[st.sel], 1));
+    };
+    const poner = (i, v) => { st.sel = limitar(i, 0, N - 1); st.x[st.sel] = limitar(redondear(v, 0.1), -1, 1) + 0; aria(); tocado(); };
+    Curso.arrastre(LA, {
+      eje: 'y',
+      alBajar: p => { if (!escA) return false; st.arrastrando = true; poner(Math.round(escA.xi(p.x)), escA.yi(p.y)); },
+      alMover: p => poner(st.sel, escA.yi(p.y)),
+      alSoltar: () => { st.arrastrando = false; LA.dibujar(); },
+    });
+    LA.canvas.tabIndex = 0;
+    LA.canvas.setAttribute('aria-valuemin', '-1');
+    LA.canvas.setAttribute('aria-valuemax', '1');
+    LA.canvas.addEventListener('focus', () => { st.enfocada = true; LA.dibujar(); });
+    LA.canvas.addEventListener('blur', () => { st.enfocada = false; LA.dibujar(); });
+    LA.canvas.addEventListener('keydown', ev => {
+      const k = ev.key;
+      if (k === 'ArrowLeft') st.sel = Math.max(0, st.sel - 1);
+      else if (k === 'ArrowRight') st.sel = Math.min(N - 1, st.sel + 1);
+      else if (k === 'ArrowUp') st.x[st.sel] = limitar(redondear(st.x[st.sel] + (ev.shiftKey ? 0.5 : 0.1), 0.1), -1, 1) + 0;
+      else if (k === 'ArrowDown') st.x[st.sel] = limitar(redondear(st.x[st.sel] - (ev.shiftKey ? 0.5 : 0.1), 0.1), -1, 1) + 0;
+      else return;
+      ev.preventDefault(); aria(); tocado();
+    });
+    aria();
+  })();
+  // ── Reto 1 · Estampa los sellos (tocar para colocar) ────────────────────────────────────────────────────
+  // Tres palitos de entrada en t = 0,05, 0,20 y 0,45 s (alturas 1, 0,5 y −0,8) y un sello de «ding» que decae en
+  // 0,15 s. Se toca el carril de abajo para poner un sello en una de sus 12 columnas (cada 0,05 s); la altura del
+  // toque es el tamaño del sello. La salida que se ve es la convolución real (Senal.convolucion) de lo que se ha puesto.
+  (function () {
+    const FS = 400, DUR = 0.7, DT = 0.05, NS = 12, nOut = Math.round(DUR * FS);
+    const OBJ = [{ s: 1, a: 1 }, { s: 4, a: 0.5 }, { s: 9, a: -0.8 }];
+    const sello = (() => {
+      const n = Math.round(0.15 * FS), h = new Float64Array(n);
+      let m = 0;
+      for (let i = 0; i < n; i++) { const t = i / FS; h[i] = Math.exp(-t / 0.04) * Math.sin(TAU * 20 * t); m = Math.max(m, Math.abs(h[i])); }
+      return h.map(v => v / m);
+    })();
+    const salida = lista => {
+      const x = new Float64Array(nOut);
+      for (const p of lista) x[Math.round(p.s * DT * FS)] += p.a;
+      return Senal.convolucion(x, sello).subarray(0, nOut);
+    };
+    const objetivo = salida(OBJ);
+    const st = { sellos: new Array(NS).fill(null), cur: 1, enfocada: false };
+    const lista = () => st.sellos.map((a, s) => (a === null ? null : { s, a })).filter(Boolean);
+    let escB = null;
+    const escena = document.getElementById('r1-escena');
+    const MX = { izquierda: 44, derecha: 12 };
+    const LA = G.lienzo(escena, {
+      alto: altoMov(110, 124),
+      etiqueta: 'La entrada: tres palitos verdes, en 0,05, 0,2 y 0,45 segundos, con alturas 1, 0,5 y menos 0,8. En la esquina, el sello: un ding que se apaga en 0,15 segundos.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 10, abajo: 6 }, x: [0, DUR], y: [-1.35, 1.35], marcasX: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6], formatoX: () => '', marcasY: [-1, 0, 1], formatoY: v => num(v), cero: true, C });
+        G.tallos(ctx, esc, OBJ.map(p => p.s * DT), OBJ.map(p => p.a), { color: C.senal, radio: 5.5, C });
+        G.texto(ctx, esc.caja.x + esc.caja.w - 6, esc.caja.y + 12, 'entrada', { alinear: 'right', color: C.tenue, tam: 11, C });
+        const ix = esc.x(0.51), iw = esc.x(0.69) - ix, e2 = G.ejes(ctx, { caja: { x: ix, y: esc.y(1.2), w: iw, h: esc.y(-1.2) - esc.y(1.2) }, x: [0, 0.15], y: [-1.1, 1.1], soloEscala: true, C });
+        G.linea(ctx, e2, null, sello, { t0: 0, dt: 1 / FS, color: C.respuesta, ancho: 2, C });
+        G.texto(ctx, ix + iw / 2, esc.y(-1.2) + 11, 'el sello', { alinear: 'center', color: C.tenue, tam: 10, C });
+      },
+    });
+    const LB = G.lienzo(escena, {
+      alto: altoMov(190, 220), rol: 'application',
+      etiqueta: 'El carril de salida, con doce columnas separadas 0,05 segundos: tócalas para estampar un sello. La salida objetivo va discontinua y la tuya, en tinta.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = escB = G.ejes(ctx, { margen: { ...MX, arriba: 10, abajo: 22 }, x: [0, DUR], y: [-1.45, 1.45], marcasX: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6], formatoX: v => num(v, 1) + (v > 0.55 ? ' s' : ''), marcasY: [-1, 0, 1], formatoY: v => num(v), cero: true, C });
+        separador(ctx, w, C);
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.eje, 0.28); ctx.lineWidth = 1; ctx.setLineDash([2, 4]);
+        ctx.beginPath();
+        for (let s = 0; s < NS; s++) { const px = Math.round(esc.x(s * DT)) + 0.5; ctx.moveTo(px, esc.caja.y); ctx.lineTo(px, esc.caja.y + esc.caja.h); }
+        ctx.stroke();
+        ctx.restore();
+        const t = Float64Array.from({ length: nOut }, (_, i) => i / FS);
+        G.linea(ctx, esc, t, objetivo, { color: C.cuerpo, guiones: [6, 5], alfa: 0.7, halo: false, ancho: 2, C });
+        const L = lista();
+        for (const p of L) {
+          const y = new Float64Array(nOut), i0 = Math.round(p.s * DT * FS);
+          for (let k = 0; k < sello.length && i0 + k < nOut; k++) y[i0 + k] = p.a * sello[k];
+          G.linea(ctx, esc, t, y, { color: C.respuesta, alfa: 0.55, halo: false, ancho: 1.5, C });
+        }
+        if (L.length) G.linea(ctx, esc, t, salida(L), { color: C.cuerpo, ancho: 2.6, C });
+        else G.texto(ctx, esc.caja.x + esc.caja.w / 2, esc.y(-1.05), 'Toca una columna para estampar', { alinear: 'center', color: C.suave, tam: 12, fondo: G.alfa(C.pantalla, 0.85), C });
+        for (const p of L) G.puntos(ctx, esc, [p.s * DT], [p.a], { color: C.respuesta, radio: 6, borde: C.pantalla, C });
+        if (st.enfocada) {
+          const x = esc.x(st.cur * DT), a = st.sellos[st.cur];
+          ctx.save();
+          ctx.fillStyle = G.alfa(C.acento, 0.14); ctx.fillRect(x - 9, esc.caja.y, 18, esc.caja.h);
+          ctx.strokeStyle = C.acento; ctx.lineWidth = 1.5; ctx.strokeRect(Math.round(x - 9) + 0.5, esc.caja.y + 0.5, 18, esc.caja.h - 1);
+          if (a !== null) { ctx.beginPath(); ctx.arc(x, esc.y(a), 10.5, 0, TAU); ctx.stroke(); }
+          ctx.restore();
+        }
+      },
+    });
+    const fila = document.getElementById('r1-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'n', nombre: 'Sellos puestos' },
+      { id: 'parecido', nombre: 'Parecido con la salida', clase: 'respuesta' },
+    ]);
+    Curso.botones(filaBotones(fila), [{ id: 'quitar', texto: 'Quitar los sellos', tipo: 'discreto', peque: true, alPulsar: () => { st.sellos.fill(null); cambio(); } }]);
+    function lecturas() {
+      const L = lista(), y = salida(L);
+      let e = 0, o = 0;
+      for (let i = 0; i < nOut; i++) { e += (y[i] - objetivo[i]) * (y[i] - objetivo[i]); o += objetivo[i] * objetivo[i]; }
+      lect.fijar('n', String(L.length));
+      lect.fijar('parecido', num(Math.max(0, 100 * (1 - Math.sqrt(e / o))), 0) + ' %');
+      LB.canvas.setAttribute('aria-valuetext', L.length ? 'Sellos en ' + L.map(p => num(p.s * DT, 2) + ' s, de altura ' + num(p.a, 1)).join('; ') : 'Sin sellos');
+    }
+    function cambio() { lecturas(); LB.dibujar(); Curso.cambio('reto-1'); }
+    // Un toque pone el sello de la columna con la altura del toque; si ya había uno y el toque cae sobre su cabeza,
+    // lo quita.
+    const poner = (s, a) => {
+      const actual = st.sellos[s];
+      if (actual !== null && Math.abs(a - actual) <= 0.2) st.sellos[s] = null;
+      else if (Math.abs(a) < 0.1) st.sellos[s] = null;
+      else st.sellos[s] = limitar(redondear(a, 0.1), -1.3, 1.3) + 0;
+      st.cur = s;
+      cambio();
+    };
+    LB.canvas.classList.add('tocable');
+    LB.canvas.addEventListener('click', ev => {
+      if (!escB) return;
+      const r = LB.canvas.getBoundingClientRect(), px = ev.clientX - r.left, py = ev.clientY - r.top;
+      if (px < escB.caja.x - 8 || px > escB.caja.x + escB.caja.w + 8) return;
+      poner(limitar(Math.round(escB.xi(px) / DT), 0, NS - 1), escB.yi(py));
+    });
+    LB.canvas.tabIndex = 0;
+    LB.canvas.addEventListener('focus', () => { st.enfocada = true; LB.dibujar(); });
+    LB.canvas.addEventListener('blur', () => { st.enfocada = false; LB.dibujar(); });
+    LB.canvas.addEventListener('keydown', ev => {
+      const k = ev.key, paso = ev.shiftKey ? 0.5 : 0.1, a = st.sellos[st.cur];
+      if (k === 'ArrowLeft') st.cur = Math.max(0, st.cur - 1);
+      else if (k === 'ArrowRight') st.cur = Math.min(NS - 1, st.cur + 1);
+      else if (k === 'ArrowUp' || k === 'ArrowDown') {
+        const v = limitar(redondear((a === null ? 0 : a) + (k === 'ArrowUp' ? paso : -paso), 0.1), -1.3, 1.3) + 0;
+        st.sellos[st.cur] = Math.abs(v) < 0.05 ? null : v;
+        cambio();
+      } else if (k === 'Delete' || k === 'Backspace') { st.sellos[st.cur] = null; cambio(); }
+      else return;
+      ev.preventDefault(); LB.dibujar();
+    });
+    lecturas();
+    Curso.reto('reto-1', {
+      titulo: 'Un sello por cada palito', nivel: 'fácil',
+      comprobar: () => {
+        const L = lista();
+        if (!L.length) return { ok: false };
+        const extra = L.filter(p => !OBJ.some(o => o.s === p.s));
+        if (extra.length) return { ok: false, mensaje: 'Tienes un sello donde la entrada no tiene palito. Cada palito, y solo los palitos, estampa un sello en su mismo instante.' };
+        const falta = OBJ.filter(o => !L.some(p => p.s === o.s));
+        if (falta.length) return { ok: false, mensaje: falta.length === 1 ? 'Casi: a un palito de la entrada todavía le falta su sello.' : 'Sigue: todavía hay palitos de la entrada sin su sello.' };
+        for (const o of OBJ) {
+          const p = L.find(q => q.s === o.s);
+          if (Math.sign(p.a) !== Math.sign(o.a)) return { ok: false, mensaje: 'El palito de ' + num(o.s * DT, 2) + ' s apunta hacia ' + (o.a < 0 ? 'abajo' : 'arriba') + ': su sello tiene que salir ' + (o.a < 0 ? 'dado la vuelta' : 'del derecho') + '.' };
+          if (Math.abs(p.a - o.a) > 0.15) return { ok: false, mensaje: 'El sello de ' + num(o.s * DT, 2) + ' s sale demasiado ' + (Math.abs(p.a) > Math.abs(o.a) ? 'grande' : 'pequeño') + ': tiene que medir lo mismo que su palito.' };
+        }
+        return { ok: true, mensaje: 'Tres palitos, tres sellos: la salida coincide con la discontinua.' };
+      },
+      resolver: () => { st.sellos.fill(null); for (const o of OBJ) st.sellos[o.s] = o.a; st.cur = 1; cambio(); },
+      pista: [
+        'Cada palito de la entrada deja su sello en su mismo instante: el primero en 0,05 s, el segundo en 0,2 s y el tercero en 0,45 s.',
+        'El tamaño del sello es la altura del palito y, si el palito apunta hacia abajo, el sello sale dado la vuelta. Toca a la altura de cada palito: 1, 0,5 y −0,8.',
+      ],
+      exito: '<p>Eso es convolucionar: cada muestra deja una copia del sello, de su tamaño y en su sitio, y la salida es la suma de todas. Una voz tiene miles de muestras por segundo, así que son miles de sellos que se pisan unos a otros.</p>',
+    });
+  })();
+  // ── Reto 2 · Adivina la sala (escuchar y elegir) ────────────────────────────────────────────────────────
+  // Tres respuestas al impulso sintéticas (Senal.ejemplos.respuestaSala con T60 de 0,3, 1,2 y 6 s) y la misma palmada
+  // convolucionada con cada una. Los sonidos A, B y C salen de las salas en un orden que cambia en cada visita.
+  (function () {
+    const FS = 16000;
+    const SALAS = [{ id: 'salon', texto: 'Salón', t60: 0.3 }, { id: 'bano', texto: 'Baño', t60: 1.2 }, { id: 'catedral', texto: 'Catedral', t60: 6 }];
+    const irs = [null, null, null], sonidos = [null, null, null];
+    const ir = i => irs[i] || (irs[i] = Senal.ejemplos.respuestaSala(FS, { t60: SALAS[i].t60 }));
+    let clap = null;
+    const palmada = () => {
+      if (!clap) { const az = Senal.azar(3), n = Math.round(0.08 * FS); clap = new Float64Array(n); for (let i = 0; i < n; i++) clap[i] = az.normal() * Math.exp(-i / (0.004 * FS)); }
+      return clap;
+    };
+    const sonido = i => {
+      if (!sonidos[i]) { const y = Senal.convolucion(palmada(), ir(i)), k = 0.8 / (pico(y) || 1); sonidos[i] = Float64Array.from(y, v => v * k); }
+      return sonidos[i];
+    };
+    const perm = Curso.azar().barajar([0, 1, 2]);
+    const resp = [null, null, null];
+    const LA = G.lienzo('#r2-escena', {
+      alto: altoMov(250, 280),
+      etiqueta: 'Las respuestas al impulso de tres salas, en el mismo eje de tiempo de cero a seis segundos y medio: la del salón se apaga enseguida, la del baño tarda más y la de la catedral dura varios segundos',
+      dibujar: (ctx, w, h, C) => {
+        const fila = (h - 8) / 3;
+        SALAS.forEach((s, r) => {
+          const ultima = r === 2, caja = { x: 14, y: 6 + r * fila, w: w - 28, h: fila - (ultima ? 22 : 12) };
+          const esc = G.ejes(ctx, { caja, x: [0, 6.6], y: [-1.1, 1.1], marcasY: false, marcasX: ultima ? [0, 1, 2, 3, 4, 5, 6] : [0, 1, 2, 3, 4, 5, 6], formatoX: ultima ? v => num(v) + ' s' : () => '', rejilla: false, cero: true, C });
+          G.linea(ctx, esc, null, ir(r), { t0: 0, dt: 1 / FS, color: C.respuesta, ancho: 1.1, halo: false, C });
+          G.texto(ctx, esc.caja.x + esc.caja.w - 4, esc.caja.y + 12, s.texto, { alinear: 'right', color: C.suave, tam: 11, peso: 600, C });
+        });
+      },
+    });
+    const fila = document.getElementById('r2-fila');
+    ['A', 'B', 'C'].forEach((letra, k) => Curso.audio.boton(fila, () => ({ x: sonido(perm[k]), fs: FS, volumen: 0.8 }), 'Sonido ' + letra));
+    const mandos = document.getElementById('r2-mandos');
+    const elecciones = ['A', 'B', 'C'].map((letra, k) => Curso.eleccion(mandos, {
+      etiqueta: 'El sonido ' + letra + ' suena en…', opciones: SALAS.map(s => ({ valor: s.id, texto: s.texto })), valor: '', reto: 'reto-2',
+      alCambiar: v => { resp[k] = v; },
+    }));
+    Curso.reto('reto-2', {
+      titulo: 'Adivina la sala', nivel: 'fácil',
+      comprobar: () => {
+        if (resp.some(v => !v)) return { ok: false };
+        const bien = resp.filter((v, k) => v === SALAS[perm[k]].id).length;
+        if (bien === 3) return { ok: true, mensaje: 'Las tres, bien: cuanto más tarda en apagarse la cola, más reverberante es la sala.' };
+        return { ok: false, mensaje: 'Aciertas ' + bien + ' de 3. Vuelve a escuchar y compara cuánto tarda en apagarse cada sonido con las colas de los dibujos.' };
+      },
+      resolver: () => elecciones.forEach((e, k) => e.fijar(SALAS[perm[k]].id)),
+      pista: [
+        'Fíjate en cuánto tarda en apagarse cada dibujo: eso es lo que se oye como cola detrás de la palmada.',
+        'La catedral es la que sigue sonando cuando las otras ya han callado, y el salón, la que casi no deja cola.',
+      ],
+      exito: '<p>La huella de una sala está en su respuesta al impulso: cuánto tarda en apagarse y cómo. Con ella puedes poner cualquier sonido dentro de esa sala, que es justo lo que hacen los estudios con una catedral.</p>',
+    });
+  })();
+
+  // ── Reto 3 · El eco de la montaña (arrastrar sobre el lienzo, en dos dimensiones) ───────────────────────
+  // El sello tiene dos palitos: el sonido directo (1, en el instante cero) y un eco que se arrastra: a la derecha,
+  // más retraso; hacia arriba, más fuerza. La salida es Senal.convolucion de una sílaba sintética con ese sello.
+  (function () {
+    const FS = 8000, T_MAX = 0.6, D_OBJ = 0.3, G_OBJ = 0.5;
+    const silaba = (() => {
+      const v = Senal.ejemplos.vocal(FS, { vocal: 'a', f0: 140, dur: 0.14 }), n = v.length, y = new Float64Array(n);
+      for (let i = 0; i < n; i++) y[i] = v[i] * Math.pow(Math.sin(Math.PI * (i + 0.5) / n), 2);
+      const k = 0.8 / (pico(y) || 1);
+      return y.map(a => a * k);
+    })();
+    const salidaDe = (d, g) => {
+      const nd = Math.round(d * FS), h = new Float64Array(nd + 1);
+      h[0] = 1; h[nd] += g;
+      return Senal.convolucion(silaba, h);
+    };
+    const objetivo = salidaDe(D_OBJ, G_OBJ);
+    const st = { d: 0.12, g: 0.8, enfocada: false };
+    let esc3 = null;
+    const MX = { izquierda: 44, derecha: 14 };
+    const escena = document.getElementById('r3-escena');
+    const LA = G.lienzo(escena, {
+      alto: altoMov(136, 150), rol: 'application',
+      etiqueta: 'El sello de dos palitos: el directo, en el instante cero, y el eco, un palito naranja con una cabeza que se arrastra a derecha o izquierda para cambiar el retraso y arriba o abajo para cambiar la fuerza',
+      dibujar: (ctx, w, h, C) => {
+        const esc = esc3 = G.ejes(ctx, { margen: { ...MX, arriba: 12, abajo: 22 }, x: [-0.03, T_MAX + 0.04], y: [-0.08, 1.3], marcasX: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6], formatoX: v => num(v, 1) + (v > 0.55 ? ' s' : ''), marcasY: [0, 0.5, 1], formatoY: v => num(v, 1), cero: true, C });
+        G.tallos(ctx, esc, [0], [1], { color: C.respuesta, radio: 5, C });
+        G.texto(ctx, esc.x(0) + 9, esc.y(1) + 4, 'directo', { color: C.tenue, tam: 10, C });
+        G.tallos(ctx, esc, [st.d], [st.g], { color: C.respuesta, radio: 8, C });
+        if (st.enfocada) { ctx.save(); ctx.strokeStyle = C.acento; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(esc.x(st.d), esc.y(st.g), 13, 0, TAU); ctx.stroke(); ctx.restore(); }
+        G.texto(ctx, Math.min(esc.x(st.d) + 12, esc.caja.x + esc.caja.w - 4), Math.max(esc.y(st.g) - 6, esc.caja.y + 11), 'eco', { alinear: esc.x(st.d) + 40 > esc.caja.x + esc.caja.w ? 'right' : 'left', color: C.suave, tam: 11, peso: 600, C });
+      },
+    });
+    const LB = G.lienzo(escena, {
+      alto: altoMov(150, 175),
+      etiqueta: 'La sílaba con tu eco, en tinta, frente a la sílaba con el eco que hay que conseguir, discontinua',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 8, abajo: 22 }, x: [-0.03, T_MAX + 0.04], y: [-1.3, 1.3], marcasX: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6], formatoX: v => num(v, 1) + (v > 0.55 ? ' s' : ''), marcasY: false, cero: true, C });
+        separador(ctx, w, C);
+        G.linea(ctx, esc, null, objetivo, { t0: 0, dt: 1 / FS, color: C.cuerpo, guiones: [5, 4], alfa: 0.65, halo: false, ancho: 1.6, C });
+        G.linea(ctx, esc, null, salidaDe(st.d, st.g), { t0: 0, dt: 1 / FS, color: C.cuerpo, ancho: 1.9, C });
+        G.texto(ctx, esc.caja.x + 6, esc.caja.y + 12, 'salida', { color: C.tenue, tam: 11, C });
+      },
+    });
+    const fila = document.getElementById('r3-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'd', nombre: 'Retraso del eco', clase: 'respuesta' },
+      { id: 'g', nombre: 'Fuerza del eco', clase: 'respuesta' },
+    ]);
+    const botones = filaBotones(fila);
+    const sonido = tuyo => { const y = tuyo ? salidaDe(st.d, st.g) : objetivo, k = 0.8 / Math.max(pico(objetivo), pico(salidaDe(st.d, st.g)), 1e-9); return { x: Float64Array.from(y, v => v * k), fs: FS, volumen: 1, normalizar: false }; };
+    Curso.audio.boton(botones, () => sonido(false), 'Oír el objetivo', { clase: 'peque' });
+    Curso.audio.boton(botones, () => sonido(true), 'Oír el tuyo', { clase: 'peque' });
+    function lecturas() {
+      lect.fijar('d', num(st.d * 1000, 0) + ' ms');
+      lect.fijar('g', num(st.g, 2));
+      LA.canvas.setAttribute('aria-valuetext', 'Eco con un retraso de ' + num(st.d * 1000, 0) + ' milisegundos y una fuerza de ' + num(st.g, 2));
+    }
+    const poner = (d, g, avisar = true) => {
+      st.d = limitar(redondear(d, 0.01), 0.01, T_MAX) + 0; st.g = limitar(redondear(g, 0.05), 0, 1) + 0;
+      lecturas(); LA.dibujar(); LB.dibujar();
+      if (avisar) Curso.cambio('reto-3');
+    };
+    Curso.arrastre(LA, {
+      eje: 'ambos',
+      alBajar: p => { if (!esc3) return false; poner(esc3.xi(p.x), esc3.yi(p.y)); },
+      alMover: p => poner(esc3.xi(p.x), esc3.yi(p.y)),
+    });
+    LA.canvas.tabIndex = 0;
+    LA.canvas.addEventListener('focus', () => { st.enfocada = true; LA.dibujar(); });
+    LA.canvas.addEventListener('blur', () => { st.enfocada = false; LA.dibujar(); });
+    LA.canvas.addEventListener('keydown', ev => {
+      const k = ev.key;
+      if (k === 'ArrowLeft') poner(st.d - 0.01, st.g);
+      else if (k === 'ArrowRight') poner(st.d + 0.01, st.g);
+      else if (k === 'ArrowUp') poner(st.d, st.g + 0.05);
+      else if (k === 'ArrowDown') poner(st.d, st.g - 0.05);
+      else return;
+      ev.preventDefault();
+    });
+    lecturas();
+    Curso.reto('reto-3', {
+      titulo: 'El eco de la montaña', nivel: 'medio',
+      comprobar: () => {
+        const ed = st.d - D_OBJ, eg = st.g - G_OBJ;
+        if (Math.abs(ed) <= 0.011 && Math.abs(eg) <= 0.051) return { ok: true, mensaje: 'Tu eco llega a los ' + num(st.d * 1000, 0) + ' ms y con fuerza ' + num(st.g, 2) + ': la salida coincide con la discontinua.' };
+        if (Math.abs(ed) > 0.011) return { ok: false, mensaje: 'La copia de tu salida llega ' + (ed > 0 ? 'demasiado tarde' : 'demasiado pronto') + ': mira dónde empieza la copia de la discontinua.' };
+        return { ok: false, mensaje: 'La copia llega a tiempo, pero tu eco suena ' + (eg > 0 ? 'demasiado fuerte' : 'demasiado flojo') + ' comparado con la discontinua.' };
+      },
+      resolver: () => poner(D_OBJ, G_OBJ),
+      pista: [
+        'Mide en la salida discontinua cuánto tarda en llegar la copia de la sílaba: ese es el retraso del eco.',
+        'La copia mide la mitad que el original, así que la cabeza del palito naranja va a media altura.',
+      ],
+      exito: '<p>Un eco es el sello más sencillo: dos palitos. Convolucionar con él suma tu voz con una copia más floja y más tardía. Una sala es lo mismo con miles de palitos, y una media móvil, con muchos palitos iguales pegados.</p>',
+    });
+  })();
+
+  // ── Reto 4 · La media móvil es un sello (arrastrar el borde del sello) ──────────────────────────────────
+  // Un escalón de altura 1 enterrado en ruido (σ = 0,5), 160 muestras. El sello es un rectángulo de N muestras de
+  // altura 1/N: la media móvil centrada (Senal.mediaMovil). Se arrastra su borde derecho. El ruido baja a 1/√N y
+  // el escalón tarda N muestras en subir.
+  (function () {
+    const NN = 160, ESC = 70, NMAX = 40, MX = { izquierda: 44, derecha: 14 };
+    const az = Senal.azar(4);
+    const limpia = Float64Array.from({ length: NN }, (_, i) => (i >= ESC ? 1 : 0));
+    const ruidosa = Float64Array.from(limpia, v => v + 0.5 * az.normal());
+    const st = { N: 1, enfocada: false };
+    const idx = Float64Array.from({ length: NN }, (_, i) => i);
+    let escB = null;
+    const salida = () => Senal.mediaMovil(ruidosa, st.N, { centrada: true });
+    const escena = document.getElementById('r4-escena');
+    const LA = G.lienzo(escena, {
+      alto: altoMov(170, 200),
+      etiqueta: 'Un escalón enterrado en ruido: la medida, en verde; el escalón limpio, discontinuo; y la salida de la media móvil, en tinta',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 10, abajo: 22 }, x: [0, NN], y: [-1.5, 2.5], marcasX: [0, 40, 80, 120, 160], formatoX: v => num(v), marcasY: [0, 1, 2], formatoY: v => num(v), cero: true, C });
+        G.linea(ctx, esc, idx, ruidosa, { color: C.senal, ancho: 1.2, alfa: 0.75, halo: false, C });
+        G.linea(ctx, esc, idx, limpia, { color: C.cuerpo, guiones: [5, 4], alfa: 0.6, halo: false, ancho: 1.5, C });
+        G.linea(ctx, esc, idx, salida(), { color: C.cuerpo, ancho: 2.5, C });
+        G.texto(ctx, esc.caja.x + 6, esc.caja.y + 12, 'verde: medida · tinta: salida', { color: C.tenue, tam: 10, C });
+      },
+    });
+    const LB = G.lienzo(escena, {
+      alto: altoMov(96, 110), rol: 'slider',
+      etiqueta: 'El sello de la media móvil: un rectángulo naranja de N muestras cuyo borde derecho se arrastra',
+      dibujar: (ctx, w, h, C) => {
+        const esc = escB = G.ejes(ctx, { margen: { ...MX, arriba: 10, abajo: 22 }, x: [-1, NMAX + 3], y: [0, 1.45], marcasX: [0, 10, 20, 30, 40], formatoX: v => num(v), marcasY: false, cero: true, C });
+        separador(ctx, w, C);
+        const x0 = esc.x(-0.5), x1 = esc.x(st.N - 0.5), y1 = esc.y(1), y0 = esc.y(0);
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.respuesta, 0.3); ctx.fillRect(x0, y1, x1 - x0, y0 - y1);
+        ctx.strokeStyle = C.respuesta; ctx.lineWidth = 2; ctx.strokeRect(x0 + 0.5, y1 + 0.5, x1 - x0 - 1, y0 - y1 - 1);
+        ctx.restore();
+        G.puntos(ctx, esc, [st.N - 0.5], [0.5], { color: C.respuesta, radio: 8, borde: C.pantalla, C });
+        if (st.enfocada) { ctx.save(); ctx.strokeStyle = C.acento; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(esc.x(st.N - 0.5), esc.y(0.5), 13, 0, TAU); ctx.stroke(); ctx.restore(); }
+        G.texto(ctx, Math.min(x1 + 14, esc.caja.x + esc.caja.w - 4), esc.y(1.12), 'sello de ' + st.N + (st.N === 1 ? ' muestra' : ' muestras') + ', cada una vale 1/' + st.N, { alinear: x1 + 14 + 230 > esc.caja.x + esc.caja.w ? 'right' : 'left', color: C.suave, tam: 11, C });
+      },
+    });
+    const fila = document.getElementById('r4-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'ruido', nombre: 'Ruido dividido entre', clase: 'respuesta' },
+      { id: 'subida', nombre: 'El escalón tarda en subir', clase: 'respuesta' },
+    ]);
+    function lecturas() {
+      lect.fijar('ruido', num(Math.sqrt(st.N), 1));
+      lect.fijar('subida', st.N === 1 ? 'una muestra' : num(st.N) + ' muestras');
+      LB.canvas.setAttribute('aria-valuenow', String(st.N));
+      LB.canvas.setAttribute('aria-valuetext', 'Sello de ' + st.N + ' muestras: el ruido baja ' + num(Math.sqrt(st.N), 1) + ' veces y el escalón tarda ' + st.N + ' muestras en subir');
+    }
+    const poner = (n, avisar = true) => { st.N = limitar(Math.round(n), 1, NMAX); lecturas(); LA.dibujar(); LB.dibujar(); if (avisar) Curso.cambio('reto-4'); };
+    Curso.arrastre(LB, { eje: 'x', alBajar: p => { if (!escB) return false; poner(escB.xi(p.x) + 0.5); }, alMover: p => poner(escB.xi(p.x) + 0.5) });
+    LB.canvas.tabIndex = 0;
+    LB.canvas.setAttribute('aria-valuemin', '1');
+    LB.canvas.setAttribute('aria-valuemax', String(NMAX));
+    LB.canvas.addEventListener('focus', () => { st.enfocada = true; LB.dibujar(); });
+    LB.canvas.addEventListener('blur', () => { st.enfocada = false; LB.dibujar(); });
+    LB.canvas.addEventListener('keydown', ev => {
+      const k = ev.key;
+      if (k === 'ArrowLeft' || k === 'ArrowDown') poner(st.N - (ev.shiftKey ? 5 : 1));
+      else if (k === 'ArrowRight' || k === 'ArrowUp') poner(st.N + (ev.shiftKey ? 5 : 1));
+      else return;
+      ev.preventDefault();
+    });
+    lecturas();
+    Curso.reto('reto-4', {
+      titulo: 'La media móvil es un sello', nivel: 'medio',
+      comprobar: () => {
+        const r = Math.sqrt(st.N);
+        if (r >= 3 && st.N <= 20) return { ok: true, mensaje: 'Con ' + st.N + ' muestras el ruido baja ' + num(r, 1) + ' veces y el escalón tarda ' + st.N + ' muestras en subir.' };
+        if (st.N === 1) return { ok: false };
+        if (r < 3) return { ok: false, mensaje: 'Por ahora el ruido solo baja ' + num(r, 1) + ' veces: hace falta promediar más muestras, es decir, un sello más largo.' };
+        return { ok: false, mensaje: 'El ruido ya baja, pero el escalón tarda ' + st.N + ' muestras en subir: te has pasado de las 20.' };
+      },
+      resolver: () => poner(12),
+      pista: [
+        'El ruido baja con la raíz cuadrada del número de muestras que promedias.',
+        'Para dividir el ruido entre 3 hace falta promediar al menos 9 muestras, y para que el escalón no tarde más de 20 en subir, no más de 20.',
+      ],
+      exito: '<p>La media móvil es una convolución con un sello plano. Cuanto más largo es el sello, menos ruido, pero más se emborronan los saltos: el escalón tarda en subir tantas muestras como mide el sello. Siempre hay que elegir entre limpiar y conservar los saltos.</p>',
+    });
+  })();
+
+  // ── Reto 5 · Desenfoca la foto (elegir la forma y fijar el tamaño del sello) ────────────────────────────
+  // Una ciudad nocturna sintética de 128 × 80 píxeles, dibujada con números y desenfocada con un disco de radio 4
+  // (Senal.convolucion2). Hay que encontrar la forma y el tamaño del sello que da la foto borrosa.
+  (function () {
+    const W = 128, H = 80, R_OBJ = 4, RMAX = 10;
+    const FORMAS = [{ valor: 'disco', texto: 'Disco' }, { valor: 'cuadrado', texto: 'Cuadrado' }, { valor: 'gauss', texto: 'Mancha suave' }, { valor: 'raya', texto: 'Raya horizontal' }];
+    const st = { forma: 'disco', r: 1.5 };
+    let datos = null;
+    function ciudad() {
+      const img = new Float64Array(W * H), az = Senal.azar(7);
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) img[y * W + x] = 0.14 + 0.16 * (y / H);
+      for (let k = 0; k < 16; k++) img[az.entero(1, 40) * W + az.entero(2, W - 3)] = 1;
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const d = Math.hypot(x - 104, y - 16); if (d <= 6) img[y * W + x] = 0.85; }
+      let x0 = 0;
+      while (x0 < W) {
+        const ancho = az.entero(14, 22), alto = az.entero(22, 50), x1 = Math.min(W, x0 + ancho);
+        for (let y = H - alto; y < H; y++) for (let x = x0; x < x1 - 1; x++) img[y * W + x] = 0.03;
+        for (let y = H - alto + 3; y < H - 2; y += 4) for (let x = x0 + 2; x < x1 - 3; x += 4) if (az.real() < 0.55) img[y * W + x] = 0.95;
+        x0 = x1;
+      }
+      return img;
+    }
+    function nucleo(forma, r) {
+      if (r < 0.25) return { k: Float64Array.of(1), kw: 1, kh: 1 };
+      const R = forma === 'gauss' ? Math.ceil(1.5 * r) : Math.ceil(r), kw = 2 * R + 1, kh = forma === 'raya' ? 1 : kw, k = new Float64Array(kw * kh);
+      let s = 0;
+      for (let j = 0; j < kh; j++) for (let i = 0; i < kw; i++) {
+        const dx = i - R, dy = forma === 'raya' ? 0 : j - R, d = Math.hypot(dx, dy);
+        let v;
+        if (forma === 'disco') v = limitar(r + 0.5 - d, 0, 1);
+        else if (forma === 'cuadrado') v = limitar(r + 0.5 - Math.abs(dx), 0, 1) * limitar(r + 0.5 - Math.abs(dy), 0, 1);
+        else if (forma === 'gauss') v = Math.exp(-d * d / (2 * (r / 2) * (r / 2)));
+        else v = limitar(r + 0.5 - Math.abs(dx), 0, 1);
+        k[j * kw + i] = v; s += v;
+      }
+      for (let i = 0; i < k.length; i++) k[i] /= s;
+      return { k, kw, kh };
+    }
+    const desenfocar = (img, forma, r) => { const n = nucleo(forma, r); return Senal.convolucion2(img, W, H, n.k, n.kw, n.kh, { borde: 'repetir' }); };
+    function preparar() { if (!datos) { const nitida = ciudad(); datos = { nitida, objetivo: desenfocar(nitida, 'disco', R_OBJ), mia: null, clave: '' }; } return datos; }
+    const tuya = () => { const d = preparar(), c = st.forma + '|' + st.r; if (d.clave !== c) { d.mia = desenfocar(d.nitida, st.forma, st.r); d.clave = c; } return d.mia; };
+    const diferencia = () => {
+      const d = preparar(), m = tuya();
+      let e = 0, mn = Infinity, mx = -Infinity;
+      for (let i = 0; i < m.length; i++) { e += (m[i] - d.objetivo[i]) * (m[i] - d.objetivo[i]); mn = Math.min(mn, d.objetivo[i]); mx = Math.max(mx, d.objetivo[i]); }
+      return 100 * Math.sqrt(e / m.length) / (mx - mn);
+    };
+    // Una imagen en gris dibujada en un lienzo auxiliar y ampliada sin suavizar, para que se vean los píxeles.
+    const auxiliar = document.createElement('canvas');
+    auxiliar.width = W; auxiliar.height = H;
+    const pintar = (ctx, img, x, y, w, h) => {
+      const a = auxiliar.getContext('2d'), im = a.createImageData(W, H);
+      for (let i = 0; i < W * H; i++) { const v = Math.round(255 * Math.pow(limitar(img[i], 0, 1), 0.8)); im.data[4 * i] = v; im.data[4 * i + 1] = v; im.data[4 * i + 2] = Math.min(255, v + 6); im.data[4 * i + 3] = 255; }
+      a.putImageData(im, 0, 0);
+      ctx.save(); ctx.imageSmoothingEnabled = false; ctx.drawImage(auxiliar, x, y, w, h); ctx.restore();
+    };
+    const disposicion = w => { const cols = w >= 720 ? 4 : 2, hueco = 12, cw = Math.floor((w - hueco * (cols + 1)) / cols), ch = Math.round(cw * H / W); return { cols, hueco, cw, ch, filas: 4 / cols, alto: (4 / cols) * (ch + 26) + 6 }; };
+    const L = G.lienzo('#r5-escena', {
+      alto: w => disposicion(w).alto,
+      etiqueta: 'Cuatro imágenes: la foto nítida de una ciudad de noche, la foto borrosa que hay que conseguir, la foto que da tu sello y tu sello, ampliado',
+      dibujar: (ctx, w, h, C) => {
+        const d = preparar(), m = tuya(), g = disposicion(w);
+        const celdas = [['foto nítida', d.nitida], ['foto borrosa (objetivo)', d.objetivo], ['la tuya', m], ['tu sello, ampliado', null]];
+        celdas.forEach(([rotulo, img], i) => {
+          const col = i % g.cols, fila = Math.floor(i / g.cols), x = g.hueco + col * (g.cw + g.hueco), y = 4 + fila * (g.ch + 26);
+          G.texto(ctx, x, y + 11, rotulo, { color: C.suave, tam: 11, C });
+          if (img) pintar(ctx, img, x, y + 16, g.cw, g.ch);
+          else {
+            ctx.save();
+            ctx.fillStyle = C.superficie2 || G.alfa(C.cuerpo, 0.08); ctx.fillRect(x, y + 16, g.cw, g.ch);
+            const n = nucleo(st.forma, st.r);
+            let mx = 0;
+            for (const v of n.k) if (v > mx) mx = v;
+            const px = Math.max(1, Math.floor(Math.min((g.cw - 8) / n.kw, (g.ch - 8) / Math.max(1, n.kh)))), ox = x + (g.cw - px * n.kw) / 2, oy = y + 16 + (g.ch - px * n.kh) / 2;
+            for (let j = 0; j < n.kh; j++) for (let k = 0; k < n.kw; k++) { const v = n.k[j * n.kw + k] / mx; if (v > 0.02) { ctx.fillStyle = G.alfa(C.respuesta, Math.min(1, v)); ctx.fillRect(Math.round(ox + k * px), Math.round(oy + j * px), px, px); } }
+            ctx.restore();
+          }
+        });
+      },
+    });
+    const mandos = document.getElementById('r5-mandos');
+    const eleccion = Curso.eleccion(mandos, { etiqueta: 'Forma del sello', opciones: FORMAS, valor: st.forma, reto: 'reto-5', alCambiar: v => { st.forma = v; actualizar(); } });
+    const tam = Curso.mando(mandos, { etiqueta: 'Tamaño del sello', clase: 'respuesta', min: 0, max: RMAX, paso: 0.5, valor: st.r, formato: v => 'radio de ' + num(v, 1) + ' píxeles', reto: 'reto-5', alCambiar: v => { st.r = v; actualizar(); } });
+    eleccion.el.style.gridColumn = '1 / -1';
+    const lect = Curso.lecturas(document.getElementById('r5-fila'), [
+      { id: 'dif', nombre: 'Diferencia con la foto borrosa', clase: 'respuesta' },
+    ]);
+    function actualizar() { lect.fijar('dif', num(diferencia(), 1) + ' %'); L.dibujar(); }
+    Curso.alVerse(L.canvas, () => { preparar(); actualizar(); });
+    Curso.reto('reto-5', {
+      titulo: 'Desenfoca la foto', nivel: 'medio',
+      comprobar: () => {
+        preparar();
+        if (st.forma === 'disco' && Math.abs(st.r - R_OBJ) <= 0.5) return { ok: true, mensaje: 'Un disco de unos ' + num(st.r, 1) + ' píxeles de radio: esa es la forma del desenfoque de una lente, y la diferencia con la foto borrosa es de solo el ' + num(diferencia(), 1) + ' %.' };
+        if (st.r < 0.5) return { ok: false };
+        if (st.forma !== 'disco') return { ok: false, mensaje: 'Compara una ventana encendida de tu foto con la misma de la foto borrosa: ¿se parece la forma de la mancha a la que deja tu sello?' };
+        return { ok: false, mensaje: 'La forma es la buena, pero tu mancha es demasiado ' + (st.r > R_OBJ ? 'grande' : 'pequeña') + ': compara el tamaño de las ventanas con el de la foto borrosa.' };
+      },
+      resolver: () => { eleccion.fijar('disco'); tam.fijar(R_OBJ); },
+      pista: [
+        'Mira una ventana o una estrella suelta en la foto borrosa: cada punto de luz de la foto nítida se ha convertido en una mancha, y esa mancha es el sello.',
+        'Las manchas tienen el borde duro y son redondas, como el desenfoque de una lente. Pruébalo con un radio de unos 4 píxeles.',
+      ],
+      exito: '<p>Un objetivo desenfocado convierte cada punto en un disco, una cámara movida lo convierte en una raya y el aire caliente, en una mancha suave. La foto borrosa es la suma de todos esos sellos de luz, igual que la salida de una sala es la suma de todas las colas. Y por eso se pueden intentar despegar, como hicieron con el Hubble, aunque solo a medias.</p>',
+    });
+  })();
+
+  // ── Reto 6 · Sumar sellos es multiplicar espectros (dos deslizadores) ───────────────────────────────────
+  // Un sello de dos palitos, [1, g en D muestras], a 16.000 Hz. Su respuesta en frecuencia (Senal.respuesta) es un
+  // peine: hay que apagar un pitido de 1.000 Hz y dejar pasar una nota de 2.000 Hz.
+  (function () {
+    const FS = 16000, F_PITIDO = 1000, F_NOTA = 2000, DMAX = 3, SUELO = -45;
+    const st = { d: 1, g: 0.5 };
+    const nd = () => Math.round(st.d * FS / 1000);
+    const sello = () => { const n = nd(), b = new Float64Array(n + 1); b[0] = 1; b[n] += st.g; return b; };
+    const FR = Float64Array.from({ length: 321 }, (_, i) => i * 12.5);
+    const ganancias = () => Senal.respuesta({ b: sello(), a: [1] }, FS, [F_PITIDO, F_NOTA]).magDb;
+    const MX = { izquierda: 44, derecha: 14 };
+    const escena = document.getElementById('r6-escena');
+    const LA = G.lienzo(escena, {
+      alto: altoMov(104, 118),
+      etiqueta: 'El sello de dos palitos: el directo y el eco, en naranja, con el retraso en milisegundos',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 10, abajo: 22 }, x: [-0.15, DMAX + 0.3], y: [-0.08, 1.35], marcasX: [0, 0.5, 1, 1.5, 2, 2.5, 3], formatoX: v => num(v, 1) + (v === 3 ? ' ms' : ''), marcasY: [0, 0.5, 1], formatoY: v => num(v, 1), cero: true, C });
+        G.tallos(ctx, esc, [0, nd() / FS * 1000], [1, st.g], { color: C.respuesta, radio: 5.5, C });
+        G.texto(ctx, esc.caja.x + esc.caja.w - 6, esc.caja.y + 12, 'sello (milisegundos)', { alinear: 'right', color: C.tenue, tam: 11, C });
+      },
+    });
+    const LB = G.lienzo(escena, {
+      alto: altoMov(170, 195),
+      etiqueta: 'La respuesta en frecuencia del sello, de cero a cuatro mil hercios, con el pitido de 1.000 Hz en coral y la nota de 2.000 Hz en verde',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 22, abajo: 22 }, x: [0, 4000], y: [SUELO, 9], marcasX: [0, 1000, 2000, 3000, 4000], formatoX: fHz, marcasY: [-40, -20, 0], formatoY: v => num(v), etiquetaY: 'respuesta del sello (dB)', cero: true, C });
+        separador(ctx, w, C);
+        const r = Senal.respuesta({ b: sello(), a: [1] }, FS, FR).magDb;
+        G.linea(ctx, esc, FR, Float64Array.from(r, v => Math.max(v, SUELO - 5)), { color: C.respuesta, ancho: 2.5, C });
+        const [gp, gn] = ganancias();
+        G.puntos(ctx, esc, [F_PITIDO], [Math.max(gp, SUELO + 1)], { color: C.ruido, radio: 6, borde: C.pantalla, C });
+        G.puntos(ctx, esc, [F_NOTA], [Math.max(gn, SUELO + 1)], { color: C.senal, radio: 6, borde: C.pantalla, C });
+        G.texto(ctx, esc.x(F_PITIDO) - 9, Math.min(esc.y(gp) - 10, esc.caja.y + esc.caja.h - 18), 'pitido', { alinear: 'right', color: C.ruido, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+        G.texto(ctx, esc.x(F_NOTA) + 9, Math.min(esc.y(gn) - 10, esc.caja.y + esc.caja.h - 18), 'nota', { color: C.senal, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+      },
+    });
+    const mandos = document.getElementById('r6-mandos');
+    const mD = Curso.mando(mandos, { etiqueta: 'Retraso del eco', clase: 'respuesta', min: 0, max: DMAX, paso: 1000 / FS, valor: st.d, formato: v => num(v, 2) + ' ms', reto: 'reto-6', alCambiar: v => { st.d = v; cambio(); } });
+    const mG = Curso.mando(mandos, { etiqueta: 'Fuerza del eco', clase: 'respuesta', min: 0, max: 1, paso: 0.01, valor: st.g, formato: v => num(v, 2), reto: 'reto-6', alCambiar: v => { st.g = v; cambio(); } });
+    const fila = document.getElementById('r6-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'p', nombre: 'Pitido de 1.000 Hz', clase: 'ruido' },
+      { id: 'n', nombre: 'Nota de 2.000 Hz', clase: 'senal' },
+    ]);
+    const botones = filaBotones(fila);
+    const tonos = () => { const x = new Float64Array(Math.round(1.4 * FS)); for (let i = 0; i < x.length; i++) x[i] = 0.3 * Math.sin(TAU * F_PITIDO * i / FS) + 0.3 * Math.sin(TAU * F_NOTA * i / FS); return x; };
+    Curso.audio.boton(botones, () => ({ x: tonos(), fs: FS, volumen: 0.6, normalizar: false }), 'Oír el pitido y la nota', { clase: 'peque' });
+    Curso.audio.boton(botones, () => ({ x: Senal.convolucion(tonos(), sello()).subarray(0, Math.round(1.4 * FS)), fs: FS, volumen: 0.6, normalizar: false }), 'Oír con tu sello', { clase: 'peque' });
+    const dbTxt = v => (v < SUELO ? 'menos de −45 dB' : (v > 0.05 ? '+' : '') + num(v, 1) + ' dB');
+    function cambio() {
+      const [gp, gn] = ganancias();
+      lect.fijar('p', dbTxt(gp));
+      lect.fijar('n', dbTxt(gn));
+      LA.dibujar(); LB.dibujar();
+    }
+    cambio();
+    Curso.reto('reto-6', {
+      titulo: 'Sumar sellos es multiplicar espectros', nivel: 'difícil',
+      comprobar: () => {
+        const [gp, gn] = ganancias();
+        if (gp <= -30 && gn >= -1) return { ok: true, mensaje: 'El pitido baja a ' + dbTxt(gp) + ' y la nota queda en ' + dbTxt(gn) + ': tu sello apaga una frecuencia y deja pasar la otra.' };
+        if (st.d === 0) return { ok: false, mensaje: 'Con el eco pegado al sonido directo no hay retraso: las dos copias se suman en todas las frecuencias. Separa el eco.' };
+        if (gp > -30 && st.g < 0.9) return { ok: false, mensaje: 'Para anular una frecuencia, la copia tiene que valer casi lo mismo que el original, para que al sumarse a contrafase se resten. Sube la fuerza del eco.' };
+        if (gp > -30) return { ok: false, mensaje: 'El pitido sigue a ' + dbTxt(gp) + '. Busca un retraso en el que la copia llegue justo a media vuelta del pitido: así sube cuando el original baja.' };
+        return { ok: false, mensaje: 'Has apagado el pitido, pero la nota de 2.000 Hz también baja (' + dbTxt(gn) + '). Prueba con otro retraso que apague el pitido sin apagar la nota.' };
+      },
+      resolver: () => { mD.fijar(0.5); mG.fijar(1); },
+      pista: [
+        'Un pitido de 1.000 Hz da una vuelta cada milisegundo. Si la copia llega media vuelta más tarde, la copia va al revés que el original y las dos se anulan.',
+        'Media vuelta de 1.000 Hz son 0,5 ms. Con ese retraso y la fuerza al máximo, el pitido desaparece, y a 2.000 Hz esos 0,5 ms son una vuelta entera, así que la nota se suma consigo misma.',
+      ],
+      exito: '<p>Un sello de dos palitos es un filtro: en frecuencias dibuja un peine que refuerza unas frecuencias y apaga otras, justo las que tu retraso deja a media vuelta. Es el teorema de la convolución: sumar sellos en el tiempo es multiplicar el espectro por la respuesta en frecuencia del sello. Y por eso una sala, que es un sello enorme, es un ecualizador con retrasos.</p>',
+    });
+  })();
+
+
+  // ── En tu voz · tu palmada como sello ───────────────────────────────────────────────────────────────────
+  // El audio llega a 16.000 Hz. Se buscan las palmadas, se recorta el sello de la que elijas, se enseña su
+  // caída y una estimación del T60, y se convoluciona con él una frase sintética (Senal.convolucion, por FFT).
+  (function () {
+    const FS = 16000;
+    // ── Análisis puro del laboratorio: encontrar palmadas, recortar el sello y estimar el T60 ─────────────────
+    const pot2 = n => { let p = 16; while (p * 2 <= n) p *= 2; return p; };
+    // Las palmadas: picos de la envolvente (máximo de |x| cada 5 ms) a menos de 20 dB del máximo y separados al menos 0,4 s.
+    function buscarPalmadas(x, fs) {
+      const w = Math.max(1, Math.round(0.005 * fs)), nb = Math.floor(x.length / w), env = new Float64Array(nb);
+      let mx = 0;
+      for (let b = 0; b < nb; b++) { let m = 0; for (let k = b * w; k < (b + 1) * w; k++) { const a = Math.abs(x[k]); if (a > m) m = a; } env[b] = m; if (m > mx) mx = m; }
+      if (!(mx > 1e-4)) return [];
+      const med = Array.from(env).sort((a, b) => a - b)[nb >> 1];
+      if (mx < 8 * med) return [];   // sin un golpe claro sobre el ruido de fondo
+      const lista = [];
+      for (let b = 1; b < nb - 1; b++) {
+        if (env[b] < 0.1 * mx || env[b] < env[b - 1] || env[b] <= env[b + 1]) continue;
+        const t = b * w / fs, ult = lista[lista.length - 1];
+        if (ult && t - ult.t < 0.4) { if (env[b] > ult.nivel) { ult.t = t; ult.nivel = env[b]; } } else lista.push({ t, nivel: env[b] });
+      }
+      return lista.map(p => {
+        // El pico exacto, dentro de la ventana de 5 ms de su envolvente (y un poco antes)
+        let k0 = Math.max(0, Math.round(p.t * fs) - w), k1 = Math.min(x.length - 1, Math.round(p.t * fs) + 2 * w), km = k0;
+        for (let k = k0; k <= k1; k++) if (Math.abs(x[k]) > Math.abs(x[km])) km = k;
+        return { t: km / fs, i: km, nivel: Math.abs(x[km]) };
+      });
+    }
+    // Decibelios de la energía media de tramas de 20 ms que empiezan en «desde»
+    const tramasDb = (x, fs, desde, hasta) => {
+      const n = Math.max(1, Math.round(0.02 * fs)), out = [];
+      for (let i = desde; i + n <= hasta; i += n) { let s = 0; for (let k = i; k < i + n; k++) s += x[k] * x[k]; out.push(10 * Math.log10(s / n + 1e-14)); }
+      return out;
+    };
+    // El sello de una palmada: desde 2 ms antes del pico hasta que la cola se hunde en el ruido de fondo (percentil 10
+    // de las tramas, más 3 dB), a 60 dB del pico, 50 ms antes de la palmada siguiente o 2 s como mucho.
+    function recortarSello(x, fs, palmadas, k) {
+      const p = palmadas[k], ini = Math.max(0, p.i - Math.round(0.002 * fs));
+      const todas = tramasDb(x, fs, 0, x.length).sort((a, b) => a - b);
+      const suelo = (todas.length ? todas[Math.floor(0.1 * (todas.length - 1))] : -140) + 3;
+      const tope = Math.min(x.length, ini + Math.round(2 * fs), palmadas[k + 1] ? Math.round((palmadas[k + 1].t - 0.05) * fs) : x.length);
+      const n = Math.max(1, Math.round(0.02 * fs));
+      let pico = -Infinity, fin = Math.min(tope, ini + n);
+      for (let i = ini, j = 0; i + n <= tope; i += n, j++) {
+        let s = 0;
+        for (let q = i; q < i + n; q++) s += x[q] * x[q];
+        const db = 10 * Math.log10(s / n + 1e-14);
+        if (j === 0) pico = db;
+        fin = i + n;
+        if (j > 0 && (db <= suelo || db <= pico - 60)) break;
+      }
+      fin = Math.max(fin, Math.min(tope, ini + Math.round(0.05 * fs)));
+      const h = Float64Array.from(x.subarray(ini, fin));
+      const f0 = Math.floor(h.length * 0.8);
+      for (let i = f0; i < h.length; i++) h[i] *= 0.5 * (1 + Math.cos(Math.PI * (i - f0) / (h.length - f0)));
+      let m = 0;
+      for (let i = 0; i < h.length; i++) m = Math.max(m, Math.abs(h[i]));
+      if (m > 0) for (let i = 0; i < h.length; i++) h[i] /= m;
+      let saturadas = 0;
+      for (let i = Math.max(0, p.i - 8); i < Math.min(x.length, p.i + 8); i++) if (Math.abs(x[i]) >= 0.99) saturadas++;
+      return { h, duracion: h.length / fs, saturada: saturadas >= 3 };
+    }
+    // La caída de la energía (curva de Schroeder: lo que queda de energía desde cada instante hasta el final, en dB)
+    // y el T60 estimado con la pendiente entre −5 y −25 dB.
+    function caida(h, fs) {
+      const n = h.length, e = new Float64Array(n);
+      let s = 0;
+      for (let i = n - 1; i >= 0; i--) { s += h[i] * h[i]; e[i] = s; }
+      const db = Float64Array.from(e, v => 10 * Math.log10(v / (e[0] || 1) + 1e-12));
+      const cruza = nivel => { for (let i = 0; i < n; i++) if (db[i] <= nivel) return i / fs; return null; };
+      const t5 = cruza(-5), t25 = cruza(-25);
+      return { db, t60: t5 !== null && t25 !== null && t25 > t5 ? 3 * (t25 - t5) : null, t5, t25 };
+    }
+    const st = { x: null, palmadas: [], k: 0, sello: null, caida: null, frase: null, humeda: null, mezcla: 0.7, nombre: '' };
+    const frase = () => st.frase || (st.frase = Senal.ejemplos.frase(FS));
+    const lab = Curso.voz('#voz-lab', {
+      ejemplos: ['palmadas', { id: 'bano', nombre: 'Solo el baño', crear: fs => Senal.ejemplos.palmadas(fs, { sala: 'bano' }) }, { id: 'habitacion', nombre: 'Solo la habitación', crear: fs => Senal.ejemplos.palmadas(fs, { sala: 'habitacion' }) }],
+      fsAnalisis: FS, fsEjemplos: FS, alCargar: cargar,
+      alDibujarVista: (ctx, esc, C) => {
+        st.palmadas.forEach((p, k) => {
+          const x = esc.x(p.t), elegida = k === st.k;
+          ctx.save();
+          ctx.strokeStyle = elegida ? C.acento : G.alfa(C.respuesta, 0.7); ctx.lineWidth = elegida ? 2 : 1.2;
+          ctx.beginPath(); ctx.moveTo(Math.round(x) + 0.5, esc.caja.y); ctx.lineTo(Math.round(x) + 0.5, esc.caja.y + esc.caja.h); ctx.stroke();
+          ctx.fillStyle = elegida ? C.acento : C.respuesta;
+          ctx.beginPath(); ctx.arc(x, esc.caja.y + 5, elegida ? 5 : 3.5, 0, TAU); ctx.fill();
+          ctx.restore();
+        });
+      },
+      alTocarVista: t => {
+        if (!st.palmadas.length) return;
+        let mejor = 0;
+        st.palmadas.forEach((p, k) => { if (Math.abs(p.t - t) < Math.abs(st.palmadas[mejor].t - t)) mejor = k; });
+        elegir(mejor);
+      },
+    });
+    const mandos = crear('div', { class: 'mandos' });
+    lab.panel.appendChild(mandos);
+    const fila = filaBotones(lab.panel);
+    Curso.botones(fila, [
+      { id: 'ant', texto: 'Palmada anterior', tipo: 'discreto', peque: true, alPulsar: () => elegir(st.k - 1) },
+      { id: 'sig', texto: 'Palmada siguiente', tipo: 'discreto', peque: true, alPulsar: () => elegir(st.k + 1) },
+    ]);
+    const mezcla = Curso.mando(mandos, { etiqueta: 'Mezcla de la frase: seca o con tu sala', clase: 'respuesta', min: 0, max: 100, paso: 5, valor: 70, formato: v => (v === 0 ? 'solo seca' : v === 100 ? 'solo con tu sala' : num(v) + ' % con tu sala'), alCambiar: v => { st.mezcla = v / 100; } });
+    const filaSonido = filaBotones(lab.panel);
+    Curso.audio.boton(filaSonido, () => (st.sello ? { x: frase(), fs: FS, volumen: 0.8 } : null), 'Oír la frase seca', { clase: 'peque' });
+    Curso.audio.boton(filaSonido, () => (st.sello ? mezclada() : null), 'Oír la frase con tu sala', { clase: 'peque' });
+    Curso.audio.boton(filaSonido, () => (st.sello ? { x: st.sello.h, fs: FS, volumen: 0.8 } : null), 'Oír tu sello', { clase: 'peque' });
+    const lect = Curso.lecturas(lab.panel, [
+      { id: 'palmada', nombre: 'Palmada elegida' },
+      { id: 'dur', nombre: 'Duración del sello', clase: 'respuesta' },
+      { id: 't60', nombre: 'T60 (estimación)', clase: 'respuesta' },
+    ]);
+    const MX = { izquierda: 44, derecha: 14 };
+    const escena = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena);
+    const LA = G.lienzo(escena, {
+      alto: altoMov(120, 140),
+      etiqueta: 'El sello recortado de tu palmada: la onda en naranja',
+      dibujar: (ctx, w, h, C) => {
+        const s = st.sello, dur = s ? Math.max(s.duracion, 0.1) : 1;
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 10, abajo: 22 }, x: [0, dur], y: [-1.15, 1.15], marcasY: false, formatoX: v => num(v, v < 1 ? 2 : 1) + ' s', cero: true, C });
+        if (!s) { G.texto(ctx, w / 2, h / 2, 'Sin palmadas que enseñar', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+        G.linea(ctx, esc, null, s.h, { t0: 0, dt: 1 / FS, color: C.respuesta, ancho: 1.3, C });
+        G.texto(ctx, esc.caja.x + 6, esc.caja.y + 12, 'tu sello', { color: C.tenue, tam: 11, C });
+      },
+    });
+    const escena2 = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena2);
+    const LB = G.lienzo(escena2, {
+      alto: altoMov(130, 150),
+      etiqueta: 'La caída de la energía de tu sello, en decibelios, con la recta con la que se estima el tiempo de reverberación',
+      dibujar: (ctx, w, h, C) => {
+        const s = st.sello, c = st.caida, dur = s ? Math.max(s.duracion, 0.1) : 1;
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 10, abajo: 22 }, x: [0, dur], y: [-70, 3], marcasY: [-60, -40, -20, 0], formatoY: v => num(v), formatoX: v => num(v, v < 1 ? 2 : 1) + ' s', cero: false, C });
+        separador(ctx, w, C);
+        if (!s || !c) return;
+        G.linea(ctx, esc, null, Float64Array.from(c.db, v => Math.max(v, -70)), { t0: 0, dt: 1 / FS, color: C.respuesta, ancho: 2, C });
+        if (c.t60 !== null) {
+          const pend = -20 / (c.t25 - c.t5), ta = c.t5 + 5 / pend, tb = c.t5 - 60 / pend;
+          G.linea(ctx, esc, [ta, tb], [0, -65], { color: C.cuerpo, guiones: [5, 4], alfa: 0.75, halo: false, ancho: 1.4, C });
+        }
+        G.texto(ctx, esc.caja.x + esc.caja.w - 4, esc.caja.y + 13, 'energía que queda (dB)', { alinear: 'right', color: C.tenue, tam: 10, C });
+      },
+    });
+    const nota = crear('p', { class: 'nota-reto' }, '');
+    lab.panel.appendChild(nota);
+
+    function cargar(x, fs, nombre) {
+      st.x = x; st.nombre = nombre || '';
+      st.palmadas = x.length >= FS * 0.2 ? buscarPalmadas(x, FS) : [];
+      // Por defecto, la cuarta si hay seis (la primera del baño); si no, la de en medio.
+      st.k = st.palmadas.length >= 6 ? 3 : Math.floor(st.palmadas.length / 2);
+      recortar();
+    }
+    function elegir(k) {
+      if (!st.palmadas.length) return;
+      st.k = limitar(k, 0, st.palmadas.length - 1);
+      recortar();
+    }
+    function recortar() {
+      st.humeda = null;
+      if (st.palmadas.length) {
+        st.sello = recortarSello(st.x, FS, st.palmadas, st.k);
+        st.caida = caida(st.sello.h, FS);
+      } else { st.sello = null; st.caida = null; }
+      refrescar();
+    }
+    // La frase convolucionada con el sello, con relleno hasta la longitud completa (L + M − 1).
+    function humeda() {
+      if (!st.humeda) {
+        const y = Senal.convolucion(frase(), st.sello.h), k = pico(frase()) / (pico(y) || 1);
+        st.humeda = Float64Array.from(y, v => v * k);
+      }
+      return st.humeda;
+    }
+    function mezclada() {
+      const seca = frase(), hum = humeda(), y = new Float64Array(hum.length), m = st.mezcla;
+      for (let i = 0; i < y.length; i++) y[i] = (1 - m) * (i < seca.length ? seca[i] : 0) + m * hum[i];
+      return { x: y, fs: FS, volumen: 0.8 };
+    }
+    function refrescar() {
+      const s = st.sello, c = st.caida;
+      lect.fijar('palmada', s ? (st.k + 1) + ' de ' + st.palmadas.length + ', a los ' + num(st.palmadas[st.k].t, 1) + ' s' : '—');
+      lect.fijar('dur', s ? num(s.duracion, 2) + ' s' : '—');
+      lect.fijar('t60', s && c && c.t60 !== null ? 'unos ' + num(c.t60, 1) + ' s' : '—');
+      let aviso = '';
+      if (!st.x) aviso = '';
+      else if (!s) aviso = 'No he encontrado ninguna palmada clara: busco golpes secos que sobresalgan del ruido de fondo, separados al menos 0,4 s. Prueba a dar palmadas más fuertes y más cerca del micrófono, o elige el ejemplo.';
+      else if (s.saturada) aviso = 'La palmada elegida está saturada, con los picos planos, y el sello saldrá áspero. Graba más lejos del micrófono o con menos fuerza.';
+      else if (s.duracion < 0.1) aviso = 'Este sello dura menos de 0,1 s: puede que tu aplicación haya recortado la cola, o que la sala sea muy seca.';
+      else if (c && c.t60 === null) aviso = 'La cola se hunde en el ruido de fondo antes de bajar 25 dB, así que no puedo estimar el T60. Con otra palmada, o en una sala más silenciosa, saldrá.';
+      else aviso = 'El sello va de un poco antes del golpe hasta que la cola se hunde en el ruido de fondo. El T60 se estima con la pendiente entre −5 y −25 dB, y es solo una estimación: la palmada no es un impulso perfecto.';
+      nota.textContent = aviso;
+      lab.redibujarVista && lab.redibujarVista();
+      LA.dibujar(); LB.dibujar();
+    }
+    refrescar();
+  })();
+})();
+</script>
+</body>
+</html>
