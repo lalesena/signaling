@@ -1,0 +1,1228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Filters: keeping what matters · Signals</title>
+<meta name="description" content="Lesson 6 of the visual course “Signals, from Zero to Expert”: what a filter is, why it is drawn as a curve (low-pass, high-pass, band-pass and band-stop) and why the moving average is the simplest one, with an equalizer, six challenges and your own voice.">
+<link rel="stylesheet" href="../comun/fuentes.css">
+<link rel="stylesheet" href="../comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+<style>
+/* Tarjetas que se tocan para elegir (una curva de filtro en el reto 2) */
+.tarjeta { font: inherit; color: inherit; text-align: center; cursor: pointer; }
+.tarjeta:hover:not(:disabled) { border-color: var(--acento); }
+.tarjeta:disabled { cursor: default; color: inherit; }
+.tarjeta.es-correcta { border-color: var(--ok); box-shadow: 0 0 0 3px var(--ok-suave); }
+.tarjeta.fallo { border-color: var(--mal); box-shadow: 0 0 0 3px var(--mal-suave); }
+</style>
+</head>
+<body data-leccion="e06">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Level 3 · Lesson 6</p>
+    <h1>Filters: keeping what matters</h1>
+    <aside class="pregunta">
+      <p>With the equalizer of a music app you turn the bass up, turn the treble down, and the song sounds different. The old landline phone network leaves a voice thin and tinny, and an electrocardiograph has to remove the hum of the power grid from a signal that comes out of the heart. An app, a phone line and a hospital machine have nothing in common and yet all three do the same thing to the signal that reaches them. What is it?</p>
+    </aside>
+    <ul class="meta"><li>About 50 minutes</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>The idea in one picture</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>A five-knob equalizer on a piece of synthetic music. At the top, the orange curve that joins the knobs: it says by how much each frequency is multiplied. In the middle, the spectrum of the music, faint before it goes through the equalizer and vivid after. At the bottom, the wave, faint before and green after, which changes shape because it no longer contains the same Ferris wheels.</figcaption>
+    </figure>
+    <p>An equalizer is a <b class="termino">filter</b>, and how it works fits in one picture: a row of knobs, one for each band of frequencies, and each knob multiplies the Ferris wheels in its band by a number. If you turn up the bass knob, the slow wheels grow, and if you turn down the treble knob, the fast ones shrink. From <a href="e04.html">lesson 4</a> you know that the spectrum says how much of each wheel there is, so filtering is shaping that spectrum.</p>
+    <p>Move the knobs and watch two things at once. The spectrum changes exactly as the curve says: where the curve goes up, the spectrum goes up, and where it goes down, it goes down. And the wave at the bottom, which is what actually reaches the speaker, changes shape, because a wave with less bass or less treble is a different sum of wheels. The rule is applied frequency by frequency, but the result is seen and heard in time.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Step by step</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>One knob for each band</h3>
+      <p>Each knob on the equalizer carries a number, the <b class="termino">gain</b>, which is measured in the decibels of <a href="e05.html">lesson 5</a>: 6 dB more doubles the height of the wheels in its band, 6 dB less leaves it at half, and with 0 dB nothing changes. Turning up the bass knob is multiplying the slow wheels by a number greater than one, and turning down the treble knob is multiplying the fast wheels by a number smaller than one.</p>
+      <p>The line that joins the knobs is the <b class="termino">frequency response</b> of the filter, and it is all the information needed to describe it, because it says, for each frequency, by how much it is multiplied. Filtering is multiplying the spectrum of the signal by that curve, frequency by frequency, and what comes out of the speaker is the signal whose spectrum is that product.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Make the music sound like an old radio: drag the orange dots until your curve covers the dashed one.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="fila" id="r1-fila"></div>
+        <p class="nota-reto">Each dot is a knob: drag it up or down, or tap near it. With the keyboard, tab to the canvas, choose a knob with the left and right arrow keys and move it with the up and down ones.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>Four shapes of curve</h3>
+      <p>With that same equalizer you can draw almost any filter, and the most common ones have names according to the shape of their curve. The one that lets the lows through and holds back the highs is a <b class="termino">low-pass</b>, and you have one at home: a wall lets low pitches through better than high ones, and that is why from the neighbor's music you mostly get the bass while their voice sounds muffled. The opposite, which removes what is slow and lets what is fast through, is a <b class="termino">high-pass</b>, and it is used to remove the rumble of a knock on the microphone or the drift of a line that slowly rises and falls.</p>
+      <p>If only one band is let through, the filter is a <b class="termino">band-pass</b>, like the one in the phone voice you will see shortly. And if only a narrow band is removed and everything else is let through, it is a <b class="termino" data-termino="Band-stop (notch)">band-stop</b>, also called a notch, which is the tool against the hum of the power grid.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Listen to a sound and choose the curve of the filter it went through. They are all the same sentence. Get three right in a row.</p>
+        <div class="fila" id="r2-fila"></div>
+        <div class="escena" id="r2-espectro" hidden></div>
+        <div class="columnas-2" id="r2-curvas"></div>
+        <div class="fila" id="r2-acciones"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>The phone voice</h3>
+      <p>For decades, the digital phone network has guaranteed an almost flat response between about 300 and 3,400 Hz, with 8,000 samples per second. Outside that band the standard no longer promises anything: at the top it is cut off so that the sampling isn't fooled, because with 8,000 samples per second nothing above 4,000 Hz fits, as you saw in <a href="e02.html">lesson 2</a>, and at the bottom each operator decides. It is a band-pass, and you can hear it: a good part of the energy of the “s” and the “f” is above 3,400 Hz, and so little of it reaches the classic phone that they are hard to tell apart.</p>
+      <p>The curious thing is that the pitch of the voice is still heard. The fundamental of most adult voices, when speaking, is below 300 Hz and the classic phone barely lets it through, but you can tell whether the voice is low or high, because your brain works out the note from the harmonics, which do get through. They are the Ferris wheels of <a href="e03.html">lesson 3</a>: a stack of speeds that are multiples of the fundamental.</p>
+      <p>The HD voice of mobile phones widens the band to 50–7,000 Hz, and the most modern codecs, such as EVS, reach up to 20,000 Hz when the network and both phones allow it.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Turn this voice into an old-style phone call: drag the two handles of the filter until you let through just the band the phone used to let through.</p>
+        <div class="escena" id="r3-escena"></div>
+        <div class="fila" id="r3-fila"></div>
+        <p class="nota-reto">Drag each handle left or right, or tap near it. With the keyboard, tab to the canvas, switch handles with the up and down arrow keys and move one with the left and right ones.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>The hum</h3>
+      <p>The power grid sneaks into recordings as a hum of 50 Hz in Europe and 60 Hz in much of the Americas. It is not a single line, but the frequency of the grid and its multiples, and sometimes the strongest is the one at 100 Hz, depending on where the hum comes from. That is why a notch at 50 Hz is not enough: the 100 and 150 Hz are still there, and you need a notch at each one.</p>
+      <p>A narrow notch removes the hum almost without touching the voice, because the voice has nothing right at those frequencies. The price of being narrow is that it takes time to settle, and the narrower it is, the longer it takes: very narrow ones need several hundred milliseconds to take full effect.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">The hum as a clock</span>
+        <p>The hum you want to remove serves a forensic examiner as a clock. The grid is never exactly at 50 Hz, its small fluctuations are recorded in the audio and, by comparing them with a record of the grid, you can check whether a recording has been cut. According to a 2014 SWGDE working document, some laboratories use it to date recordings, although there is no guarantee that the hum will show up.</p>
+      </aside>
+      <p>The same problem appears in an electrocardiograph, where the 50 Hz of the grid falls in the middle of the band of the heart signal. There a poorly chosen filter doesn't just remove noise, it can distort the tracing, and that is why the 2007 recommendations for the electrocardiogram ask the device to let through from 0.05 Hz up to at least 150 Hz in adults. In this course, the electrocardiogram is just an example of a signal: what matters is how it is filtered, not what it says.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Get the hum down by at least 30 dB without touching the voice. Tap the peaks in the spectrum to put a notch on them; you have four.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="fila" id="r4-fila"></div>
+        <p class="nota-reto">The red peaks are the hum and the yellow ones are the voice. Tap a peak to put a notch on it and tap it again to remove it. With the keyboard, tab to the canvas, move through the peaks with the left and right arrow keys and add or remove the notch with the Enter key.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>Cutoff and slope</h3>
+      <p>A filter doesn't cut off abruptly. The <b class="termino">cutoff frequency</b> is the point where the power has already dropped to half, which is about 3 dB down, and from there the curve keeps falling with a slope that depends on the <b class="termino" data-termino="Filter order">order</b> of the filter. In the Butterworth filter, from 1930, which was designed to be as flat as possible in the band it lets through, each order adds about 6 dB of drop per octave, and an octave is doubling the frequency.</p>
+      <p>A low order is a gentle ramp and a high order is a cliff. To separate two notes that are an octave apart you need a cliff, but it has a price: the more abrupt a filter is, the more it delays the signal, the longer it takes to settle and the more it can distort the wave, as you will see in <a href="e08.html">lesson 8</a>.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Let the 1,000 Hz note through almost intact and sink the 2,000 Hz beep below −40 dB. You have two knobs: the cutoff and the order.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>The moving average</h3>
+      <p>The simplest filter of all doesn't need to know anything about frequencies: each data point is replaced by the average of the last <i>N</i>. It is the <b class="termino">moving average</b>, and the pandemic charts used it every day. In 2020, daily cases went up and down every week, because on weekends fewer tests were done and reported, and the 7-day average erased that sawtooth.</p>
+      <p>It works because a 7-day average always contains a Monday, a Tuesday, a Wednesday and so on up to Sunday, so anything that repeats exactly every week is seen in full, with its highs and lows canceling out. In general, a moving average of <i>N</i> samples completely erases everything that makes a whole number of turns in <i>N</i> samples. It does have two catches. If it is computed with today and the six previous days, it describes what was happening three days ago, so the curve arrives three days late; you can center the average, but then you need the data from the next three days. And for cleaning up random noise without blurring the jumps it is the best possible filter, but for separating one frequency from another it is among the worst, according to Steven Smith in his book on signal processing.</p>
+      <p>In Spain people talked about the 14-day incidence: the cases of the last two weeks per 100,000 inhabitants, which was among the main indicators of Spain's Ministry of Health. It is a moving sum, the same filter with a 14-day window, and that is why it didn't have weekend teeth either.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">These are daily cases, synthetic, for a wave with a weekly rhythm. Get a curve without teeth that marks the peak on the day it really happened, day 70.</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>In your voice</h2>
+    <p><b>What to record.</b> The sentence from the reference recording (segment 5) and, separately, a few seconds of the silence of your room (segment 1). Record with the microphone if your browser allows it; if not, upload audio recorded with your phone or try the synthetic examples, one of them with hum.</p>
+    <p><b>What to look at.</b> Run your sentence through the classic phone: it is understandable, it sounds “canned,” the “s” loses its hiss and the pitch is still there even though the fundamental is missing. Run it through the wall and you will see the voice gets muffled and the words are hard to make out. With the silence of your room, the lab looks for thin lines at 50 or 60 Hz and their multiples; if there are any, it proposes a notch for each one and measures how much the hum drops. With a phone's microphone the most normal thing is that there are none, and then it tells you so and lets you try the example.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>What to remember</h2>
+    <ol class="tres">
+      <li>A filter multiplies each frequency by a number, and the curve of those numbers is its frequency response. Low-pass, high-pass, band-pass and band-stop are four shapes of that curve.</li>
+      <li>A filter doesn't cut off abruptly: the cutoff frequency is where the power drops to half, and the slope depends on the order. Abruptness has a price, because it delays more and distorts more.</li>
+      <li>The moving average is the simplest filter: it erases everything that fits a whole number of times in its window and, in exchange, delays the curve. A filter only separates what occupies different frequencies.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Common mistakes</h2>
+    <ul class="errores">
+      <li><b>“A low-pass removes the bass.”</b> The other way around: it lets the lows, the bass, through and holds back the highs. The name says what passes, not what is removed.</li>
+      <li><b>“The cutoff frequency is where the filter cuts off abruptly.”</b> It is where the gain falls to −3 dB, half the power. From there the curve keeps going down, with a slope that depends on the order.</li>
+      <li><b>“A filter removes noise.”</b> Only noise that falls outside the band of the signal. Noise that shares frequencies with the voice passes along with it: to separate John Lennon's voice from the piano on a demo, in 2023, on the song “Now and Then,” it took a machine-learning program, not an equalizer.</li>
+      <li><b>“The more abrupt, the better.”</b> An abrupt filter delays more, takes longer to settle and can distort the wave, which is the reason for the electrocardiogram recommendations.</li>
+      <li><b>“The 7-day average gives you today's figure.”</b> If it is computed with today and the six previous days, it actually describes what was happening three days ago.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Open</span>
+      <h2>Math corner</h2>
+      <span class="resumen">The formulas, for whoever wants them. Each one comes after its reading in words.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>Filtering is multiplying</h3>
+      <p>Filtering is multiplying, frequency by frequency, the spectrum of the input <span class="tex">X(f)</span> by the response of the filter <span class="tex">H(f)</span>:</p>
+      <div class="tex">Y(f) = H(f)\,X(f)</div>
+
+      <h3>Gain and cutoff frequency</h3>
+      <p>The gain in decibels is twenty times the logarithm of the size of the response, and the cutoff frequency is where the power drops to half, that is, about 3 dB:</p>
+      <div class="tex">G(f) = 20\,\log_{10}|H(f)|, \qquad |H(f_c)| = \tfrac{1}{\sqrt{2}} \;\Longleftrightarrow\; G(f_c) \approx -3\ \text{dB}</div>
+
+      <h3>The Butterworth filter</h3>
+      <p>The Butterworth low-pass of order <span class="tex">n</span> is flat in the passband and, far from the cutoff, falls about 6 dB per octave for each order:</p>
+      <div class="tex">|H(f)|^2 = \frac{1}{1 + (f/f_c)^{2n}}</div>
+      <p>The high-pass is the same drawing turned around: it holds back what is below the cutoff.</p>
+      <div class="tex">|H(f)|^2 = \frac{1}{1 + (f_c/f)^{2n}}</div>
+      <p>At <span class="tex">k</span> octaves above the cutoff, the low-pass attenuates, in decibels:</p>
+      <div class="tex">A_k = 10\,\log_{10}\!\left(1 + 4^{\,nk}\right) \approx 6\,n\,k\ \text{dB}</div>
+
+      <h3>The moving average</h3>
+      <p>The backward moving average adds up the last <span class="tex">N</span> samples and divides by <span class="tex">N</span>:</p>
+      <div class="tex">y[n] = \frac{1}{N}\sum_{k=0}^{N-1} x[n-k]</div>
+      <p>Its response has zeros where a whole turn fits an exact number of times in <span class="tex">N</span> samples, and it delays the signal by <span class="tex">(N-1)/2</span> samples:</p>
+      <div class="tex">|H(f)| = \left|\frac{\sin(\pi f N / f_s)}{N\,\sin(\pi f / f_s)}\right|, \qquad H(f) = 0 \ \text{ if } f = m\,\frac{f_s}{N},\; m = 1, 2, \dots</div>
+      <p>The random noise that comes out is the square root of <span class="tex">N</span> times smaller than what goes in:</p>
+      <div class="tex">\sigma_y = \frac{\sigma_x}{\sqrt{N}}</div>
+
+      <h3>The notch</h3>
+      <p>A notch puts two zeros right at the frequency of the hum and two poles very close by, just inside, so that the gap is narrow; the closer <span class="tex">r</span> is to 1, the narrower the notch. Poles and zeros are explained in <a href="e08.html">lesson 8</a>.</p>
+      <div class="tex">H(z) = \frac{1 - 2\cos\omega_0\, z^{-1} + z^{-2}}{1 - 2r\cos\omega_0\, z^{-1} + r^2 z^{-2}}, \qquad \omega_0 = \frac{2\pi f_0}{f_s},\; r \lesssim 1</div>
+
+      <h3>A preview</h3>
+      <p>Multiplying in frequency is equivalent, in time, to a convolution with the impulse response of the filter, and from there comes <a href="e07.html">lesson 7</a>:</p>
+      <div class="tex">Y(f) = H(f)\,X(f) \;\Longleftrightarrow\; y[n] = \sum_k h[k]\, x[n-k]</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Further reading</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Open book</span>Steven W. Smith, <i>The Scientist and Engineer's Guide to Digital Signal Processing</i>: chapters <a href="http://www.dspguide.com/CH14.PDF">14</a> and <a href="http://www.dspguide.com/CH15.PDF">15</a>. What a filter is, the low-pass and the high-pass, and why the moving average is at once the best and the worst of filters.</li>
+      <li><span class="tipo">Open book</span>Allen B. Downey, <i>Think DSP</i>, <a href="https://greenteapress.com/thinkdsp/html/thinkdsp009.html">chapter 8</a>. Smoothing with moving averages on real data and the step to convolution, with code.</li>
+      <li><span class="tipo">Standard</span>ITU-T, <a href="https://www.itu.int/rec/T-REC-G.712">Recommendation G.712</a>, with the original masks of the 300 to 3,400 Hz telephone band, and the GSMA document <a href="https://www.gsma.com/newsroom/wp-content/uploads//IR.36-v4.0.pdf">IR.36</a> on HD voice, which explains why the “s” and the “f” get confused on a narrowband call.</li>
+      <li><span class="tipo">Open article</span>Bergman, A., Sella, Y., Agre, P. and Casadevall, A. (2020). <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7363007/">Oscillations in U.S. COVID-19 incidence and mortality data reflect diagnostic and reporting factors</a>. <i>mSystems</i>, 5(4). The 7-day rhythm of the pandemic data, analyzed with Fourier.</li>
+      <li><span class="tipo">Open article</span>Levkov, C. et al. (2005). <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1232857/">Removal of power-line interference from the ECG: a review of the subtraction procedure</a>. <i>BioMedical Engineering OnLine</i>, 4, 50. The hum of the grid in the electrocardiogram and why a simple notch is not enough.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>New terms</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Exam</h2>
+  </section>
+
+</main>
+
+<script src="temario.js"></script>
+<script src="../comun/graficas.js"></script>
+<script src="../comun/senal.js"></script>
+<script src="../comun/curso.js"></script>
+<script src="datos/e06.js"></script>
+<script>
+// Lección 6 · Filtros: quedarte con lo que importa. La imagen ancla (el ecualizador), los seis retos y el laboratorio
+// «En tu voz». Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo.
+// Convenios de color: la respuesta del filtro, en naranja; los espectros, en ámbar; la señal, en verde; el ruido y el
+// zumbido, en coral; lo que sirve de objetivo, discontinuo y en tinta.
+(function () {
+  'use strict';
+  const G = Graficas, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const altoMov = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  const fHz = v => (v >= 1000 ? num(v / 1000, Math.abs(v / 1000 - Math.round(v / 1000)) < 1e-9 ? 0 : 1) + ' kHz' : num(v) + ' Hz');
+  const dbTxt = v => (v > 0.0001 ? '+' : '') + num(v, Number.isInteger(v) ? 0 : 1);
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); (typeof contenedor === 'string' ? document.querySelector(contenedor) : contenedor).appendChild(f); return f; };
+  const pico = x => { let m = 0; for (let i = 0; i < x.length; i++) { const a = Math.abs(x[i]); if (a > m) m = a; } return m; };
+
+  // ── Utilidades de dibujo: un espectro de bins uniformes, pintado por columnas de píxel ──────────────────────
+  // Para cada columna del dibujo, el máximo de los bins que caen en ella (así no se pierde ningún pico) o, si no cae
+  // ninguno (graves, con el eje logarítmico), la interpolación entre los dos más cercanos.
+  function columnas(esc, df, db) {
+    const x0 = esc.caja.x, W = Math.max(1, Math.floor(esc.caja.w)), n = db.length, out = new Float32Array(W);
+    for (let c = 0; c < W; c++) {
+      const fa = esc.xi(x0 + c), fb = esc.xi(x0 + c + 1);
+      const ka = Math.ceil(fa / df - 1e-9), kb = Math.min(n - 1, Math.floor(fb / df));
+      if (ka <= kb) {
+        let m = -Infinity;
+        for (let k = Math.max(0, ka); k <= kb; k++) if (db[k] > m) m = db[k];
+        out[c] = m;
+      } else {
+        const fc = (fa + fb) / 2 / df, k0 = Math.floor(fc), t = fc - k0;
+        out[c] = k0 >= 0 && k0 + 1 < n ? db[k0] * (1 - t) + db[k0 + 1] * t : NaN;
+      }
+    }
+    return out;
+  }
+  const centrosHz = esc => { const W = Math.max(1, Math.floor(esc.caja.w)), f = new Float64Array(W); for (let c = 0; c < W; c++) f[c] = esc.xi(esc.caja.x + c + 0.5); return f; };
+  // Relleno bajo una serie por columnas (el contorno de un espectro).
+  function rellenoCols(ctx, esc, ys, color, a, base) {
+    const x0 = esc.caja.x, yb = esc.y(base), top = esc.caja.y, bot = esc.caja.y + esc.caja.h;
+    const q = new Path2D();
+    let abierto = false, ult = 0;
+    for (let c = 0; c < ys.length; c++) {
+      const v = ys[c];
+      if (!Number.isFinite(v)) { if (abierto) { q.lineTo(ult, yb); q.closePath(); abierto = false; } continue; }
+      const x = x0 + c + 0.5, y = limitar(esc.y(v), top, bot);
+      if (!abierto) { q.moveTo(x, yb); abierto = true; }
+      q.lineTo(x, y);
+      ult = x;
+    }
+    if (abierto) { q.lineTo(ult, yb); q.closePath(); }
+    ctx.save();
+    ctx.beginPath(); ctx.rect(esc.caja.x, top, esc.caja.w, esc.caja.h); ctx.clip();
+    ctx.fillStyle = G.alfa(color, a);
+    ctx.fill(q);
+    ctx.restore();
+  }
+  const separador = (ctx, w, C) => { ctx.save(); ctx.strokeStyle = C.linea; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, 0.5); ctx.lineTo(w, 0.5); ctx.stroke(); ctx.restore(); };
+  // Espectro de potencia medio (Welch), en dB respecto a su máximo (o a «ref», en dB, si se da): { df, db, mx }.
+  function espectroMedio(x, fs, n, ref) {
+    const W = Senal.welch(x, fs, { n: Math.min(n, 1 << Math.floor(Math.log2(Math.max(2, x.length)))), escala: 'espectro' });
+    let mx = -Infinity;
+    for (let k = 1; k < W.psdDb.length; k++) if (W.psdDb[k] > mx) mx = W.psdDb[k];
+    const r = ref === undefined ? mx : ref;
+    return { df: W.df, db: Float64Array.from(W.psdDb, v => Math.max(-140, v - r)), mx };
+  }
+
+  // ── La música sintética del ecualizador: bombo, bajo, acordes, caja y charles, en un bucle de 2 s ─────────
+  const FS_EQ = 22050;
+  function crearMusica(fs) {
+    const n = Math.round(2 * fs), x = new Float64Array(n), az = Senal.azar(11);
+    const suma = (i, v) => { x[((i % n) + n) % n] += v; };
+    const nota = (f, t0, d, amp, armonicos, caida) => {
+      const i0 = Math.round(t0 * fs), n1 = Math.round(d * fs);
+      for (let h = 1; h <= armonicos; h++) {
+        const fh = f * h;
+        if (fh > 0.45 * fs) break;
+        const w = TAU * fh / fs;
+        for (let i = 0; i < n1; i++) suma(i0 + i, amp / h * Math.exp(-i / fs / caida) * Math.sin(w * i));
+      }
+    };
+    const ruido = (t0, d, fLo, fHi, amp, caida) => {
+      const m = Math.round(d * fs), r = new Float64Array(m);
+      for (let i = 0; i < m; i++) r[i] = az.normal();
+      const y = Senal.filtrarSecciones([...Senal.butterworth(2, fLo, fs, 'pasoAlto'), ...Senal.butterworth(2, fHi, fs, 'pasoBajo')], r), i0 = Math.round(t0 * fs);
+      for (let i = 0; i < m; i++) suma(i0 + i, amp * Math.exp(-i / fs / caida) * y[i]);
+    };
+    for (let b = 0; b < 4; b++) {
+      const t = b * 0.5;
+      let ph = 0;
+      for (let i = 0; i < 0.3 * fs; i++) { const s = i / fs; ph += TAU * (52 + 80 * Math.exp(-s / 0.035)) / fs; suma(Math.round(t * fs) + i, 0.9 * Math.exp(-s / 0.1) * Math.sin(ph)); }
+      nota([55, 55, 73.4, 65.4][b], t, 0.42, 0.28, 6, 0.25);
+      for (const f of [220, 261.6, 329.6, 392]) nota(f, t + 0.25, 0.22, 0.11, 10, 0.1);
+      if (b % 2 === 1) ruido(t, 0.16, 1500, 5000, 0.9, 0.05);
+      ruido(t + 0.25, 0.06, 6500, 10000, 0.5, 0.02);
+      ruido(t, 0.03, 6500, 10000, 0.3, 0.01);
+    }
+    const p = pico(x);
+    for (let i = 0; i < n; i++) x[i] *= 0.6 / p;
+    return x;
+  }
+  let musicaMemo = null;
+  function musica() {
+    if (!musicaMemo) {
+      const x = crearMusica(FS_EQ), e = espectroMedio(x, FS_EQ, 4096);
+      musicaMemo = { x, df: e.df, db: e.db };
+    }
+    return musicaMemo;
+  }
+
+  // ── El ecualizador: cinco mandos que dibujan una curva ──────────────────────────────────────────────────
+  // Lo usan la imagen ancla y el reto 1. Tres lienzos apilados con el mismo eje de frecuencias (logarítmico):
+  // la curva con sus mandos, el espectro antes y después y, si se pide, la onda. Cada mando es un filtro de pico
+  // (Senal.biquad 'pico') y la curva que se ve es la respuesta real de los cinco en cascada (Senal.respuesta).
+  const BANDAS = [100, 300, 1000, 3000, 8000];
+  const Q_EQ = 1.4, G_MIN = -18, G_MAX = 12, F_MIN = 40, F_MAX = 10000;
+  const FREQS = Float64Array.from({ length: 180 }, (_, i) => F_MIN * Math.pow(F_MAX / F_MIN, i / 179));
+  const MARGEN = { izquierda: 42, derecha: 12 };
+  const seccionesEQ = g => BANDAS.map((f, i) => Senal.biquad('pico', f, FS_EQ, { Q: Q_EQ, ganancia: g[i] }));
+  const respuestaEQ = (frs, g) => Senal.respuesta(seccionesEQ(g), FS_EQ, frs).magDb;
+  // El sonido de la música a través del ecualizador. Todos comparten el mismo factor de volumen para que se note
+  // cuánto sube o baja cada versión.
+  function sonidoEQ(g) {
+    const m = musica(), rep = new Float64Array(m.x.length * 2);
+    rep.set(m.x); rep.set(m.x, m.x.length);
+    const y = Senal.filtrarSecciones(seccionesEQ(g), rep);
+    return { x: y, fs: FS_EQ, volumen: Math.min(1, 0.85 / Math.max(pico(rep), pico(y))), normalizar: false };
+  }
+  function crearEcualizador(escena, o) {
+    const cont = typeof escena === 'string' ? document.querySelector(escena) : escena;
+    const st = { g: BANDAS.map(() => 0), sel: 2, t0: 0, secs: null };
+    const objetivo = o.objetivo ? { g: o.objetivo, curva: respuestaEQ(FREQS, o.objetivo), bandas: respuestaEQ(BANDAS, o.objetivo) } : null;
+    let escA = null;
+    const recalcular = () => { st.secs = seccionesEQ(st.g); };
+    recalcular();
+    const resp = frs => Senal.respuesta(st.secs, FS_EQ, frs).magDb;
+
+    // Arriba: la curva y los mandos
+    const LA = G.lienzo(cont, {
+      alto: altoMov(176, 200), rol: 'slider',
+      etiqueta: o.etiqueta,
+      dibujar: (ctx, w, h, C) => {
+        const esc = escA = G.ejes(ctx, { margen: { ...MARGEN, arriba: 24, abajo: 22 }, x: [F_MIN, F_MAX], y: [-21, 15], logX: true, marcasX: BANDAS, formatoX: fHz, marcasY: [-12, -6, 0, 6, 12], formatoY: dbTxt, etiquetaY: 'filter response (dB)', C });
+        if (objetivo) {
+          G.linea(ctx, esc, FREQS, objetivo.curva, { color: C.cuerpo, guiones: [6, 5], alfa: 0.75, halo: false, ancho: 2, C });
+          BANDAS.forEach((f, i) => {
+            ctx.save();
+            ctx.strokeStyle = C.cuerpo; ctx.globalAlpha = 0.85; ctx.lineWidth = 1.4;
+            ctx.beginPath(); ctx.arc(esc.x(f), esc.y(objetivo.bandas[i]), 4.5, 0, TAU); ctx.stroke();
+            ctx.restore();
+          });
+        }
+        G.linea(ctx, esc, FREQS, resp(FREQS), { color: C.respuesta, ancho: 2.6, C });
+        BANDAS.forEach((f, i) => {
+          const x = esc.x(f), y = esc.y(st.g[i]);
+          if (i === st.sel) { ctx.save(); ctx.strokeStyle = C.acento; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 12.5, 0, TAU); ctx.stroke(); ctx.restore(); }
+          G.puntos(ctx, esc, [f], [st.g[i]], { color: C.respuesta, radio: 7.5, borde: C.pantalla, C });
+          G.texto(ctx, x, st.g[i] > 4 ? y + 26 : y - 15, dbTxt(st.g[i]), { alinear: 'center', color: C.texto, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+        });
+      },
+    });
+    // En medio: el espectro, antes (tenue) y después (vivo)
+    const LB = G.lienzo(cont, {
+      alto: altoMov(112, 128),
+      etiqueta: 'The spectrum of the music before it goes through the equalizer, faint, and after, vivid',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MARGEN, arriba: 8, abajo: 6 }, x: [F_MIN, F_MAX], y: [-70, 14], logX: true, marcasX: BANDAS, formatoX: () => '', marcasY: false, cero: false, C });
+        separador(ctx, w, C);
+        const m = musica();
+        const ent = columnas(esc, m.df, m.db), hz = centrosHz(esc), r = resp(hz), sal = new Float32Array(ent.length);
+        for (let c = 0; c < ent.length; c++) sal[c] = ent[c] + r[c];
+        rellenoCols(ctx, esc, ent, C.espectro, 0.1, -70);
+        G.linea(ctx, esc, hz, ent, { color: C.espectro, alfa: 0.4, halo: false, ancho: 1.3, C });
+        rellenoCols(ctx, esc, sal, C.espectro, C.oscuro ? 0.22 : 0.3, -70);
+        G.linea(ctx, esc, hz, sal, { color: C.espectro, ancho: 1.8, C });
+        G.texto(ctx, esc.caja.x + 6, esc.caja.y + 13, 'spectrum', { color: C.tenue, tam: 11, C });
+      },
+    });
+    // Abajo: la onda, antes y después (solo en la imagen ancla)
+    let LC = null;
+    if (o.onda) {
+      LC = G.lienzo(cont, {
+        alto: altoMov(86, 98),
+        etiqueta: 'About 40 milliseconds of the wave of the music before it goes through the equalizer, faint, and after, in green',
+        dibujar: (ctx, w, h, C) => {
+          const esc = G.ejes(ctx, { margen: { ...MARGEN, arriba: 8, abajo: 20 }, x: [0, 0.04], y: [-1.1, 1.1], marcasX: [0, 0.01, 0.02, 0.03, 0.04], formatoX: v => num(v * 1000) + ' ms', marcasY: false, rejilla: false, C });
+          separador(ctx, w, C);
+          const m = musica(), pre = 0.25, n = m.x.length, seg = new Float64Array(Math.round((pre + 0.04) * FS_EQ)), i0 = Math.round((st.t0 - pre) * FS_EQ);
+          for (let i = 0; i < seg.length; i++) seg[i] = m.x[(((i0 + i) % n) + n) % n];
+          const y = Senal.filtrarSecciones(st.secs, seg), a = Math.round(pre * FS_EQ);
+          const ent = seg.subarray(a), sal = y.subarray(a), k = 1 / Math.max(pico(ent), pico(sal), 1e-6);
+          const ye = Float64Array.from(ent, v => v * k), ys = Float64Array.from(sal, v => v * k);
+          G.linea(ctx, esc, null, ye, { t0: 0, dt: 1 / FS_EQ, color: C.cuerpo, alfa: 0.5, halo: false, ancho: 1.3, C });
+          G.linea(ctx, esc, null, ys, { t0: 0, dt: 1 / FS_EQ, color: C.senal, ancho: 1.9, C });
+          G.texto(ctx, esc.caja.x + 6, esc.caja.y + 13, 'wave', { color: C.tenue, tam: 11, C });
+        },
+      });
+    }
+    const todos = () => { LA.dibujar(); LB.dibujar(); if (LC) LC.dibujar(); };
+
+    const aria = () => {
+      LA.canvas.setAttribute('aria-valuenow', String(st.g[st.sel]));
+      LA.canvas.setAttribute('aria-valuetext', 'Knob at ' + fHz(BANDAS[st.sel]) + ': ' + dbTxt(st.g[st.sel]) + ' dB');
+    };
+    const poner = (i, v, avisar = true) => {
+      st.g[i] = limitar(Math.round(v), G_MIN, G_MAX);
+      recalcular(); aria(); todos();
+      if (avisar) { if (o.alCambiar) o.alCambiar(st.g); if (o.reto) Curso.cambio(o.reto); }
+    };
+    const bandaCerca = px => { let mejor = 0, d = Infinity; BANDAS.forEach((f, i) => { const dd = Math.abs(escA.x(f) - px); if (dd < d) { d = dd; mejor = i; } }); return mejor; };
+    Curso.arrastre(LA, {
+      eje: 'y',
+      alBajar: p => { if (!escA) return false; st.sel = bandaCerca(p.x); poner(st.sel, escA.yi(p.y)); },
+      alMover: p => poner(st.sel, escA.yi(p.y)),
+    });
+    LA.canvas.tabIndex = 0;
+    LA.canvas.setAttribute('aria-valuemin', String(G_MIN));
+    LA.canvas.setAttribute('aria-valuemax', String(G_MAX));
+    LA.canvas.addEventListener('keydown', ev => {
+      const k = ev.key;
+      if (k === 'ArrowLeft') st.sel = Math.max(0, st.sel - 1);
+      else if (k === 'ArrowRight') st.sel = Math.min(BANDAS.length - 1, st.sel + 1);
+      else if (k === 'ArrowUp') poner(st.sel, st.g[st.sel] + (ev.shiftKey ? 3 : 1));
+      else if (k === 'ArrowDown') poner(st.sel, st.g[st.sel] - (ev.shiftKey ? 3 : 1));
+      else if (k === 'Home') poner(st.sel, 0);
+      else return;
+      ev.preventDefault(); aria(); LA.dibujar();
+    });
+    aria();
+    return {
+      g: st.g, LA, LB, LC, objetivo,
+      get t0() { return st.t0; }, set t0(v) { st.t0 = v; },
+      fijar(arr, avisar = true) { for (let i = 0; i < BANDAS.length; i++) st.g[i] = limitar(Math.round(arr[i]), G_MIN, G_MAX); recalcular(); aria(); todos(); if (avisar) { if (o.alCambiar) o.alCambiar(st.g); if (o.reto) Curso.cambio(o.reto); } },
+      respuestaBandas() { return resp(BANDAS); },
+      redibujar: todos,
+    };
+  }
+
+  // ── La idea en una imagen: el ecualizador sobre una música ──────────────────────────────────────────────
+  (function () {
+    const mandos = document.getElementById('ancla-mandos');
+    const fila = filaBotones(mandos);
+    const eq = crearEcualizador('#ancla-escena', {
+      onda: true,
+      etiqueta: 'Five-knob equalizer, at 100, 300, 1,000, 3,000 and 8,000 hertz, that you move by dragging. Below, the spectrum of the music and its wave, before and after the filter.',
+    });
+    Curso.botones(fila, [
+      { id: 'plano', texto: 'Flat', alPulsar: () => eq.fijar([0, 0, 0, 0, 0]) },
+      { id: 'graves', texto: 'Heavy bass', alPulsar: () => eq.fijar([9, 5, 0, -3, -6]) },
+      { id: 'brillo', texto: 'Bright treble', alPulsar: () => eq.fijar([-6, -3, 0, 5, 9]) },
+    ]);
+    Curso.audio.boton(fila, () => sonidoEQ(eq.g), 'Listen with your equalizer');
+    Curso.audio.boton(fila, () => sonidoEQ([0, 0, 0, 0, 0]), 'Listen unfiltered');
+    // El espectro de la música se calcula al acercarse a la pantalla; la onda avanza despacio, como un osciloscopio.
+    Curso.alVerse(eq.LA.canvas, () => { musica(); eq.redibujar(); });
+    Curso.animar(eq.LC, (t, dt) => { eq.t0 = (eq.t0 + dt * 0.04) % 1.9; eq.LC.dibujar(); }, { boton: fila });
+  })();
+
+  // ── Reto 1 · La radio de la abuela (arrastrar los mandos sobre el lienzo) ───────────────────────────────
+  (function () {
+    const OBJ = [-12, -3, 0, -6, -12];
+    const fila = document.getElementById('r1-fila');
+    const lect = Curso.lecturas(fila, [{ id: 'dif', nombre: 'Distance from the dashed line', clase: 'respuesta' }]);
+    const eq = crearEcualizador('#r1-escena', {
+      objetivo: OBJ, reto: 'reto-1',
+      etiqueta: 'Five-knob equalizer with a dashed target curve: that of an old radio, which dampens the lows and the highs',
+      alCambiar: () => estado(),
+    });
+    const botones = filaBotones(fila);
+    Curso.audio.boton(botones, () => sonidoEQ([0, 0, 0, 0, 0]), 'Original', { clase: 'peque' });
+    Curso.audio.boton(botones, () => sonidoEQ(OBJ), 'Old radio', { clase: 'peque' });
+    Curso.audio.boton(botones, () => sonidoEQ(eq.g), 'Yours', { clase: 'peque' });
+    const diferencias = () => { const r = eq.respuestaBandas(); return r.map((v, i) => v - eq.objetivo.bandas[i]); };
+    function estado() {
+      const d = diferencias();
+      lect.fijar('dif', num(Math.max(...d.map(Math.abs)), 1) + ' dB');
+    }
+    Curso.alVerse(eq.LA.canvas, () => { musica(); eq.redibujar(); });
+    estado();
+    Curso.reto('reto-1', {
+      titulo: 'The old radio', nivel: 'fácil',
+      comprobar: () => {
+        const d = diferencias(), a = d.map(Math.abs), peor = a.indexOf(Math.max(...a));
+        if (a[peor] <= 2) return { ok: true, mensaje: 'Your curve covers the dashed one: that is how an old radio sounds.' };
+        if (eq.g.every(v => v === 0)) return { ok: false };
+        return { ok: false, mensaje: (a[peor] <= 4 ? 'Close: ' : 'Not yet: ') + 'at ' + fHz(BANDAS[peor]) + ' your curve is ' + num(a[peor], 0) + ' dB ' + (d[peor] > 0 ? 'above' : 'below') + ' the dashed one.' };
+      },
+      resolver: () => eq.fijar(OBJ),
+      pista: [
+        'Each knob raises or lowers only the Ferris wheels in its band: look at the spectrum below and check what goes quiet when you move it.',
+        'An old radio is missing lows and highs: leave the middle knob as it is and turn down the others, the ones at the ends more than the ones next to them.',
+      ],
+      exito: '<p>An equalizer multiplies each band of frequencies by a number. The curve you have drawn is the frequency response of the filter, and with a curve like that you can describe any filter. Look at the spectrum: it is the one from before, multiplied by your curve.</p>',
+    });
+  })();
+
+  // ── Reto 2 · Ponle nombre al filtro (escuchar y elegir) ─────────────────────────────────────────────────
+  // La misma frase sintética pasa por un paso bajo, un paso alto, un paso banda o una banda eliminada. Se oye
+  // uno y se elige su curva entre cuatro. Tres aciertos seguidos.
+  (function () {
+    const FS = 16000, azar = Curso.azar();
+    const FILTROS = [
+      { id: 'bajo', como: 'the low-pass', secs: () => Senal.butterworth(4, 500, FS, 'pasoBajo'), bien: 'Without highs, the voice sounds muffled, as if from the other side of a wall.' },
+      { id: 'alto', como: 'the high-pass', secs: () => Senal.butterworth(4, 2000, FS, 'pasoAlto'), bien: 'Without lows, the voice sounds thin and hissy.' },
+      { id: 'banda', como: 'the band-pass', secs: () => [...Senal.butterworth(4, 300, FS, 'pasoAlto'), ...Senal.butterworth(4, 3400, FS, 'pasoBajo')], bien: 'A band in the middle of the voice sounds “canned,” as over the phone.' },
+      { id: 'muesca', como: 'the band-stop', secs: () => [Senal.biquad('banda', 1000, FS, { Q: 2 })], bien: 'It removes a band so narrow that the voice hardly changes.' },
+    ];
+    const NOMBRES = ['Low-pass', 'High-pass', 'Band-pass', 'Band-stop'];
+    const FR = Float64Array.from({ length: 160 }, (_, i) => 50 * Math.pow(160, i / 159));
+    FILTROS.forEach(f => { f.curva = null; });
+    const curvaDe = f => f.curva || (f.curva = Senal.respuesta(f.secs(), FS, FR).magDb);
+    let datos = null;
+    const preparar = () => {
+      if (datos) return datos;
+      const x = Senal.ejemplos.frase(FS), ref = espectroMedio(x, FS, 1024);
+      const salidas = FILTROS.map(f => Senal.filtrarSecciones(f.secs(), x));
+      datos = { x, ref, salidas, espectros: salidas.map(y => espectroMedio(y, FS, 1024, ref.mx)) };
+      return datos;
+    };
+    const st = { ronda: null, orden: [0, 1, 2, 3], racha: 0, ultimo: '' };
+    const fila = document.getElementById('r2-fila');
+    const cont = document.getElementById('r2-curvas');
+    cont.style.gridTemplateColumns = 'repeat(auto-fit, minmax(9rem, 1fr))';
+    const rachaEl = crear('span', { class: 'racha' });
+    Curso.audio.boton(fila, () => { const d = preparar(); return { x: d.salidas[st.ronda.i], fs: FS }; }, 'Listen to the sound');
+    fila.appendChild(rachaEl);
+    Curso.botones(fila, [{ id: 'ver', texto: 'Show the sound’s spectrum', icono: 'ojo', tipo: 'discreto', pulsado: false, alPulsar: on => { escEsp.hidden = !on; if (on) espL.ajustar(); } }]);
+
+    // El espectro del sonido (para quien no pueda oírlo): el original, tenue, y el de después del filtro, vivo.
+    const escEsp = document.getElementById('r2-espectro');
+    const espL = G.lienzo(escEsp, {
+      alto: altoMov(130, 150), etiqueta: 'The spectrum of the original sentence, faint, and that of the sound you hear, vivid',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { izquierda: 14, derecha: 12, arriba: 8, abajo: 22 }, x: [50, 8000], y: [-70, 4], logX: true, marcasX: [100, 300, 1000, 3000], formatoX: fHz, marcasY: false, cero: false, C });
+        if (!datos || !st.ronda) { G.texto(ctx, w / 2, h / 2, 'calculating…', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+        const hz = centrosHz(esc), o = columnas(esc, datos.ref.df, datos.ref.db), s = columnas(esc, datos.espectros[st.ronda.i].df, datos.espectros[st.ronda.i].db);
+        rellenoCols(ctx, esc, s, C.espectro, C.oscuro ? 0.2 : 0.28, -70);
+        G.linea(ctx, esc, hz, o, { color: C.espectro, alfa: 0.4, halo: false, ancho: 1.3, C });
+        G.linea(ctx, esc, hz, s, { color: C.espectro, ancho: 1.8, C });
+        G.texto(ctx, esc.caja.x + 6, esc.caja.y + 13, 'spectrum of the sound', { color: C.tenue, tam: 11, C });
+      },
+    });
+
+    const tarjetas = [0, 1, 2, 3].map(k => {
+      const b = crear('button', { type: 'button', class: 'panel-mini tarjeta' });
+      const escena = crear('span', { class: 'escena', style: { display: 'block' } });
+      const nombre = crear('span', { class: 'rotulo-mini' });
+      b.append(escena, nombre);
+      cont.appendChild(b);
+      const L = G.lienzo(escena, {
+        alto: 84, etiqueta: 'Gain curve of a filter',
+        dibujar: (ctx, w, h, C) => {
+          const esc = G.ejes(ctx, { margen: { izquierda: 26, derecha: 8, arriba: 8, abajo: 20 }, x: [50, 8000], y: [-48, 6], logX: true, marcasX: [100, 1000], formatoX: fHz, marcasY: [-40, -20, 0], formatoY: v => num(v), C });
+          G.linea(ctx, esc, FR, curvaDe(FILTROS[st.orden[k]]), { color: C.respuesta, ancho: 2.2, C });
+        },
+      });
+      b.addEventListener('click', () => responder(k));
+      return { b, nombre, L };
+    });
+    const acciones = document.getElementById('r2-acciones');
+    const bOtra = Curso.botones(acciones, [{ id: 'otra', texto: 'Another round', icono: 'otra', tipo: 'principal', alPulsar: () => nuevaRonda() }]).otra;
+
+    function nuevaRonda() {
+      let i;
+      do { i = azar.entero(0, 3); } while (st.ronda && i === st.ronda.i);
+      st.ronda = { i, respondida: false, elegida: -1 };
+      st.orden = azar.barajar([0, 1, 2, 3]);
+      Curso.audio.parar();
+      pintar();
+    }
+    function responder(k) {
+      const r = st.ronda;
+      if (!r || r.respondida) return;
+      r.respondida = true; r.elegida = k;
+      const buena = FILTROS[r.i], elegida = FILTROS[st.orden[k]];
+      if (st.orden[k] === r.i) {
+        st.racha += 1;
+        st.ultimo = 'Right: it was ' + buena.como + '. ' + buena.bien + (st.racha < 3 ? ' You have ' + st.racha + (st.racha === 1 ? ' correct answer.' : ' in a row.') : '');
+      } else {
+        st.racha = 0;
+        st.ultimo = 'No: it was ' + buena.como + ', the green card. ' + buena.bien + ' You had chosen ' + elegida.como + '. Press “Show the sound’s spectrum” and compare it with each curve.';
+      }
+      pintar();
+      Curso.cambio('reto-2');
+    }
+    function pintar() {
+      const r = st.ronda;
+      rachaEl.innerHTML = '';
+      rachaEl.append(crear('span', { class: 'puntos', 'aria-hidden': 'true' }, [0, 1, 2].map(i => crear('i', { class: i < st.racha ? 'si' : '' }))), 'Correct in a row: ' + Math.min(st.racha, 3) + ' of 3');
+      tarjetas.forEach(({ b, nombre, L }, k) => {
+        const idx = st.orden[k];
+        nombre.textContent = NOMBRES[idx];
+        b.disabled = r.respondida;
+        b.setAttribute('aria-label', NOMBRES[idx] + (r.respondida ? (idx === r.i ? ', the right one' : '') : ''));
+        b.classList.toggle('es-correcta', r.respondida && idx === r.i);
+        b.classList.toggle('fallo', r.respondida && r.elegida === k && idx !== r.i);
+        L.dibujar();
+      });
+      bOtra.parentElement.hidden = !r.respondida;
+      if (datos && !escEsp.hidden) espL.dibujar();
+    }
+    nuevaRonda();
+    Curso.alVerse('#reto-2', () => { preparar(); espL.dibujar(); });
+    Curso.reto('reto-2', {
+      titulo: 'Name the filter', nivel: 'fácil',
+      comprobar: () => ({ ok: st.racha >= 3, mensaje: st.ultimo }),
+      resolver: () => { st.racha = 3; st.ronda.respondida = true; st.ultimo = 'Three in a row.'; pintar(); Curso.cambio('reto-2'); },
+      pista: [
+        'Notice what is missing: without highs, the voice sounds muffled; without lows, it sounds thin and hissy; with a band in the middle, it sounds like over the phone.',
+        'If you can’t listen, press “Show the sound’s spectrum”: the vivid spectrum is the original multiplied by the curve of the filter. The band-stop is the hardest to hear, because it removes very little.',
+      ],
+      exito: '<p>Low-pass, high-pass, band-pass and band-stop are four shapes of the same idea: a curve that says how much of each frequency gets through. With a single curve, the frequency response, you can describe what any filter does to any sound.</p>',
+    });
+  })();
+
+  // ── Reto 3 · Voz de teléfono (arrastrar dos asas sobre el lienzo) ───────────────────────────────────────
+  // Un paso alto de orden 4 y un paso bajo de orden 6, en cascada, forman el paso banda. Las asas son sus
+  // frecuencias de corte, donde la curva cae 3 dB. Sobre una frase sintética de 16 kHz.
+  (function () {
+    const FS = 16000, F0 = 40, F1 = 8000;
+    const st = { fL: 60, fH: 7000, sel: 1 };
+    const FR = Float64Array.from({ length: 220 }, (_, i) => F0 * Math.pow(F1 / F0, i / 219));
+    let datos = null, escA = null;
+    const preparar = () => { if (!datos) { const x = Senal.ejemplos.frase(FS); datos = { x, ref: espectroMedio(x, FS, 1024) }; } return datos; };
+    const secs = () => [...Senal.butterworth(4, st.fL, FS, 'pasoAlto'), ...Senal.butterworth(6, st.fH, FS, 'pasoBajo')];
+    const escena = document.getElementById('r3-escena');
+    const MX = { izquierda: 42, derecha: 12 };
+    const LA = G.lienzo(escena, {
+      alto: altoMov(150, 172), rol: 'slider',
+      etiqueta: 'Curve of a band-pass filter with two handles, the low cutoff and the high cutoff, which you drag along the frequency axis',
+      dibujar: (ctx, w, h, C) => {
+        const esc = escA = G.ejes(ctx, { margen: { ...MX, arriba: 24, abajo: 22 }, x: [F0, F1], y: [-60, 8], logX: true, marcasX: [100, 300, 1000, 3000], formatoX: fHz, marcasY: [-48, -24, 0], formatoY: v => num(v), etiquetaY: 'filter response (dB)', C });
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.cuerpo, 0.4); ctx.lineWidth = 1; ctx.setLineDash([3, 4]);
+        ctx.beginPath(); ctx.moveTo(esc.caja.x, Math.round(esc.y(-3)) + 0.5); ctx.lineTo(esc.caja.x + esc.caja.w, Math.round(esc.y(-3)) + 0.5); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, esc.caja.x + esc.caja.w - 4, esc.y(-3) - 5, '−3 dB', { alinear: 'right', color: C.tenue, tam: 10, C });
+        G.linea(ctx, esc, FR, Senal.respuesta(secs(), FS, FR).magDb, { color: C.respuesta, ancho: 2.6, C });
+        [[st.fL, 0], [st.fH, 1]].forEach(([f, i]) => {
+          const x = esc.x(f), y = esc.y(-3);
+          if (i === st.sel) { ctx.save(); ctx.strokeStyle = C.acento; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 12.5, 0, TAU); ctx.stroke(); ctx.restore(); }
+          G.puntos(ctx, esc, [f], [-3], { color: C.respuesta, radio: 7.5, borde: C.pantalla, C });
+          G.texto(ctx, x, y - 16, fHz(f), { alinear: i ? 'right' : 'left', color: C.texto, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+        });
+      },
+    });
+    const LB = G.lienzo(escena, {
+      alto: altoMov(112, 128),
+      etiqueta: 'The spectrum of the sentence before it goes through the filter, faint, and after, vivid',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 8, abajo: 6 }, x: [F0, F1], y: [-72, 4], logX: true, marcasX: [100, 300, 1000, 3000], formatoX: () => '', marcasY: false, cero: false, C });
+        separador(ctx, w, C);
+        if (!datos) { G.texto(ctx, w / 2, h / 2, 'calculating…', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+        const ent = columnas(esc, datos.ref.df, datos.ref.db), hz = centrosHz(esc), r = Senal.respuesta(secs(), FS, hz).magDb, sal = new Float32Array(ent.length);
+        for (let c = 0; c < ent.length; c++) sal[c] = ent[c] + r[c];
+        rellenoCols(ctx, esc, ent, C.espectro, 0.1, -72);
+        G.linea(ctx, esc, hz, ent, { color: C.espectro, alfa: 0.4, halo: false, ancho: 1.3, C });
+        rellenoCols(ctx, esc, sal, C.espectro, C.oscuro ? 0.22 : 0.3, -72);
+        G.linea(ctx, esc, hz, sal, { color: C.espectro, ancho: 1.8, C });
+        G.texto(ctx, esc.caja.x + 6, esc.caja.y + 13, 'spectrum of the sentence', { color: C.tenue, tam: 11, C });
+      },
+    });
+    const todos = () => { LA.dibujar(); LB.dibujar(); };
+    const fila = document.getElementById('r3-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'bajo', nombre: 'Low cutoff', clase: 'respuesta' },
+      { id: 'alto', nombre: 'High cutoff', clase: 'respuesta' },
+    ]);
+    const botones = filaBotones(fila);
+    const sonido = tuyo => {
+      const d = preparar(), y = tuyo ? Senal.filtrarSecciones(secs(), d.x) : d.x;
+      return { x: y, fs: FS, volumen: Math.min(1, 0.85 / Math.max(pico(d.x), pico(Senal.filtrarSecciones(secs(), d.x)))), normalizar: false };
+    };
+    Curso.audio.boton(botones, () => sonido(false), 'Original', { clase: 'peque' });
+    Curso.audio.boton(botones, () => sonido(true), 'With your filter', { clase: 'peque' });
+    const aria = () => {
+      const f = st.sel ? st.fH : st.fL;
+      LA.canvas.setAttribute('aria-valuenow', String(f));
+      LA.canvas.setAttribute('aria-valuetext', (st.sel ? 'High cutoff at ' : 'Low cutoff at ') + fHz(f));
+      lect.fijar('bajo', fHz(st.fL));
+      lect.fijar('alto', fHz(st.fH));
+    };
+    const fijar = (sel, f, avisar = true) => {
+      if (sel === 0) st.fL = limitar(Math.round(f / 10) * 10, 40, Math.min(1500, st.fH / 2));
+      else st.fH = limitar(Math.round(f / 50) * 50, Math.max(1000, st.fL * 2), 7500);
+      aria(); todos();
+      if (avisar) Curso.cambio('reto-3');
+    };
+    Curso.arrastre(LA, {
+      eje: 'x',
+      alBajar: p => {
+        if (!escA) return false;
+        st.sel = Math.abs(p.x - escA.x(st.fL)) <= Math.abs(p.x - escA.x(st.fH)) ? 0 : 1;
+        fijar(st.sel, escA.xi(p.x));
+      },
+      alMover: p => fijar(st.sel, escA.xi(p.x)),
+    });
+    LA.canvas.tabIndex = 0;
+    LA.canvas.setAttribute('aria-valuemin', String(F0));
+    LA.canvas.setAttribute('aria-valuemax', String(F1));
+    LA.canvas.addEventListener('keydown', ev => {
+      const f = st.sel ? st.fH : st.fL, k = ev.key;
+      if (k === 'ArrowUp') st.sel = 1;
+      else if (k === 'ArrowDown') st.sel = 0;
+      else if (k === 'ArrowRight' || k === 'ArrowLeft') { const paso = st.sel ? 50 : 10, nuevo = f * (k === 'ArrowRight' ? 1.07 : 1 / 1.07); fijar(st.sel, k === 'ArrowRight' ? Math.max(nuevo, f + paso) : Math.min(nuevo, f - paso)); }
+      else return;
+      ev.preventDefault(); aria(); todos();
+    });
+    aria();
+    Curso.alVerse(escena, () => { preparar(); todos(); });
+    Curso.reto('reto-3', {
+      titulo: 'Phone voice', nivel: 'medio',
+      comprobar: () => {
+        const bajoOk = st.fL >= 250 && st.fL <= 400, altoOk = st.fH >= 3000 && st.fH <= 3600;
+        if (bajoOk && altoOk) return { ok: true, mensaje: 'That is how the phone sounded: from about ' + fHz(st.fL) + ' to ' + fHz(st.fH) + '.' };
+        if (!altoOk) {
+          if (st.fH > 6000) return { ok: false, mensaje: 'That is already HD voice: it reaches 7,000 Hz. The old landline phone stopped much earlier.' };
+          return { ok: false, mensaje: st.fH > 3600 ? 'You have too much treble: the classic phone cut off well before that, below 4,000 Hz.' : 'You are removing too much treble: the classic phone let through up to about 3,400 Hz.' };
+        }
+        return { ok: false, mensaje: st.fL < 250 ? 'You have too much bass: the phone network guaranteed nothing below about 300 Hz, and that is where the fundamental of the voice lives.' : 'You are removing too much bass: the classic phone let through from about 300 Hz.' };
+      },
+      resolver: () => { fijar(0, 300); fijar(1, 3400); },
+      pista: [
+        'The classic phone network guaranteed a band of about three thousand hertz in the middle of the voice, and the HD voice of mobile phones is wider.',
+        'Start with the low cutoff, at about 300 Hz, and bring the high cutoff down to about 3,400 Hz.',
+      ],
+      exito: '<p>That is how the phone sounded for decades: between 300 and 3,400 Hz. The fundamental of the voice has almost completely disappeared and yet you still hear the pitch, because your brain works it out from the harmonics. What is lost is the difference between the “s” and the “f,” because a good part of their energy lies above the high cutoff.</p>',
+    });
+  })();
+
+  // ── Reto 4 · Quita el zumbido (tocar el espectro para colocar muescas) ──────────────────────────────────
+  // Una vocal sintética de 180 Hz con un zumbido de 50, 100 y 150 Hz. Cada toque pone o quita una muesca (una
+  // banda eliminada estrecha, Q = 20, con Senal.biquad 'banda'); hasta cuatro. Las lecturas son exactas en régimen:
+  // cuánto baja cada raya del zumbido y cuánta voz se pierde, según la respuesta de las muescas.
+  (function () {
+    const FS = 16000, F0 = 30, F1 = 1000, DUR = 2.5, Q = 20, MAX = 4;
+    const HUM = [[50, 0.3], [100, 0.15], [150, 0.08]];
+    const st = { notches: [], cur: 0, enfocada: false, r: null, lleno: false };
+    let datos = null, escB = null;
+    const MX = { izquierda: 42, derecha: 12 };
+    const db = a => 20 * Math.log10(a + 1e-9);
+    function preparar() {
+      if (datos) return datos;
+      const v = Senal.ejemplos.vocal(FS, { vocal: 'a', f0: 180, dur: DUR }), hum = new Float64Array(v.length), x = new Float64Array(v.length);
+      for (const [f, a] of HUM) for (let i = 0; i < hum.length; i++) hum[i] += a * Math.sin(TAU * f * i / FS);
+      for (let i = 0; i < x.length; i++) x[i] = v[i] + hum[i];
+      const a0 = Math.round(0.5 * FS), Ev = Senal.espectro(v.slice(a0), FS, { ventana: 'hann', escala: 'amplitud' }), Eh = Senal.espectro(hum.slice(a0), FS, { ventana: 'hann', escala: 'amplitud' });
+      const df = Ev.f[1] - Ev.f[0], kmax = Math.round(4000 / df), kdib = Math.round(1100 / df);
+      const binF = Ev.f.slice(0, kmax + 1), dbV = Float64Array.from(Ev.mag.slice(0, kmax + 1), db), dbH = Float64Array.from(Eh.mag.slice(0, kmax + 1), db);
+      // Los picos que se pueden tocar: máximos locales (en ±4 Hz) de lo más fuerte de los dos espectros
+      const picos = [], w = Math.round(4 / df);
+      for (let k = Math.round(F0 / df); k < kdib; k++) {
+        const lv = Math.max(dbV[k], dbH[k]);
+        if (lv < -42) continue;
+        let esMax = true;
+        for (let j = Math.max(0, k - w); j <= k + w; j++) if (Math.max(dbV[j], dbH[j]) > lv) { esMax = false; break; }
+        if (esMax) picos.push({ f: binF[k], nivel: lv });
+      }
+      const pv = Float64Array.from(Ev.mag.slice(0, kmax + 1), m => m * m);
+      datos = { x, df, binF, dbV, dbH, kdib, picos, pv, pvTot: pv.reduce((a, b) => a + b, 0), humF: HUM.map(h => h[0]) };
+      recalcular();
+      return datos;
+    }
+    function recalcular() {
+      if (!datos) return;
+      const secs = st.notches.map(f => Senal.biquad('banda', f, FS, { Q }));
+      if (!secs.length) { st.r = { secs, bins: new Float64Array(datos.binF.length), att: HUM.map(() => 0), zum: 0, voz: 0 }; return; }
+      const bins = Senal.respuesta(secs, FS, datos.binF).magDb, att = Senal.respuesta(secs, FS, datos.humF).magDb;
+      let e0 = 0, e1 = 0, v1 = 0;
+      HUM.forEach(([, a], i) => { e0 += a * a; e1 += a * a * Math.pow(10, att[i] / 10); });
+      for (let k = 0; k < bins.length; k++) v1 += datos.pv[k] * Math.pow(10, bins[k] / 10);
+      st.r = { secs, bins, att: Array.from(att), zum: 10 * Math.log10(e1 / e0), voz: 10 * Math.log10(v1 / datos.pvTot) };
+    }
+    const escena = document.getElementById('r4-escena');
+    const FRC = Float64Array.from({ length: 260 }, (_, i) => F0 * Math.pow(F1 / F0, i / 259));
+    const LA = G.lienzo(escena, {
+      alto: altoMov(104, 120),
+      etiqueta: 'Curve of the notches you have placed: each one is a narrow gap at one frequency',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 22, abajo: 6 }, x: [F0, F1], y: [-45, 7], logX: true, marcasX: [50, 100, 200, 500, 1000], formatoX: () => '', marcasY: [-40, -20, 0], formatoY: v => num(v), etiquetaY: 'filter response (dB)', C });
+        const r = st.r && st.r.secs.length ? Senal.respuesta(st.r.secs, FS, FRC).magDb : new Float64Array(FRC.length);
+        G.linea(ctx, esc, FRC, Float64Array.from(r, v => Math.max(v, -60)), { color: C.respuesta, ancho: 2.4, C });
+        st.notches.forEach(f => G.texto(ctx, esc.x(f), esc.caja.y + 11, num(f, 0), { alinear: 'center', color: C.suave, tam: 10, fondo: G.alfa(C.pantalla, 0.8), C }));
+      },
+    });
+    const LB = G.lienzo(escena, {
+      alto: altoMov(176, 200), rol: 'application',
+      etiqueta: 'Spectrum of a vowel with power-grid hum: the red peaks are the hum and the yellow ones are the voice. Tap a peak to put a notch on it or remove it.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = escB = G.ejes(ctx, { margen: { ...MX, arriba: 8, abajo: 24 }, x: [F0, F1], y: [-84, 14], logX: true, marcasX: [50, 100, 200, 500, 1000], formatoX: fHz, marcasY: [-80, -60, -40, -20], formatoY: v => num(v), cero: false, C });
+        separador(ctx, w, C);
+        if (!datos) { G.texto(ctx, w / 2, h / 2, 'calculating…', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+        const n = datos.kdib + 1, rb = st.r.bins;
+        const dbV = datos.dbV.subarray(0, n), dbH = datos.dbH.subarray(0, n);
+        const sumar = dbs => { const o = new Float32Array(n); for (let k = 0; k < n; k++) o[k] = Math.max(-90, dbs[k] + rb[k]); return o; };
+        const hz = centrosHz(esc);
+        const antesV = columnas(esc, datos.df, dbV), antesH = columnas(esc, datos.df, dbH), despV = columnas(esc, datos.df, sumar(dbV)), despH = columnas(esc, datos.df, sumar(dbH));
+        G.linea(ctx, esc, hz, antesV, { color: C.espectro, alfa: 0.35, halo: false, ancho: 1.2, C });
+        G.linea(ctx, esc, hz, antesH, { color: C.ruido, alfa: 0.45, halo: false, ancho: 1.2, C });
+        rellenoCols(ctx, esc, despV, C.espectro, C.oscuro ? 0.25 : 0.3, -84);
+        G.linea(ctx, esc, hz, despV, { color: C.espectro, ancho: 1.8, C });
+        rellenoCols(ctx, esc, despH, C.ruido, C.oscuro ? 0.25 : 0.3, -84);
+        G.linea(ctx, esc, hz, despH, { color: C.ruido, ancho: 1.8, C });
+        // Los picos que se pueden tocar, con una marca encima; los que tienen muesca, rellena y naranja.
+        datos.picos.forEach((p, i) => {
+          const x = esc.x(p.f), y = esc.y(p.nivel) - 9, con = st.notches.some(f => Math.abs(f - p.f) < 0.75);
+          if (st.enfocada && i === st.cur) {
+            ctx.save(); ctx.fillStyle = G.alfa(C.acento, 0.16); ctx.fillRect(x - 9, esc.caja.y, 18, esc.caja.h);
+            ctx.strokeStyle = C.acento; ctx.lineWidth = 1.5; ctx.strokeRect(Math.round(x - 9) + 0.5, esc.caja.y, 18, esc.caja.h); ctx.restore();
+          }
+          ctx.save();
+          ctx.strokeStyle = con ? C.respuesta : G.alfa(C.suave, 0.7); ctx.fillStyle = C.respuesta; ctx.lineWidth = 1.4;
+          ctx.beginPath(); ctx.arc(x, y, 4, 0, TAU); if (con) ctx.fill(); ctx.stroke();
+          ctx.restore();
+        });
+        // Leyenda
+        let x = esc.caja.x + 8;
+        for (const [col, txt] of [[C.espectro, 'voice'], [C.ruido, 'power-grid hum']]) {
+          ctx.save(); ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x + 4, esc.caja.y + 12, 4, 0, TAU); ctx.fill(); ctx.restore();
+          x += 13 + G.texto(ctx, x + 13, esc.caja.y + 16, txt, { color: C.suave, tam: 11, C }) + 12;
+        }
+      },
+    });
+    const todos = () => { LA.dibujar(); LB.dibujar(); };
+    const fila = document.getElementById('r4-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'n', nombre: 'Notches' },
+      { id: 'zum', nombre: 'Hum', clase: 'respuesta' },
+      { id: 'voz', nombre: 'Voice', clase: 'senal' },
+    ]);
+    const botones = filaBotones(fila);
+    const sonido = con => {
+      const d = preparar(), y = st.r.secs.length ? Senal.filtrarSecciones(st.r.secs, d.x) : d.x;
+      return { x: con ? y : d.x, fs: FS, volumen: Math.min(1, 0.85 / Math.max(pico(d.x), pico(y))), normalizar: false };
+    };
+    Curso.audio.boton(botones, () => sonido(false), 'Original', { clase: 'peque' });
+    Curso.audio.boton(botones, () => sonido(true), 'With your notches', { clase: 'peque' });
+    Curso.botones(botones, [{ id: 'quitar', texto: 'Remove the notches', tipo: 'discreto', peque: true, alPulsar: () => { st.notches = []; cambio(); } }]);
+    const dbCorto = v => (v < -60 ? 'less than −60 dB' : num(v, 1) + ' dB');
+    function lecturas() {
+      lect.fijar('n', st.notches.length + ' of ' + MAX);
+      if (!st.r) return;
+      lect.fijar('zum', st.notches.length ? dbCorto(st.r.zum) : '0 dB');
+      lect.fijar('voz', st.notches.length ? num(st.r.voz, 1) + ' dB' : '0 dB');
+      LB.canvas.setAttribute('aria-valuetext', st.notches.length ? 'Notches at ' + st.notches.map(f => num(f, 0) + ' Hz').join(', ') + '. The hum drops ' + (st.r.zum < -60 ? 'more than 60' : num(-st.r.zum, 0)) + ' dB' : 'No notches');
+    }
+    function cambio() { recalcular(); lecturas(); todos(); Curso.cambio('reto-4'); }
+    // Un toque pone una muesca en el pico más cercano (a menos de 14 píxeles) o, si no hay ninguno, donde se toca;
+    // si ya había una muesca allí, la quita.
+    function alternar(f) {
+      const cerca = st.notches.findIndex(g => Math.abs(escB.x(g) - escB.x(f)) <= 10);
+      st.lleno = false;
+      if (cerca >= 0) st.notches.splice(cerca, 1);
+      else if (st.notches.length < MAX) st.notches.push(Math.round(f * 10) / 10);
+      else st.lleno = true;
+      st.notches.sort((a, b) => a - b);
+      cambio();
+    }
+    function alToque(ev, canvas) {
+      if (!datos || !escB) return;
+      const px = ev.clientX - canvas.getBoundingClientRect().left;
+      let mejor = null, d = Infinity;
+      for (const p of datos.picos) { const dd = Math.abs(escB.x(p.f) - px); if (dd < d) { d = dd; mejor = p; } }
+      alternar(mejor && d <= 14 ? mejor.f : limitar(escB.xi(px), F0, F1));
+    }
+    for (const L of [LA, LB]) { L.canvas.classList.add('tocable'); L.canvas.addEventListener('click', ev => alToque(ev, L.canvas)); }
+    LB.canvas.tabIndex = 0;
+    LB.canvas.addEventListener('focus', () => { st.enfocada = true; LB.dibujar(); });
+    LB.canvas.addEventListener('blur', () => { st.enfocada = false; LB.dibujar(); });
+    LB.canvas.addEventListener('keydown', ev => {
+      if (!datos) return;
+      const k = ev.key;
+      if (k === 'ArrowLeft') st.cur = Math.max(0, st.cur - 1);
+      else if (k === 'ArrowRight') st.cur = Math.min(datos.picos.length - 1, st.cur + 1);
+      else if (k === 'Enter' || k === ' ') alternar(datos.picos[st.cur].f);
+      else return;
+      ev.preventDefault();
+      LB.canvas.setAttribute('aria-label', 'Peak at ' + num(datos.picos[st.cur].f, 0) + ' hertz. Press Enter to put a notch on it or remove it.');
+      LB.dibujar();
+    });
+    lecturas();
+    Curso.alVerse(escena, () => { preparar(); lecturas(); todos(); });
+    Curso.reto('reto-4', {
+      titulo: 'Remove the hum', nivel: 'medio',
+      comprobar: () => {
+        if (!datos || !st.r) return { ok: false };
+        const n = st.notches.length;
+        if (st.lleno) return { ok: false, mensaje: 'You already have four notches. To place another, remove one by tapping it.' };
+        if (st.r.zum <= -30 && st.r.voz >= -1) return { ok: true, mensaje: 'The hum has dropped ' + (st.r.zum < -60 ? 'more than 60' : num(-st.r.zum, 0)) + ' dB and the voice barely noticed (' + num(st.r.voz, 1) + ' dB).' };
+        if (!n) return { ok: false };
+        const sigue = HUM.filter((h, i) => st.r.att[i] > -20).map(h => h[0]);
+        if (sigue.length) return { ok: false, mensaje: (n === 1 && sigue.length === 2 ? 'A single notch is not enough: ' : '') + 'the hum can still be heard at ' + sigue.map(f => num(f, 0)).join(' and ') + ' Hz.' + (n >= MAX ? ' You have run out of notches: remove the ones that are not on a red line.' : ' Put another notch on top of each red peak.') };
+        if (st.r.voz < -1) return { ok: false, mensaje: 'The hum is almost gone, but you have taken away part of the voice (' + num(st.r.voz, 1) + ' dB). Remove the notches that are not on a red line.' };
+        return { ok: false, mensaje: 'Close: the hum has dropped ' + num(-st.r.zum, 0) + ' dB and 30 are needed. Check that each notch lands right at the center of the peak.' };
+      },
+      resolver: () => { preparar(); st.notches = [50, 100, 150]; st.lleno = false; cambio(); },
+      pista: [
+        'The hum is not a single line: look closely at the red peaks, which are at 50, 100 and 150 Hz.',
+        'Put a notch on each multiple of 50, on top of each red peak, and leave the yellow ones alone.',
+      ],
+      exito: '<p>A notch at 50 Hz alone only lowered the hum by about 6 dB: the rest was in its multiples. Narrow notches remove the hum almost without touching the voice, because the voice has nothing right at those frequencies.</p>',
+    });
+  })();
+
+  // ── Reto 5 · Suave o abrupto (un deslizador y una elección: corte y orden) ──────────────────────────────
+  // La respuesta de un paso bajo de Butterworth (Senal.butterworth y Senal.respuesta) y dos notas, de 1.000 y de
+  // 2.000 Hz, a una octava una de otra. Hay que salvar la primera y hundir la segunda.
+  (function () {
+    const FS = 16000, F0 = 100, F1 = 8000;
+    const st = { fc: 1500, orden: 2 };
+    const FR = Float64Array.from({ length: 240 }, (_, i) => F0 * Math.pow(F1 / F0, i / 239));
+    const secs = (n = st.orden, fc = st.fc) => Senal.butterworth(n, fc, FS, 'pasoBajo');
+    const gan = (f, n = st.orden, fc = st.fc) => Senal.respuesta(secs(n, fc), FS, [f]).magDb[0];
+    const L = G.lienzo('#r5-escena', {
+      alto: altoMov(200, 230),
+      etiqueta: 'Curve of a Butterworth low-pass, in decibels, with two notes marked, at 1,000 and 2,000 hertz, and two thresholds: minus 3 and minus 40 decibels',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { izquierda: 44, derecha: 14, arriba: 24, abajo: 24 }, x: [F0, F1], y: [-72, 6], logX: true, marcasX: [100, 300, 1000, 3000], formatoX: fHz, marcasY: [-60, -40, -20, -3, 0], formatoY: v => num(v), etiquetaY: 'gain (dB)', C });
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.cuerpo, 0.55); ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        for (const y of [-3, -40]) { const py = Math.round(esc.y(y)) + 0.5; ctx.moveTo(esc.caja.x, py); ctx.lineTo(esc.caja.x + esc.caja.w, py); }
+        for (const f of [1000, 2000]) { const px = Math.round(esc.x(f)) + 0.5; ctx.moveTo(px, esc.caja.y); ctx.lineTo(px, esc.caja.y + esc.caja.h); }
+        ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, esc.x(1000) - 5, esc.caja.y + 9, 'note', { alinear: 'right', color: C.tenue, tam: 10, C });
+        G.texto(ctx, esc.x(2000) + 5, esc.caja.y + 9, 'beep', { color: C.tenue, tam: 10, C });
+        const r = Senal.respuesta(secs(), FS, FR).magDb;
+        G.linea(ctx, esc, FR, Float64Array.from(r, v => Math.max(v, -90)), { color: C.respuesta, ancho: 2.6, C });
+        const g1 = gan(1000), g2 = gan(2000);
+        G.puntos(ctx, esc, [1000, 2000], [g1, Math.max(g2, -71)], { color: C.respuesta, radio: 5.5, borde: C.pantalla, C });
+        G.texto(ctx, esc.x(1000) - 9, esc.y(g1) + 18, num(g1, 1) + ' dB', { alinear: 'right', color: C.texto, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+        G.texto(ctx, esc.x(2000) + 9, Math.min(esc.y(g2) + 18, esc.caja.y + esc.caja.h - 6), num(g2, 1) + ' dB', { color: C.texto, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+      },
+    });
+    const mandos = document.getElementById('r5-mandos');
+    const corte = Curso.mando(mandos, { etiqueta: 'Cutoff frequency', clase: 'respuesta', min: 500, max: 2000, paso: 5, valor: st.fc, formato: v => fHz(v), reto: 'reto-5', alCambiar: v => { st.fc = v; cambio(); } });
+    const orden = Curso.eleccion(mandos, { etiqueta: 'Filter order', opciones: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => ({ valor: n, texto: String(n) })), valor: st.orden, reto: 'reto-5', alCambiar: v => { st.orden = v; cambio(); } });
+    orden.el.style.gridColumn = '1 / -1';
+    const fila = document.getElementById('r5-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'g1', nombre: '1,000 Hz note', clase: 'senal' },
+      { id: 'g2', nombre: '2,000 Hz beep', clase: 'ruido' },
+    ]);
+    const botones = filaBotones(fila);
+    const tonos = () => { const x = new Float64Array(Math.round(1.6 * FS)); for (let i = 0; i < x.length; i++) x[i] = 0.3 * Math.sin(TAU * 1000 * i / FS) + 0.3 * Math.sin(TAU * 2000 * i / FS); return x; };
+    Curso.audio.boton(botones, () => ({ x: tonos(), fs: FS, volumen: 0.6, normalizar: false }), 'Listen to the note and the beep', { clase: 'peque' });
+    Curso.audio.boton(botones, () => ({ x: Senal.filtrarSecciones(secs(), tonos()), fs: FS, volumen: 0.6, normalizar: false }), 'Listen with your filter', { clase: 'peque' });
+    function cambio() {
+      lect.fijar('g1', num(gan(1000), 1) + ' dB');
+      lect.fijar('g2', num(gan(2000), 1) + ' dB');
+      L.dibujar();
+    }
+    cambio();
+    Curso.reto('reto-5', {
+      titulo: 'Gentle or abrupt', nivel: 'difícil',
+      comprobar: () => {
+        const g1 = gan(1000), g2 = gan(2000);
+        if (g1 >= -3.1 && g2 <= -40) return { ok: true, mensaje: 'The note passes almost intact (' + num(g1, 1) + ' dB) and the beep ends up at ' + num(g2, 1) + ' dB.' };
+        if (g1 < -3.1) return { ok: false, mensaje: 'Your cutoff eats the 1,000 Hz note, which drops ' + num(-g1, 1) + ' dB: raise the cutoff.' + (g2 > -40 ? ' And to sink the beep you will need a more abrupt drop.' : '') };
+        if (st.orden <= 6) return { ok: false, mensaje: 'The beep is still at ' + num(g2, 1) + ' dB. Even if you put the cutoff right at 1,000 Hz, with order ' + st.orden + ' an octave higher it would only drop about ' + num(-gan(2000, st.orden, 1000), 0) + ' dB: you need a more abrupt drop, that is, a higher order.' };
+        return { ok: false, mensaje: 'The beep is still at ' + num(g2, 1) + ' dB: lower the cutoff a little, without letting the 1,000 Hz note fall below −3 dB.' };
+      },
+      resolver: () => { orden.fijar(8); corte.fijar(1050); },
+      pista: [
+        'The two notes are an octave apart, from 1,000 to 2,000 Hz, and each order adds about 6 dB of drop per octave.',
+        'You need at least 40 dB of drop in that octave: with an order of 6 or less no cutoff will get you there. Try a high order and look for the cutoff.',
+      ],
+      exito: '<p>A low-order filter is a gentle ramp and a high-order one is a cliff. To separate two notes that are an octave apart you need a cliff, but it has a price: it delays the signal more and takes longer to settle, as you will see in <a href="e08.html">lesson 8</a>.</p>',
+    });
+  })();
+
+  // ── Reto 6 · La media de 7 días (un deslizador y una elección) ─────────────────────────────────────────
+  // Casos diarios sintéticos de una ola con el pico en el día 70, multiplicada por un ritmo semanal. La media
+  // móvil (Senal.mediaMovil), hacia atrás o centrada, con su ventana de 1 a 21 días.
+  (function () {
+    const D = 140, PICO = 70;
+    const patron0 = [1.15, 1.05, 1, 1, 0.95, 0.6, 0.55], m = patron0.reduce((a, b) => a + b) / 7, patron = patron0.map(v => v / m);
+    const az = Senal.azar(5);
+    const ola = t => 1000 * Math.exp(-0.5 * Math.pow((t - PICO) / 18, 2)) + 40;
+    const dias = Float64Array.from({ length: D }, (_, i) => i);
+    const datos = Float64Array.from(dias, t => Math.round(ola(t) * patron[t % 7] * (1 + 0.01 * az.normal())));
+    // Cuánto queda del ritmo semanal tras una media de N días: el ritmo son tres armónicos de 1/7, 2/7 y 3/7 de
+    // ciclo por día, y la respuesta de la media en cada uno es |sen(π·f·N) / (N·sen(π·f))|.
+    const armonicos = [1, 2, 3].map(k => { let re = 0, im = 0; for (let j = 0; j < 7; j++) { re += patron[j] * Math.cos(TAU * k * j / 7); im -= patron[j] * Math.sin(TAU * k * j / 7); } return Math.hypot(re, im) / 7; });
+    const resto = N => {
+      let a = 0, b = 0;
+      armonicos.forEach((c, i) => { const f = (i + 1) / 7, h = Math.abs(Math.sin(Math.PI * f * N) / (N * Math.sin(Math.PI * f))); a += c * c * h * h; b += c * c; });
+      return 100 * Math.sqrt(a / b);
+    };
+    const st = { N: 1, modo: 'atras' };
+    const filtrada = () => {
+      const y = Senal.mediaMovil(datos, st.N, { centrada: st.modo === 'centrada' }), d = st.modo === 'centrada' ? Math.floor((st.N - 1) / 2) : 0;
+      for (let i = 0; i < D; i++) if (i + d - st.N + 1 < 0 || i + d >= D) y[i] = NaN;
+      return y;
+    };
+    const picoDe = y => { let p = -1; for (let i = 0; i < y.length; i++) if (Number.isFinite(y[i]) && (p < 0 || y[i] > y[p])) p = i; return p; };
+    const retraso = () => (st.modo === 'atras' ? (st.N - 1) / 2 : 0);
+    const L = G.lienzo('#r6-escena', {
+      alto: altoMov(200, 240),
+      etiqueta: 'Synthetic daily cases over 140 days, as gray bars with a dip every weekend, and the moving average in orange; a mark points to the real peak, day 70',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { izquierda: 44, derecha: 14, arriba: 24, abajo: 24 }, x: [0, D], y: [0, 1500], marcasX: [0, 28, 56, 70, 84, 112, 140], formatoX: v => num(v), marcasY: [0, 500, 1000], formatoY: v => num(v), etiquetaX: 'day', etiquetaY: 'cases per day (synthetic)', C });
+        G.barras(ctx, esc, dias, datos, { color: C.cuerpo, alfa: 0.3, ancho: 0.7 });
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.cuerpo, 0.7); ctx.lineWidth = 1; ctx.setLineDash([3, 4]);
+        ctx.beginPath(); ctx.moveTo(Math.round(esc.x(PICO)) + 0.5, esc.caja.y); ctx.lineTo(Math.round(esc.x(PICO)) + 0.5, esc.caja.y + esc.caja.h); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, esc.x(PICO) - 5, esc.caja.y + 12, 'real peak: day 70', { alinear: 'right', color: C.tenue, tam: 10, C });
+        const y = filtrada(), p = picoDe(y);
+        G.linea(ctx, esc, dias, y, { color: C.respuesta, ancho: 2.6, C });
+        if (p >= 0 && st.N > 1) {
+          G.puntos(ctx, esc, [p], [y[p]], { color: C.respuesta, radio: 5, borde: C.pantalla, C });
+          G.texto(ctx, esc.x(p) + (p > PICO ? 9 : -9), esc.y(y[p]) - 10, 'your peak: day ' + p, { alinear: p > PICO ? 'left' : 'right', color: C.texto, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+        }
+      },
+    });
+    const mandos = document.getElementById('r6-mandos');
+    const mN = Curso.mando(mandos, { etiqueta: 'Days the average covers', clase: 'respuesta', min: 1, max: 21, paso: 1, valor: st.N, formato: v => num(v) + (v === 1 ? ' day' : ' days'), reto: 'reto-6', alCambiar: v => { st.N = v; cambio(); } });
+    const mModo = Curso.eleccion(mandos, { etiqueta: 'Which days it looks at', opciones: [{ valor: 'atras', texto: 'Backward' }, { valor: 'centrada', texto: 'Centered' }], valor: st.modo, reto: 'reto-6', alCambiar: v => { st.modo = v; cambio(); } });
+    const lect = Curso.lecturas(document.getElementById('r6-fila'), [
+      { id: 'resto', nombre: 'Weekly rhythm left', clase: 'respuesta' },
+      { id: 'pico', nombre: 'Peak of your curve' },
+      { id: 'tarde', nombre: 'Delay of the curve' },
+    ]);
+    function cambio() {
+      const p = picoDe(filtrada());
+      lect.fijar('resto', num(Math.round(resto(st.N))) + '%');
+      lect.fijar('pico', st.N === 1 ? 'day ' + picoDe(datos) : 'day ' + p);
+      lect.fijar('tarde', num(retraso(), retraso() % 1 ? 1 : 0) + (retraso() === 1 ? ' day' : ' days'));
+      L.dibujar();
+    }
+    cambio();
+    Curso.reto('reto-6', {
+      titulo: 'The 7-day average', nivel: 'medio',
+      comprobar: () => {
+        const r = resto(st.N), t = retraso();
+        if (r <= 4 && t <= 1) return { ok: true, mensaje: 'No teeth and the peak in its place: a ' + st.N + '-day average, centered.' };
+        if (st.N === 1) return { ok: false };
+        if (r > 4) return { ok: false, mensaje: st.N < 7 ? 'The teeth are still visible: a ' + st.N + '-day average doesn’t contain a whole week. How often do the dips repeat?' : 'With ' + st.N + ' days the average contains whole weeks plus some extra days, and those days leave a bit of tooth. Try a number of days that is one week, or two.' };
+        return { ok: false, mensaje: 'You have erased the weekly rhythm, but the curve arrives ' + num(t, t % 1 ? 1 : 0) + ' days late: its peak shows up on day ' + picoDe(filtrada()) + '. Try centering it.' };
+      },
+      resolver: () => { mN.fijar(7); mModo.fijar('centrada'); },
+      pista: [
+        'How often do the dips repeat? An average that spans exactly that long cancels them out.',
+        'An average that looks only backward arrives late: center it, even if it needs the data from the following days.',
+      ],
+      exito: '<p>A 7-day average erases anything that repeats exactly every week, because each average contains a Monday, a Tuesday and so on up to a Sunday. Looking only backward it arrives three days late, and centered it doesn’t, but it needs the data from the next three days. That is why the pandemic charts ran behind, and why a filter that can’t wait for the future always arrives late.</p>',
+    });
+  })();
+
+  // ── En tu voz · tu audio por el teléfono, por la pared y sin zumbido ─────────────────────────────────────
+  // El audio llega a 16.000 Hz. Tres filtros a elegir: el paso banda del teléfono clásico (300–3.400 Hz), un paso
+  // bajo que hace de pared y, si el audio tiene un zumbido de la red, una muesca en cada raya. El zumbido se busca
+  // en 50 y en 60 Hz y sus múltiplos: una raya cuenta si destaca al menos 8 dB de su entorno en las dos mitades del
+  // audio y, además, se ve la de la propia frecuencia de la red (así no se confunde con los armónicos de una vocal).
+  (function () {
+    const FS = 16000, QM = 20, UMBRAL = 8;
+    const pot2 = n => { let p = 16; while (p * 2 <= n) p *= 2; return p; };
+    const OPC = [{ valor: 'telefono', texto: 'Classic phone' }, { valor: 'pared', texto: 'Through the wall' }, { valor: 'zumbido', texto: 'Remove the hum' }];
+    const NOMBRE = { telefono: 'Phone, 300 to 3,400 Hz', pared: 'Wall, up to about 500 Hz', zumbido: 'Notches on the hum' };
+    const RANGO = { telefono: [40, 8000], pared: [40, 8000], zumbido: [30, 1000] };
+    const MARCAS = { telefono: [100, 300, 1000, 3000], pared: [100, 300, 1000, 3000], zumbido: [50, 100, 200, 500, 1000] };
+    const FIJOS = {
+      telefono: [...Senal.butterworth(4, 300, FS, 'pasoAlto'), ...Senal.butterworth(6, 3400, FS, 'pasoBajo')],
+      pared: Senal.butterworth(4, 500, FS, 'pasoBajo'),
+    };
+    const st = { x: null, modo: 'telefono', espec: null, hum: null, cache: {} };
+    const listaHz = v => (v.length < 2 ? v.join('') : v.slice(0, -1).join(', ') + ' and ' + v[v.length - 1]);
+    const secs = modo => (modo === 'zumbido' ? (st.hum ? st.hum.lineas.map(f => Senal.biquad('banda', f, FS, { Q: QM })) : []) : FIJOS[modo]);
+    // Cuánto destaca una raya de su entorno: el pico en ±3 Hz frente a la mediana de lo que hay entre 12 y 32 Hz a cada lado.
+    function destaque(psd, df, f) {
+      const w = Math.max(3, 1.5 * df), ref = [];
+      let pk = 0;
+      for (let k = 1; k < psd.length; k++) { const d = Math.abs(k * df - f); if (d <= w) pk = Math.max(pk, psd[k]); else if (d >= 12 && d <= 32) ref.push(psd[k]); }
+      ref.sort((a, b) => a - b);
+      return 10 * Math.log10((pk + 1e-30) / ((ref[ref.length >> 1] || 0) + 1e-30));
+    }
+    const potenciaRayas = (x, lineas) => {
+      const n = Math.min(4096, pot2(x.length)), W = Senal.welch(x, FS, { n, solape: 0.5, ventana: 'hann' }), df = W.f[1] - W.f[0];
+      let s = 0;
+      for (const f of lineas) { const w = Math.max(3, 1.5 * df); for (let k = 1; k < W.psd.length; k++) if (Math.abs(k * df - f) <= w) s += W.psd[k]; }
+      return s;
+    };
+    function buscarZumbido(x) {
+      const n = Math.min(4096, pot2(x.length));
+      if (n < 1024) return { base: null, lineas: [] };
+      const mid = x.length >> 1, trozos = x.length >= 2 * n ? [x.subarray(0, mid), x.subarray(mid)] : [x];
+      const Ws = trozos.map(t => { const m = Math.min(n, pot2(t.length)), W = Senal.welch(t, FS, { n: m, solape: 0.5, ventana: 'hann' }); return { psd: W.psd, df: W.f[1] - W.f[0] }; });
+      let mejor = { base: null, lineas: [], suma: 0 };
+      for (const base of [50, 60]) {
+        const dest = [1, 2, 3, 4, 5].map(m => Math.min(...Ws.map(W => destaque(W.psd, W.df, base * m))));
+        if (dest[0] < UMBRAL) continue;
+        const lineas = [], suma = dest.reduce((a, d, i) => { if (d >= UMBRAL) { lineas.push(base * (i + 1)); return a + d; } return a; }, 0);
+        if (suma > mejor.suma) mejor = { base, lineas: lineas.slice(0, 4), suma };
+      }
+      return { base: mejor.base, lineas: mejor.lineas };
+    }
+    // Lo que se calcula de cada filtro con el audio cargado: la versión filtrada y las medidas.
+    function version(modo) {
+      if (!st.cache[modo]) {
+        const s = secs(modo), y = s.length ? Senal.filtrarSecciones(s, st.x) : st.x;
+        const e = st.espec, hz = Float64Array.from(e.db, (_, k) => k * e.df), r = s.length ? Senal.respuesta(s, FS, hz).magDb : new Float64Array(hz.length);
+        let a = 0, b = 0;
+        for (let k = 1; k < e.db.length; k++) { const p = Math.pow(10, e.db[k] / 10); a += p; b += p * Math.pow(10, r[k] / 10); }
+        let baja = null;
+        if (modo === 'zumbido' && st.hum && st.hum.lineas.length) baja = 10 * Math.log10((potenciaRayas(y, st.hum.lineas) + 1e-30) / (potenciaRayas(st.x, st.hum.lineas) + 1e-30));
+        st.cache[modo] = { y, secs: s, resto: a > 0 ? b / a : 1, baja };
+      }
+      return st.cache[modo];
+    }
+    const lab = Curso.voz('#voz-lab', { ejemplos: ['frase', 'silencio'], fsAnalisis: FS, fsEjemplos: FS, alCargar: cargar });
+    const mandos = crear('div', { class: 'mandos' });
+    lab.panel.appendChild(mandos);
+    Curso.eleccion(mandos, { etiqueta: 'What to do to your audio', opciones: OPC, valor: st.modo, alCambiar: v => { st.modo = v; refrescar(); } });
+    const fila = crear('div', { class: 'botones' });
+    lab.panel.appendChild(fila);
+    const sonido = tuyo => {
+      if (!st.x || !st.espec) return null;
+      const v = tuyo ? version(st.modo) : null, p = Math.max(pico(st.x), v ? pico(v.y) : 0, 1e-9), k = 0.8 / p;
+      return { x: Float64Array.from(tuyo ? v.y : st.x, a => a * k), fs: FS, volumen: 1, normalizar: false };
+    };
+    Curso.audio.boton(fila, () => sonido(false), 'Listen to the original', { clase: 'peque' });
+    Curso.audio.boton(fila, () => sonido(true), 'Listen with the filter', { clase: 'peque' });
+    const lect = Curso.lecturas(lab.panel, [
+      { id: 'filtro', nombre: 'Filter', clase: 'respuesta' },
+      { id: 'zum', nombre: 'Hum in your audio' },
+      { id: 'resto', nombre: 'Energy left', clase: 'senal' },
+      { id: 'baja', nombre: 'Hum after the filter', clase: 'ruido' },
+    ]);
+    const MX = { izquierda: 42, derecha: 12 };
+    const escena = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena);
+    const LA = G.lienzo(escena, {
+      alto: altoMov(130, 150),
+      etiqueta: 'Curve of the chosen filter, in decibels, over the frequency axis',
+      dibujar: (ctx, w, h, C) => {
+        const [f0, f1] = RANGO[st.modo], n = 220, fr = Float64Array.from({ length: n }, (_, i) => f0 * Math.pow(f1 / f0, i / (n - 1)));
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 24, abajo: 22 }, x: [f0, f1], y: [-60, 8], logX: true, marcasX: MARCAS[st.modo], formatoX: fHz, marcasY: [-48, -24, 0], formatoY: v => num(v), etiquetaY: 'filter response (dB)', C });
+        if (!st.x) { G.texto(ctx, w / 2, h / 2, 'Record, upload audio or pick an example', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C }); return; }
+        const s = secs(st.modo), r = s.length ? Senal.respuesta(s, FS, fr).magDb : new Float64Array(n);
+        G.linea(ctx, esc, fr, Float64Array.from(r, v => Math.max(v, -80)), { color: C.respuesta, ancho: 2.6, C });
+      },
+    });
+    const escena2 = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena2);
+    const LB = G.lienzo(escena2, {
+      alto: altoMov(150, 170),
+      etiqueta: 'Spectrum of your audio before it goes through the filter, faint, and after, vivid. The hum lines, dashed in coral.',
+      dibujar: (ctx, w, h, C) => {
+        const [f0, f1] = RANGO[st.modo];
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 8, abajo: 24 }, x: [f0, f1], y: [-90, 4], logX: true, marcasX: MARCAS[st.modo], formatoX: fHz, marcasY: [-80, -60, -40, -20, 0], formatoY: v => num(v), cero: false, C });
+        separador(ctx, w, C);
+        if (!st.x || !st.espec) return;
+        const e = st.espec, s = secs(st.modo), ent = columnas(esc, e.df, e.db), hz = centrosHz(esc), r = s.length ? Senal.respuesta(s, FS, hz).magDb : new Float64Array(hz.length), sal = new Float32Array(ent.length);
+        for (let c = 0; c < ent.length; c++) sal[c] = ent[c] + r[c];
+        rellenoCols(ctx, esc, ent, C.espectro, 0.1, -90);
+        G.linea(ctx, esc, hz, ent, { color: C.espectro, alfa: 0.4, halo: false, ancho: 1.3, C });
+        rellenoCols(ctx, esc, sal, C.espectro, C.oscuro ? 0.22 : 0.3, -90);
+        G.linea(ctx, esc, hz, sal, { color: C.espectro, ancho: 1.8, C });
+        if (st.hum) for (const f of st.hum.lineas) {
+          if (f < f0 || f > f1) continue;
+          ctx.save(); ctx.strokeStyle = G.alfa(C.ruido, 0.7); ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+          ctx.beginPath(); ctx.moveTo(Math.round(esc.x(f)) + 0.5, esc.caja.y); ctx.lineTo(Math.round(esc.x(f)) + 0.5, esc.caja.y + esc.caja.h); ctx.stroke();
+          ctx.restore();
+        }
+        G.texto(ctx, esc.caja.x + esc.caja.w - 4, esc.caja.y + 13, 'your audio, faint; with the filter, vivid', { alinear: 'right', color: C.tenue, tam: 10, C });
+      },
+    });
+    const nota = crear('p', { class: 'nota-reto' }, '');
+    lab.panel.appendChild(nota);
+
+    function cargar(x) {
+      st.x = x; st.cache = {};
+      st.espec = x.length >= 256 ? espectroMedio(x, FS, 2048) : null;
+      st.hum = x.length >= 256 ? buscarZumbido(x) : { base: null, lineas: [] };
+      refrescar();
+    }
+    function refrescar() {
+      lect.fijar('filtro', NOMBRE[st.modo]);
+      const hay = st.hum && st.hum.lineas.length;
+      lect.fijar('zum', !st.x ? '—' : hay ? listaHz(st.hum.lineas.map(f => num(f, 0))) + ' Hz' : 'none visible');
+      if (st.x && st.espec) {
+        const v = version(st.modo);
+        lect.fijar('resto', num(100 * v.resto, v.resto < 0.1 ? 1 : 0) + '%');
+        lect.fijar('baja', st.modo === 'zumbido' && v.baja !== null ? (v.baja < -60 ? 'more than 60 dB' : num(-v.baja, 0) + ' dB') : '—');
+      } else { lect.fijar('resto', '—'); lect.fijar('baja', '—'); }
+      nota.textContent = !st.x ? '' : st.modo === 'telefono'
+        ? 'Look at the band that stays vivid: what is above 3,400 Hz, where a good part of the “s” lives, disappears, and below 300 Hz the fundamental of the voice disappears. Even so, you can still hear the pitch.'
+        : st.modo === 'pared'
+          ? 'A wall holds back the highs much more than the lows: that is why from the apartment next door you get the bass and not the words. The energy that is left is almost only that of the lows.'
+          : hay
+            ? 'The dashed lines are the hum I found, and there is a notch on top of each one. Check that the rest of the spectrum hasn’t changed.'
+            : 'I didn’t find any power-grid hum in this audio, which is normal with a phone’s microphone. Try the “Silence” example, which carries a 50 Hz hum with its multiples.';
+      LA.dibujar(); LB.dibujar();
+    }
+    refrescar();
+  })();
+})();
+</script>
+</body>
+</html>

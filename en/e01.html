@@ -1,0 +1,1137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Every wave is a Ferris wheel · Signals</title>
+<meta name="description" content="Lesson 1 of the visual course “Signals, from Zero to Expert”: what a signal is and how to read a sinusoid with three words (amplitude, frequency and phase), with a Ferris wheel, six challenges and your own voice.">
+<link rel="stylesheet" href="../comun/fuentes.css">
+<link rel="stylesheet" href="../comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e01">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Level 1 · Lesson 1</p>
+    <h1>Every wave is a Ferris wheel</h1>
+    <aside class="pregunta">
+      <p>A tuning fork in front of a microphone, someone whistling, and the voltage at a wall outlet as an electrician’s instruments draw it. A piece of metal, the air coming out of a mouth, and the electricity in a house have nothing to do with each other, and yet all three draw almost the same curve. Why that curve and not another?</p>
+    </aside>
+    <ul class="meta"><li>About 35 minutes</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>The idea in one picture</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>A Ferris wheel always turns at the same speed. The height of the green cabin, jotted down moment by moment, draws a wave: the sinusoid. What was just jotted down stays next to the wheel, and what is farther right happened a moment ago, up to two seconds back.</figcaption>
+    </figure>
+    <p>A sinusoid is what you see of something that spins when you look only at its height, like the shadow of a wheel cast on a wall. That same curve is also the natural motion of everything that vibrates, which is why it shows up in a tuning fork, in the wall outlet, and in a whistle.</p>
+    <p>Change the size or the speed of the wheel and watch where the change appears: it is born next to the wheel and moves away to the right, because the wave is the history of the cabin. If you turn on the orange cabin, you will see two histories running side by side.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Step by step</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>The shadow of a Ferris wheel</h3>
+      <p>The air pressure in front of a microphone goes up and down, and so does the voltage at a wall outlet. A pulse, the temperature on a street, or the price of bread all change over time, and anything that changes and can be measured is a <b class="termino">signal</b>. To draw one you only need two axes: time and what is being measured.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">A word with a history</span>
+        <p>“Sine,” the other name of this curve, comes from a bowstring. Indian mathematicians called the chord joining two points of a circle <i>jyā</i>. Arabic translators copied the sound as <i>jība</i>, which meant nothing in Arabic and was written without vowels, and in twelfth-century Latin translations it was read as <i>jayb</i>, “fold” or “pocket,” and translated as <i>sinus</i>. Through a misreading, the most important curve in the course is named after a fold.</p>
+      </aside>
+      <p>Picture a carnival Ferris wheel turning slowly and watch a single cabin. Its height rises, reaches the top, drops, passes the bottom, and rises again. If you jot down that height at every instant and keep laying what you jotted down off to one side, a smooth, repeating curve appears: the <b class="termino">sinusoid</b>, or sine wave. Each point of the curve tells where the cabin was at some moment in the past.</p>
+      <p>What a phone stores, on the other hand, is numbers. When you record audio, the microphone jots down how hard the air is pushing tens of thousands of times per second, so, for a machine, a signal is a list of numbers in order. In the challenge you will see that list grow while you turn the wheel.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Grab the Ferris wheel with your finger or the mouse and give it one full turn. As you turn, the trace jots down the height of the green cabin.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div>
+          <p class="nota-reto">What a machine would jot down, four times per second, from now going back:</p>
+          <div class="lista-numeros" id="r1-lista"></div>
+        </div>
+        <div class="fila" id="r1-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>Turns per second</h3>
+      <p>The Ferris wheel brings, for free, the whole vocabulary of waves, and the first word is speed. If the wheel turns faster, the cabin goes up and down more times in the same time and the waves get squeezed together. The number of turns it makes in one second is the <b class="termino">frequency</b>, and it is measured in <b class="termino">hertz</b>: one hertz is one turn, one cycle, per second. The name honors Heinrich Hertz, the first to show that electromagnetic waves exist.</p>
+      <p>How long one turn takes is the <b class="termino">period</b>. Frequency and period are two sides of the same thing: if the wheel makes four turns per second, each turn lasts a quarter of a second.</p>
+      <p>The wall outlet at home is the most literal case. Much of our electricity comes from spinning generators, and a typical one in a thermal power plant has two poles and makes 3,000 turns per minute, which is fifty per second. Each turn pushes the voltage up and down once, and that is why the European grid runs at 50 Hz (so the outlet in Spain does too). Much of the Americas uses 60 Hz, and Japan has both, because in 1895 Tokyo bought German 50 Hz generators and, the following year, Osaka bought American 60 Hz ones. Today, in addition, solar panels and batteries produce that same curve with electronics, without spinning, imitating the Ferris wheel.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">This wave lasts exactly one second. Count how many turns it makes and write its frequency; then write how long each turn lasts, its period.</p>
+        <div class="escena" id="r2-escena"></div>
+        <p class="nota-reto">If it helps, tap the crests to number them. You can write the period as “0.25”, as “1/4”, or as “250 ms”.</p>
+        <div class="mandos" id="r2-mandos"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>Size and speed can be heard</h3>
+      <p>The second word is size. If the wheel is bigger, the cabin goes higher and lower, and the wave grows. That maximum height, measured from the center, is called the <b class="termino">amplitude</b>.</p>
+      <p>When the wave is a sound, each word is heard in its own way. Frequency is heard as the note: a Ferris wheel that turned 440 times per second would sound like the A that an orchestra tunes to, the one from the most common tuning fork. Amplitude is heard as loudness, so a big wheel sounds loud and a small one sounds quiet. The sensation of loudness also depends on the note, but this is enough to start with. We hear, more or less, between 20 and 20,000 Hz, and the upper limit drops with age.</p>
+      <div class="botones" id="p3-la"></div>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Listen to the two tones and pick the higher one, the one with the higher note. Careful: the higher one is not always the louder one. Get three correct in a row.</p>
+        <div class="columnas-2" id="r3-tonos"></div>
+        <div class="fila" id="r3-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>The starting point</h3>
+      <p>The third word seems the dullest. Put two cabins on the same Ferris wheel, a quarter of a turn apart: they draw exactly the same wave, but one runs ahead of the other. That offset, the point in the turn where each cabin starts, is called the <b class="termino">phase</b>, and it is measured in degrees (one full turn is 360°) or in fractions of a turn.</p>
+      <p>Size, speed, and starting point: with amplitude, frequency, and phase you can describe any sinusoid. In the challenge, an orange cabin draws a wave with three values you do not know, and you have to find them by moving your own Ferris wheel.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Adjust the size, the speed, and the starting point of your Ferris wheel until the green wave covers the dotted orange one.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="mandos" id="r4-mandos"></div>
+        <div class="fila" id="r4-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>When phase decides</h3>
+      <p>With a single wave, phase hardly matters, because it only says where the wave starts. As soon as two waves are added, however, it decides whether they reinforce or cancel each other. If the two cabins go together, their heights add up and the wave doubles; if one is at the top just when the other is at the bottom, they compensate each other at every instant.</p>
+      <p>Noise-canceling headphones rely on this: a microphone listens to the noise outside and the headphone produces an equal wave with its starting point shifted, so that the two compensate each other inside your ear. Adding waves is the subject of <a href="e03.html">lesson 3</a>; here it is enough to see what phase does.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Drag the orange cabin around the Ferris wheel until the sum of the two waves disappears. With “Hear the sum” you can listen to it while you move it.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>What vibrates</h3>
+      <p>A tuning fork does not spin and yet it draws the same curve, for a deeper reason. If you pull a prong of the fork away from its position and let go, the metal itself pulls it back, and the farther you pull it, the harder it pulls. This is the rule of a spring: a force back toward rest, proportional to the displacement.</p>
+      <p>Everything that follows that rule moves the same way, with a motion physicists call <b class="termino">simple harmonic motion</b>, and that motion is exactly the shadow of a Ferris wheel. The prongs of a tuning fork, the air vibrating inside your mouth when you whistle, or a swing with a small push follow it, at least approximately. A freshly struck tuning fork also makes a sharp “clang” that dies out quickly and leaves only the pure note.</p>
+      <p>How fast a spring vibrates depends on two things: how hard it is, its stiffness, and how heavy the mass hanging from it is. A stiffer spring pulls the mass back with more force and vibrates faster, while a heavier mass is harder to move and vibrates more slowly.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">Adjust the spring stiffness and the mass until the orange mass goes up and down in step with the green cabin. Every time you touch a control, the mass starts again from the height of the cabin.</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-lecturas"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>In your voice</h2>
+    <p><b>What to record.</b> A sustained whistle of a few seconds and then a long “aah” on the same note: these are segments 2 and 3 of the series’ reference recording. Record with the microphone if your browser allows it; if not, upload audio recorded with your phone or try the synthetic examples.</p>
+    <p><b>What to look at.</b> The oscilloscope shows a few milliseconds of the signal, and in that window your whistle should look almost like a perfect Ferris wheel. A study that recorded twenty people whistling found that a single frequency dominates in a whistle, almost always between 500 and 5,000 Hz. The “aah” repeats at the same pace, but with humps and peaks of its own that a single Ferris wheel cannot draw. Tap two consecutive crests to measure how long one vibration lasts: the frequency and the note come from that, and the lab tells you how much your signal resembles a single Ferris wheel.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>What to remember</h2>
+    <ol class="tres">
+      <li>A signal is something that changes and can be measured. For a machine, it is a list of numbers in order.</li>
+      <li>The sinusoid is the shadow of something that spins, and it is described with three words: amplitude, the size; frequency, the turns per second; and phase, the starting point.</li>
+      <li>It appears everywhere because it is the shadow of what spins and the natural motion of what vibrates. Almost nothing is a single Ferris wheel, but almost everything can be built by putting Ferris wheels together.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Common mistakes</h2>
+    <ul class="errores">
+      <li><b>“More frequency means more volume.”</b> Frequency is the note, and volume depends on the amplitude. They are independent: a small, fast Ferris wheel gives a high, quiet note.</li>
+      <li><b>“Phase doesn’t matter.”</b> With a single wave, almost. As soon as two are added, phase decides whether they reinforce or cancel each other, and noise-canceling headphones live off that.</li>
+      <li><b>“The sinusoid is a mathematical invention.”</b> It is what a spring, a tuning fork prong, or the voltage of a generator does. Mathematics describes it, and the curve was already in the spring before anyone wrote it down.</li>
+      <li><b>“The computer stores the curve.”</b> It stores separate numbers, one every so often, and it does not look between one and the next. Whoever draws the curve reconstructs it.</li>
+      <li><b>“Every wave is a sinusoid.”</b> The title of this lesson is a slogan. The simplest wave is a Ferris wheel, and most waves, like your “aah,” are sums of Ferris wheels.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Open</span>
+      <h2>Math corner</h2>
+      <span class="resumen">The formulas, for anyone who wants them. Each one comes after its reading in words.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>The cabin</h3>
+      <p>If the Ferris wheel turns with constant angular velocity <span class="tex">\omega</span> and the cabin starts at angle <span class="tex">\varphi</span>, its angle at time <span class="tex">t</span> is <span class="tex">\theta = \omega t + \varphi</span>. Seen from the front, the cabin has two shadows, one on the ground and one on the wall, and the one on the wall is its height, the wave of this lesson:</p>
+      <div class="tex">x(t) = A\,\cos(\omega t + \varphi), \qquad y(t) = A\,\sin(\omega t + \varphi)</div>
+
+      <h3>Frequency and period</h3>
+      <p>Angular velocity counts radians per second, and frequency counts turns per second. One turn is <span class="tex">2\pi</span> radians, and the period is how long a turn lasts:</p>
+      <div class="tex">\omega = 2\pi f, \qquad T = \frac{1}{f}</div>
+
+      <h3>Two cabins</h3>
+      <p>Two cabins on the same Ferris wheel separated by an angle <span class="tex">\delta</span> add their heights into another sinusoid of the same frequency, whose size depends on the separation. With half a turn, <span class="tex">\delta = \pi</span>, the cosine is zero and the sum disappears:</p>
+      <div class="tex">A\,\sin\,\theta + A\,\sin(\theta + \delta) = 2A\,\cos\!\left(\tfrac{\delta}{2}\right)\,\sin\!\left(\theta + \tfrac{\delta}{2}\right)</div>
+
+      <h3>The spring</h3>
+      <p>“The restoring force is proportional to the displacement and points toward rest” is written with Hooke’s law and Newton’s second law:</p>
+      <div class="tex">m\,\frac{d^2x}{dt^2} = -k\,x</div>
+      <p>Its solutions are precisely the shadows of a Ferris wheel turning with angular velocity <span class="tex">\omega = \sqrt{k/m}</span>. That is why, in the spring challenge, the only thing that counts is the ratio between stiffness and mass:</p>
+      <div class="tex">x(t) = A\,\cos\!\left(\sqrt{k/m}\;t + \varphi\right), \qquad f = \frac{1}{2\pi}\sqrt{\frac{k}{m}}</div>
+
+      <h3>The generator</h3>
+      <p>A synchronous machine with <span class="tex">P</span> poles turning at <span class="tex">N</span> turns per minute produces a voltage of frequency</p>
+      <div class="tex">f = \frac{P\,N}{120}</div>
+      <p>With <span class="tex">P = 2</span> and <span class="tex">N = 3{,}000</span> you get <span class="tex">f = 50</span> Hz.</p>
+
+      <h3>A preview</h3>
+      <p>The two shadows together form a complex number, and the whole Ferris wheel fits in a single expression, which reads “an arrow of length A that spins”:</p>
+      <div class="tex">A\,e^{i(\omega t + \varphi)} = A\,\cos(\omega t + \varphi) + i\,A\,\sin(\omega t + \varphi)</div>
+      <p>It will come back in <a href="e04.html">lesson 4</a>, with Fourier, and in <a href="e16.html">lesson 16</a>, with the analytic signal.</p>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Further reading</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Open textbook</span>OpenStax, <i>University Physics</i>, vol. 1: <a href="https://openstax.org/books/university-physics-volume-1/pages/15-3-comparing-simple-harmonic-motion-and-circular-motion">§ 15.3, Comparing simple harmonic motion and circular motion</a> and <a href="https://openstax.org/books/university-physics-volume-1/pages/15-1-simple-harmonic-motion">§ 15.1, Simple harmonic motion</a>. The shadow of the wheel, with full rigor and free of charge.</li>
+      <li><span class="tipo">Open textbook</span>OpenStax, <a href="https://openstax.org/books/university-physics-volume-1/pages/17-3-sound-intensity">§ 17.3, Sound intensity</a>. Why frequency is heard as pitch and intensity, which grows with amplitude, as loudness.</li>
+      <li><span class="tipo">Interactive</span>Jack Schaedler, <a href="https://jackschaedler.github.io/circles-sines-signals/"><i>Circles, Sines and Signals</i></a>. An interactive text that explains digital signal processing with animations and sound, all the way to the discrete Fourier transform.</li>
+      <li><span class="tipo">Article</span>Nilsson, M., Bartůněk, J. S., Nordberg, J., and Claesson, I. (2008). <a href="https://www.diva-portal.org/smash/get/diva2:836227/FULLTEXT01.pdf"><i>Human Whistle Detection and Frequency Estimation</i></a>. CISP 2008. They record twenty people whistling: a single frequency dominates, between 500 and 5,000 Hz.</li>
+      <li><span class="tipo">Free app</span>phyphox, from RWTH Aachen University: its <a href="https://phyphox.org/wiki/index.php/Experiment:_Audio_Scope">Audio Scope</a> experiment is an audio oscilloscope for looking at your whistle on your phone while it sounds.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>New terms</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Lesson quiz</h2>
+  </section>
+
+</main>
+
+<script src="temario.js"></script>
+<script src="../comun/graficas.js"></script>
+<script src="../comun/senal.js"></script>
+<script src="../comun/curso.js"></script>
+<script src="datos/e01.js"></script>
+<script>
+// Lección 1 · Toda onda es una noria: la imagen ancla, los seis retos y el laboratorio «En tu voz».
+// Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo; aquí solo va lo de esta lección.
+// Convenio de ángulos: se miden desde las tres en punto y crecen en sentido antihorario; la altura de una cabina
+// es radio · sen(ángulo). La onda es la historia de la cabina: lo reciente, junto a la noria.
+(function () {
+  'use strict';
+  const G = Graficas, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const envolver = a => Math.atan2(Math.sin(a), Math.cos(a));        // ángulo en (−π, π]
+  const aGrados = a => ((a * 180 / Math.PI) % 360 + 360) % 360;       // radianes → grados en [0, 360)
+  const difGrados = g => ((g % 360) + 540) % 360 - 180;               // diferencia de ángulos en (−180, 180]
+  const suave = u => u * u * (3 - 2 * u);
+  const VUELTAS = { 45: 'one eighth of a turn', 90: 'a quarter of a turn', 135: 'three eighths of a turn', 180: 'half a turn', 225: 'five eighths of a turn', 270: 'three quarters of a turn', 315: 'seven eighths of a turn' };
+  function enVueltas(g) {
+    const r = Math.round(g / 45) * 45;
+    return Math.abs(g - r) <= 6 && VUELTAS[r % 360] ? VUELTAS[r % 360] : num(Math.round(g)) + '°';
+  }
+  // Ángulo y distancia de un punto del lienzo vistos desde el eje de la noria (geo: lo que devuelve escenaNoria).
+  const anguloEn = (geo, p) => Math.atan2(geo.cy - p.y, (p.x - geo.cx) / geo.sx);
+  const distanciaAlEje = (geo, p) => Math.hypot((p.x - geo.cx) / geo.sx, geo.cy - p.y);
+  const altoEscena = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  // Una fila de botones dentro de un contenedor (para el botón de pausa de las escenas con noria).
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); document.querySelector(contenedor).appendChild(f); return f; };
+
+  // ── La idea en una imagen: la noria que dibuja la onda ──────────────────────────────────────────────
+  // La traza se apunta de verdad, fotograma a fotograma: si cambias algo, el cambio nace junto a la noria y se
+  // aleja. En pausa, la traza se recalcula como si la noria llevara dos segundos girando así.
+  (function () {
+    const DESFASE = Math.PI / 2;                        // la cabina naranja va un cuarto de vuelta por delante
+    const e = { theta: 0.75, f: 0.8, A: 0.85, naranja: false, t: 0 };
+    const hist = G.historia({ segundos: 2, canales: 2 });
+    const rellenar = () => hist.llenar(e.t, tp => {
+      const th = e.theta - TAU * e.f * (e.t - tp);
+      return [e.A * Math.sin(th), e.naranja ? e.A * Math.sin(th + DESFASE) : NaN];
+    });
+    rellenar();
+    const L = G.lienzo('#ancla-escena', {
+      alto: w => G.altoNoria(w, { max: 340 }),
+      etiqueta: 'A Ferris wheel turns and the height of its green cabin draws a sinusoid to the right: the recent past next to the wheel and what happened two seconds ago at the far end.',
+      dibujar: (ctx, w, h, C) => {
+        const cabinas = [{ desfase: 0, color: C.senal }];
+        const trazas = [{ puntos: hist.puntos(0), color: C.senal }];
+        if (e.naranja) { cabinas.push({ desfase: DESFASE, color: C.respuesta }); trazas.unshift({ puntos: hist.puntos(1), color: C.respuesta }); }
+        G.escenaNoria(ctx, w, h, { C, angulo: e.theta, radio: e.A, cabinas, trazas, segundos: 2 });
+      },
+    });
+    const mandos = document.getElementById('ancla-mandos');
+    let anim = null;
+    const cambiar = () => { if (!anim || !anim.corriendo) rellenar(); L.dibujar(); };
+    Curso.mando(mandos, { etiqueta: 'Size', min: 0.3, max: 1, paso: 0.05, valor: e.A, decimales: 2, alCambiar: v => { e.A = v; cambiar(); } });
+    Curso.mando(mandos, { etiqueta: 'Speed', min: 0.2, max: 2, paso: 0.05, valor: e.f, formato: v => num(v, 2) + ' turns/s', alCambiar: v => { e.f = v; cambiar(); } });
+    const fila = crear('div', { class: 'botones' });
+    mandos.appendChild(fila);
+    Curso.botones(fila, [{ id: 'naranja', texto: 'Orange cabin', pulsado: false, alPulsar: on => { e.naranja = on; cambiar(); } }]);
+    anim = Curso.animar(L, (t, dt) => {
+      if (dt > 0) {
+        e.t += dt;
+        e.theta += TAU * e.f * dt;
+        hist.anotar(e.t, e.A * Math.sin(e.theta), e.naranja ? e.A * Math.sin(e.theta + DESFASE) : NaN);
+      }
+      L.dibujar();
+    }, { boton: fila });
+  })();
+
+  // ── Reto 1 · Gira tú la noria (arrastrar sobre el lienzo) ────────────────────────────────────────────
+  (function () {
+    const SEG = 3;
+    const e = { theta: 0, t: 0, neto: 0, inicio: 0, prev: 0, auto: null, ultimaLista: -1 };
+    const hist = G.historia({ segundos: SEG });
+    hist.llenar(0, () => Math.sin(e.theta));
+    let geo = null;
+    const L = G.lienzo('#r1-escena', {
+      alto: w => G.altoNoria(w, { max: 300 }), rol: 'slider',
+      etiqueta: 'A Ferris wheel you can turn by dragging or with the keyboard arrow keys; to the right, the history of the height of the green cabin',
+      dibujar: (ctx, w, h, C) => {
+        geo = G.escenaNoria(ctx, w, h, { C, angulo: e.theta, radio: 1, cabinas: [{ desfase: 0, color: C.senal }], trazas: [{ puntos: hist.puntos(0), color: C.senal }], segundos: SEG });
+        // Lo que llevas de vuelta: un arco alrededor de la noria, desde donde empezaste a girar. Antes de
+        // empezar, una flecha punteada sugiere el giro.
+        const p = Math.min(1, Math.abs(e.neto) / TAU);
+        if (p < 0.03) {
+          const r = geo.Rmax * 1.13, a0 = 1.15, a1 = 2.45;
+          ctx.save();
+          ctx.strokeStyle = G.alfa(C.acento, 0.65);
+          ctx.lineWidth = 2;
+          ctx.setLineDash([4, 4]);
+          ctx.beginPath();
+          ctx.ellipse(geo.cx, geo.cy, r * geo.sx, r, 0, -a0, -a1, true);
+          ctx.stroke();
+          ctx.restore();
+          const x = geo.cx + r * Math.cos(a1) * geo.sx, y = geo.cy - r * Math.sin(a1);
+          const tx = -Math.sin(a1) * geo.sx, ty = -Math.cos(a1), n = Math.hypot(tx, ty);
+          G.flecha(ctx, x - 6 * tx / n, y - 6 * ty / n, x + 4 * tx / n, y + 4 * ty / n, { color: G.alfa(C.acento, 0.85), punta: 9, C });
+        } else {
+          const r = geo.Rmax * 1.12, s = Math.sign(e.neto) || 1;
+          ctx.save();
+          ctx.strokeStyle = G.alfa(C.acento, p >= 0.985 ? 0.95 : 0.7);
+          ctx.lineWidth = 3;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.ellipse(geo.cx, geo.cy, r * geo.sx, r, 0, -e.inicio, -(e.inicio + s * p * TAU), s > 0);
+          ctx.stroke();
+          ctx.restore();
+        }
+      },
+    });
+    const lista = document.getElementById('r1-lista');
+    const lect = Curso.lecturas('#r1-fila', [
+      { id: 'altura', nombre: 'Height', clase: 'senal' },
+      { id: 'vuelta', nombre: 'So far' },
+    ]);
+    function pintarLista() {
+      const pts = hist.puntos(0);
+      const valores = [];
+      let j = 0;
+      for (let k = 0; k <= 12; k++) {
+        const edad = k * 0.25;
+        while (j < pts.length - 1 && pts[j][0] < edad) j++;
+        valores.push(pts[j] ? pts[j][1] : NaN);
+      }
+      lista.innerHTML = '';
+      valores.forEach((v, k) => lista.appendChild(crear('span', { class: k === 0 ? 'nuevo' : '' }, (k ? '  ·  ' : '') + num(v, 2))));
+    }
+    function estado() {
+      const v = Math.abs(e.neto) / TAU;
+      lect.fijar('altura', num(Math.sin(e.theta), 2));
+      lect.fijar('vuelta', num(Math.min(100, Math.round(100 * v))) + '% of a turn');
+      L.canvas.setAttribute('aria-valuenow', String(Math.round(aGrados(e.theta))));
+      L.canvas.setAttribute('aria-valuetext', 'Cabin at ' + Math.round(aGrados(e.theta)) + ' degrees; you are ' + Math.min(100, Math.round(100 * v)) + '% of the way around the turn');
+    }
+    let anim = null;
+    const despertar = () => { if (anim && !anim.corriendo) anim.reanudar(); };
+    const cambio = () => { estado(); L.dibujar(); Curso.cambio('reto-1'); };
+    Curso.arrastre(L, {
+      alBajar: p => {
+        if (!geo || distanciaAlEje(geo, p) > geo.Rmax * 1.5) return false;
+        if (Math.abs(e.neto) < 1e-9) e.inicio = e.theta;
+        e.prev = anguloEn(geo, p);
+        e.auto = null;
+        despertar();
+      },
+      alMover: p => {
+        const a = anguloEn(geo, p);
+        if (distanciaAlEje(geo, p) < geo.Rmax * 0.12) { e.prev = a; return; }   // junto al eje, el ángulo salta
+        const d = envolver(a - e.prev);
+        e.prev = a;
+        e.theta += d;
+        e.neto += d;
+        cambio();
+      },
+    });
+    L.canvas.tabIndex = 0;
+    L.canvas.setAttribute('aria-valuemin', '0');
+    L.canvas.setAttribute('aria-valuemax', '360');
+    L.canvas.addEventListener('keydown', ev => {
+      const s = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[ev.key];
+      if (!s) return;
+      ev.preventDefault();
+      if (Math.abs(e.neto) < 1e-9) e.inicio = e.theta;
+      const hasta = (e.auto ? e.auto.hasta : e.theta) + s * Math.PI / 12;
+      e.auto = { desde: e.theta, hasta, t0: e.t, dur: 0.2 };
+      e.neto += s * Math.PI / 12;
+      despertar();
+      cambio();
+    });
+    anim = Curso.animar(L, (t, dt) => {
+      if (dt > 0) {
+        e.t += dt;
+        if (e.auto) {
+          const k = limitar((e.t - e.auto.t0) / e.auto.dur, 0, 1);
+          e.theta = e.auto.desde + (e.auto.hasta - e.auto.desde) * suave(k);
+          if (k >= 1) e.auto = null;
+        }
+        hist.anotar(e.t, Math.sin(e.theta));
+        if (e.t - e.ultimaLista >= 0.25) { e.ultimaLista = e.t; pintarLista(); }
+        estado();
+      }
+      L.dibujar();
+    }, { boton: filaBotones('#r1-fila') });
+    pintarLista();
+    estado();
+    Curso.reto('reto-1', {
+      titulo: 'Turn the Ferris wheel yourself', nivel: 'fácil',
+      comprobar: () => {
+        const v = Math.abs(e.neto) / TAU;
+        if (v >= 0.985) return { ok: true, mensaje: 'Full turn: the trace has drawn a whole wave.' };
+        if (v < 0.03) return { ok: false };
+        const tramo = ['less than a quarter of a turn', 'more than a quarter of a turn', 'more than half a turn', 'more than three quarters of a turn'][Math.min(3, Math.floor(v * 4))];
+        return { ok: false, mensaje: 'So far you have made ' + tramo + '. Keep turning in the same direction.' };
+      },
+      resolver: () => {
+        if (Math.abs(e.neto) < 1e-9) e.inicio = e.theta;
+        const s = Math.sign(e.neto) || 1, falta = s * TAU - e.neto;
+        e.neto = s * TAU;
+        if (anim.corriendo) e.auto = { desde: e.theta, hasta: e.theta + falta, t0: e.t, dur: Math.max(0.6, 2 * Math.abs(falta) / TAU) };
+        else {
+          // En pausa, la vuelta se dibuja de golpe, como si hubiera durado dos segundos.
+          const fin = e.theta + falta;
+          hist.llenar(e.t, tp => Math.sin(fin - falta * limitar((e.t - tp) / 2, 0, 1)));
+          e.theta = fin;
+          e.auto = null;
+          pintarLista();
+        }
+        cambio();
+      },
+      pista: [
+        'Put your finger or the mouse on the Ferris wheel and move it in a circle, as if you were turning a steering wheel. You do not need to grab the cabin: any point of the wheel works.',
+        'With the keyboard: reach the canvas with the Tab key and use the right or up arrow; each press turns 15°, and one full turn is 24 presses.',
+      ],
+      exito: '<p>You have just drawn a signal: the height of something that changes, jotted down over time. If you turn at a constant pace, the trace comes out as a sinusoid, the curve of the tuning fork; if you stop, it goes flat, because the height does not change. And the list below is the same trace counted the way a machine counts it: separate numbers, four per second.</p>',
+    });
+  })();
+
+  // ── Reto 2 · ¿Cuántos hercios? (escribir un número; tocar para marcar) ───────────────────────────────
+  (function () {
+    const azar = Curso.azar();
+    let f = azar.entero(3, 8), esc = null;
+    const marcas = new Set();
+    const L = G.lienzo('#r2-escena', {
+      alto: altoEscena(184, 224),
+      etiqueta: 'One second of a wave: count how many turns it makes',
+      dibujar: (ctx, w, h, C) => {
+        esc = G.ejes(ctx, { x: [0, 1], y: [-1.3, 1.3], marcasX: w < 520 ? 5 : 10, marcasY: false, formatoX: v => num(v, 1), etiquetaX: 'time (s)', margen: { izquierda: 16, derecha: 18, arriba: 30, abajo: 36 }, C });
+        // Un segundo, marcado arriba con un corchete.
+        const y = esc.caja.y - 12, xa = esc.x(0), xb = esc.x(1);
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.eje, 0.9);
+        ctx.beginPath(); ctx.moveTo(xa, y + 6); ctx.lineTo(xa, y); ctx.lineTo(xb, y); ctx.lineTo(xb, y + 6); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, (xa + xb) / 2, y - 4, 'one second', { alinear: 'center', color: C.tenue, tam: 11, fondo: G.alfa(C.pantalla, 0.95), C });
+        G.curva(ctx, esc, t => Math.sin(TAU * f * t), { color: C.senal, ancho: 2.2, n: 900, C });
+        [...marcas].sort((a, b) => a - b).forEach((k, i) => {
+          const x = esc.x((k + 0.25) / f), yc = esc.y(1);
+          ctx.save();
+          ctx.strokeStyle = C.acento; ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.arc(x, yc, 8, 0, TAU); ctx.stroke();
+          ctx.restore();
+          G.texto(ctx, x, yc - 13, String(i + 1), { alinear: 'center', color: C.acento, tam: 12, peso: 600, C });
+        });
+      },
+    });
+    L.canvas.classList.add('tocable');
+    L.canvas.addEventListener('click', ev => {
+      if (!esc) return;
+      const r = L.canvas.getBoundingClientRect();
+      const t = esc.xi(ev.clientX - r.left);
+      const k = Math.round(t * f - 0.25);
+      if (k < 0 || k >= f || Math.abs(t - (k + 0.25) / f) > 0.4 / f) return;
+      if (marcas.has(k)) marcas.delete(k); else marcas.add(k);
+      lect.fijar('marcadas', String(marcas.size));
+      L.dibujar();
+    });
+    const mandos = document.getElementById('r2-mandos');
+    let reto = null;
+    const cF = Curso.campo(mandos, { etiqueta: 'Frequency', unidad: 'Hz', ancho: 10, marcador: 'how many?', alEnviar: () => reto.revisar() });
+    const cT = Curso.campo(mandos, { etiqueta: 'Period', unidad: 's', unidades: { s: 1, ms: 0.001 }, ancho: 10, marcador: 'how long?', alEnviar: () => reto.revisar() });
+    const lect = Curso.lecturas(mandos, [{ id: 'marcadas', nombre: 'Crests marked', valor: '0' }]);
+    Curso.botones(mandos, [{ id: 'otra', texto: 'Another wave', icono: 'otra', alPulsar: () => {
+      let g;
+      do { g = azar.entero(3, 8); } while (g === f);
+      f = g;
+      marcas.clear();
+      lect.fijar('marcadas', '0');
+      cF.fijar('');
+      cT.fijar('');
+      L.dibujar();
+      reto.reiniciar();
+    } }]);
+    reto = Curso.reto('reto-2', {
+      titulo: 'How many hertz?', nivel: 'fácil', auto: false,
+      comprobar: () => {
+        const fv = cF.valor, tv = cT.valor;
+        if (!Number.isFinite(fv)) return { ok: false, mensaje: 'First write how many turns it makes in one second: its frequency, in hertz.' };
+        if (Math.abs(fv - f) > 0.01) {
+          cF.marcar('mal');
+          return { ok: false, mensaje: Math.abs(fv - f) <= 1.01 ? 'Almost: count the crests again, from the first to the last.' : 'Count the crests, the peaks at the top, that fit in the second: each one is a turn.' };
+        }
+        cF.marcar('bien');
+        if (!Number.isFinite(tv)) return { ok: false, mensaje: 'The frequency is done: ' + f + ' Hz. Now the period: how long does each turn last?' };
+        if (Math.abs(tv - 1 / f) > 0.006) {
+          cT.marcar('mal');
+          if (Math.abs(tv - f) < 0.01) return { ok: false, mensaje: 'That is the frequency again. The period is how long one turn lasts: one second divided among ' + f + ' turns.' };
+          if (Math.abs(tv / 1000 - 1 / f) < 0.006) return { ok: false, mensaje: 'Milliseconds? Write it in seconds (' + num(1 / f) + ') or add the unit: “' + num(1000 / f) + ' ms”.' };
+          return { ok: false, mensaje: 'Not yet: divide one second among ' + f + ' turns.' };
+        }
+        cT.marcar('bien');
+        return { ok: true, mensaje: f + ' turns per second, and each one lasts ' + num(1 / f) + ' s.' };
+      },
+      resolver: () => { cF.fijar(f); cT.fijar(+(1 / f).toFixed(3)); },
+      pista: [
+        'Each crest, each peak at the top, is one full turn of the Ferris wheel. Count them from left to right; tapping them helps you keep your place.',
+        'The period is one second divided among the turns: with 4 turns, each one lasts 1/4 = 0.25 s. You can write it as a fraction.',
+      ],
+      exito: '<p>One hertz is one turn per second, so measuring a frequency means counting turns. The period is the opposite, one second divided among those turns, and that is why each is the inverse of the other. The wall outlet at home (in Spain and most of Europe) makes 50 turns per second, and each one lasts 20 thousandths of a second.</p>',
+    });
+  })();
+
+  // ── Paso 3 · un La de 440 Hz para oír ─────────────────────────────────────────────────────────────────
+  Curso.audio.boton('#p3-la', () => ({ f: 440, dur: 1.5, volumen: 0.4 }), 'Listen to a 440 Hz A');
+
+  // ── Reto 3 · ¿Cuál suena más agudo? (escuchar y elegir) ─────────────────────────────────────────────
+  (function () {
+    const azar = Curso.azar();
+    let ronda = null, racha = 0, verOndas = false, ultimo = '';
+    const cont = document.getElementById('r3-tonos');
+    const pads = ['A', 'B'].map(letra => {
+      const panel = crear('div', { class: 'panel-mini' });
+      const cabeza = crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, 'Tone ' + letra));
+      panel.appendChild(cabeza);
+      Curso.audio.boton(cabeza, () => (ronda ? { f: ronda['f' + letra], dur: 0.9, volumen: ronda['v' + letra] } : null), 'Listen', { clase: 'peque' });
+      const escena = crear('div', { class: 'escena' });
+      panel.appendChild(escena);
+      cont.appendChild(panel);
+      return G.lienzo(escena, { alto: 92, etiqueta: 'The wave of tone ' + letra + ' (shown after you answer or with “Show the waves”)', dibujar: (ctx, w, h, C) => dibujarTono(ctx, w, h, C, letra) });
+    });
+    function dibujarTono(ctx, w, h, C, letra) {
+      if (!ronda) return;
+      if (!verOndas && !ronda.respondida) {
+        G.texto(ctx, w / 2, h / 2, 'listen to it', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C });
+        return;
+      }
+      const f = ronda['f' + letra], v = ronda['v' + letra];
+      const esc = G.ejes(ctx, { caja: { x: 8, y: 8, w: w - 16, h: h - 16 }, x: [0, 0.012], y: [-1, 1], soloEscala: true, C });
+      ctx.save();
+      ctx.strokeStyle = G.alfa(C.eje, 0.5);
+      ctx.beginPath(); ctx.moveTo(8, Math.round(h / 2) + 0.5); ctx.lineTo(w - 8, Math.round(h / 2) + 0.5); ctx.stroke();
+      ctx.restore();
+      const destacada = ronda.respondida && ronda.buena === letra;
+      G.curva(ctx, esc, t => v * Math.sin(TAU * f * t), { color: destacada || !ronda.respondida ? C.senal : C.cuerpo, alfa: destacada || !ronda.respondida ? 1 : 0.6, ancho: 1.8, n: 500, C });
+      if (ronda.respondida) G.texto(ctx, w - 10, 20, num(f, 0) + ' Hz', { alinear: 'right', color: C.tenue, tam: 11, fondo: G.alfa(C.superficie, 0.85), C });
+    }
+    const fila = document.getElementById('r3-fila');
+    const rachaEl = crear('span', { class: 'racha' });
+    fila.appendChild(rachaEl);
+    const b = Curso.botones(fila, [
+      { id: 'A', texto: 'A is higher', alPulsar: () => responder('A') },
+      { id: 'B', texto: 'B is higher', alPulsar: () => responder('B') },
+      { id: 'otra', texto: 'Another round', icono: 'otra', tipo: 'principal', alPulsar: () => nuevaRonda() },
+      { id: 'ver', texto: 'Show the waves', icono: 'ojo', tipo: 'discreto', pulsado: false, alPulsar: on => { verOndas = on; pintar(); } },
+    ]);
+    function nuevaRonda() {
+      const baja = azar.real(250, 400), alta = baja * Math.pow(2, azar.entero(4, 9) / 12);
+      const trampa = azar.real() < 0.7;                       // casi siempre, la más aguda suena más flojita
+      const vAlta = trampa ? 0.22 : azar.real(0.45, 0.7), vBaja = trampa ? 0.85 : azar.real(0.45, 0.7);
+      ronda = azar.real() < 0.5
+        ? { fA: alta, fB: baja, vA: vAlta, vB: vBaja, buena: 'A' }
+        : { fA: baja, fB: alta, vA: vBaja, vB: vAlta, buena: 'B' };
+      ronda.trampa = trampa;
+      ronda.respondida = false;
+      Curso.audio.parar();
+      pintar();
+    }
+    function responder(letra) {
+      if (!ronda || ronda.respondida) return;
+      ronda.respondida = true;
+      const otra = letra === 'A' ? 'B' : 'A';
+      if (letra === ronda.buena) {
+        racha += 1;
+        ultimo = 'Right: tone ' + letra + ' (' + num(ronda['f' + letra], 0) + ' Hz) is higher than tone ' + otra + ' (' + num(ronda['f' + otra], 0) + ' Hz)' + (ronda.trampa ? ', even though it sounds quieter.' : '.') + (racha < 3 ? ' You have ' + racha + (racha === 1 ? ' correct answer.' : ' in a row.') : '');
+      } else {
+        racha = 0;
+        ultimo = ronda['v' + letra] > ronda['v' + otra] + 0.1
+          ? 'Tone ' + letra + ' sounded louder, but it was lower: the note is set by the frequency, not the loudness. Look at the waves: tone ' + otra + ' has them more tightly packed.'
+          : 'No: tone ' + otra + ' was higher. Listen to them again and look at how tightly packed its waves are.';
+      }
+      pintar();
+      Curso.cambio('reto-3');
+    }
+    function pintar() {
+      rachaEl.innerHTML = '';
+      rachaEl.append(crear('span', { class: 'puntos', 'aria-hidden': 'true' }, [0, 1, 2].map(i => crear('i', { class: i < racha ? 'si' : '' }))), 'Correct in a row: ' + Math.min(racha, 3) + ' of 3');
+      const r = ronda && ronda.respondida;
+      b.A.disabled = r;
+      b.B.disabled = r;
+      b.otra.hidden = !r;
+      for (const L of pads) L.dibujar();
+    }
+    nuevaRonda();
+    Curso.reto('reto-3', {
+      titulo: 'Which sounds higher?', nivel: 'medio',
+      comprobar: () => ({ ok: racha >= 3, mensaje: ultimo }),
+      resolver: () => { racha = 3; if (ronda) ronda.respondida = true; ultimo = 'Three correct in a row.'; pintar(); Curso.cambio('reto-3'); },
+      pista: [
+        'High is about the note, not the loudness: notice whether the sound is thin, like a whistle, or thick. Listen to each tone several times.',
+        'If you cannot listen, press “Show the waves”: the higher one is the one with the more tightly packed waves, even if they are shorter.',
+      ],
+      exito: '<p>The note is set by the frequency, how fast the Ferris wheel turns, and the loudness is set by the amplitude, its size. They are independent: a small, fast wheel sounds high and quiet, and a big, slow one sounds low and loud. Mixing them up is the most common mistake when starting out.</p>',
+    });
+  })();
+
+  // ── Reto 4 · Copia la onda (deslizadores) ──────────────────────────────────────────────────────────
+  (function () {
+    const azar = Curso.azar();
+    const e = { A: 1, f: 0.5, fase: 0, t: 0 };
+    const nuevo = previo => {
+      let o;
+      do { o = { A: azar.elegir([0.45, 0.55, 0.65, 0.75, 0.85]), f: azar.elegir([0.75, 1, 1.25, 1.5]), fase: azar.elegir([45, 90, 135, 180, 225, 270, 315]) }; }
+      while (previo && o.A === previo.A && o.f === previo.f && o.fase === previo.fase);
+      return o;
+    };
+    let obj = nuevo(null);
+    const ang = (f, fase, t) => TAU * f * t + fase * Math.PI / 180;
+    const L = G.lienzo('#r4-escena', {
+      alto: w => G.altoNoria(w, { max: 300 }),
+      etiqueta: 'Your Ferris wheel, with the green cabin, and a dotted target wheel, with the orange cabin; to the right, the two waves',
+      dibujar: (ctx, w, h, C) => {
+        G.escenaNoria(ctx, w, h, {
+          C, angulo: ang(e.f, e.fase, e.t), radio: e.A, cabinas: [{ desfase: 0, color: C.senal }], segundos: 2,
+          anillo: { r: obj.A, color: C.respuesta, angulo: ang(obj.f, obj.fase, e.t) },
+          trazas: [
+            { f: edad => obj.A * Math.sin(ang(obj.f, obj.fase, e.t - edad)), color: C.respuesta, guiones: [6, 5], enfriar: false, halo: false, ancho: 2 },
+            { f: edad => e.A * Math.sin(ang(e.f, e.fase, e.t - edad)), color: C.senal },
+          ],
+        });
+      },
+    });
+    const mandos = document.getElementById('r4-mandos');
+    const redibujar = () => { L.dibujar(); medirParecido(); };
+    const mA = Curso.mando(mandos, { etiqueta: 'Size', clase: 'senal', min: 0.2, max: 1, paso: 0.05, valor: e.A, decimales: 2, reto: 'reto-4', alCambiar: v => { e.A = v; redibujar(); } });
+    const mF = Curso.mando(mandos, { etiqueta: 'Speed', clase: 'senal', min: 0.25, max: 2, paso: 0.05, valor: e.f, formato: v => num(v, 2) + ' turns/s', reto: 'reto-4', alCambiar: v => { e.f = v; redibujar(); } });
+    const mP = Curso.mando(mandos, { etiqueta: 'Starting point', clase: 'senal', min: 0, max: 355, paso: 5, valor: e.fase, formato: v => num(v) + '°', reto: 'reto-4', alCambiar: v => { e.fase = v; redibujar(); } });
+    const fila = document.getElementById('r4-fila');
+    const lect = Curso.lecturas(fila, [{ id: 'parecido', nombre: 'Match between the two waves' }]);
+    let reto = null;
+    const bOtra = Curso.botones(fila, [{ id: 'otra', texto: 'Another wave', icono: 'otra', alPulsar: () => { obj = nuevo(obj); redibujar(); reto.reiniciar(); } }]).otra;
+    // Parecido: 100 % si las dos ondas de la ventana coinciden; 0 % si son opuestas.
+    function medirParecido() {
+      let d = 0, p = 0;
+      for (let i = 0; i <= 200; i++) {
+        const t = e.t - 2 * i / 200;
+        const yo = obj.A * Math.sin(ang(obj.f, obj.fase, t)), yu = e.A * Math.sin(ang(e.f, e.fase, t));
+        d += (yu - yo) * (yu - yo); p += yo * yo;
+      }
+      lect.fijar('parecido', num(Math.round(100 * Math.max(0, 1 - Math.sqrt(d / p) / 2))) + '%');
+    }
+    let cuadro = 0;
+    Curso.animar(L, (t, dt) => { e.t += dt; L.dibujar(); if (cuadro++ % 6 === 0) medirParecido(); }, { boton: bOtra.parentElement });
+    medirParecido();
+    reto = Curso.reto('reto-4', {
+      titulo: 'Copy the wave', nivel: 'medio',
+      comprobar: () => {
+        const dF = e.f - obj.f, dA = e.A - obj.A, dP = difGrados(e.fase - obj.fase);
+        if (Math.abs(dF) > 0.03) return { ok: false, mensaje: dF > 0
+          ? 'Your wave is more tightly packed than the orange one: your Ferris wheel is turning too fast (' + num(Math.abs(dF), 2) + ' turns per second too many).'
+          : 'Your wave is more stretched out than the orange one: your Ferris wheel is turning too slowly (' + num(Math.abs(dF), 2) + ' turns per second too few).' };
+        if (Math.abs(dA) > 0.04) return { ok: false, mensaje: 'The speed is done. Now the size: your wave ' + (dA > 0 ? 'rises higher than' : 'stays below') + ' the orange one.' };
+        if (Math.abs(dP) > 10) return { ok: false, mensaje: 'The speed and the size are done; you still need the starting point: your cabin is ' + enVueltas(Math.abs(dP)) + (dP > 0 ? ' ahead of' : ' behind') + ' the orange one.' };
+        return { ok: true, mensaje: 'The two waves match: same size, same speed, and same starting point.' };
+      },
+      resolver: () => { mA.fijar(obj.A); mF.fijar(obj.f); mP.fijar(obj.fase); },
+      pista: [
+        'Start with the speed: until the two waves are squeezed together the same way, nothing else fits. Then the size, and last, the starting point.',
+        'When the speed is right, the two cabins turn together and the offset can be seen on the wheel: move your starting point until the green one sits on top of the orange one.',
+      ],
+      exito: '<p>You have read a wave with three numbers: its amplitude, the size of the Ferris wheel; its frequency, how fast it turns; and its phase, where it starts. With those three values anyone can draw exactly the same sinusoid, and that is what the Fourier transform will do, in <a href="e04.html">lesson 4</a>, with every Ferris wheel it finds inside a sound.</p>',
+    });
+  })();
+
+  // ── Reto 5 · Dos cabinas que se anulan (arrastrar y escuchar) ───────────────────────────────────────
+  (function () {
+    const F = 0.5;                                     // vueltas por segundo de la noria
+    const e = { theta: 0.4, delta: Math.PI / 3, t: 0, prev: 0, sonido: null };
+    let geo = null;
+    const amplitudSuma = () => 2 * Math.abs(Math.cos(e.delta / 2));
+    const altoArriba = w => G.altoNoria(w, { rotulos: false, max: 236 });
+    const L = G.lienzo('#r5-escena', {
+      alto: w => altoArriba(w) + (w < 560 ? 104 : 124), rol: 'slider',
+      etiqueta: 'A Ferris wheel with a green cabin and an orange one that you can move; above, the wave of each, and below, their sum',
+      dibujar: (ctx, w, h, C) => {
+        const h1 = altoArriba(w);
+        geo = G.escenaNoria(ctx, w, h1, {
+          C, angulo: e.theta, radio: 1, segundos: 2, rotulos: false,
+          cabinas: [{ desfase: 0, color: C.senal }, { desfase: e.delta, color: C.respuesta }],
+          trazas: [
+            { f: edad => Math.sin(e.theta - TAU * F * edad + e.delta), color: C.respuesta, ancho: 1.8 },
+            { f: edad => Math.sin(e.theta - TAU * F * edad), color: C.senal, ancho: 1.8 },
+          ],
+        });
+        // La franja de la suma, con el mismo eje del tiempo.
+        const y0 = h1 + 8, alto = h - y0 - 24, medio = y0 + alto / 2, k = alto / 2 / 2.1;
+        const escY = v => medio - v * k;
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.cuerpo, C.oscuro ? 0.04 : 0.035);
+        ctx.fillRect(geo.x0, y0, geo.xMax - geo.x0, alto);
+        ctx.strokeStyle = G.alfa(C.eje, 0.6);
+        ctx.setLineDash([2, 4]);
+        ctx.beginPath(); ctx.moveTo(geo.x0, Math.round(medio) + 0.5); ctx.lineTo(geo.xMax, Math.round(medio) + 0.5); ctx.stroke();
+        const amp = amplitudSuma();
+        ctx.strokeStyle = G.alfa(C.cuerpo, 0.22);
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        for (const s of [1, -1]) { const y = Math.round(escY(s * amp)) + 0.5; ctx.moveTo(geo.x0, y); ctx.lineTo(geo.xMax, y); }
+        ctx.stroke();
+        ctx.restore();
+        const pts = [];
+        for (let i = 0; i <= 240; i++) { const edad = 2 * i / 240, th = e.theta - TAU * F * edad; pts.push([edad, Math.sin(th) + Math.sin(th + e.delta)]); }
+        G.trazaEnfriada(ctx, pts, { C, x0: geo.x0, xMax: geo.xMax, escX: geo.escX, escY, color: C.cuerpo, ancho: 2.4, enfriar: false });
+        G.texto(ctx, geo.x0 - 14, medio - 6, 'sum', { alinear: 'right', color: C.texto, tam: 12, peso: 600, C });
+        G.texto(ctx, geo.x0 - 14, medio + 10, 'of the two', { alinear: 'right', color: C.tenue, tam: 11, C });
+        G.texto(ctx, geo.x0, h - 6, 'now', { color: C.tenue, tam: 11, C });
+        G.texto(ctx, geo.xMax, h - 6, '2 s ago', { alinear: 'right', color: C.tenue, tam: 11, C });
+      },
+    });
+    const fila = document.getElementById('r5-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'sep', nombre: 'Separation', clase: 'respuesta' },
+      { id: 'suma', nombre: 'The sum rises to' },
+    ]);
+    let bSon = null;
+    const pintarSon = on => {
+      if (!bSon) return;
+      bSon.setAttribute('aria-pressed', String(on));
+      bSon.innerHTML = (on ? Curso.iconos.stop : Curso.iconos.play) + '<span>' + (on ? 'Stop the sound' : 'Hear the sum') + '</span>';
+    };
+    const volumen = () => 0.42 * amplitudSuma() / 2;
+    bSon = Curso.botones(fila, [{ id: 'oir', texto: 'Hear the sum', icono: 'play', pulsado: false, alPulsar: on => {
+      if (on) {
+        e.sonido = Curso.audio.continuo(330, { volumen: volumen() });
+        e.sonido.alAcabar(() => { e.sonido = null; pintarSon(false); });
+      } else if (e.sonido) e.sonido.parar();
+      pintarSon(on && !!e.sonido);
+    } }]).oir;
+    function estado() {
+      const g = aGrados(e.delta), nombre = enVueltas(g);
+      lect.fijar('sep', nombre.indexOf('°') < 0 ? num(Math.round(g)) + '° · ' + nombre : nombre);
+      lect.fijar('suma', num(amplitudSuma(), 2) + ' × one cabin');
+      L.canvas.setAttribute('aria-valuenow', String(Math.round(g)));
+      L.canvas.setAttribute('aria-valuetext', 'The orange cabin is ' + Math.round(g) + ' degrees ahead; the sum rises to ' + num(amplitudSuma(), 2) + ' times the height of one cabin');
+      if (e.sonido) e.sonido.fijar({ volumen: volumen() });
+    }
+    const cambio = () => { estado(); L.dibujar(); Curso.cambio('reto-5'); };
+    let anim = null;
+    Curso.arrastre(L, {
+      alBajar: p => {
+        if (!geo || distanciaAlEje(geo, p) > geo.Rmax * 1.5 || p.y > geo.cy + geo.Rmax * 1.35) return false;
+        e.prev = anguloEn(geo, p);
+        if (anim && !anim.corriendo) anim.reanudar();
+      },
+      alMover: p => {
+        const a = anguloEn(geo, p);
+        if (distanciaAlEje(geo, p) < geo.Rmax * 0.12) { e.prev = a; return; }
+        e.delta = ((e.delta + envolver(a - e.prev)) % TAU + TAU) % TAU;
+        e.prev = a;
+        cambio();
+      },
+    });
+    L.canvas.tabIndex = 0;
+    L.canvas.setAttribute('aria-valuemin', '0');
+    L.canvas.setAttribute('aria-valuemax', '360');
+    L.canvas.addEventListener('keydown', ev => {
+      const s = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[ev.key];
+      if (!s) return;
+      ev.preventDefault();
+      e.delta = ((e.delta + s * Math.PI / 36) % TAU + TAU) % TAU;
+      cambio();
+    });
+    anim = Curso.animar(L, (t, dt) => { e.theta += TAU * F * dt; L.dibujar(); }, { boton: bSon.parentElement });
+    estado();
+    Curso.reto('reto-5', {
+      titulo: 'Two cabins that cancel out', nivel: 'medio',
+      comprobar: () => {
+        const g = aGrados(e.delta), dev = Math.abs(difGrados(g - 180)), amp = amplitudSuma();
+        if (dev <= 5) return { ok: true, mensaje: 'The sum is zero at every moment: silence.' };
+        if (dev <= 15) return { ok: false, mensaje: 'Almost: the sum is already small (' + num(amp, 2) + '). Fine-tune it a bit more.' };
+        if (g < 25 || g > 335) return { ok: false, mensaje: 'Together, the two cabins reinforce each other: the sum goes up and down almost twice as much. Pull them apart.' };
+        return { ok: false, mensaje: 'The sum still goes up and down by up to ' + num(amp, 2) + ' times the height of one cabin. ' + (g < 180 ? 'Pull them farther apart.' : 'You went too far: come back a little.') };
+      },
+      resolver: () => { e.delta = Math.PI; cambio(); },
+      pista: [
+        'For the sum to be zero at every moment, when one cabin is up the other has to be down, and when one goes up, the other has to go down.',
+        'Put them half a turn apart: 180°. With “Hear the sum” on, the tone fades out right there.',
+      ],
+      exito: '<p>With half a turn of difference, one cabin goes up when the other goes down, and the sum is zero at every instant: silence. That is why phase matters so much, and at the end of the course synchrosqueezing will consist precisely in reading it carefully.</p>',
+    });
+  })();
+
+  // ── Reto 6 · El muelle y la noria (dos deslizadores) ───────────────────────────────────────────────
+  (function () {
+    const FN = 0.5, WN = TAU * FN;                     // la noria: media vuelta por segundo
+    const e = { k: 20, m: 1, t: 0, theta0: 0.3, t0: -2, psi0: 0 };
+    const wm = () => Math.sqrt(e.k / e.m);
+    const th = t => e.theta0 + WN * t;
+    // La masa sale en t0 desde la altura de la cabina y, desde ahí, oscila a su propio ritmo.
+    const masa = t => (t < e.t0 ? Math.sin(th(t)) : Math.sin(wm() * (t - e.t0) + e.psi0));
+    const hist = G.historia({ segundos: 2, canales: 2 });
+    const rellenar = () => { e.t0 = e.t - 2; e.psi0 = th(e.t0); hist.llenar(e.t, tp => [Math.sin(th(tp)), masa(tp)]); };
+    rellenar();
+    let anim = null;
+    // Al soltar la masa de nuevo, su traza se corta (como una pluma que se levanta) y vuelve a empezar en la cabina.
+    const soltar = () => {
+      if (anim && anim.corriendo) { hist.anotar(e.t, Math.sin(th(e.t)), NaN); e.t0 = e.t; e.psi0 = th(e.t); }
+      else rellenar();
+    };
+    const ARRIBA = 36, ABAJO = 22;
+    const L = G.lienzo('#r6-escena', {
+      alto: w => ARRIBA + ABAJO + G.altoNoria(w, { rotulos: false, max: 280 }),
+      etiqueta: 'A Ferris wheel and, next to it, a mass hanging from a spring; to the right, the history of the height of the cabin and of the mass',
+      dibujar: (ctx, w, h, C) => {
+        ctx.save();
+        ctx.translate(0, ARRIBA);
+        const geo = G.escenaNoria(ctx, w, h - ARRIBA - ABAJO, {
+          C, angulo: th(e.t), radio: 1, segundos: 2, rotulos: false, cabinas: [{ desfase: 0, color: C.senal }],
+          trazas: [{ puntos: hist.puntos(1), color: C.respuesta, ancho: 2 }, { puntos: hist.puntos(0), color: C.senal }],
+        });
+        G.muelle(ctx, { x: geo.x0, arriba: 8 - ARRIBA, y: geo.escY(masa(e.t)), ancho: 14, espiras: 9, radioMasa: 6 + 5 * Math.cbrt(e.m), grosor: 0.7 + e.k / 40, color: C.respuesta, C });
+        ctx.restore();
+        // El eje del tiempo, debajo de todo para que la masa no lo tape.
+        G.texto(ctx, geo.x0 + 18, h - 7, 'now', { color: C.tenue, tam: 11, C });
+        G.texto(ctx, geo.xMax, h - 7, '2 s ago', { alinear: 'right', color: C.tenue, tam: 11, C });
+      },
+    });
+    const lect = Curso.lecturas('#r6-lecturas', [
+      { id: 'noria', nombre: 'The Ferris wheel turns at', clase: 'senal', valor: num(FN, 2) + ' Hz' },
+      { id: 'muelle', nombre: 'The spring vibrates at', clase: 'respuesta' },
+    ]);
+    const estado = () => lect.fijar('muelle', num(wm() / TAU, 2) + ' Hz');
+    const mandos = document.getElementById('r6-mandos');
+    const cambiar = () => { soltar(); estado(); L.dibujar(); };
+    const mK = Curso.mando(mandos, { etiqueta: 'Spring stiffness', clase: 'respuesta', min: 1, max: 40, paso: 0.5, valor: e.k, formato: v => num(v, 1) + ' N/m', reto: 'reto-6', alCambiar: v => { e.k = v; cambiar(); } });
+    const mM = Curso.mando(mandos, { etiqueta: 'Mass', clase: 'respuesta', min: 0.25, max: 4, paso: 0.05, valor: e.m, formato: v => num(v, 2) + ' kg', reto: 'reto-6', alCambiar: v => { e.m = v; cambiar(); } });
+    anim = Curso.animar(L, (t, dt) => {
+      if (dt > 0) { e.t += dt; hist.anotar(e.t, Math.sin(th(e.t)), masa(e.t)); }
+      L.dibujar();
+    }, { boton: filaBotones('#r6-lecturas') });
+    estado();
+    Curso.reto('reto-6', {
+      titulo: 'The spring and the Ferris wheel', nivel: 'difícil',
+      comprobar: () => {
+        const fm = wm() / TAU, r = fm / FN;
+        if (Math.abs(r - 1) <= 0.03) return { ok: true, mensaje: 'In step: the spring vibrates at ' + num(fm, 2) + ' Hz, the same rate the Ferris wheel turns.' };
+        const comparado = ' (' + num(fm, 2) + ' Hz, against ' + num(FN, 2) + ' for the Ferris wheel)';
+        const casi = Math.abs(r - 1) <= 0.12;
+        return { ok: false, mensaje: r > 1
+          ? (casi ? 'Almost: the spring is still a bit too fast' : 'The spring is faster than the cabin') + comparado + '. Make it softer or give it more mass.'
+          : (casi ? 'Almost: the spring is still a bit too slow' : 'The spring is slower than the cabin') + comparado + '. Make it stiffer or take mass off.' };
+      },
+      resolver: () => { mM.fijar(1); mK.fijar(10); },
+      pista: [
+        'If the mass gets ahead of the cabin, the spring is vibrating too fast: make it softer or give it more mass. If it falls behind, do the opposite.',
+        'What counts is the ratio between stiffness and mass: with a mass of 1 kg, the right stiffness is near 10 N/m; with 2 kg, near 20.',
+      ],
+      exito: '<p>The spring knows nothing about Ferris wheels and, even so, its mass is at the same height as the cabin at every instant. The curve has, then, two origins: it is the shadow of what spins and the natural motion of what vibrates. Deep down they are the same thing, and that is why it shows up in a tuning fork, in the wall outlet, and in a whistle.</p>',
+    });
+  })();
+
+  // ── En tu voz: un osciloscopio para tu silbido y tu «aaa» ───────────────────────────────────────────
+  // La ventana empieza en un paso por cero hacia arriba, como el disparo de un osciloscopio, para que la onda
+  // se quede quieta. Tocando dos crestas se mide el periodo, y con él se ajusta la mejor noria posible.
+  (function () {
+    const OPCIONES = [2, 5, 10, 20, 40];
+    const CAJA = { x: 10, y: 10, abajo: 30 };
+    const st = { x: null, fs: 1, dur: 0, nombre: '', inicio: 0, ventana: 0.02, marcas: [], auto: false, T: null, ajuste: null, ref: null, vista: null };
+    const lab = Curso.voz('#voz-lab', {
+      ejemplos: ['silbido', 'aaa', 'diapason'],
+      alCargar: cargar,
+      alTocarVista: t => mover(t, false),
+      alDibujarVista: (ctx, esc, C) => {
+        if (!st.x) return;
+        const x0 = esc.x(st.inicio), x1 = Math.max(x0 + 3, esc.x(st.inicio + st.ventana));
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.acento, 0.2);
+        ctx.fillRect(x0 - 2, esc.caja.y - 2, x1 - x0 + 4, esc.caja.h + 4);
+        ctx.strokeStyle = C.acento;
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(Math.round(x0 - 2) + 0.5, esc.caja.y - 2, Math.round(x1 - x0 + 4), esc.caja.h + 4);
+        ctx.restore();
+      },
+    });
+    const escena = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena);
+    // Con una referencia guardada, el osciloscopio crece y la enseña en una franja propia, con su base de tiempo.
+    const altoRef = w => (st.ref ? (w < 560 ? 78 : 92) : 0);
+    const scope = G.lienzo(escena, { alto: w => (w < 560 ? 204 : 252) + altoRef(w), etiqueta: 'Oscilloscope: a few milliseconds of the loaded signal. Tap two crests to measure the period.', dibujar: dibujarScope });
+    scope.canvas.classList.add('tocable');
+    const TEXTO_AYUDA = 'Tap two consecutive crests to measure how long one vibration lasts; the dotted orange line is the Ferris wheel that best fits that measurement. To move the window, drag over the recording above or use “Position.”';
+    const ayuda = crear('p', { class: 'nota-reto' }, TEXTO_AYUDA);
+    lab.panel.appendChild(ayuda);
+    const mandos = crear('div', { class: 'mandos' });
+    lab.panel.appendChild(mandos);
+    const base = Curso.eleccion(mandos, { etiqueta: 'Window', opciones: OPCIONES.map(v => ({ valor: v, texto: v + ' ms' })), valor: 20, alCambiar: v => { st.ventana = v / 1000; mover(st.inicio, true); } });
+    const recorrido = () => Math.max(0, st.dur - st.ventana);
+    const pos = Curso.mando(mandos, { etiqueta: 'Position', min: 0, max: 100, paso: 0.1, valor: 45, formato: v => (st.dur ? num(v / 100 * recorrido(), 2) + ' s' : '—'), alCambiar: v => mover(v / 100 * recorrido(), true) });
+    const fila = crear('div', { class: 'fila' });
+    lab.panel.appendChild(fila);
+    const lect = Curso.lecturas(fila, [
+      { id: 'T', nombre: 'Period' },
+      { id: 'f', nombre: 'Frequency', clase: 'senal' },
+      { id: 'nota', nombre: 'Closest note' },
+      { id: 'parecido', nombre: 'Match with a Ferris wheel', clase: 'respuesta' },
+    ]);
+    const bot = Curso.botones(fila, [
+      { id: 'medir', texto: 'Measure automatically', alPulsar: () => medirSolo(false) },
+      { id: 'ref', texto: 'Save as reference', alPulsar: () => guardarReferencia() },
+      { id: 'quitar', texto: 'Remove reference', tipo: 'discreto', alPulsar: () => { st.ref = null; bot.quitar.hidden = true; scope.ajustar(); } },
+    ]);
+    bot.quitar.hidden = true;
+
+    function cargar(x, fs, nombre) {
+      Object.assign(st, { x, fs, nombre, dur: x.length / fs, marcas: [], auto: false, ajuste: null });
+      const est = estimarPeriodo(x, fs, st.dur * 0.45);
+      st.T = est ? est.T : null;
+      const v = st.T ? (OPCIONES.find(o => o / 1000 >= 3.2 * st.T) || 40) : 20;
+      base.fijar(v, false);
+      st.ventana = v / 1000;
+      st.inicio = limitar(st.dur * 0.45 - st.ventana / 2, 0, recorrido());
+      pos.fijar(recorrido() > 0 ? 100 * st.inicio / recorrido() : 0, false);
+      ayuda.textContent = TEXTO_AYUDA;
+      if (st.T) medirSolo(true); else { actualizar(); scope.dibujar(); }
+      lab.redibujarVista();
+    }
+    function mover(t, directo) {
+      if (!st.x) return;
+      st.inicio = limitar(directo ? t : t - st.ventana / 2, 0, recorrido());
+      if (!directo) pos.fijar(recorrido() > 0 ? 100 * st.inicio / recorrido() : 0, false);
+      actualizar();
+      scope.dibujar();
+      lab.redibujarVista();
+    }
+    // La ventana visible: empieza en el primer paso por cero hacia arriba y se escala a su propio pico.
+    function vista() {
+      const n = Math.max(2, Math.round(st.ventana * st.fs));
+      let i0 = Math.round(st.inicio * st.fs);
+      const busca = Math.round(Math.min(st.T || 0.01, 0.025) * st.fs);
+      for (let i = Math.max(1, i0); i < Math.min(st.x.length - n, i0 + busca); i++) if (st.x[i - 1] < 0 && st.x[i] >= 0) { i0 = i; break; }
+      i0 = limitar(i0, 0, Math.max(0, st.x.length - n));
+      const fin = Math.min(st.x.length, i0 + n);
+      let pico = 0;
+      for (let i = i0; i < fin; i++) pico = Math.max(pico, Math.abs(st.x[i]));
+      return { i0, fin, escala: pico > 1e-9 ? pico : 1, t0: i0 / st.fs };
+    }
+    // Periodo por autocorrelación normalizada: el primer pico casi tan alto como el mejor (evita el doble periodo).
+    function estimarPeriodo(x, fs, centro) {
+      const n = Math.min(x.length, Math.round(0.06 * fs));
+      const i0 = limitar(Math.round(centro * fs - n / 2), 0, Math.max(0, x.length - n));
+      const minL = Math.max(2, Math.floor(fs / 4000)), maxL = Math.min(Math.floor(fs / 60), Math.floor(n * 0.6));
+      if (maxL <= minL + 2) return null;
+      let energia = 0;
+      for (let i = 0; i < n; i++) energia += x[i0 + i] * x[i0 + i];
+      if (energia / n < 1e-8) return null;
+      const r = new Float64Array(maxL + 2);
+      for (let L = minL; L <= maxL + 1; L++) {
+        let s = 0, a = 0, b = 0;
+        for (let i = 0; i + L < n; i++) { const u = x[i0 + i], v = x[i0 + i + L]; s += u * v; a += u * u; b += v * v; }
+        r[L] = s / Math.sqrt(a * b + 1e-20);
+      }
+      let mejor = -1;
+      for (let L = minL + 1; L <= maxL; L++) mejor = Math.max(mejor, r[L]);
+      if (mejor < 0.5) return null;
+      for (let L = minL + 1; L <= maxL; L++) {
+        if (r[L] >= 0.9 * mejor && r[L] >= r[L - 1] && r[L] >= r[L + 1]) {
+          const den = r[L - 1] - 2 * r[L] + r[L + 1];
+          const d = den !== 0 ? limitar(0.5 * (r[L - 1] - r[L + 1]) / den, -0.5, 0.5) : 0;
+          return { T: (L + d) / fs, confianza: r[L] };
+        }
+      }
+      return null;
+    }
+    // La cresta más cercana a t: el máximo local (buscado a menos de medio periodo), afinado entre muestras con
+    // una parábola. Sin ese afinado, con 25 muestras por vuelta el periodo saldría con un error de hasta un 4 %.
+    function cresta(t) {
+      const w = st.T ? 0.4 * st.T : 0.0006;
+      const a = Math.max(0, Math.round((t - w) * st.fs)), b = Math.min(st.x.length - 1, Math.round((t + w) * st.fs));
+      let i = a;
+      for (let k = a; k <= b; k++) if (st.x[k] > st.x[i]) i = k;
+      if (i > 0 && i < st.x.length - 1) {
+        const y0 = st.x[i - 1], y1 = st.x[i], y2 = st.x[i + 1], den = y0 - 2 * y1 + y2;
+        if (den < 0) return (i + limitar(0.5 * (y0 - y2) / den, -0.5, 0.5)) / st.fs;
+      }
+      return i / st.fs;
+    }
+    function medirSolo(silencioso) {
+      if (!st.x) return;
+      const est = estimarPeriodo(st.x, st.fs, st.inicio + st.ventana / 2);
+      if (!est) {
+        st.marcas = [];
+        if (!silencioso) ayuda.textContent = 'I cannot find anything that repeats in this window: try another spot in the recording.';
+        actualizar(); scope.dibujar();
+        return;
+      }
+      st.T = est.T;
+      const v = vista(), n = Math.max(1, Math.round(est.T * st.fs));
+      let i1 = v.i0;
+      for (let i = v.i0; i < Math.min(v.fin, v.i0 + n); i++) if (st.x[i] > st.x[i1]) i1 = i;
+      const t1 = cresta(i1 / st.fs);
+      st.marcas = [t1, t1 + est.T];
+      st.auto = true;
+      actualizar();
+      scope.dibujar();
+    }
+    // La mejor noria con el periodo medido: mínimos cuadrados de a·sen + b·cos + c sobre la ventana.
+    function ajustarNoria(T) {
+      const v = vista(), w = TAU / T;
+      let n = 0, S = 0, Cc = 0, SS = 0, CC = 0, SC = 0, X = 0, XS = 0, XC = 0;
+      for (let i = v.i0; i < v.fin; i++) {
+        const t = i / st.fs, s = Math.sin(w * t), c = Math.cos(w * t), x = st.x[i];
+        n++; S += s; Cc += c; SS += s * s; CC += c * c; SC += s * c; X += x; XS += x * s; XC += x * c;
+      }
+      if (n < 6) return null;
+      const M = [[SS, SC, S], [SC, CC, Cc], [S, Cc, n]], y = [XS, XC, X];
+      const det = m => m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+      const D = det(M);
+      if (!(Math.abs(D) > 1e-12)) return null;
+      const con = k => M.map((f, i) => f.map((val, j) => (j === k ? y[i] : val)));
+      const a = det(con(0)) / D, b = det(con(1)) / D, c0 = det(con(2)) / D;
+      const valor = t => a * Math.sin(w * t) + b * Math.cos(w * t) + c0;
+      let res = 0, tot = 0;
+      const media = X / n;
+      for (let i = v.i0; i < v.fin; i++) { const x = st.x[i]; res += (x - valor(i / st.fs)) ** 2; tot += (x - media) ** 2; }
+      if (!(tot > 1e-14)) return null;
+      return { r2: limitar(1 - res / tot, 0, 1), valor };
+    }
+    function actualizar() {
+      const [a, b] = st.marcas;
+      if (a != null && b != null && Math.abs(b - a) > 1.5 / st.fs) {
+        const T = Math.abs(b - a), f = 1 / T, n = Curso.nota(f);
+        lect.fijar('T', num(T * 1000, 2) + ' ms');
+        lect.fijar('f', num(f, 0) + ' Hz');
+        lect.fijar('nota', n ? n.nombre + ' · ' + num(n.frecuencia, 0) + ' Hz' : '—');
+        st.ajuste = ajustarNoria(T);
+        lect.fijar('parecido', st.ajuste ? num(Math.round(100 * st.ajuste.r2)) + '%' : '—');
+      } else {
+        st.ajuste = null;
+        for (const id of ['T', 'f', 'nota', 'parecido']) lect.fijar(id, '—');
+        if (a != null) lect.fijar('T', 'tap another crest');
+      }
+    }
+    // La referencia es lo que se ve ahora, con su propia ventana: el silbido y la «aaa» tienen notas muy distintas,
+    // así que cada una se compara con su base de tiempo, unas cuatro vueltas cada una.
+    function guardarReferencia() {
+      if (!st.x) return;
+      const v = vista(), y = new Float64Array(v.fin - v.i0);
+      for (let i = 0; i < y.length; i++) y[i] = st.x[v.i0 + i] / v.escala;
+      st.ref = { y, fs: st.fs, nombre: st.nombre, ventana: st.ventana };
+      bot.quitar.hidden = false;
+      scope.ajustar();
+    }
+    scope.canvas.addEventListener('click', ev => {
+      if (!st.x || !st.vista) return;
+      const r = scope.canvas.getBoundingClientRect();
+      const s = (ev.clientX - r.left - CAJA.x) / (r.width - 2 * CAJA.x) * st.ventana;
+      if (s < 0 || s > st.ventana) return;
+      if (st.auto || st.marcas.length >= 2) st.marcas = [];
+      st.auto = false;
+      st.marcas.push(cresta(st.vista.t0 + s));
+      actualizar();
+      scope.dibujar();
+    });
+    function dibujarScope(ctx, w, h, C) {
+      const hRef = altoRef(w);
+      const caja = { x: CAJA.x, y: CAJA.y + hRef, w: w - 2 * CAJA.x, h: h - CAJA.y - hRef - CAJA.abajo };
+      if (st.ref) {
+        const r = { x: CAJA.x, y: CAJA.y, w: caja.w, h: hRef - 14 };
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.cuerpo, C.oscuro ? 0.04 : 0.03);
+        ctx.fillRect(r.x, r.y, r.w, r.h);
+        ctx.strokeStyle = G.alfa(C.eje, 0.6);
+        ctx.setLineDash([2, 4]);
+        ctx.beginPath(); ctx.moveTo(r.x, Math.round(r.y + r.h / 2) + 0.5); ctx.lineTo(r.x + r.w, Math.round(r.y + r.h / 2) + 0.5); ctx.stroke();
+        ctx.restore();
+        const escR = G.ejes(ctx, { caja: r, x: [0, st.ref.ventana], y: [-1.15, 1.15], soloEscala: true, C });
+        G.linea(ctx, escR, null, st.ref.y, { dt: 1 / st.ref.fs, color: C.cuerpo, alfa: 0.75, ancho: 1.5, halo: false, C });
+        G.texto(ctx, r.x + 6, r.y + 13, 'reference: ' + st.ref.nombre + ' · ' + num(st.ref.ventana * 1000) + ' ms', { color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.86), C });
+      }
+      // Retícula de osciloscopio: diez divisiones de tiempo y ocho de amplitud.
+      ctx.save();
+      ctx.strokeStyle = C.rejilla;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i <= 10; i++) { const x = Math.round(caja.x + caja.w * i / 10) + 0.5; ctx.moveTo(x, caja.y); ctx.lineTo(x, caja.y + caja.h); }
+      for (let j = 0; j <= 8; j++) { const y = Math.round(caja.y + caja.h * j / 8) + 0.5; ctx.moveTo(caja.x, y); ctx.lineTo(caja.x + caja.w, y); }
+      ctx.stroke();
+      ctx.strokeStyle = G.alfa(C.eje, 0.75);
+      ctx.beginPath(); ctx.moveTo(caja.x, Math.round(caja.y + caja.h / 2) + 0.5); ctx.lineTo(caja.x + caja.w, Math.round(caja.y + caja.h / 2) + 0.5); ctx.stroke();
+      ctx.restore();
+      for (let i = 0; i <= 4; i++) {
+        const ms = st.ventana * 1000 * i / 4;
+        G.texto(ctx, limitar(caja.x + caja.w * i / 4, 18, w - 18), h - 10, num(ms) + ' ms', { alinear: 'center', color: C.tenue, tam: 10, C });
+      }
+      if (!st.x) {
+        G.texto(ctx, w / 2, caja.y + caja.h / 2, 'Record, upload audio, or pick an example', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C });
+        return;
+      }
+      const v = vista();
+      st.vista = v;
+      const esc = G.ejes(ctx, { caja, x: [0, st.ventana], y: [-1.12, 1.12], soloEscala: true, C });
+      if (st.ajuste) G.curva(ctx, esc, s => st.ajuste.valor(v.t0 + s) / v.escala, { color: C.respuesta, ancho: 1.6, guiones: [6, 4], halo: false, n: 400, C });
+      const ys = new Float64Array(v.fin - v.i0);
+      for (let i = 0; i < ys.length; i++) ys[i] = st.x[v.i0 + i] / v.escala;
+      G.linea(ctx, esc, null, ys, { dt: 1 / st.fs, color: C.senal, ancho: 2, C });
+      const fondo = G.alfa(C.pantalla, 0.86);
+      if (ys.length <= 140) {
+        G.puntos(ctx, esc, Array.from(ys, (_, i) => i / st.fs), ys, { color: C.senal, radio: 2.2, C });
+        G.texto(ctx, caja.x + caja.w - 6, caja.y + 14, '1 point = 1 number', { alinear: 'right', color: C.tenue, tam: 10, fondo, C });
+      }
+      // Las marcas de las crestas, abajo, y el periodo entre ellas.
+      const xs = st.marcas.map(tm => tm - v.t0);
+      xs.forEach((s, k) => {
+        if (s < 0 || s > st.ventana) return;
+        const x = esc.x(s);
+        ctx.save();
+        ctx.strokeStyle = C.acento; ctx.lineWidth = 1.3; ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(x, caja.y); ctx.lineTo(x, caja.y + caja.h); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, x + 4, caja.y + caja.h - 6, k ? 'B' : 'A', { color: C.acento, peso: 600, tam: 12, fondo, C });
+      });
+      if (xs.length === 2 && xs.every(s => s >= 0 && s <= st.ventana)) {
+        const xa = esc.x(Math.min(...xs)), xb = esc.x(Math.max(...xs)), y = caja.y + caja.h - 26;
+        ctx.save();
+        ctx.strokeStyle = C.acento; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(xa, y - 4); ctx.lineTo(xa, y); ctx.lineTo(xb, y); ctx.lineTo(xb, y - 4); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, (xa + xb) / 2, y - 6, 'T = ' + num(Math.abs(st.marcas[1] - st.marcas[0]) * 1000, 2) + ' ms', { alinear: 'center', color: C.acento, tam: 11, peso: 600, fondo, C });
+      }
+      G.texto(ctx, caja.x + 6, caja.y + 14, st.nombre, { color: C.tenue, tam: 10, fondo, C });
+    }
+  })();
+})();
+</script>
+</body>
+</html>

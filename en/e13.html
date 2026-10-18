@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wavelets: a microscope for signals · Signals</title>
+<meta name="description" content="Lesson 13 of the visual course “Signals, from Zero to Expert”: the wavelet that stretches and shrinks, the scalogram, and why it looks at each octave with its own magnifying glass, with six challenges and your own voice.">
+<link rel="stylesheet" href="../comun/fuentes.css">
+<link rel="stylesheet" href="../comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e13">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Level 4 · Lesson 13</p>
+    <h1>Wavelets: a microscope for signals</h1>
+    <aside class="pregunta">
+      <p>Your ear follows a very fast cymbal and a very long low note at the same time. A spectrogram, on the other hand, looks at every frequency through the same window, and you already know a window can’t be short and long at once. To see the cymbal well you need a window of a few milliseconds, and to separate two low notes you need one of about 150 milliseconds or more. What if the microscope changed its magnification depending on what it was looking at?</p>
+    </aside>
+    <ul class="meta"><li>About 55 minutes</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>The idea in one picture</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>At the top, a sound with two hits, a low note and a high note, and the strip of time covered by the purple wavelet. In the middle, the wavelet itself with its own time scale: when it looks for low notes it stretches, when it looks for high notes it shrinks, and it always keeps the same shape. At the bottom, the map of the sound, which you can view with a fixed window or with the wavelet.</figcaption>
+    </figure>
+    <p>In <a href="e11.html">lesson 11</a>, the spectrogram cut the sound with a sliding window, and in <a href="e12.html">lesson 12</a> you saw that each cell of that map is a tile that can be stretched or squashed, but not shrunk. With a fixed window, all the tiles on the map are the same, from the lows to the highs.</p>
+    <p>A <b class="termino">wavelet</b> is a short wave, just a few turns long, that you use as a template, like the test Ferris wheel of <a href="e04.html">lesson 4</a> or the sliding template of <a href="e09.html">lesson 9</a>. The difference is that a wavelet has no fixed size: it stretches to look for low notes and shrinks to look for high ones, and at each instant it measures how much it resembles the signal. Move the frequency it looks for and notice that the drawing of the wavelet doesn’t change shape, only size.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Step by step</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>A zoom that adapts</h3>
+      <p>To recognize a note you need a few turns of its Ferris wheel, say four. Four turns of a 4,000 Hz wheel last one millisecond, and four turns of a 50 Hz wheel last about 80 milliseconds. On top of that, high sounds tend to be brief, like a cymbal or a consonant, and low sounds tend to last, like a bass note. It makes sense to look at the highs with a short window and at the lows with a long one, instead of using the same window for everything.</p>
+      <p>Music asks for the same thing from another angle. On a piano, one semitone multiplies the frequency by 1.0595, so in hertz the distance between notes grows with pitch: between the two lowest keys there are 1.6 Hz, and between the two highest, about 235 Hz. With the rule from lesson 12, separating the low notes takes listening for more than a second, while for the high ones less than a hundredth of a second would do. The seven A notes of the piano, from 55 to 3,520 Hz, are each at double the frequency of the one before. That distance, from a note to the one at double its frequency, is an <b class="termino">octave</b>, and on the keyboard all octaves measure the same, even though in hertz each one is twice as wide as the previous one.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">The seven A notes of the piano play one after another, and below you can see their spectrum over time. Choose the frequency axis on which the seven end up at the same distance from each other.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="mandos" id="r1-mandos"></div>
+        <div class="fila" id="r1-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>The mother wavelet and its copies</h3>
+      <p>You start from a single short wave, with as many ups as downs so that its average is zero, called the <b class="termino">mother wavelet</b>. From it you make copies of the same shape, more stretched or more shrunk, and the amount of stretching is the <b class="termino">scale</b>: a stretched copy looks for low frequencies and a shrunk one looks for high ones. Each copy is then placed at every instant of the signal, which is called translation, and at each place you measure the resemblance, which is the same old question: multiply point by point and add up the area.</p>
+      <p>The wavelet most used with sounds is the <b class="termino">Morlet wavelet</b>: a Ferris wheel inside a Gaussian bell, that is, the Gabor atom from lesson 12. Its setting, written w0, says how many turns it has inside the bell. With the most common value, w0 = 6, you see about four oscillations, and its scale almost exactly matches the period of the note it looks for. It makes no difference whether it looks for 100 Hz or 2,000 Hz: it always has the same four turns, and the only thing that changes is the time it takes to make them.</p>
+      <p>Wavelets weren’t born in a math department but while looking for oil. In the late 1970s, Jean Morlet, an engineer at the French oil company Elf Aquitaine, was trying to read better the echoes that layers of rock send back when a wave is sent into the ground, waves of a few tens of hertz, as low as a bass. He thought of comparing them with short waves, all with the same shape but stretched to different sizes, and called them waves of constant shape. His colleagues didn’t take it very seriously, and the physicist Alex Grossmann, in Marseille, gave it its mathematical form: in 1984 they published the continuous wavelet transform together.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">This wave is a pure note. Stretch or shrink the Morlet wavelet, using the frequency control, until it fits the wave: its crests have to land on the crests of the wave. The amber curve says how much they resemble each other for every frequency it could look for.</p>
+        <div class="escena" id="r2-escena"></div>
+        <div class="mandos" id="r2-mandos"></div>
+        <div class="fila" id="r2-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>Tiles that change shape</h3>
+      <p>The Morlet wavelet is a Ferris wheel clipped by a Gaussian bell, and that is exactly the signal that, according to lesson 12, reaches the minimum tile area. So each wavelet has a tile of minimum area, but its shape depends on pitch. At the top, with the high notes, the wavelet is very short and its tile is narrow in time and tall in frequency: you know very well when, but not so well which one. At the bottom, with the low notes, the wavelet is long and its tile is wide and short: you know very well which one, but not so well when.</p>
+      <p>What stays the same is the proportion. In <b class="termino" data-termino="Constant relative resolution (constant Q)">constant relative resolution</b>, the width of each tile in frequency is a fixed fraction of its frequency, about 12% with w0 = 6. It is the same thing a third-octave graphic equalizer does, like the one in <a href="e06.html">lesson 6</a>, with up to 31 bands spaced a third of an octave apart: its filters are narrow in hertz at the bottom and wide at the top. The sliders of a graphic equalizer are already spaced the way wavelets are.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Every tile has the same area, the Gabor minimum, but not the same shape. Place the three in their frequency band: the tall narrow one, the square one, and the short wide one. You can drag them or choose their band with the selectors.</p>
+        <div class="escena" id="r3-escena"></div>
+        <div class="columnas-2" id="r3-mandos"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>The scalogram and the hits</h3>
+      <p>If you repeat the measurement at every scale and at every instant, you get a map: the <b class="termino">scalogram</b>. It has time running to the right, frequency going up on a logarithmic axis, on which each octave takes up the same space, and energy in magma colors, in decibels. The whole procedure is the <b class="termino" data-termino="Continuous wavelet transform (CWT)">continuous wavelet transform</b>. In this lesson the color measures amplitude: a pure note of amplitude one shows up at 0 dB in its row.</p>
+      <p>A hit is what wavelets see best. A click lights up all the scales at the same instant: at the top, where the wavelets are very short, it leaves a thin line that points almost to the exact instant, and at the bottom, where they are long, it widens into a cone that points at that instant. That is why wavelets are good for finding hits, cracks in a material, or the arrival of an earthquake.</p>
+      <p>An earthquake sends two <b class="termino" data-termino="P and S waves">waves</b> that travel at different speeds. The first to arrive, the P wave, feels like a sharp thump, and a few seconds later the S wave arrives, a sway that usually does more damage; S waves generally travel at about 60% of the speed of P waves. Finding on a seismogram the exact instant when each one starts means looking for a sudden change, and that is one of the things wavelets do best. Earthquake early warning systems take advantage of those seconds: sensors detect the P wave and send out the alert before the strong shaking arrives, which in the best case can give tens of seconds.</p>
+      <p>Near the start and the end of the signal, long wavelets spill out of it and the result gets distorted. The unreliable zone is called the <b class="termino">cone of influence</b>, and it is wider the lower the row is: on each side it measures about 1.4 times the scale, a little more than one period of the note it looks for.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">There is a click hidden in a sustained note, so faint that it is barely visible in the wave. Tap on the scalogram the instant when it happens, within a margin of 3 milliseconds.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="fila" id="r4-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>The cymbal and the bass</h3>
+      <p>Here is what the spectrogram couldn’t do. Imagine a bass playing two low notes at once, a whole step apart, with a cymbal ticking away on top. To separate the two low notes you need a long window, and to see each hit of the cymbal you need a short one. With a spectrogram there is no window that works for both.</p>
+      <p>With a wavelet there is a setting that does. The w0 setting is the number of turns of the wavelet: if you raise it, the wavelet is longer, and it gains sharpness in frequency at the expense of time. But it does so in its own way, because the duration of the wavelet still depends on pitch: with a high w0, the wavelet for the lows lasts tens of milliseconds and the one for the highs lasts barely more than one. That doesn’t break the rule from lesson 12, because each tile has the same minimum area; what it does is distribute sharpness differently, long at the bottom and short at the top.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">With a single control, manage to see at the same time the two low notes separated and each hit of the cymbal, with a gap of at least 3 dB in both cases. Try the spectrogram first, and then the wavelet.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>What wavelets don’t solve</h3>
+      <p>Wavelets don’t see better than the spectrogram at everything; they distribute sharpness in a different way. At the top they are blurrier in frequency than a long-window spectrogram, and that is why the high harmonics of a voice melt together: they are always at the same distance in hertz, the distance of the note, but the tiles get taller with frequency. At the bottom they are blurrier in time than a short-window one.</p>
+      <p>There is also more than one way to color the map. If you normalize by energy, a low sine comes out stronger than a high one of the same amplitude and white noise comes out flat; if you normalize by amplitude, the sines come out equal and white noise grows toward the highs. It pays to always look at the legend and know which normalization was used.</p>
+      <p>The ear resembles a wavelet transform in one respect, but it isn’t one. In the cochlea, each stretch of a coiled membrane vibrates with certain frequencies, and the filters they form are narrow for the lows and wide for the highs. Above about a thousand hertz, their width grows almost in proportion to frequency, just as in wavelets; below that, it stays at a few tens of hertz, more like a fixed window. Besides, the ear’s response changes with loudness, it is not linear, and the brain makes use of the moment when nerve impulses arrive. Wavelets resemble the ear, but they are not the ear.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">This synthetic “aah” has its harmonics in horizontal lines, and at the top you can see little vertical lines, one for each pulse of the vocal cords. With w0 = 6, count how many harmonics show up separated and type the number. Then adjust w0 to see at least five separated harmonics without losing the little lines at the top.</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+      <p>The picture is still blurry, because the Gabor limit still rules. And one question remains unanswered: what the scalogram shows in each cell is an energy, but what exactly is “the frequency at this instant”? That is what <a href="e15.html">lesson 15</a> is about.</p>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>In your voice</h2>
+    <p><b>What to record.</b> Three claps followed by a long “aah” on a comfortable note, which are segments 6 and 3 of the series’ reference recording, or any other short segment. Clap away from your phone so they don’t clip. Record with the microphone if your browser allows it; if not, upload audio recorded with your phone or try the synthetic examples. At most 4 seconds are analyzed.</p>
+    <p><b>What to look at.</b> The Morlet scalogram of your audio, with a 32 ms spectrogram next to it, with the same logarithmic axis and the same color scale. In the claps, the vertical lines are very thin at the top and widen toward the bottom, like a cone. In your “aah,” two or three lines show up separated at the bottom, and higher up the harmonics melt into a band, with little vertical lines at the rhythm of your vocal cords. Raise w0 and you will see more harmonics separate, at the cost of widening the lines in time. The shading at the edges is the cone of influence, where you shouldn’t trust the picture.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>What to remember</h2>
+    <ol class="tres">
+      <li>A wavelet is a short wave of a few turns that stretches to look for lows and shrinks to look for highs, always with the same shape. The scalogram is the map of its resemblance to the signal, at all scales and at all instants.</li>
+      <li>Each tile of a wavelet has the minimum Gabor area, but its shape changes with pitch: narrow and tall at the top, wide and short at the bottom. The relative resolution is constant, like the octaves of a piano, and that is why the axis is logarithmic.</li>
+      <li>Wavelets don’t break the limit from lesson 12; they distribute sharpness differently. They locate hits and sudden changes very well and separate the lows, but at the top the harmonics melt together, and the picture is still blurry.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Common mistakes</h2>
+    <ul class="errores">
+      <li><b>“The scale is the frequency.”</b> They go in opposite directions: a large scale looks for low frequencies. The conversion depends on the wavelet: with Morlet and w0 = 6, the period is 1.03 times the scale.</li>
+      <li><b>“Wavelets see better than the spectrogram at everything.”</b> They distribute sharpness differently. At the top they are blurrier in frequency than a long-window spectrogram, and at the bottom, blurrier in time than a short-window one. The area of each tile is still the Gabor minimum.</li>
+      <li><b>“At the top, the harmonics melt together because of noise.”</b> They melt together because the tiles are tall there. The harmonics are always at the same distance in hertz, but the width of the wavelet grows with frequency.</li>
+      <li><b>“In the scalogram, the brightest row is the one that sounds loudest.”</b> It depends on the normalization: by energy, the lows look stronger, and by amplitude, noise looks stronger at the top. You have to look at the legend.</li>
+      <li><b>“What you see at the edges is part of the signal.”</b> Near the start and the end, long wavelets spill out of the signal and the result gets distorted. That is the cone of influence, wider in the lows.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Open</span>
+      <h2>Math corner</h2>
+      <span class="resumen">The formulas, for whoever wants them. Each one comes after its reading in words.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>The family of copies</h3>
+      <p>Each copy is the mother wavelet stretched to scale <span class="tex">a</span> and shifted to instant <span class="tex">b</span>. The factor in front chooses how it is normalized: one over <span class="tex">a</span> preserves amplitude, and one over the square root of <span class="tex">a</span> preserves energy:</p>
+      <div class="tex">\psi_{a,b}(t) = \frac{1}{a}\,\psi\!\left(\frac{t-b}{a}\right) \quad\text{or}\quad \psi_{a,b}(t) = \frac{1}{\sqrt{a}}\,\psi\!\left(\frac{t-b}{a}\right)</div>
+
+      <h3>The continuous wavelet transform</h3>
+      <p>For each scale and each instant you measure the resemblance between the signal and the copy: you multiply point by point, using the conjugate of the copy, and add up the area:</p>
+      <div class="tex">W(a,b) = \int_{-\infty}^{\infty} x(t)\,\overline{\psi_{a,b}(t)}\,dt</div>
+
+      <h3>The Morlet wavelet</h3>
+      <p>It is a Ferris wheel that turns <span class="tex">\omega_0</span> radians per unit of scale, inside a Gaussian bell. The subtracted term ensures a zero average and is negligible if <span class="tex">\omega_0 \ge 5</span>:</p>
+      <div class="tex">\psi(t) = \pi^{-1/4}\left(e^{i\omega_0 t} - e^{-\omega_0^2/2}\right) e^{-t^2/2}</div>
+
+      <h3>From scale to frequency</h3>
+      <p>The peak of the response is at <span class="tex">\omega_0</span> divided by two pi times the scale. Torrence and Compo use the equivalent Fourier period, which with <span class="tex">\omega_0 = 6</span> is 1.03 times the scale:</p>
+      <div class="tex">f_{\text{peak}} = \frac{\omega_0}{2\pi a}, \qquad \lambda = \frac{4\pi a}{\omega_0 + \sqrt{2+\omega_0^2}} \approx 1.03\,a</div>
+
+      <h3>Admissibility</h3>
+      <p>To be able to reconstruct the signal, the energy of the wavelet’s spectrum divided by the frequency has to be finite. In practice, that requires a zero average:</p>
+      <div class="tex">C_\psi = \int_0^{\infty} \frac{|\Psi(\omega)|^2}{\omega}\,d\omega < \infty \;\Rightarrow\; \int \psi(t)\,dt = 0</div>
+
+      <h3>Tiles of minimum area and variable shape</h3>
+      <p>At scale <span class="tex">a</span>, the energy of the Morlet is spread in time with a standard deviation of <span class="tex">a</span> divided by the square root of two, and in frequency with a fixed proportion of its frequency. The product is always the Gabor minimum:</p>
+      <div class="tex">\sigma_t = \frac{a}{\sqrt{2}}, \qquad \frac{\sigma_f}{f} = \frac{1}{\sqrt{2}\,\omega_0}, \qquad \sigma_t\,\sigma_f = \frac{1}{4\pi}</div>
+
+      <h3>Constant Q</h3>
+      <p>The center frequency divided by the width doesn’t depend on the frequency. With <span class="tex">\omega_0 = 6</span>, the width is 11.8% of the frequency:</p>
+      <div class="tex">Q = \frac{f}{\delta f} = \text{constant}</div>
+
+      <h3>Reconstruction</h3>
+      <p>With energy normalization, the signal is recovered by adding up all the copies weighted by their resemblances, according to Grossmann and Morlet:</p>
+      <div class="tex">x(t) = \frac{1}{C_\psi}\int_0^{\infty}\!\!\int_{-\infty}^{\infty} W(a,b)\,\psi_{a,b}(t)\,\frac{db\,da}{a^2}</div>
+
+      <h3>Cone of influence</h3>
+      <p>Near the edges, within root two times the scale, the result is not reliable:</p>
+      <div class="tex">\tau_{\text{edge}}(a) = \sqrt{2}\,a</div>
+
+      <h3>The semitone</h3>
+      <p>Each semitone multiplies the frequency by the twelfth root of two, and in hertz the distance grows with the note:</p>
+      <div class="tex">f_{n+1} = 2^{1/12} f_n, \qquad \Delta f \approx 0.0595\,f</div>
+
+      <h3>The ear’s filters</h3>
+      <p>Glasberg and Moore (1990) gave their equivalent width in hertz, for frequencies in hertz between 100 and 10,000:</p>
+      <div class="tex">\mathrm{ERB}(f) = 24.7\,\left(4.37\,\frac{f}{1000} + 1\right)</div>
+
+      <h3>Distance to an earthquake</h3>
+      <p>It is obtained from the difference in arrival time between the S and P waves and their two speeds:</p>
+      <div class="tex">d = \Delta t\,\frac{V_P\,V_S}{V_P - V_S}</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Further reading</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Paper</span>Torrence, C. and Compo, G. P. (1998), <a href="https://paos.colorado.edu/research/wavelets/bams_79_01_0061.pdf"><i>A Practical Guide to Wavelet Analysis</i></a>. The most cited practical guide: the Morlet, how to choose scales, the cone of influence, and how not to stop at “colorful pictures.”</li>
+      <li><span class="tipo">Tutorial</span>Polikar, R., <a href="https://users.rowan.edu/~polikar/WTtutorial.html"><i>The Wavelet Tutorial</i></a>. From the spectrogram to the continuous wavelet transform, step by step and with figures.</li>
+      <li><span class="tipo">History</span>Meyer, Y. (2020), <a href="https://celebratio.org/Daubechies_I/article/811">introduction in <i>Celebratio Mathematica</i></a>. The story of Morlet and Grossmann told by one of the mathematicians who lived it.</li>
+      <li><span class="tipo">Article</span><a href="https://sites.math.washington.edu/~warfield/news/news32.html">“The Wavelet Story” (1997)</a>, University of Washington. The anecdote of Morlet, his printouts and the skeptical colleagues, based on Daubechies’s account.</li>
+      <li><span class="tipo">Encyclopedia</span>Wikipedia, <a href="https://en.wikipedia.org/wiki/Constant-Q_transform"><i>Constant-Q transform</i></a>. As a complement: why music asks for constant relative resolution, and the piano example.</li>
+      <li><span class="tipo">Web</span>PNSN, <a href="https://pnsn.org/education/earthquake-early-warning"><i>Earthquake Early Warning</i></a>. How the arrival of the P wave is used to warn before the shaking.</li>
+      <li><span class="tipo">Manual</span><a href="https://manual.audacityteam.org/man/spectrogram_view.html">Audacity, <i>Spectrogram View</i></a>. To view your recordings with the logarithmic axis, the one of musical scales.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>New terms</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Quiz</h2>
+  </section>
+
+</main>
+
+<script src="temario.js"></script>
+<script src="../comun/graficas.js"></script>
+<script src="../comun/senal.js"></script>
+<script src="../comun/curso.js"></script>
+<script src="datos/e13.js"></script>
+<script>
+(function () {
+// Lección 11 · Fourier no sabe cuándo: el espectrograma. La imagen ancla (la ventana deslizante), los seis retos y el
+// laboratorio «En tu voz». Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo.
+// Convenios: tiempo hacia la derecha y frecuencia hacia arriba; señales en verde, espectros en ámbar, ventanas en
+// púrpura y mapas en magma con su leyenda en dB.
+'use strict';
+const G = Graficas, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+const pot2 = n => Senal.siguientePotencia2(n);
+const redondear = (v, d) => Math.round(v * Math.pow(10, d)) / Math.pow(10, d);
+const ms = v => num(v) + ' ms';
+const altoDe = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); (typeof contenedor === 'string' ? document.querySelector(contenedor) : contenedor).appendChild(f); return f; };
+
+// ── Utilidades de cálculo y dibujo ───────────────────────────────────────────────────────────────────
+// Recorta un mapa (E: { t, f, nT, nF, db }) a una zona [t0, t1] × [f0, f1] y lo deja listo para Graficas.mapa.
+function recortarMapa(E, t0, t1, f0, f1) {
+  const dt = E.nT > 1 ? E.t[1] - E.t[0] : 1, df = E.nF > 1 ? E.f[1] - E.f[0] : 1;
+  const j0 = limitar(Math.floor(t0 / dt), 0, E.nT - 1), j1 = limitar(Math.ceil(t1 / dt), j0, E.nT - 1);
+  const k0 = limitar(Math.floor(f0 / df), 0, E.nF - 1), k1 = limitar(Math.ceil(f1 / df), k0, E.nF - 1);
+  const nT = j1 - j0 + 1, nF = k1 - k0 + 1, datos = new Float32Array(nF * nT);
+  for (let k = 0; k < nF; k++) for (let j = 0; j < nT; j++) datos[k * nT + j] = E.db[(k + k0) * E.nT + j + j0];
+  return { datos, nF, nT, t: E.t.subarray(j0, j1 + 1), f: E.f.subarray(k0, k1 + 1) };
+}
+// Remuestrea las filas de un mapa a una rejilla uniforme en log2(f), entre fmin y fmax. El eje del resultado se
+// dibuja en unidades de log2(f), con marcas en las octavas.
+function mapaLog(E, t0, t1, fmin, fmax, filas) {
+  const dt = E.nT > 1 ? E.t[1] - E.t[0] : 1, df = E.f[1] - E.f[0];
+  const j0 = limitar(Math.floor(t0 / dt), 0, E.nT - 1), j1 = limitar(Math.ceil(t1 / dt), j0, E.nT - 1), nT = j1 - j0 + 1;
+  const lo = Math.log2(fmin), hi = Math.log2(fmax), paso = (hi - lo) / filas;
+  const datos = new Float32Array(filas * nT), f = new Float64Array(filas);
+  for (let r = 0; r < filas; r++) {
+    const lc = lo + (r + 0.5) * paso;
+    f[r] = lc;
+    const a = Math.pow(2, lc - paso / 2) / df, b = Math.pow(2, lc + paso / 2) / df, c = Math.pow(2, lc) / df;
+    const ka = Math.ceil(a), kb = Math.floor(b);
+    for (let j = 0; j < nT; j++) {
+      let v;
+      if (kb >= ka) { v = -Infinity; for (let k = ka; k <= kb && k < E.nF; k++) v = Math.max(v, E.db[k * E.nT + j + j0]); }
+      else { const k = Math.floor(c), u = c - k, v0 = E.db[Math.min(k, E.nF - 1) * E.nT + j + j0], v1 = E.db[Math.min(k + 1, E.nF - 1) * E.nT + j + j0]; v = v0 + u * (v1 - v0); }
+      datos[r * nT + j] = v;
+    }
+  }
+  return { datos, nF: filas, nT, t: E.t.subarray(j0, j1 + 1), f };
+}
+// Un mapa tiempo-frecuencia con sus ejes y su leyenda en dB (frecuencia hacia arriba, escala magma).
+function dibujarMapa(ctx, w, h, C, V, o) {
+  const margen = { izquierda: w < 380 ? 44 : 52, derecha: w < 380 ? 52 : 60, arriba: o.titulo && w >= 520 ? 28 : 14, abajo: 32 };
+  const esc = G.ejes(ctx, { x: o.x, y: o.y, marcasX: o.marcasX, marcasY: o.marcasY, formatoX: o.formatoX, formatoY: o.formatoY, rejilla: false,
+    etiquetaX: o.etiquetaX, etiquetaY: o.etiquetaY || 'frequency (Hz)', margen, C });
+  if (V) G.mapa(ctx, esc, { datos: V.datos, nF: V.nF, nT: V.nT, t: V.t, f: V.f, rango: o.rango });
+  ctx.save();
+  ctx.strokeStyle = C.eje;
+  ctx.strokeRect(Math.round(esc.caja.x) + 0.5, Math.round(esc.caja.y) + 0.5, Math.round(esc.caja.w), Math.round(esc.caja.h));
+  ctx.restore();
+  G.leyenda(ctx, { x: w - margen.derecha + 14, y: esc.caja.y + 14, ancho: 9, alto: Math.max(40, esc.caja.h - 14), rango: o.rango, etiqueta: 'dB', C });
+  if (o.titulo && w >= 520) G.texto(ctx, esc.caja.x + esc.caja.w, 17, o.titulo, { alinear: 'right', color: C.suave, tam: 11, peso: 600, C });
+  return esc;
+}
+// Un mapa pequeño sin leyenda ni ejes numéricos (para los dibujos del reto 3): V con t y f en unidades reales.
+function miniMapa(ctx, w, h, C, V, rango, titulo, dur, fmax) {
+  const caja = { x: 4, y: titulo ? 20 : 4, w: w - 8, h: h - (titulo ? 24 : 8) };
+  const esc = G.ejes(ctx, { caja, x: [0, dur], y: [0, fmax], rejilla: false, marcasX: false, marcasY: false, cero: false, C });
+  if (V) G.mapa(ctx, esc, { datos: V.datos, nF: V.nF, nT: V.nT, t: V.t, f: V.f, rango });
+  ctx.save(); ctx.strokeStyle = C.eje; ctx.strokeRect(caja.x + 0.5, caja.y + 0.5, caja.w - 1, caja.h - 1); ctx.restore();
+  if (titulo) G.texto(ctx, caja.x + 2, 13, titulo, { color: C.suave, tam: 12, peso: 600, C });
+  return esc;
+}
+// Una ventana de Hann dibujada sobre un eje de tiempo: ancho en segundos, centro c.
+const hann = u => (Math.abs(u) < 0.5 ? Math.pow(Math.cos(Math.PI * u), 2) : 0);
+// Una nota pura con principio y final suaves.
+function nota(f, dur, fs, { amp = 1, armonicos = [1], ataque = 0.01, caida = 0.02 } = {}) {
+  const n = Math.round(dur * fs), x = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    const t = i / fs;
+    let s = 0;
+    for (let k = 0; k < armonicos.length; k++) if ((k + 1) * f < fs / 2) s += armonicos[k] * Math.sin(TAU * (k + 1) * f * t);
+    x[i] = amp * s * Math.min(1, t / ataque) * Math.min(1, (dur - t) / caida);
+  }
+  return x;
+}
+const pegar = (...xs) => { let n = 0; for (const x of xs) n += x.length; const y = new Float64Array(n); let o = 0; for (const x of xs) { y.set(x, o); o += x.length; } return y; };
+const invertir = x => { const y = new Float64Array(x.length); for (let i = 0; i < x.length; i++) y[i] = x[x.length - 1 - i]; return y; };
+// Frecuencia del pico del espectro de un trozo (ventana de Hann, relleno ×8, interpolación parabólica).
+function picoDeTrozo(x, fs) {
+  const n = x.length, w = Senal.ventana('hann', n), y = new Float64Array(n);
+  for (let i = 0; i < n; i++) y[i] = x[i] * w[i];
+  const nfft = pot2(n * 8), X = Senal.fftReal(y, nfft), df = fs / nfft, K = Math.floor(nfft / 2);
+  const mag = new Float64Array(K + 1);
+  let mx = 0, im = 1;
+  for (let k = 0; k <= K; k++) { mag[k] = Math.hypot(X.re[k], X.im[k]); if (k > 0 && mag[k] > mx) { mx = mag[k]; im = k; } }
+  let f = im * df;
+  if (im > 0 && im < K) { const a = mag[im - 1], b = mag[im], c = mag[im + 1], d = a - 2 * b + c; if (d !== 0) f = (im + 0.5 * (a - c) / d) * df; }
+  return { f, mag, df, max: mx };
+}
+
+// ── Utilidades de las wavelets ───────────────────────────────────────────────────────────────────────
+const log2 = Math.log2;
+// Recorta un mapa en el tiempo (t0 a t1, en s) sin tocar las filas.
+function cortarTiempo(V, t0, t1) {
+  const dt = V.nT > 1 ? V.t[1] - V.t[0] : 1;
+  const j0 = limitar(Math.floor(t0 / dt), 0, V.nT - 1), j1 = limitar(Math.ceil(t1 / dt), j0, V.nT - 1), nT = j1 - j0 + 1, datos = new Float32Array(V.nF * nT);
+  for (let k = 0; k < V.nF; k++) for (let j = 0; j < nT; j++) datos[k * nT + j] = V.datos[k * V.nT + j + j0];
+  return { datos, nF: V.nF, nT, t: V.t.subarray(j0, j1 + 1), f: V.f };
+}
+// Un escalograma de Morlet listo para dibujar: las filas van en log2(f) (el eje de las octavas) si logEje, y en Hz si no.
+// Devuelve { V, max, E }.
+function escalo(x, fs, frecuencias, w0, salto, logEje = true) {
+  const E = Senal.escalograma(x, fs, { frecuencias, w0, salto });
+  const f = logEje ? Float64Array.from(E.f, log2) : E.f;
+  return { V: { datos: E.db, nF: E.nF, nT: E.nT, t: E.t, f }, max: E.max, E };
+}
+// Las marcas de un eje logarítmico de frecuencias (valores en Hz) dentro de [fmin, fmax].
+const marcasLog = (fmin, fmax, lista = [50, 100, 200, 500, 1000, 2000, 5000, 10000]) => lista.filter(v => v >= fmin * 0.999 && v <= fmax * 1.001);
+// La parte real de la wavelet de Morlet (w0) que busca la frecuencia f, en el instante t (s) respecto a su centro.
+const morlet = (t, f, w0 = 6) => { const s = w0 / (TAU * f); return Math.exp(-t * t / (2 * s * s)) * Math.cos(TAU * f * t); };
+const sMorlet = (f, w0 = 6) => w0 / (TAU * f);          // la escala, en s, de la fila de frecuencia f
+// Reduce las columnas de un mapa a n, quedándose con el máximo de cada grupo: así una raya muy fina no se pierde al
+// dibujarla en menos píxeles que columnas.
+function agruparTiempo(V, n) {
+  if (V.nT <= n) return V;
+  const datos = new Float32Array(V.nF * n), t = new Float64Array(n), g = V.nT / n;
+  for (let j = 0; j < n; j++) {
+    const a = Math.floor(j * g), b = Math.max(a + 1, Math.floor((j + 1) * g));
+    t[j] = (V.t[a] + V.t[Math.min(V.nT - 1, b - 1)]) / 2;
+    for (let k = 0; k < V.nF; k++) { let m = -Infinity; for (let i = a; i < b; i++) m = Math.max(m, V.datos[k * V.nT + i]); datos[k * n + j] = m; }
+  }
+  return { datos, nF: V.nF, nT: n, t, f: V.f };
+}
+
+// ── La idea en una imagen: la wavelet que se estira ──────────────────────────────────────────────────
+// Un sonido de 1,6 s a 8 kHz con dos golpes, una nota grave (110 Hz) y una nota aguda (1.760 Hz). La wavelet de Morlet
+// (w0 = 6) busca una frecuencia que se puede cambiar: su dibujo no cambia de forma, solo de tamaño. El mapa puede
+// verse con una ventana fija de 32 ms (espectrograma) o con la wavelet (escalograma), siempre con el eje logarítmico.
+(function () {
+  const FS = 8000, DUR = 1.6, FMIN = 60, FMAX = 3500, W0 = 6, N_VENT = 256;
+  const x = (() => {
+    const y = new Float64Array(Math.round(DUR * FS)), az = Senal.azar(7);
+    const bajo = nota(110, 1.4, FS, { amp: 0.5, armonicos: [1, 0.4], ataque: 0.05, caida: 0.1 });
+    y.set(bajo, Math.round(0.1 * FS));
+    const agudo = nota(1760, 0.22, FS, { amp: 0.4, ataque: 0.03, caida: 0.05 });
+    const i0 = Math.round(0.78 * FS);
+    for (let i = 0; i < agudo.length; i++) y[i0 + i] += agudo[i];
+    for (const tc of [0.36, 1.22]) { const j0 = Math.round(tc * FS); for (let i = 0; i < 28; i++) y[j0 + i] += 0.9 * Math.exp(-i / 6) * az.normal(); }
+    return y;
+  })();
+  const frec = Senal.frecuenciasLog(FMIN, FMAX, 110);
+  const mapas = {};
+  function preparar() {
+    if (mapas.cwt) return;
+    const c = escalo(x, FS, frec, W0, 8, true);
+    mapas.cwt = { V: c.V, max: c.max };
+    const E = Senal.espectrograma(x, FS, { n: N_VENT, salto: 32, ventana: 'hann', nfft: 1024, suelo: -120 });
+    mapas.stft = { V: mapaLog(E, 0, DUR, FMIN, FMAX, 110), max: E.max };
+  }
+  preparar();
+  const e = { f: 200, p: 0.62, modo: 'cwt', u: 0, anim: null };
+  const LN_MID = (Math.log(75) + Math.log(2800)) / 2, LN_AMP = (Math.log(2800) - Math.log(75)) / 2;
+  e.u = Math.asin(limitar((Math.log(e.f) - LN_MID) / LN_AMP, -1, 1));
+  const lect = Curso.lecturas('#ancla-mandos', [
+    { id: 'f', nombre: 'The wavelet looks for', clase: 'respuesta' },
+    { id: 'dur', nombre: 'Lasts' },
+    { id: 'vueltas', nombre: 'Turns inside' },
+    { id: 'db', nombre: 'Energy here', clase: 'senal' },
+  ]);
+  let mandoF = null, mandoP = null, modoSel = null;
+  const L = G.lienzo('#ancla-escena', {
+    alto: altoDe(460, 510),
+    etiqueta: 'At the top, the wave of a sound with two hits, a low note and a high note, with the strip covered by the wavelet. In the middle, the shape of the Morlet wavelet, which is always the same but changes size. At the bottom, the time-frequency map with a logarithmic frequency axis, which can be a spectrogram or a scalogram, with the wavelet’s tile marked.',
+    dibujar: (ctx, w, h, C) => {
+      const izq = w < 380 ? 44 : 52, der = w < 380 ? 50 : 58, pw = w - izq - der;
+      const s = sMorlet(e.f, W0), dur = 4 * s;                           // ± 2 s de campana
+      // 1. La onda y la franja de la wavelet.
+      const h1 = 56, esc1 = G.ejes(ctx, { caja: { x: izq, y: 10, w: pw, h: h1 }, x: [0, DUR], y: [-1.1, 1.1], marcasX: false, marcasY: false, rejilla: false, C });
+      G.linea(ctx, esc1, null, x, { t0: 0, dt: 1 / FS, color: C.senal, ancho: 1, alfa: 0.7, halo: false, C });
+      const xa = esc1.x(e.p - dur / 2), xb = esc1.x(e.p + dur / 2), anchoPx = Math.max(3, xb - xa);
+      ctx.save(); ctx.fillStyle = G.alfa(C.plantilla, 0.3); ctx.fillRect(esc1.x(e.p) - anchoPx / 2, esc1.caja.y, anchoPx, esc1.caja.h);
+      ctx.strokeStyle = C.plantilla; ctx.lineWidth = 1.4; ctx.strokeRect(esc1.x(e.p) - anchoPx / 2 + 0.5, esc1.caja.y + 0.5, anchoPx - 1, esc1.caja.h - 1); ctx.restore();
+      G.texto(ctx, esc1.caja.x + 2, esc1.caja.y + 10, 'sound', { color: C.tenue, tam: 10.5, C });
+      // 2. La wavelet, con su propia escala de tiempo.
+      const y2 = 10 + h1 + 24, h2 = 74, ancho = 3.2 * s * 1000;
+      const esc2 = G.ejes(ctx, { caja: { x: izq, y: y2, w: pw, h: h2 }, x: [-ancho, ancho], y: [-1.15, 1.15], marcasY: false, marcasX: 5, formatoX: v => num(v, Math.abs(ancho) < 3 ? 1 : 0), etiquetaX: 'ms', rejilla: false, C });
+      const env = t => Math.exp(-t * t / (2 * s * s));
+      G.curva(ctx, esc2, t => env(t / 1000), { desde: -ancho, hasta: ancho, color: C.plantilla, ancho: 1.3, guiones: [4, 4], halo: false, n: 120, C });
+      G.curva(ctx, esc2, t => -env(t / 1000), { desde: -ancho, hasta: ancho, color: C.plantilla, ancho: 1.3, guiones: [4, 4], halo: false, n: 120, C });
+      G.curva(ctx, esc2, t => morlet(t / 1000, e.f, W0), { desde: -ancho, hasta: ancho, color: C.plantilla, ancho: 2.2, n: 500, C });
+      G.texto(ctx, esc2.caja.x + 2, esc2.caja.y + 10, 'the wavelet', { color: C.plantilla, tam: 10.5, peso: 600, C });
+      // 3. El mapa, con la baldosa de la wavelet.
+      const y3 = y2 + h2 + 46, h3 = h - y3 - 34, M = mapas[e.modo], rango = [M.max - 60, M.max];
+      const esc3 = G.ejes(ctx, { caja: { x: izq, y: y3, w: pw, h: h3 }, x: [0, DUR], y: [log2(FMIN), log2(FMAX)], marcasX: [0, 0.5, 1, 1.5], formatoX: v => num(v, 1),
+        marcasY: marcasLog(FMIN, FMAX).map(log2), formatoY: v => num(Math.pow(2, v), 0), etiquetaX: 'time (s)', etiquetaY: 'frequency (Hz)', rejilla: false, C });
+      G.mapa(ctx, esc3, { datos: M.V.datos, nF: M.V.nF, nT: M.V.nT, t: M.V.t, f: M.V.f, rango });
+      ctx.save(); ctx.strokeStyle = C.eje; ctx.strokeRect(Math.round(esc3.caja.x) + 0.5, Math.round(esc3.caja.y) + 0.5, Math.round(esc3.caja.w), Math.round(esc3.caja.h)); ctx.restore();
+      // La baldosa: ± una desviación típica de la energía en el tiempo y en frecuencia.
+      let st, sf;
+      if (e.modo === 'cwt') { st = s / Math.SQRT2; sf = e.f / (Math.SQRT2 * W0); }
+      else { const T = N_VENT / FS; st = 0.1414 * T; sf = 1 / (Math.sqrt(3) * T); }
+      const fa = Math.max(FMIN, e.f - sf), fb = Math.min(FMAX, e.f + sf);
+      const bx0 = esc3.x(e.p - st), bx1 = esc3.x(e.p + st), by0 = esc3.y(log2(fb)), by1 = esc3.y(log2(fa));
+      ctx.save();
+      ctx.fillStyle = G.alfa(C.plantilla, 0.28); ctx.fillRect(bx0 - 1, by0, Math.max(4, bx1 - bx0 + 2), by1 - by0);
+      ctx.strokeStyle = C.plantilla; ctx.lineWidth = 2; ctx.strokeRect(bx0 - 1, by0, Math.max(4, bx1 - bx0 + 2), by1 - by0);
+      ctx.setLineDash([3, 4]); ctx.lineWidth = 1; ctx.strokeStyle = G.alfa(C.plantilla, 0.8);
+      ctx.beginPath(); ctx.moveTo(esc3.x(e.p), esc3.caja.y); ctx.lineTo(esc3.x(e.p), esc3.caja.y + esc3.caja.h); ctx.moveTo(esc3.caja.x, esc3.y(log2(e.f))); ctx.lineTo(esc3.caja.x + esc3.caja.w, esc3.y(log2(e.f))); ctx.stroke();
+      ctx.restore();
+      G.texto(ctx, esc3.caja.x + esc3.caja.w - 4, esc3.caja.y + 12, e.modo === 'cwt' ? 'scalogram' : 'spectrogram (' + num(1000 * N_VENT / FS) + ' ms window)', { alinear: 'right', color: C.texto, tam: 10.5, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+      G.leyenda(ctx, { x: w - der + 16, y: esc3.caja.y + 12, ancho: 9, alto: Math.max(40, esc3.caja.h - 12), rango, etiqueta: 'dB', C });
+    },
+  });
+  function pintar() {
+    const s = sMorlet(e.f, W0), M = mapas[e.modo];
+    lect.fijar('f', num(e.f, 0) + ' Hz');
+    lect.fijar('dur', e.f >= 1000 ? num(4 * s * 1000, 2) + ' ms' : num(4 * s * 1000, 1) + ' ms');
+    lect.fijar('vueltas', num(4 * s * e.f, 1));
+    // La energía del mapa en el punto de la baldosa.
+    let kb = 0, d = 1e9;
+    for (let k = 0; k < M.V.nF; k++) { const dd = Math.abs(M.V.f[k] - log2(e.f)); if (dd < d) { d = dd; kb = k; } }
+    const j = limitar(Math.round(e.p / (M.V.t[1] - M.V.t[0])), 0, M.V.nT - 1), v = M.V.datos[kb * M.V.nT + j];
+    lect.fijar('db', v > M.max - 60 ? num(v - M.max, 0) + ' dB' : 'nothing');
+    L.dibujar();
+  }
+  mandoF = Curso.mando('#ancla-mandos', { etiqueta: 'Frequency the wavelet looks for', escala: 'log', min: 60, max: 3000, paso: 1, valor: e.f, formato: v => num(v, 0) + ' Hz', clase: 'respuesta',
+    alCambiar: v => { e.f = v; e.u = Math.asin(limitar((Math.log(v) - LN_MID) / LN_AMP, -1, 1)); if (e.anim) e.anim.pausar(); pintar(); } });
+  mandoP = Curso.mando('#ancla-mandos', { etiqueta: 'Position', min: 0.05, max: DUR - 0.05, paso: 0.01, valor: e.p, formato: v => num(v, 2) + ' s',
+    alCambiar: v => { e.p = v; pintar(); } });
+  modoSel = Curso.eleccion('#ancla-mandos', { etiqueta: 'The map is a', valor: 'cwt', opciones: [{ valor: 'cwt', texto: 'Scalogram (wavelet)' }, { valor: 'stft', texto: 'Spectrogram (fixed window)' }],
+    alCambiar: v => { e.modo = v; pintar(); } });
+  const bots = filaBotones('#ancla-mandos');
+  Curso.audio.boton(bots, () => ({ x, fs: FS, volumen: 0.6 }), 'Listen to the sound');
+  e.anim = Curso.animar(L, (t, dt) => {
+    if (dt > 0) { e.u += dt * 0.45; e.f = Math.exp(LN_MID + LN_AMP * Math.sin(e.u)); mandoF.fijar(e.f, false); }
+    pintar();
+  }, { boton: bots });
+  pintar();
+})();
+
+// ── Reto 1 · Las octavas del piano (elegir el eje) ───────────────────────────────────────────────────
+// Los siete La del piano (55, 110, 220, 440, 880, 1.760 y 3.520 Hz), 0,3 s cada uno, con dos armónicos, a 16 kHz.
+// Su escalograma con un interruptor de eje (lineal o logarítmico) y una marca horizontal en cada La.
+(function () {
+  const FS = 16000, LAS = [55, 110, 220, 440, 880, 1760, 3520], DUR = 2.1;
+  const x = pegar(...LAS.map(f => nota(f, 0.3, FS, { amp: 0.5, armonicos: [1, 0.4], ataque: 0.02, caida: 0.04 })));
+  const e = { eje: 'lineal', M: null };
+  const lect = Curso.lecturas('#r1-fila', [{ id: 'eje', nombre: 'Frequency axis', clase: 'respuesta' }, { id: 'paso', nombre: 'From one A to the next' }]);
+  function calcular() {
+    if (e.M) return;
+    const l = escalo(x, FS, Senal.frecuenciasLineal(30, 4500, 150), 6, 16, false), g = escalo(x, FS, Senal.frecuenciasLog(40, 5000, 100), 6, 16, true);
+    e.M = { lineal: l, log: g };
+    pintar();
+  }
+  const L = G.lienzo('#r1-escena', {
+    alto: altoDe(260, 320),
+    etiqueta: 'Scalogram of the seven A notes of the piano, one after another, from 55 to 3,520 hertz, with a mark at each A. The frequency axis can be linear or logarithmic.',
+    dibujar: (ctx, w, h, C) => {
+      const log = e.eje === 'log', M = e.M && e.M[e.eje];
+      const izq = w < 380 ? 46 : 54, der = w < 380 ? 50 : 58, caja = { x: izq, y: 14, w: w - izq - der, h: h - 14 - 32 };
+      const esc = G.ejes(ctx, { caja, x: [0, DUR], y: log ? [log2(40), log2(5000)] : [0, 4500], marcasX: [0, 0.5, 1, 1.5, 2], formatoX: v => num(v, 1),
+        marcasY: log ? marcasLog(40, 5000).map(log2) : [0, 1000, 2000, 3000, 4000], formatoY: log ? v => num(Math.pow(2, v), 0) : v => num(v, 0),
+        etiquetaX: 'time (s)', etiquetaY: 'frequency (Hz)', rejilla: false, C });
+      if (M) {
+        const rango = [M.max - 60, M.max];
+        G.mapa(ctx, esc, { datos: M.V.datos, nF: M.V.nF, nT: M.V.nT, t: M.V.t, f: M.V.f, rango });
+        G.leyenda(ctx, { x: w - der + 16, y: caja.y + 12, ancho: 9, alto: Math.max(40, caja.h - 12), rango, etiqueta: 'dB', C });
+      } else G.texto(ctx, w / 2, h / 2, 'computing…', { alinear: 'center', color: C.tenue, tam: 12, C });
+      ctx.save(); ctx.strokeStyle = C.eje; ctx.strokeRect(Math.round(caja.x) + 0.5, Math.round(caja.y) + 0.5, Math.round(caja.w), Math.round(caja.h));
+      ctx.setLineDash([3, 4]); ctx.strokeStyle = G.alfa(C.texto, 0.55); ctx.lineWidth = 1; ctx.beginPath();
+      LAS.forEach(f => { const y = esc.y(log ? log2(f) : f); ctx.moveTo(caja.x, y); ctx.lineTo(caja.x + caja.w, y); });
+      ctx.stroke(); ctx.restore();
+      LAS.forEach((f, i) => G.texto(ctx, caja.x + caja.w - 3, esc.y(log ? log2(f) : f) - 3, num(f, 0) + ' Hz', { alinear: 'right', color: C.texto, tam: 9.5, fondo: G.alfa(C.pantalla, 0.7), C }));
+    },
+  });
+  function pintar() {
+    lect.fijar('eje', e.eje === 'log' ? 'logarithmic' : 'linear');
+    lect.fijar('paso', e.eje === 'log' ? 'always the same' : 'twice as wide each time');
+    L.dibujar();
+  }
+  const eleccion = Curso.eleccion('#r1-mandos', { etiqueta: 'Frequency axis', valor: 'lineal', reto: 'reto-1',
+    opciones: [{ valor: 'lineal', texto: 'Linear' }, { valor: 'log', texto: 'Logarithmic' }], alCambiar: v => { e.eje = v; pintar(); } });
+  const bots = filaBotones('#r1-fila');
+  Curso.audio.boton(bots, () => ({ x, fs: FS, volumen: 0.5 }), 'Listen to the seven A notes');
+  Curso.alVerse(L.canvas, calcular);
+  pintar();
+  Curso.reto('reto-1', {
+    titulo: 'The octaves of the piano', nivel: 'fácil',
+    comprobar: () => (e.eje === 'log' ? { ok: true, mensaje: 'On the logarithmic axis, the seven A notes end up at the same distance.' } : { ok: false, mensaje: 'On this axis, the low A notes are bunched together and the high ones are far apart. Try the other one.' }),
+    alReiniciar: () => { eleccion.fijar('lineal'); },
+    resolver: () => { calcular(); eleccion.fijar('log'); },
+    pista: [
+      'Each A has double the frequency of the one before. Which axis turns “double” into “an equal step”?',
+      'Look at the dashed marks: on one of the two axes they pile up at the bottom.',
+    ],
+    exito: '<p>On the logarithmic axis each octave takes up the same space, as on a piano keyboard. Wavelets look this way: with the same magnifying glass on every octave.</p>',
+  });
+})();
+
+// ── Reto 2 · Estira la wavelet (deslizador) ─────────────────────────────────────────────────────────
+// Una nota pura (frecuencia al azar entre 330 y 700 Hz) y una wavelet de Morlet (w0 = 6) que se estira con el mando.
+// «Parecido» es el módulo de la CWT en el centro, con la amplitud de la nota igual a uno.
+(function () {
+  const FS = 16000, W0 = 6, azar = Curso.azar(), objetivo = azar.elegir([330, 392, 440, 523, 587, 700]);
+  const x = Senal.seno({ f: objetivo, fs: FS, dur: 0.3 });
+  const parecidoA = f => {
+    const W = Senal.cwt(x, FS, { frecuencias: [f], w0: W0, salto: 2400 }), j = Math.round(0.15 * FS / 2400);
+    return Math.hypot(W.re[j], W.im[j]);
+  };
+  const curva = (() => { const fr = Senal.frecuenciasLog(100, 2000, 70), v = Float64Array.from(fr, parecidoA); return { fr, v }; })();
+  const e = { f: 150, par: 0 };
+  let mando = null;
+  const lect = Curso.lecturas('#r2-fila', [
+    { id: 'f', nombre: 'The wavelet looks for', clase: 'respuesta' },
+    { id: 'par', nombre: 'Resemblance', clase: 'senal' },
+    { id: 'wav', nombre: 'Turns in the wavelet' },
+    { id: 'fija', nombre: 'Turns in a fixed 20 ms window' },
+  ]);
+  const Lo = G.lienzo('#r2-escena', {
+    alto: altoDe(250, 290),
+    etiqueta: 'At the top, 30 milliseconds of a pure note, in green, with the stretching Morlet wavelet, in purple. At the bottom, in amber, how much the note resembles the wavelet for each frequency it could look for, with a dot at the chosen frequency.',
+    dibujar: (ctx, w, h, C) => {
+      const h1 = Math.round(h * 0.48), izq = 14;
+      const esc = G.ejes(ctx, { caja: { x: izq, y: 8, w: w - 2 * izq, h: h1 }, x: [0, 30], y: [-1.2, 1.2], marcasY: false, marcasX: [0, 10, 20, 30], formatoX: v => num(v), etiquetaX: 'time (ms)', rejilla: false, C });
+      G.curva(ctx, esc, t => Math.sin(TAU * objetivo * t / 1000), { color: C.senal, ancho: 1.8, n: 900, C });
+      const s = sMorlet(e.f, W0);
+      G.curva(ctx, esc, t => Math.exp(-(t - 15) * (t - 15) / 1e6 / (2 * s * s)), { color: C.plantilla, ancho: 1.2, guiones: [4, 4], halo: false, n: 200, C });
+      G.curva(ctx, esc, t => morlet((t - 15) / 1000, e.f, W0), { color: C.plantilla, ancho: 2.4, n: 1200, C });
+      G.texto(ctx, esc.caja.x + 3, esc.caja.y + 11, 'note', { color: C.senal, tam: 10.5, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+      const y2 = 8 + h1 + 40, esc2 = G.ejes(ctx, { caja: { x: izq, y: y2, w: w - 2 * izq, h: h - y2 - 34 }, x: [log2(100), log2(2000)], y: [0, 1.15], marcasY: false, marcasX: [100, 200, 500, 1000, 2000].map(log2), formatoX: v => num(Math.pow(2, v), 0),
+        etiquetaX: 'frequency the wavelet looks for (Hz)', rejilla: false, C });
+      G.linea(ctx, esc2, Array.from(curva.fr, log2), curva.v, { color: C.espectro, ancho: 2.2, C });
+      G.linea(ctx, esc2, [log2(e.f), log2(e.f)], [0, 1.15], { color: C.respuesta, ancho: 1.2, guiones: [4, 4], halo: false, C });
+      G.puntos(ctx, esc2, [log2(e.f)], [Math.min(1.1, e.par)], { color: C.respuesta, radio: 6, C });
+      G.texto(ctx, esc2.caja.x + 3, esc2.caja.y + 11, 'resemblance', { color: C.espectro, tam: 10.5, peso: 600, C });
+    },
+  });
+  function pintar() {
+    e.par = parecidoA(e.f);
+    lect.fijar('f', num(e.f, 0) + ' Hz');
+    lect.fijar('par', num(e.par, 2));
+    lect.fijar('wav', num(4 * sMorlet(e.f, W0) * e.f, 1));
+    lect.fijar('fija', num(0.02 * e.f, 1));
+    Lo.dibujar();
+  }
+  mando = Curso.mando('#r2-mandos', { etiqueta: 'Frequency the wavelet looks for', escala: 'log', min: 100, max: 2000, paso: 1, valor: e.f, formato: v => num(v, 0) + ' Hz', clase: 'respuesta', reto: 'reto-2',
+    alCambiar: v => { e.f = v; pintar(); } });
+  const bots = filaBotones('#r2-fila');
+  Curso.audio.boton(bots, () => ({ f: objetivo, dur: 1, volumen: 0.3 }), 'Listen to the note');
+  pintar();
+  Curso.reto('reto-2', {
+    titulo: 'Stretch the wavelet', nivel: 'fácil',
+    comprobar: () => {
+      const d = e.f / objetivo - 1;
+      if (Math.abs(d) <= 0.03) return { ok: true, mensaje: 'The wavelet fits: it looks for ' + num(e.f, 0) + ' Hz and the note is ' + num(objetivo, 0) + ' Hz.' };
+      return { ok: false, mensaje: e.par > 0.85 ? 'Almost: ' + (d > 0 ? 'stretch it a little more.' : 'shrink it a little.') : (d > 0 ? 'The wavelet is looking for a note that is too high: stretch it.' : 'The wavelet is looking for a note that is too low: shrink it.') };
+    },
+    resolver: () => mando.fijar(objetivo),
+    pista: [
+      'Make the crests of the wavelet land on those of the green wave, or move the dot to the highest point of the amber curve.',
+      'A more stretched wavelet looks for a lower note, and a more shrunk one, for a higher note.',
+    ],
+    exito: '<p>Stretching the wavelet changes the note it looks for: the more stretched, the lower. The resemblance is highest when its turns coincide with those of the wave. Notice that the wavelet always has about four turns, while a fixed 20-millisecond window fits few turns of a low note and many of a high one.</p>',
+  });
+})();
+
+// ── Reto 3 · Cada baldosa a su altura (arrastrar, o elegir con los selectores) ───────────────────────
+// Tres baldosas de la wavelet de Morlet (w0 = 6) con el mismo área, la mínima de Gabor, en tres franjas de frecuencia.
+// Los tamaños de los rótulos son reales (2σ en el tiempo y en frecuencia); los dibujos son esquemáticos y no están a escala.
+(function () {
+  const W0 = 6;
+  const FRANJAS = [{ id: 'agudos', nombre: 'Highs', f: 4000 }, { id: 'medios', nombre: 'Mids', f: 500 }, { id: 'graves', nombre: 'Lows', f: 60 }];
+  const medida = f => { const s = sMorlet(f, W0); return { t: Math.SQRT2 * s * 1000, f: 2 * f / (Math.SQRT2 * W0) }; };   // ancho en ms y alto en Hz (± σ)
+  const BALDOSAS = [
+    { id: 'ancha', nombre: 'Short and wide', franja: 'graves', r: 0.25 },
+    { id: 'estrecha', nombre: 'Tall and narrow', franja: 'agudos', r: 4 },
+    { id: 'cuadrada', nombre: 'Square', franja: 'medios', r: 1 },
+  ].sort(() => 0);
+  const orden = Curso.azar().barajar(BALDOSAS.map(b => b.id));
+  const bs = orden.map(id => BALDOSAS.find(b => b.id === id));
+  const fDe = b => FRANJAS.find(x => x.id === b.franja).f;
+  const asig = {};                                   // baldosa → franja
+  const e = { arrastrando: null, px: 0, py: 0 };
+  const AREA = 1100;
+  const centroBanda = fr => ({ x: fr.x + fr.w * 0.7, y: fr.y + fr.h / 2 + 8 });
+  const tam = b => ({ w: Math.sqrt(AREA / b.r), h: Math.sqrt(AREA * b.r) });
+  let geo = null, reto = null;
+  const selectores = {};
+  const L = G.lienzo('#r3-escena', {
+    alto: altoDe(300, 300), rol: 'application',
+    etiqueta: 'On the left, three tiles of the same area but different shapes: tall and narrow, square, and short and wide. On the right, three frequency bands: highs, mids and lows. Drag each tile to its band, or use the selectors below.',
+    dibujar: (ctx, w, h, C) => {
+      const ancho = Math.min(w * 0.46, 200), x0 = w - ancho - 4, hf = (h - 8) / 3;
+      geo = { franjas: FRANJAS.map((f, i) => ({ ...f, x: x0, y: 4 + i * hf, w: ancho, h: hf - 6 })), tray: [] };
+      geo.franjas.forEach(fr => {
+        ctx.save(); ctx.fillStyle = G.alfa(C.plantilla, 0.07); ctx.fillRect(fr.x, fr.y, fr.w, fr.h);
+        ctx.strokeStyle = C.linea; ctx.setLineDash([4, 4]); ctx.strokeRect(fr.x + 0.5, fr.y + 0.5, fr.w - 1, fr.h - 1); ctx.restore();
+        G.texto(ctx, fr.x + 6, fr.y + 13, fr.nombre + ' · ' + num(fr.f) + ' Hz', { color: C.suave, tam: 10.5, peso: 600, C });
+      });
+      // Eje de frecuencias esquemático.
+      G.flecha(ctx, x0 - 10, 4 + 3 * hf - 10, x0 - 10, 12, { color: C.tenue, C });
+      G.texto(ctx, x0 - 14, 12, 'f', { alinear: 'right', color: C.tenue, tam: 10, C });
+      const dibujarBaldosa = (b, cx, cy, activa, rotulo) => {
+        const t = tam(b), m = medida(fDe(b));
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.plantilla, activa ? 0.5 : 0.3); ctx.fillRect(cx - t.w / 2, cy - t.h / 2, t.w, t.h);
+        ctx.strokeStyle = C.plantilla; ctx.lineWidth = activa ? 2.6 : 2; ctx.strokeRect(cx - t.w / 2, cy - t.h / 2, t.w, t.h);
+        ctx.restore();
+        if (rotulo) G.texto(ctx, cx, cy + t.h / 2 + 13, num(m.t, m.t < 1 ? 2 : 1) + ' ms × ' + num(m.f, 0) + ' Hz', { alinear: 'center', color: C.suave, tam: 10, C });
+      };
+      const trayW = x0 - 30;
+      bs.forEach((b, i) => {
+        const cy = 4 + i * hf + hf / 2 - 6;
+        b.reposo = { x: 14 + trayW / 2, y: cy };
+        if (b.id === e.arrastrando) return;
+        const fr = asig[b.id] && geo.franjas.find(f => f.id === asig[b.id]);
+        if (fr) { const c = centroBanda(fr), m = medida(fDe(b)); dibujarBaldosa(b, c.x, c.y, false, false); G.texto(ctx, fr.x + 6, fr.y + 29, num(m.t, m.t < 1 ? 2 : 1) + ' ms', { color: C.suave, tam: 10, C }); G.texto(ctx, fr.x + 6, fr.y + 42, '× ' + num(m.f, 0) + ' Hz', { color: C.suave, tam: 10, C }); }
+        else { dibujarBaldosa(b, b.reposo.x, b.reposo.y, false, true); G.texto(ctx, 14, 4 + i * hf + 12, b.nombre, { color: C.tenue, tam: 10, C }); }
+      });
+      const b = bs.find(q => q.id === e.arrastrando);
+      if (b) dibujarBaldosa(b, e.px, e.py, true, false);
+    },
+  });
+  function franjaEn(px, py) { return geo && geo.franjas.find(f => px >= f.x - 8 && px <= f.x + f.w + 8 && py >= f.y && py <= f.y + f.h + 6); }
+  function poner(b, franjaId) {
+    for (const k in asig) if (asig[k] === franjaId && k !== b.id) { delete asig[k]; selectores[k].fijar('', false); }
+    if (franjaId) asig[b.id] = franjaId; else delete asig[b.id];
+    selectores[b.id].fijar(franjaId || '', false);
+    L.dibujar(); Curso.cambio('reto-3');
+  }
+  Curso.arrastre(L, { eje: 'ambos',
+    alBajar: p => {
+      if (!geo) return false;
+      const b = bs.find(q => { const t = tam(q), c = asig[q.id] ? centroBanda(geo.franjas.find(f => f.id === asig[q.id])) : q.reposo; return c && Math.abs(p.x - c.x) <= t.w / 2 + 6 && Math.abs(p.y - c.y) <= t.h / 2 + 6; });
+      if (!b) return false;
+      e.arrastrando = b.id; e.px = p.x; e.py = p.y; L.dibujar();
+    },
+    alMover: p => { e.px = p.x; e.py = p.y; L.dibujar(); },
+    alSoltar: p => {
+      const b = bs.find(q => q.id === e.arrastrando); e.arrastrando = null;
+      if (!b) return;
+      const fr = franjaEn(p.x, p.y);
+      poner(b, fr ? fr.id : null);
+    },
+  });
+  const cont = document.getElementById('r3-mandos');
+  for (const b of bs) {
+    const panel = crear('div', { class: 'panel-mini' }, crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, b.nombre)));
+    selectores[b.id] = Curso.eleccion(panel, { etiqueta: 'Which band does it go in?', valor: '', opciones: [{ valor: 'agudos', texto: 'Highs' }, { valor: 'medios', texto: 'Mids' }, { valor: 'graves', texto: 'Lows' }],
+      alCambiar: v => poner(b, v || null) });
+    cont.appendChild(panel);
+  }
+  reto = Curso.reto('reto-3', {
+    titulo: 'Each tile at its own pitch', nivel: 'medio',
+    comprobar: () => {
+      const puestas = bs.filter(b => asig[b.id]), bien = bs.filter(b => asig[b.id] === b.franja);
+      if (bien.length === 3) return { ok: true, mensaje: 'All three, in their bands.' };
+      if (!puestas.length) return { ok: false, mensaje: '' };
+      if (puestas.length < 3) return { ok: false, mensaje: 'You have placed ' + puestas.length + ' of 3.' };
+      return { ok: false, mensaje: 'You have ' + bien.length + ' of 3 right. Think about how long the wavelet lasts at each pitch: short at the top, long at the bottom.' };
+    },
+    alReiniciar: () => { for (const b of bs) { delete asig[b.id]; selectores[b.id].fijar('', false); } L.dibujar(); },
+    resolver: () => { for (const b of bs) { asig[b.id] = b.franja; selectores[b.id].fijar(b.franja, false); } L.dibujar(); },
+    pista: [
+      'The wavelet is short for the highs and long for the lows. What is its tile like in each case: narrow or wide in time?',
+      'Look at the labels: the one 0.34 ms wide is the one for the highs, and the one about 22 ms wide is the one for the lows.',
+    ],
+    exito: '<p>The three tiles have the same area, the Gabor minimum, but they change shape with pitch: narrow and tall at the top, wide and short at the bottom. It is what the spectrogram, with a single window, cannot do.</p>',
+  });
+})();
+
+// ── Reto 4 · Encuentra el chasquido (tocar para colocar) ─────────────────────────────────────────────
+// 1 s de un tono de 220 Hz con un chasquido de una muestra con amplitud 0,1 (−20 dB) en un instante al azar entre 0,2 y
+// 0,8 s, a 16 kHz. Su escalograma: 60 filas de 100 a 7.000 Hz, con w0 = 6. El alumno marca el instante a ±3 ms.
+(function () {
+  const FS = 16000, FMIN = 100, FMAX = 7000, azar = Curso.azar();
+  const tc = Math.round(azar.real(0.2, 0.8) * 1000) / 1000, x = Senal.seno({ f: 220, fs: FS, dur: 1, amp: 1 });
+  x[Math.round(tc * FS)] += 0.1;
+  const e = { M: null, marca: null };
+  const lect = Curso.lecturas('#r4-fila', [{ id: 'marca', nombre: 'Your mark', clase: 'respuesta' }]);
+  function calcular() { if (!e.M) { e.M = escalo(x, FS, Senal.frecuenciasLog(FMIN, FMAX, 60), 6, 2, true); L.dibujar(); } }
+  let esc1 = null;
+  const L = G.lienzo('#r4-escena', {
+    alto: altoDe(320, 380), rol: 'slider',
+    etiqueta: 'At the top, the one-second wave of a 220 hertz note, where the click is barely noticeable. Below it, its scalogram, with a logarithmic frequency axis. Tap or drag to mark the instant of the click, or use the keyboard arrows.',
+    dibujar: (ctx, w, h, C) => {
+      const izq = w < 380 ? 44 : 52, der = w < 380 ? 50 : 58, pw = w - izq - der, h1 = 56;
+      esc1 = G.ejes(ctx, { caja: { x: izq, y: 8, w: pw, h: h1 }, x: [0, 1], y: [-1.15, 1.15], marcasX: false, marcasY: false, rejilla: false, C });
+      G.linea(ctx, esc1, null, x, { t0: 0, dt: 1 / FS, color: C.senal, ancho: 1, alfa: 0.75, halo: false, C });
+      G.texto(ctx, esc1.caja.x + 2, esc1.caja.y + 10, 'wave', { color: C.texto, tam: 10.5, fondo: G.alfa(C.pantalla, 0.8), C });
+      const y2 = 8 + h1 + 22, h2 = h - y2 - 34;
+      const esc2 = G.ejes(ctx, { caja: { x: izq, y: y2, w: pw, h: h2 }, x: [0, 1], y: [log2(FMIN), log2(FMAX)], marcasX: [0, 0.2, 0.4, 0.6, 0.8, 1], formatoX: v => num(v, 1), marcasY: marcasLog(FMIN, FMAX).map(log2), formatoY: v => num(Math.pow(2, v), 0),
+        etiquetaX: 'time (s)', etiquetaY: 'frequency (Hz)', rejilla: false, C });
+      if (e.M) {
+        const rango = [e.M.max - 60, e.M.max];
+        const n = Math.max(50, Math.round(esc2.caja.w));
+        if (!e.P || e.P.nT !== n) e.P = agruparTiempo(e.M.V, n);
+        G.mapa(ctx, esc2, { datos: e.P.datos, nF: e.P.nF, nT: e.P.nT, t: e.P.t, f: e.P.f, rango });
+        G.leyenda(ctx, { x: w - der + 16, y: esc2.caja.y + 12, ancho: 9, alto: Math.max(40, esc2.caja.h - 12), rango, etiqueta: 'dB', C });
+      } else G.texto(ctx, w / 2, y2 + h2 / 2, 'computing…', { alinear: 'center', color: C.tenue, tam: 12, C });
+      ctx.save(); ctx.strokeStyle = C.eje; ctx.strokeRect(Math.round(esc2.caja.x) + 0.5, Math.round(esc2.caja.y) + 0.5, Math.round(esc2.caja.w), Math.round(esc2.caja.h)); ctx.restore();
+      if (e.marca !== null) {
+        ctx.save(); ctx.strokeStyle = C.acento; ctx.lineWidth = 2; ctx.setLineDash([5, 3]);
+        ctx.beginPath(); ctx.moveTo(esc1.x(e.marca), esc1.caja.y); ctx.lineTo(esc1.x(e.marca), esc2.caja.y + esc2.caja.h); ctx.stroke(); ctx.restore();
+        G.texto(ctx, esc1.x(e.marca) + (e.marca > 0.8 ? -5 : 5), esc2.caja.y + esc2.caja.h - 8, num(e.marca * 1000, 0) + ' ms', { alinear: e.marca > 0.8 ? 'right' : 'left', color: C.texto, tam: 10.5, peso: 600, fondo: G.alfa(C.pantalla, 0.85), C });
+      }
+    },
+  });
+  function marcar(t) {
+    e.marca = limitar(Math.round(t * 1000) / 1000, 0, 1);
+    lect.fijar('marca', num(e.marca * 1000, 0) + ' ms');
+    L.canvas.setAttribute('aria-valuenow', e.marca.toFixed(3)); L.canvas.setAttribute('aria-valuetext', 'Mark at ' + num(e.marca * 1000, 0) + ' milliseconds');
+    L.dibujar(); Curso.cambio('reto-4');
+  }
+  Curso.arrastre(L, { eje: 'x', cursor: 'toque', alBajar: p => { if (!esc1) return false; if (p.x < esc1.caja.x || p.x > esc1.caja.x + esc1.caja.w) return false; marcar(esc1.xi(p.x)); }, alMover: p => marcar(esc1.xi(p.x)) });
+  L.canvas.tabIndex = 0;
+  L.canvas.setAttribute('aria-valuemin', '0'); L.canvas.setAttribute('aria-valuemax', '1');
+  L.canvas.addEventListener('keydown', ev => {
+    const d = { ArrowRight: 0.001, ArrowLeft: -0.001, ArrowUp: 0.001, ArrowDown: -0.001 }[ev.key];
+    if (d) { ev.preventDefault(); marcar((e.marca === null ? 0.5 : e.marca) + d * (ev.shiftKey ? 10 : 1)); }
+  });
+  const bots = filaBotones('#r4-fila');
+  Curso.audio.boton(bots, () => ({ x, fs: FS, volumen: 0.5 }), 'Listen to the note with the click');
+  Curso.botones(bots, [{ id: 'quitar', texto: 'Remove the mark', tipo: 'discreto', alPulsar: () => { e.marca = null; lect.fijar('marca', '—'); L.dibujar(); Curso.cambio('reto-4'); } }]);
+  Curso.alVerse(L.canvas, calcular);
+  lect.fijar('marca', '—');
+  Curso.reto('reto-4', {
+    titulo: 'Find the click', nivel: 'medio',
+    comprobar: () => {
+      if (e.marca === null) return { ok: false, mensaje: '' };
+      const d = (e.marca - tc) * 1000;
+      if (Math.abs(d) <= 3) return { ok: true, mensaje: 'You are ' + num(Math.abs(d), 1) + ' ms from the click.' };
+      return { ok: false, mensaje: Math.abs(d) <= 15 ? 'Almost: you need to move ' + (d > 0 ? 'a little to the left.' : 'a little to the right.') : 'Not yet: look for the thin vertical line in the highs.' };
+    },
+    resolver: () => { calcular(); marcar(tc); },
+    pista: [
+      'Look at the top, in the highs: there the wavelets are so short that they pinpoint the instant.',
+      'Look for a thin vertical line that crosses all the rows and widens into a cone at the bottom.',
+    ],
+    exito: '<p>A sudden change lights up the small scales at a single instant: a thin line at the top that widens toward the bottom, like a cone. That is why wavelets are so good at finding hits, cracks or the arrival of an earthquake, even when they are barely visible in the wave.</p>',
+  });
+})();
+
+// ── Reto 5 · El platillo y el bajo (interruptor y un solo mando) ─────────────────────────────────────
+// 1,2 s a 8 kHz: un bajo con dos notas graves a la vez, La2 (110 Hz) y Si2 (123,47 Hz), y un platillo con golpes de 4 ms
+// a 3.000 Hz cada 40 ms. Se mide el hueco entre las dos notas graves y entre los golpes seguidos, en dB.
+(function () {
+  const FS = 8000, DUR = 1.2, F1 = 110, F2 = 123.47, FP = 3000, PER = 0.04;
+  const x = new Float64Array(Math.round(DUR * FS));
+  for (let i = 0; i < x.length; i++) { const t = i / FS; x[i] = 0.5 * Math.sin(TAU * F1 * t) + 0.5 * Math.sin(TAU * F2 * t); }
+  for (let k = 0; k * PER < DUR - 0.01; k++) { const i0 = Math.round(k * PER * FS), n = Math.round(0.004 * FS); for (let i = 0; i < n; i++) x[i0 + i] += 0.5 * Math.sin(TAU * FP * i / FS) * Math.pow(Math.sin(Math.PI * i / n), 2); }
+  const e = { modo: 'stft', ven: 64, w0: 6, R: null, cache: {}, sucio: true };
+  const hueco = (a, b, v) => Math.min(80, 10 * Math.log10(Math.min(a, b) / Math.max(v, 1e-9)));
+  // Hueco entre golpes: mediana, en los pares de golpes seguidos, entre el menor de los dos picos y el valle.
+  function huecoGolpes(ser, dt) {
+    const per = PER / dt, gap = [], mx = Math.max(...ser), v = Math.max(1, Math.round(per / 8));
+    for (let m = 2; m < 24; m++) {
+      const a = Math.round(m * per), b = Math.round((m + 1) * per);
+      if (b + v >= ser.length) break;
+      let pa = 0, pb = 0, vv = Infinity;
+      for (let j = a - v; j <= a + v; j++) pa = Math.max(pa, ser[j]);
+      for (let j = b - v; j <= b + v; j++) pb = Math.max(pb, ser[j]);
+      for (let j = a; j <= b; j++) vv = Math.min(vv, ser[j]);
+      gap.push(10 * Math.log10(Math.min(pa, pb) / Math.max(vv, mx * 1e-8)));
+    }
+    gap.sort((p, q) => p - q);
+    return Math.min(80, gap[gap.length >> 1] || 0);
+  }
+  function calcular() {
+    const clave = e.modo + (e.modo === 'stft' ? Math.round(e.ven) : Math.round(e.w0 * 10));
+    if (e.cache[clave]) return (e.R = e.cache[clave]);
+    let R;
+    if (e.modo === 'stft') {
+      const n = Math.max(32, Math.round(e.ven * FS / 1000)), salto = limitar(Math.round(n / 8), 16, 64), nfft = Math.max(4096, pot2(2 * n));
+      const T = Senal.stft(x, FS, { n, salto, ventana: 'hann', nfft }), P = Senal.potencia(T), nT = T.nT, df = T.f[1] - T.f[0], kr = f => Math.round(f / df);
+      const j0 = Math.ceil(0.25 * FS / salto), j1 = Math.floor(0.95 * FS / salto), med = k => { let s = 0; for (let j = j0; j <= j1; j++) s += P[k * nT + j]; return s / (j1 - j0 + 1); };
+      let p1 = 0, p2 = 0, v = Infinity;
+      for (let k = kr(100); k <= kr(F1 + 0.35 * (F2 - F1)); k++) p1 = Math.max(p1, med(k));
+      for (let k = kr(F2 - 0.35 * (F2 - F1)); k <= kr(135); k++) p2 = Math.max(p2, med(k));
+      for (let k = kr(F1); k <= kr(F2); k++) v = Math.min(v, med(k));
+      const k3 = kr(FP), ser = new Float64Array(nT);
+      for (let j = 0; j < nT; j++) ser[j] = P[k3 * nT + j];
+      const E = Senal.mapaDb(T, { suelo: -120 });
+      R = { hg: hueco(p1, p2, v), hp: huecoGolpes(ser, salto / FS), V: cortarTiempo(mapaLog(E, 0, DUR, 60, 3500, 120), 0.3, 0.8), max: E.max };
+    } else {
+      const filas = []; for (let f = 90; f <= 150; f += 1.5) filas.push(f);
+      filas.push(FP);
+      const W = Senal.cwt(x, FS, { frecuencias: filas, w0: e.w0, salto: 4 }), nT = W.nT, P = (k, j) => W.re[k * nT + j] * W.re[k * nT + j] + W.im[k * nT + j] * W.im[k * nT + j];
+      const j0 = Math.ceil(0.25 * FS / 4), j1 = Math.floor(0.95 * FS / 4), nf = filas.length - 1, med = new Float64Array(nf);
+      for (let k = 0; k < nf; k++) { let s = 0; for (let j = j0; j <= j1; j++) s += P(k, j); med[k] = s / (j1 - j0 + 1); }
+      let p1 = 0, p2 = 0, v = Infinity;
+      for (let k = 0; k < nf; k++) { const f = filas[k]; if (Math.abs(f - F1) <= 4) p1 = Math.max(p1, med[k]); if (Math.abs(f - F2) <= 4) p2 = Math.max(p2, med[k]); if (f >= F1 && f <= F2) v = Math.min(v, med[k]); }
+      const ser = new Float64Array(nT);
+      for (let j = 0; j < nT; j++) ser[j] = P(nf, j);
+      const c = escalo(x, FS, Senal.frecuenciasLog(60, 3500, 100), e.w0, 8, true);
+      R = { hg: hueco(p1, p2, v), hp: huecoGolpes(ser, 4 / FS), V: cortarTiempo(c.V, 0.3, 0.8), max: c.max };
+    }
+    e.cache[clave] = R;
+    return (e.R = R);
+  }
+  const lect = Curso.lecturas('#r5-fila', [
+    { id: 'aj', nombre: 'Setting', clase: 'respuesta' },
+    { id: 'hg', nombre: 'Gap between the low notes', clase: 'senal' },
+    { id: 'hp', nombre: 'Gap between hits', clase: 'senal' },
+  ]);
+  let L = null, mVen = null, mW0 = null, modoSel = null;
+  function pintar() {
+    const R = e.R; if (!R) return;
+    lect.fijar('aj', e.modo === 'stft' ? ms(e.ven) + ' window' : 'w0 = ' + num(e.w0, 1));
+    lect.fijar('hg', num(R.hg, 1) + ' dB');
+    lect.fijar('hp', R.hp >= 60 ? 'more than 60 dB' : num(R.hp, 1) + ' dB');
+    lect.clase('hg', redondear(R.hg, 1) >= 3 ? 'destacada senal' : 'senal');
+    lect.clase('hp', redondear(R.hp, 1) >= 3 ? 'destacada senal' : 'senal');
+    L.dibujar();
+  }
+  function recalcular() { e.sucio = false; calcular(); pintar(); }
+  let programado = false;
+  const pedir = () => { if (programado) return; programado = true; requestAnimationFrame(() => { programado = false; recalcular(); Curso.cambio('reto-5'); }); };
+  L = G.lienzo('#r5-escena', {
+    alto: altoDe(280, 330),
+    etiqueta: 'Time-frequency map, with a logarithmic axis, of a bass with two low notes at once and a cymbal with fast hits, computed with a spectrogram or with wavelets depending on the switch.',
+    dibujar: (ctx, w, h, C) => {
+      const R = e.R;
+      if (!R) { G.ejes(ctx, { x: [0, 1], y: [0, 1], C }); G.texto(ctx, w / 2, h / 2, 'computing…', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+      const rango = [R.max - 60, R.max];
+      dibujarMapa(ctx, w, h, C, R.V, { x: [0.3, 0.8], y: [log2(60), log2(3500)], marcasX: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8], formatoX: v => num(v, 1), marcasY: marcasLog(60, 3500).map(log2), formatoY: v => num(Math.pow(2, v), 0),
+        etiquetaX: 'time (s)', etiquetaY: 'frequency (Hz)', rango, titulo: e.modo === 'stft' ? 'spectrogram · ' + ms(e.ven) + ' window' : 'scalogram · w0 = ' + num(e.w0, 1) });
+    },
+  });
+  const mandos = document.getElementById('r5-mandos');
+  modoSel = Curso.eleccion(mandos, { etiqueta: 'Map', valor: 'stft', reto: 'reto-5', opciones: [{ valor: 'stft', texto: 'Spectrogram' }, { valor: 'cwt', texto: 'Wavelet' }],
+    alCambiar: v => { e.modo = v; mVen.input.disabled = v !== 'stft'; mVen.el.style.opacity = v === 'stft' ? '1' : '0.45'; mW0.input.disabled = v !== 'cwt'; mW0.el.style.opacity = v === 'cwt' ? '1' : '0.45'; pedir(); } });
+  mVen = Curso.mando(mandos, { etiqueta: 'Window length', escala: 'log', min: 8, max: 300, paso: 1, valor: e.ven, formato: v => ms(v), clase: 'respuesta', reto: 'reto-5', alCambiar: v => { e.ven = v; pedir(); } });
+  mW0 = Curso.mando(mandos, { etiqueta: 'Wavelet turns (w0)', escala: 'log', min: 4, max: 60, paso: 0.5, valor: e.w0, formato: v => num(v, 1), clase: 'respuesta', reto: 'reto-5', alCambiar: v => { e.w0 = v; pedir(); } });
+  mW0.input.disabled = true; mW0.el.style.opacity = '0.45';
+  const bots = filaBotones('#r5-fila');
+  Curso.audio.boton(bots, () => ({ x, fs: FS, volumen: 0.5 }), 'Listen to the bass and the cymbal');
+  const asegurar = () => { if (!e.R) recalcular(); };
+  Curso.alVerse(L.canvas, asegurar);
+  Curso.reto('reto-5', {
+    titulo: 'The cymbal and the bass', nivel: 'difícil',
+    comprobar: () => {
+      asegurar();
+      const R = e.R, okG = redondear(R.hg, 1) >= 3, okP = redondear(R.hp, 1) >= 3;
+      if (okG && okP) return { ok: true, mensaje: 'Low notes separated (' + num(R.hg, 1) + ' dB) and hits separated, both at once, with ' + (e.modo === 'cwt' ? 'w0 = ' + num(e.w0, 1) : 'a ' + ms(e.ven) + ' window') + '.' };
+      if (e.modo === 'stft') {
+        if (okP) return { ok: false, mensaje: 'The hits look good, but the two low notes melt together. Make the window longer and see what happens to the hits.' };
+        if (okG) return { ok: false, mensaje: 'The low notes are now separated, but the hits have melted into a continuous band. Is there any window that works for both?' };
+        return { ok: false, mensaje: 'With the spectrogram, the lows ask for a long window and the hits ask for a short one. Try both and watch the two readings.' };
+      }
+      if (okP) return { ok: false, mensaje: 'The hits are still separated, but the low notes still melt together (' + num(R.hg, 1) + ' dB). Raise w0.' };
+      return { ok: false, mensaje: 'Something went wrong: try another value of w0.' };
+    },
+    alReiniciar: () => { modoSel.fijar('stft'); mVen.fijar(64, false); e.ven = 64; mW0.fijar(6, false); e.w0 = 6; recalcular(); },
+    resolver: () => { modoSel.fijar('cwt', false); e.modo = 'cwt'; mVen.input.disabled = true; mVen.el.style.opacity = '0.45'; mW0.input.disabled = false; mW0.el.style.opacity = '1'; mW0.fijar(30, false); e.w0 = 30; recalcular(); },
+    pista: [
+      'With a fixed window there is no way: the lows ask for a long window and the hits ask for a short one. Try the wavelet.',
+      'With the wavelet, raise w0 until the two low notes separate: you need about 21 turns or more.',
+    ],
+    exito: '<p>The wavelet uses a long template for the lows and a very short one for the highs at the same time. With w0 = 30, the bell of its envelope has a standard deviation of about 43 ms at 110 Hz and less than 2 ms at 3,000 Hz. It is what the fixed window couldn’t do, and your ear does something similar.</p>',
+  });
+})();
+
+// ── Reto 6 · ¿Cuántos armónicos ves? (escribir y deslizador) ────────────────────────────────────────
+// Un tren de pulsos glotales a f0 = 120 Hz (un segundo, a 8 kHz), visto con wavelets de Morlet de 160 filas entre 60 y 4.000 Hz.
+// Se mide cuántos armónicos quedan separados (hueco ≥ 3 dB entre el pico de cada uno y el valle) y el contraste de las
+// rayitas verticales a 3 kHz. Con w0 = 6 se ven 3; vale w0 entre 12 y 40 (≥ 5 armónicos y ≥ 10 dB de contraste).
+(function () {
+  const FS = 8000, F0 = 120, FMIN = 60, FMAX = 4000;
+  const x = (() => {
+    const p = new Float64Array(FS), y = new Float64Array(FS);
+    for (let k = 0; k * FS / F0 < FS; k++) p[Math.round(k * FS / F0)] = 1;
+    let a = 0; for (let i = 0; i < FS; i++) { a = 0.5 * a + p[i]; y[i] = a; }
+    return y;
+  })();
+  const frec = Senal.frecuenciasLog(FMIN, FMAX, 160), cache = {};
+  const e = { w0: 6, R: null, calc: false };
+  function medir(w0) {
+    const clave = Math.round(w0 * 10);
+    if (cache[clave]) return cache[clave];
+    const W = Senal.cwt(x, FS, { frecuencias: frec, w0, salto: 4 }), nT = W.nT, nF = W.nF, P = (k, j) => W.re[k * nT + j] * W.re[k * nT + j] + W.im[k * nT + j] * W.im[k * nT + j];
+    const j0 = Math.ceil(0.2 * FS / 4), j1 = Math.floor(0.8 * FS / 4), med = new Float64Array(nF);
+    for (let k = 0; k < nF; k++) { let s = 0; for (let j = j0; j <= j1; j++) s += P(k, j); med[k] = s / (j1 - j0 + 1); }
+    let sep = 0;
+    for (let h = 1; h <= 30; h++) {
+      const fa = h * F0, fb = (h + 1) * F0;
+      if (fb > 3900) break;
+      let pa = 0, pb = 0, v = Infinity;
+      for (let k = 0; k < nF; k++) { const f = W.f[k]; if (Math.abs(f - fa) < 0.15 * F0) pa = Math.max(pa, med[k]); if (Math.abs(f - fb) < 0.15 * F0) pb = Math.max(pb, med[k]); if (f > fa && f < fb) v = Math.min(v, med[k]); }
+      if (10 * Math.log10(Math.min(pa, pb) / v) >= 3) sep = h; else break;
+    }
+    let k3 = 0, bd = 1e9;
+    for (let k = 0; k < nF; k++) { const d = Math.abs(W.f[k] - 3000); if (d < bd) { bd = d; k3 = k; } }
+    let mx = 0, mn = Infinity;
+    for (let j = j0; j <= j1; j++) { const p = P(k3, j); mx = Math.max(mx, p); mn = Math.min(mn, p); }
+    const E = Senal.escalograma(x, FS, { frecuencias: frec, w0, salto: 8 });
+    return (cache[clave] = { armonicos: sep + 1, contraste: Math.min(80, 10 * Math.log10(mx / Math.max(mn, mx * 1e-8))), V: cortarTiempo({ datos: E.db, nF: E.nF, nT: E.nT, t: E.t, f: Float64Array.from(E.f, log2) }, 0.3, 0.6), max: E.max });
+  }
+  const lect = Curso.lecturas('#r6-fila', [
+    { id: 'w0', nombre: 'w0', clase: 'respuesta' },
+    { id: 'arm', nombre: 'Separated harmonics', clase: 'senal' },
+    { id: 'con', nombre: 'Contrast of the little lines at 3 kHz', clase: 'senal' },
+  ]);
+  let L = null, mando = null, campo = null, reto = null;
+  function pintar() {
+    const R = e.R; if (!R) return;
+    lect.fijar('w0', num(e.w0, 1));
+    lect.fijar('arm', String(R.armonicos));
+    lect.fijar('con', R.contraste >= 60 ? 'more than 60 dB' : num(R.contraste, 0) + ' dB');
+    lect.clase('arm', R.armonicos >= 5 ? 'destacada senal' : 'senal');
+    lect.clase('con', R.contraste >= 10 ? 'destacada senal' : 'senal');
+    L.dibujar();
+  }
+  const recalcular = () => { e.R = medir(e.w0); e.calc = true; pintar(); };
+  L = G.lienzo('#r6-escena', {
+    alto: altoDe(300, 350),
+    etiqueta: 'Scalogram of a synthetic “aah,” with a logarithmic frequency axis. At the bottom the harmonics appear as horizontal lines; at the top, a little vertical line for each pulse of the vocal cords. The marks on the left point to the first harmonics.',
+    dibujar: (ctx, w, h, C) => {
+      const R = e.R;
+      if (!R) { G.ejes(ctx, { x: [0, 1], y: [0, 1], C }); G.texto(ctx, w / 2, h / 2, 'computing…', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+      const rango = [R.max - 60, R.max];
+      const esc = dibujarMapa(ctx, w, h, C, R.V, { x: [0.3, 0.6], y: [log2(FMIN), log2(FMAX)], marcasX: [0.3, 0.4, 0.5, 0.6], formatoX: v => num(v, 1), marcasY: marcasLog(FMIN, FMAX).map(log2), formatoY: v => num(Math.pow(2, v), 0),
+        etiquetaX: 'time (s)', etiquetaY: 'frequency (Hz)', rango, titulo: 'w0 = ' + num(e.w0, 1) });
+      ctx.save(); ctx.fillStyle = C.texto; ctx.font = '10px "IBM Plex Mono", monospace'; ctx.textAlign = 'left';
+      for (let k = 1; k <= 9; k++) { const y = esc.y(log2(k * F0)); ctx.beginPath(); ctx.moveTo(esc.caja.x + 1, y); ctx.lineTo(esc.caja.x + 8, y - 3.5); ctx.lineTo(esc.caja.x + 8, y + 3.5); ctx.closePath(); ctx.fill(); }
+      ctx.restore();
+    },
+  });
+  mando = Curso.mando('#r6-mandos', { etiqueta: 'Wavelet turns (w0)', escala: 'log', min: 4, max: 80, paso: 0.5, valor: e.w0, formato: v => num(v, 1), clase: 'respuesta', reto: 'reto-6',
+    alCambiar: v => { e.w0 = v; recalcular(); } });
+  const bots = filaBotones('#r6-fila');
+  campo = Curso.campo(bots, { etiqueta: 'Separated harmonics with w0 = 6', marcador: 'how many?', ancho: 9, reto: 'reto-6', alEnviar: () => reto.revisar() });
+  Curso.audio.boton(bots, () => { const y = new Float64Array(2 * FS); for (let i = 0; i < y.length; i++) y[i] = x[i % FS]; return { x: y, fs: FS, volumen: 0.5 }; }, 'Listen to the “aah”');
+  const asegurar = () => { if (!e.calc) recalcular(); };
+  Curso.alVerse(L.canvas, asegurar);
+  reto = Curso.reto('reto-6', {
+    titulo: 'How many harmonics do you see?', nivel: 'difícil', auto: false,
+    comprobar: () => {
+      asegurar();
+      const v = campo.valor, real = medir(6).armonicos, R = e.R;
+      if (!Number.isFinite(v)) return { ok: false, mensaje: 'First leave w0 at 6 and count the separated lines; type the number.' };
+      if (v !== real) { campo.marcar('mal'); return { ok: false, mensaje: 'No: with w0 = 6, look at how many lines show up separated before they melt together. Watch the marks on the left.' }; }
+      campo.marcar('bien');
+      if (R.armonicos < 5) return { ok: false, mensaje: 'Well counted. Now raise w0 until you see at least five separated harmonics (now ' + R.armonicos + ').' };
+      if (R.contraste < 10) return { ok: false, mensaje: 'You now separate ' + R.armonicos + ' harmonics, but you have lost the little lines at the top (' + num(R.contraste, 0) + ' dB). Lower w0 a little.' };
+      return { ok: true, mensaje: 'With w0 = ' + num(e.w0, 1) + ' you see ' + R.armonicos + ' harmonics and you can still tell each pulse apart (' + (R.contraste >= 60 ? 'more than 60' : num(R.contraste, 0)) + ' dB).' };
+    },
+    alReiniciar: () => { campo.fijar(''); mando.fijar(6); },
+    resolver: () => { campo.fijar(medir(6).armonicos); mando.fijar(16); },
+    pista: [
+      'The harmonics are always at the same distance in hertz, but the tiles grow toward the top. With w0 = 6 only the first ones separate.',
+      'Raise w0 until you pass four harmonics, and make sure the contrast of the little lines at 3 kHz doesn’t drop below 10 dB.',
+    ],
+    exito: '<p>With the wavelet you separate the first harmonics and, at the same time, you see each pulse of your vocal cords as a little line at the top. If you make the wavelet too long, you gain harmonics and lose the little lines: the wall from lesson 12 is still there, distributed differently.</p>',
+  });
+})();
+
+// ── En tu voz: el escalograma de Morlet de lo que cargues, con un espectrograma de 32 ms al lado ─────
+(function () {
+  const FS = 16000, FMIN = 60, FMAX = 7000, FRECS = Senal.frecuenciasLog(FMIN, FMAX, 83);
+  let paneles = [];
+  const st = { x: null, fs: FS, dur: 0, w0: 6, C: null, S: null, calc: false, pendiente: 0 };
+  const lab = Curso.voz('#voz-lab', {
+    ejemplos: [{ id: 'palmadas-aaa', nombre: 'Claps and “aah”', crear: fs => {
+      const p = Senal.ejemplos.palmadas(fs, { sala: 'habitacion', dur: 3 }), v = Senal.ejemplos.vocal(fs, { vocal: 'a', f0: 130, dur: 1 });
+      return pegar(p, new Float64Array(Math.round(0.2 * fs)), v);
+    } }, 'palmadas', 'aaa', 'silbidoQueSube', 'melodia'],
+    fsAnalisis: FS, maxSegundos: 4,
+    alCargar: (x, fs) => { st.x = x; st.fs = fs; st.dur = x.length / fs; st.C = null; st.S = null; st.calc = false; programar(); },
+  });
+  const controles = crear('div', { class: 'mandos' });
+  lab.panel.appendChild(controles);
+  Curso.mando(controles, { etiqueta: 'Wavelet turns (w0)', escala: 'log', min: 5, max: 30, paso: 0.5, valor: st.w0, formato: v => num(v, 1), clase: 'respuesta',
+    alCambiar: v => { st.w0 = v; st.C = null; programar(); } });
+  const dos = crear('div', { class: 'columnas-2' });
+  lab.panel.appendChild(dos);
+  paneles = ['cwt', 'stft'].map(clave => {
+    const panel = crear('div', { class: 'panel-mini' });
+    panel.appendChild(crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, clave === 'cwt' ? 'Scalogram (wavelet)' : 'Spectrogram (32 ms window)')));
+    const escena = crear('div', { class: 'escena' });
+    panel.appendChild(escena);
+    dos.appendChild(panel);
+    const L = G.lienzo(escena, {
+      alto: altoDe(260, 300),
+      etiqueta: (clave === 'cwt' ? 'Morlet scalogram' : '32 ms spectrogram') + ' of the loaded audio, with a logarithmic frequency axis and the same color scale as the other map',
+      dibujar: (ctx, w, h, C) => {
+        const M = clave === 'cwt' ? st.C : st.S, rango = [st.rango0, st.rango0 + 60];
+        const esc = dibujarMapa(ctx, w, h, C, M ? M.V : null, { x: [0, Math.max(0.1, st.dur)], y: [log2(FMIN), log2(FMAX)], marcasY: marcasLog(FMIN, FMAX).map(log2), formatoY: v => num(Math.pow(2, v), 0), formatoX: v => num(v, 1),
+          etiquetaX: 'time (s)', rango: M ? rango : [-60, 0] });
+        if (!M) { G.texto(ctx, esc.caja.x + esc.caja.w / 2, esc.caja.y + esc.caja.h / 2, st.x ? 'computing…' : 'Record, upload audio or choose an example', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+        if (clave === 'cwt') {
+          // El cono de influencia: a menos de √2 veces la escala de cada borde.
+          ctx.save();
+          ctx.beginPath(); ctx.rect(esc.caja.x, esc.caja.y, esc.caja.w, esc.caja.h); ctx.clip();
+          ctx.fillStyle = G.alfa(C.pantalla, 0.6);
+          for (const lado of [0, 1]) {
+            ctx.beginPath();
+            const x0 = lado ? st.dur : 0;
+            ctx.moveTo(esc.x(x0), esc.y(log2(FMIN)));
+            for (let i = 0; i <= 40; i++) { const f = FMIN * Math.pow(FMAX / FMIN, i / 40), tau = Math.min(st.dur / 2, Math.SQRT2 * sMorlet(f, st.w0)); ctx.lineTo(esc.x(lado ? st.dur - tau : tau), esc.y(log2(f))); }
+            ctx.lineTo(esc.x(x0), esc.y(log2(FMAX)));
+            ctx.closePath(); ctx.fill();
+          }
+          ctx.restore();
+        }
+      },
+    });
+    return { clave, L };
+  });
+  const nota = crear('p', { class: 'nota-reto' }, 'Choose an audio clip or record your own to see the two maps.');
+  lab.panel.appendChild(nota);
+  st.rango0 = -60;
+  function programar() { st.pendiente += 1; const n = st.pendiente; for (const p of paneles) p.L.dibujar(); setTimeout(() => { if (n === st.pendiente) analizar(); }, 30); }
+  function analizar() {
+    if (!st.x || st.x.length < 2048) { nota.textContent = st.x ? 'The audio is too short to analyze.' : nota.textContent; return; }
+    if (!st.C) { const c = escalo(st.x, st.fs, FRECS, st.w0, 64, true); st.C = { V: c.V, max: c.max }; }
+    if (!st.S) { const E = Senal.espectrograma(st.x, st.fs, { n: 512, salto: 128, ventana: 'hann', nfft: 1024, suelo: -120 }); st.S = { V: mapaLog(E, 0, st.dur, FMIN, FMAX, 120), max: E.max }; }
+    st.rango0 = Math.max(st.C.max, st.S.max) - 60;
+    nota.textContent = 'Both maps use the same color scale, in amplitude decibels: a pure note of amplitude 1 shows up at 0 dB. The shading at the edges of the scalogram is the cone of influence, which widens toward the lows: don’t trust the picture there.';
+    for (const p of paneles) p.L.dibujar();
+  }
+})();
+
+})();
+</script>
+</body>
+</html>

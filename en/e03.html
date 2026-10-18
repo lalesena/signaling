@@ -1,0 +1,1217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The recipe for a sound: adding Ferris wheels · Signals</title>
+<meta name="description" content="Lesson 3 of the visual course “Signals, from Zero to Expert”: how waves are added, what the fundamental and the harmonics are, why a violin and a flute sound different, and what the Gibbs phenomenon is, with Ferris wheels mounted on top of each other, six challenges, and your own voice.">
+<link rel="stylesheet" href="../comun/fuentes.css">
+<link rel="stylesheet" href="../comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e03">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Level 1 · Lesson 3</p>
+    <h1>The recipe for a sound: adding Ferris wheels</h1>
+    <aside class="pregunta">
+      <p>A violin and a flute play the same note, at the same loudness, and you can still tell them apart with your eyes closed. A tuning fork, on the other hand, sounds almost like a single Ferris wheel, the clean shadow that the first lesson talked about, and neither a violin nor a flute does. There must be something more inside a real sound for it to belong to one instrument or another with the same note. What does it carry inside?</p>
+    </aside>
+    <ul class="meta"><li>About 60 minutes</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>The idea in one picture</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Ferris wheels mounted on top of each other, each one fixed to the cabin of the previous one. The cabin of the last one, the green dot, goes up and down with the motion of all of them together, and the green curve on the right jots down its height over time. The orange Ferris wheel is the last one you added.</figcaption>
+    </figure>
+    <p>This chain of Ferris wheels is the picture of the whole lesson. The first Ferris wheel is big and slow, the next one is smaller and turns twice as fast, the next one is smaller still and turns three times as fast, and so on. The height of the final cabin is the sum of the heights of all of them, and the curve it jots down is a wave that none of them would draw alone.</p>
+    <p>Start with a single Ferris wheel and keep adding. With the “square” shape you will see how the curve, which at first is a round wave, gets straightened until it looks like a step that goes up and down. If you listen to the sound of each sum, you will notice that each new Ferris wheel adds some brightness.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Step by step</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>Adding is stacking heights</h3>
+      <p>In <a href="e01.html">lesson 1</a>, a wave was the height of a Ferris wheel cabin jotted down instant by instant. If two Ferris wheels are turning at the same time and you want to know what wave they make together, you add the height of one cabin and the height of the other at every instant: that is <b class="termino">superposition</b>. What gets added are the heights. A Ferris wheel of 100 turns per second plus another of 300 do not give one of 400, but a curve that contains both.</p>
+      <p>When the two Ferris wheels turn at the same speed, the sum is another Ferris wheel of that speed, and its size depends on how out of step they are. If the cabins always go together, the heights add up and the resulting Ferris wheel is twice as large. If one is a quarter of a turn behind the other, it measures 1.41 times one of them. And if one goes up exactly as much as the other goes down, the heights offset each other and the sum stays at zero. Reinforcing or canceling each other this way is <b class="termino">interference</b>, and it is the principle behind noise-canceling headphones.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">A tide is a sum</span>
+        <p>The tide at a port is calculated by adding Ferris wheels: one that goes around every 12 hours and 25 minutes, because of the Moon, another every 12 hours, because of the Sun, and a few more. At times they are in step and reinforce each other, and at times they are out of step and get in each other’s way: they line up every 14.8 days, and that is why there are spring tides about every 15 days. For decades, machines made of pulleys and gears did this; the one in the United States, finished in 1910, added up 37 Ferris wheels.</p>
+      </aside>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Two Ferris wheels turn at the same time: the ink one is fixed and you control the orange one. Drag the orange cabin, with your finger or the keyboard arrow keys, until the sum stays still at zero.</p>
+        <div class="columnas-2" id="r1-paneles"></div>
+        <div class="fila" id="r1-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>One Ferris wheel on another</h3>
+      <p>So far the two Ferris wheels were each in its own place. Now imagine that the second one is not on the ground, but fixed to the cabin of the first: it turns with it and, besides, makes its own turns. The cabin of the second one no longer draws a circle, but flowers, stars, or loops, depending on how fast each Ferris wheel turns. A Ferris wheel mounted on another is called an <b class="termino">epicycle</b>.</p>
+      <p>Greek astronomers explained the back-and-forth of the planets with circles that turned mounted on other circles. Ptolemy used them extensively in the second century. Many centuries later, Fourier’s mathematics gave the deeper reason: with enough circles you can approximate any closed curve, and that is what you will end up doing in the last challenge.</p>
+      <p>With two Ferris wheels, the trick is in the speeds. If the first makes one turn while the second makes <i>k</i>, the figure repeats as many times per turn as the difference between their speeds, counting the direction: a negative speed means turning the other way.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Mount the second Ferris wheel on the first and get a four-petal flower. Choose how many turns the second one makes while the first makes one, and its size.</p>
+        <div class="escena" id="r2-escena"></div>
+        <div class="fila" id="r2-fila"></div>
+        <div class="mandos" id="r2-mandos"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>The Ferris wheels of a repeating sound</h3>
+      <p>The note of an instrument is a repeating sound: its wave is the same again and again, for example 220 times per second. If you want to write that wave as a sum of Ferris wheels, not just any will do, because the sum has to start over the same way in every repetition. That happens only if each Ferris wheel makes a whole number of turns in each repetition.</p>
+      <p>The Ferris wheel that makes one turn per repetition is the slowest of all and is called the <b class="termino">fundamental</b>; it sets the note we hear. The ones that make two, three, or four turns per repetition are the <b class="termino">harmonics</b>. With a fundamental of 220 Hz, its harmonics are at 440, 660, 880 Hz, and so on, and the complete list is the <b class="termino">harmonic series</b>. Each Ferris wheel on the list has its size and its starting point; the list of sizes is the recipe of the sound.</p>
+      <p>The simplest recipe is that of the <b class="termino">square wave</b>, which jumps between two values like a switch. It is built only from the odd harmonics, the first, the third, the fifth, each one smaller than the previous: a third, a fifth, a seventh. The more you add, the straighter the sides get, and the sound goes from the softness of a single Ferris wheel to a bright, harsh whistle.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Adjust the recipe of nine Ferris wheels by dragging the height of each bar until the sum, in green, looks like the dotted square wave. Listen to it while you build it.</p>
+        <div class="columnas-2" id="r3-paneles"></div>
+        <div class="fila" id="r3-fila"></div>
+      </div>
+
+      <p>In 1807, Joseph Fourier, who was studying how heat spreads through an object, claimed that any curve that repeats can be written as a sum of waves. Lagrange and Laplace, two of the great mathematicians of the time, did not believe it: how could smooth waves form a corner? Fourier published his theory in 1822, and he was right, with a nuance you will see in a moment. The complete recipe of a repeating wave, with the Ferris wheels it contains, their size, and their starting point, is its <b class="termino">Fourier series</b>.</p>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>Timbre: the same note, another recipe</h3>
+      <p>A violin and a flute can play the same A, with the same fundamental. What changes is the recipe: a flute played softly is almost a single Ferris wheel, while a bowed string carries many strong harmonics, and the clarinet in its low register carries mostly odd harmonics, like the square wave. That recipe is a good part of what we call <b class="termino">timbre</b>, what tells apart two sounds that have the same note and the same loudness.</p>
+      <p>The other part of timbre lies in how the note starts: if you are given only the middle of a note and not its beginning, you get right much less often which instrument it was. And the same happens with your voice. Your “aah” is not a Ferris wheel, but a stack of Ferris wheels, and its recipe is part of what makes it sound like you; an “eee” on the same note has another recipe.</p>
+      <p>There is one more piece in the recipe, the starting point of each Ferris wheel. If you change it, the shape of the wave changes a lot, but a sustained sound hardly sounds different, because the ear pays attention mostly to the sizes. It is not completely deaf to phase: if the change scrambles the sound in time, you notice. And for the note, the big Ferris wheel does not even need to be there. The telephone lets almost nothing through below about 300 Hz, and the fundamental of a low voice is usually between about 90 and 155 Hz; even so, on the other end you do not hear anyone higher-pitched, because your ear reconstructs the note from the harmonics that do arrive, which repeat at the rhythm of the fundamental. That note without its big Ferris wheel is the <b class="termino">missing fundamental</b>.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">For the same note, a D, there are three recipes: a soft flute, a bowed string, and a low clarinet. Listen to each one and then let one play blind. Guess which one it is three times in a row.</p>
+        <div class="columnas-2" id="r4-recetas"></div>
+        <div class="fila" id="r4-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>The fringes that do not go away</h3>
+      <p>The more Ferris wheels you add, the more the sum looks like the square wave, except for one detail: next to each jump there is a fringe that overshoots. As you add Ferris wheels, the fringe gets narrower and sticks to the jump, but it does not shrink: it stays around 9% of the jump. This is the <b class="termino">Gibbs phenomenon</b>, and it is the nuance that escaped Lagrange. Right at the jump, the sum sits at the midpoint, and on each side the fringe is thinner and thinner but just as tall.</p>
+      <p>Notice that the 9% is of the <i>jump</i>, not of the amplitude: in a square wave that goes from −1 to 1, the jump measures 2, so the fringe sticks out almost 0.18 above the top. It was first described by Henry Wilbraham in 1848, although it carries the name of Josiah Willard Gibbs, who explained it in 1899. It shows up in practice: a filter that cuts a signal off sharply makes its edges oscillate.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Raise the number of harmonics of the square wave until the first fringe is less than 1/100 of a period from the jump. When you get there, write how far the fringe sticks out, as a percentage of the jump, and press “Check.”</p>
+        <div class="columnas-2" id="r5-paneles"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>Drawing anything with Ferris wheels</h3>
+      <p>Ferris wheels do not only add waves. A point in the plane that traces a closed outline, a star, a letter, or a silhouette, can also be written as a sum of Ferris wheels, mounted on top of each other and turning some one way and some the other. The big, slow ones give the general shape; the small, fast ones, the points, just as in the jump of the square wave, where many fast Ferris wheels were needed.</p>
+      <p>In 2008, two scholars of the history and philosophy of science, Santiago Ginnobili and Christián Carman, mounted a thousand Ferris wheels on top of each other and got the last one to draw the silhouette of Homer Simpson, which you can see in <a href="https://www.youtube.com/watch?v=QVuU2YCwHjw">their video</a>. And in 1898, the physicist Albert Michelson built a machine of gears and springs that added eighty Ferris wheels and drew the result with a pen; in the article where he presented it, one of the curves it draws is the profile of a face.</p>
+      <p>Adding Ferris wheels is easy: given the recipe, the curve comes out. Doing it the other way around, given the curve, finding out which Ferris wheels make it up, is the job of <a href="e04.html">lesson 4</a>. In the challenge, the page already knows how to do it for you, with a tool you will meet there, and you only decide how many Ferris wheels you let it use.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">The ink star is copied with a sum of Ferris wheels, in green. Choose how many Ferris wheels the copy uses and get the error below 2% of the size of the figure with as few as you can. If you like, press “Draw my own” and draw your own figure with your finger or the mouse.</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="fila" id="r6-fila"></div>
+        <div class="mandos" id="r6-mandos"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>In your voice</h2>
+    <p><b>What to record.</b> A sustained “aah” and then an “eee” on the same note, segment 3 of the series’ reference recording, and a sustained whistle, segment 2, for comparison. Record with the microphone if your browser allows it; if not, upload audio recorded with your phone or try the synthetic examples.</p>
+    <p><b>What to look at.</b> The lab finds the steadiest stretch of your recording, measures its note, and draws, in amber bars, the size of each harmonic: your recipe. Then it adds the Ferris wheels back up, and with the buttons you choose how many to keep. With one Ferris wheel you hear a whistle on your note; with five or ten it starts to resemble your vowel; with twenty the vowel is recognizable, but it sounds like an organ or a synthesizer, because the recipe lacks the noise of the air and the small natural variations of a voice. In a whistle you will see almost a single bar. If you record very low voices with your phone, bar 1 may come out weak: small microphones attenuate the low frequencies, and that is the missing fundamental. You can drag over the recording to move the window and save a recipe as a reference, to compare it with another.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>What to remember</h2>
+    <ol class="tres">
+      <li>Adding waves means adding their heights instant by instant. If they are in step, they reinforce each other; if one goes up when the other goes down, they cancel.</li>
+      <li>A repeating sound is a sum of Ferris wheels that make a whole number of turns per repetition: the fundamental, which sets the note, and its harmonics. The list of sizes is the recipe, and the recipe, together with how the sound starts, is a good part of timbre.</li>
+      <li>With the recipe, any repeating wave can be rebuilt by adding Ferris wheels. Next to the jumps there is a fringe of around 9% of the jump that gets narrower but does not shrink, and closed outlines are drawn the same way, with Ferris wheels mounted on top of each other.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Common mistakes</h2>
+    <ul class="errores">
+      <li><b>“Adding two waves means adding their frequencies.”</b> The heights are added, instant by instant. A 100 Hz Ferris wheel plus a 300 Hz one do not give a 400 Hz one, but a curve that contains both.</li>
+      <li><b>“If you add enough harmonics, the fringes disappear.”</b> They get narrower and stick to the jump, but their height stays around 9% of the jump. They disappear only in the sense that they take up less and less room and their energy goes to zero.</li>
+      <li><b>“The note is the strongest harmonic, and if you remove the fundamental, the note changes.”</b> The note is set by the rate at which the wave repeats, which matches the spacing between harmonics. The strongest may be the second or the third, and even if the fundamental is missing, the note stays.</li>
+      <li><b>“Timbre is the shape of the wave.”</b> The shape depends on the starting points, to which the ear is not very sensitive in a sustained sound. What weighs most are the sizes of the harmonics and how the note starts.</li>
+      <li><b>“The square wave contains all the harmonics.”</b> Only the odd ones, with sizes 1, 1/3, 1/5…; the triangle wave also contains only the odd ones, but they drop much faster, as 1/9, 1/25…</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Open</span>
+      <h2>Math corner</h2>
+      <span class="resumen">The formulas, for anyone who wants them. Each one comes after its reading in words.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>A sum of Ferris wheels</h3>
+      <p>Each Ferris wheel has its size <span class="tex">A_k</span>, turns <span class="tex">k</span> times faster than the fundamental <span class="tex">f_0</span>, and starts at its angle <span class="tex">\varphi_k</span>; the wave is the sum of the heights of all of them:</p>
+      <div class="tex">x(t) = \sum_{k=1}^{K} A_k \sin\!\left(2\pi k f_0 t + \varphi_k\right)</div>
+
+      <h3>Interference</h3>
+      <p>Two Ferris wheels of the same speed and the same size <span class="tex">A</span>, with their cabins separated by an angle <span class="tex">\varphi</span>, add up to another Ferris wheel of that speed whose size depends on the offset:</p>
+      <div class="tex">A_{\text{sum}} = 2A\left|\cos\frac{\varphi}{2}\right|</div>
+
+      <h3>The Fourier series</h3>
+      <p>A reasonable periodic wave, of period <span class="tex">T</span>, is a constant plus a sum of cosines and sines that make <span class="tex">k</span> turns per period:</p>
+      <div class="tex">x(t) = a_0 + \sum_{k=1}^{\infty}\left[a_k \cos\!\left(\frac{2\pi k t}{T}\right) + b_k \sin\!\left(\frac{2\pi k t}{T}\right)\right]</div>
+      <p>Each coefficient is obtained by comparing the wave with its Ferris wheel over one period: they are multiplied and the area is measured, which is the idea of <a href="e04.html">lesson 4</a>:</p>
+      <div class="tex">a_k = \frac{2}{T}\int_0^T x(t)\cos\!\left(\frac{2\pi k t}{T}\right)dt, \qquad b_k = \frac{2}{T}\int_0^T x(t)\sin\!\left(\frac{2\pi k t}{T}\right)dt</div>
+
+      <h3>Square, sawtooth, and triangle</h3>
+      <p>The square wave that jumps between −1 and 1 has only odd harmonics, with sizes that drop as one over <span class="tex">k</span>:</p>
+      <div class="tex">x(t) = \frac{4}{\pi}\left(\sin \omega t + \frac{\sin 3\omega t}{3} + \frac{\sin 5\omega t}{5} + \cdots\right)</div>
+      <p>The sawtooth contains all the harmonics, which drop as one over <span class="tex">k</span>; the triangle wave, only the odd ones, which drop as one over <span class="tex">k</span> squared:</p>
+      <div class="tex">\text{sawtooth: } \frac{2}{\pi}\sum_{k\ge 1}\frac{(-1)^{k+1}}{k}\sin k\omega t, \qquad \text{triangle: } \frac{8}{\pi^2}\sum_{k\ \text{odd}}\frac{(-1)^{(k-1)/2}}{k^2}\sin k\omega t</div>
+
+      <h3>The Gibbs phenomenon</h3>
+      <p>With the first <span class="tex">n</span> odd harmonics, the first peak is at one period divided by four times <span class="tex">n</span> from the jump, and its height approaches a fixed value that is written with the “sine integral”:</p>
+      <div class="tex">t_{\text{peak}} = \frac{T}{4n}, \qquad \lim_{n\to\infty} \max x_n = \frac{2}{\pi}\,\mathrm{Si}(\pi) \approx 1{.}179, \qquad \mathrm{Si}(\pi) = \int_0^{\pi}\frac{\sin u}{u}\,du \approx 1{.}8519</div>
+      <p>Expressed as a fraction of the jump, the overshoot is:</p>
+      <div class="tex">\frac{\mathrm{Si}(\pi)}{\pi} - \frac{1}{2} \approx 0{.}0895</div>
+      <p>Even so, the energy of the error goes to zero: the energy of the wave is the sum of the energies of its Ferris wheels (Parseval’s identity), so what you leave out is less and less:</p>
+      <div class="tex">\frac{1}{T}\int_0^T |x(t)|^2\,dt = \sum_{k} |c_k|^2</div>
+
+      <h3>Epicycles</h3>
+      <p>A point in the plane is written as a complex number <span class="tex">z = x + iy</span>, and a Ferris wheel of radius <span class="tex">r</span> that makes <span class="tex">k</span> turns per period is <span class="tex">r\,e^{i(2\pi k t/T + \varphi)}</span>. A closed drawing is a sum of Ferris wheels turning in both directions:</p>
+      <div class="tex">z(t) = \sum_{k=-K}^{K} c_k\, e^{\,i 2\pi k t / T}, \qquad c_k = \frac{1}{T}\int_0^T z(t)\, e^{-i 2\pi k t / T}\,dt</div>
+      <p>With <span class="tex">N</span> points of the outline, the coefficients come from the discrete transform, which is covered in <a href="e05.html">lesson 5</a>:</p>
+      <div class="tex">c_k = \frac{1}{N}\sum_{n=0}^{N-1} z_n\, e^{-i 2\pi k n / N}</div>
+
+      <h3>Two almost equal Ferris wheels</h3>
+      <p>Two Ferris wheels of periods <span class="tex">T_1</span> and <span class="tex">T_2</span> that are almost equal line up every so often, the beat time:</p>
+      <div class="tex">T_{\text{beat}} = \frac{1}{\left|\dfrac{1}{T_1} - \dfrac{1}{T_2}\right|} \qquad (12\ \text{h and}\ 12{.}42\ \text{h} \ \Rightarrow\ \approx 354\ \text{h} \approx 14{.}8\ \text{days})</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Further reading</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Open textbook</span>Allen B. Downey, <i>Think DSP</i>, <a href="https://greenteapress.com/thinkdsp/html/thinkdsp003.html">chapter 2, “Harmonics”</a>. Triangle and square waves built from harmonics, with their sound; <a href="https://greenteapress.com/thinkdsp/html/thinkdsp002.html">chapter 1</a> shows the harmonics of a real violin.</li>
+      <li><span class="tipo">Open textbook</span>Steven W. Smith, <i>The Scientist and Engineer's Guide to Digital Signal Processing</i>, <a href="https://www.dspguide.com/ch11.htm">chapter 11, “Fourier Transform Pairs”</a>. The 9% fringe explained with figures, in the sections “Gibbs Effect” and “Harmonics.”</li>
+      <li><span class="tipo">Web</span>Joe Wolfe (UNSW), <a href="https://newt.phys.unsw.edu.au/jw/sound.spectrum.html">“What is a sound spectrum?”</a>. Spectra of real instruments and vowels, with the warning that the spectrum does not explain everything.</li>
+      <li><span class="tipo">Video</span>3Blue1Brown (2019), <a href="https://www.3blue1brown.com/lessons/fourier-series">“But what is a Fourier series? From heat flow to drawing with circles”</a>. The epicycles that draw, explained with animations.</li>
+      <li><span class="tipo">Open textbook</span>Bill Hammack, Steve Kranz, and Bruce Carpenter (2014), <a href="https://engineerguy.com/fourier/pdfs/albert-michelsons-harmonic-analyzer.pdf"><i>Albert Michelson's Harmonic Analyzer</i></a>. A machine from 1898 that adds Ferris wheels with springs, photographed piece by piece.</li>
+      <li><span class="tipo">Web</span>NOAA, <a href="https://tidesandcurrents.noaa.gov/predmach.html">“Tide Predicting Machines”</a>. The machines that added Ferris wheels to predict the tides.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>New terms</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Lesson quiz</h2>
+  </section>
+
+</main>
+
+<script src="temario.js"></script>
+<script src="../comun/graficas.js"></script>
+<script src="../comun/senal.js"></script>
+<script src="../comun/curso.js"></script>
+<script src="datos/e03.js"></script>
+<script>
+// Lección 3 · La receta de un sonido: la imagen ancla (los epiciclos), los seis retos y el laboratorio «En tu voz».
+// Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo; aquí solo va lo de esta lección.
+// Colores con significado fijo: verde, la señal (la cabina final y su curva, la suma); tinta, las norias y lo que ya está
+// escrito; naranja, la noria que se cambia o se añade; ámbar, las recetas (espectros); púrpura, ventanas y marcas.
+(function () {
+  'use strict';
+  const G = Graficas, S = Senal, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const altoEscena = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  const hz = v => num(v) + ' Hz';
+  const RAD = Math.PI / 180;
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); (typeof contenedor === 'string' ? document.querySelector(contenedor) : contenedor).appendChild(f); return f; };
+  // Un panel pequeño con rótulo y una escena dentro (para parejas de lienzos en las columnas de los retos).
+  function panel(contenedor, rotulo) {
+    const p = crear('div', { class: 'panel-mini' });
+    const cabeza = crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, rotulo));
+    const escena = crear('div', { class: 'escena' });
+    p.append(cabeza, escena);
+    (typeof contenedor === 'string' ? document.querySelector(contenedor) : contenedor).appendChild(p);
+    return { p, cabeza, escena };
+  }
+
+  // Leyenda de colores dentro de un lienzo: puntos con su texto, en filas que se parten si no caben. → número de filas.
+  function leyenda(ctx, C, items, x, y, anchoMax, pintar = true) {
+    ctx.save();
+    ctx.font = '400 11px ' + G.FUENTE_MONO;
+    let cx = x, cy = y, filas = 1;
+    for (const it of items) {
+      const ancho = 14 + ctx.measureText(it.texto).width;
+      if (cx > x && cx + ancho > x + anchoMax) { cx = x; cy += 17; filas += 1; }
+      if (pintar) {
+        ctx.fillStyle = it.color;
+        ctx.beginPath(); ctx.arc(cx + 4, cy, 3.6, 0, TAU); ctx.fill();
+        G.texto(ctx, cx + 13, cy + 4, it.texto, { color: C.suave, tam: 11, C });
+      }
+      cx += ancho + 16;
+    }
+    ctx.restore();
+    return filas;
+  }
+  // Luz que se suma en oscuro alrededor de un punto.
+  function brillo(ctx, C, x, y, color, r = 18, a = 0.5) {
+    if (!C.oscuro) return;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, G.alfa(color, a)); g.addColorStop(1, G.alfa(color, 0));
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+    ctx.restore();
+  }
+  // Una cabina: punto relleno con su halo y, en papel, un borde fino.
+  function cabina(ctx, C, x, y, color, radio = 6) {
+    brillo(ctx, C, x, y, color, radio * 3);
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(x, y, radio, 0, TAU); ctx.fill();
+    ctx.strokeStyle = C.oscuro ? G.alfa(C.fondo, 0.6) : G.alfa(C.cuerpo, 0.55); ctx.lineWidth = 1.2; ctx.stroke();
+    ctx.restore();
+  }
+  // Un aro (la noria vista de frente) y el radio hasta su cabina.
+  function aro(ctx, cx, cy, r, color, alfa = 0.5, ancho = 1.3) {
+    ctx.save();
+    ctx.strokeStyle = G.alfa(color, alfa); ctx.lineWidth = ancho;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.stroke();
+    ctx.restore();
+  }
+  function brazo(ctx, x0, y0, x1, y1, color, alfa = 0.85, ancho = 1.8) {
+    ctx.save();
+    ctx.strokeStyle = G.alfa(color, alfa); ctx.lineWidth = ancho; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+    ctx.restore();
+  }
+  // Un número entero escrito con el signo menos tipográfico.
+  const entero = v => (v < 0 ? '−' : '') + Math.abs(v);
+
+  // ── La idea en una imagen: la cadena de norias (epiciclos) y la curva que dibuja ───────────────────────────
+  // A la izquierda, norias montadas una sobre la cabina de la anterior; a la derecha (debajo, en el móvil), la altura de
+  // la última cabina en el tiempo. Lo reciente queda junto a la cadena y lo antiguo a la derecha, rotulado «ahora» y «hace N s».
+  const F_BASE = 0.25;         // vueltas por segundo de la noria grande
+  const VENTANA = 4;           // segundos que enseña la curva
+  const altura = (hs, t) => { let y = 0; for (const q of hs) y += q.amp * Math.sin(TAU * q.k * F_BASE * t + q.fase); return y; };
+
+  function dibujarAncla(ctx, w, h, C, a) {
+    const estrecho = w < 560;
+    const zc = estrecho ? { x: 0, y: 0, w, h: 200 } : { x: 0, y: 0, w: Math.round(w * 0.4), h };
+    const zg = estrecho ? { x: 0, y: 204, w, h: h - 204 } : { x: zc.w, y: 0, w: w - zc.w, h };
+    const hs = S.armonicosForma(a.forma, a.n);
+    const suma = hs.reduce((s, q) => s + q.amp, 0);
+    const R = Math.min(zc.w / 2 - 12, zc.h / 2 - 10);
+    const sc = R / suma, cx = zc.x + zc.w / 2, cy = zc.y + zc.h / 2;
+
+    // La cadena
+    let px = cx, py = cy;
+    const tope = [];
+    hs.forEach((q, i) => {
+      const ang = TAU * q.k * F_BASE * a.t + q.fase, r = sc * q.amp;
+      const ultima = i === hs.length - 1 && hs.length > 1;
+      aro(ctx, px, py, r, ultima ? C.respuesta : C.cuerpo, ultima ? 0.9 : 0.4, ultima ? 1.8 : 1.2);
+      const nx = px + r * Math.cos(ang), ny = py - r * Math.sin(ang);
+      brazo(ctx, px, py, nx, ny, ultima ? C.respuesta : C.cuerpo, ultima ? 0.95 : 0.7, ultima ? 2.2 : 1.6);
+      tope.push([nx, ny]);
+      px = nx; py = ny;
+    });
+    for (let i = 0; i < tope.length - 1; i++) { ctx.fillStyle = G.alfa(C.cuerpo, 0.7); ctx.beginPath(); ctx.arc(tope[i][0], tope[i][1], 2.4, 0, TAU); ctx.fill(); }
+
+    // La curva
+    let peak = 0;
+    for (let i = 0; i <= 160; i++) peak = Math.max(peak, Math.abs(altura(hs, i / 160 / F_BASE)));
+    const items = [{ color: C.cuerpo, texto: 'the Ferris wheels' }, { color: C.respuesta, texto: 'the last one added' }, { color: C.senal, texto: 'the final cabin' }];
+    let caja, yM;
+    if (estrecho) {
+      const filas = leyenda(ctx, C, items, 12, zg.y + 12, w - 24);
+      yM = Math.max(1.35, peak * 1.2);
+      caja = { x: 14, y: zg.y + 14 + filas * 17, w: w - 14 - 14, h: zg.h - 14 - filas * 17 - 34 };
+    } else {
+      const filas = leyenda(ctx, C, items, zg.x + 14, 16, zg.w - 28);
+      yM = Math.max(1.35, peak * 1.2);
+      const alto = Math.min(zg.h - 26 - filas * 17 - 34, 2 * sc * yM);
+      caja = { x: zg.x + 14, y: cy - alto / 2, w: zg.w - 14 - 16, h: alto };
+      yM = alto / 2 / sc;
+    }
+    const esc = G.ejes(ctx, { caja, x: [0, VENTANA], y: [-yM, yM], marcasX: [0, 1, 2, 3, 4], marcasY: false, formatoX: v => (v === 0 ? 'now' : num(v) + ' s ago'), C });
+    const xs = [], ys = [];
+    const N = 520;
+    for (let i = 0; i <= N; i++) { const edad = VENTANA * i / N; xs.push(edad); ys.push(altura(hs, a.t - edad)); }
+    G.linea(ctx, esc, xs, ys, { color: C.senal, ancho: 2.2, C });
+    // La unión entre la cabina final y la curva
+    const [tx, ty] = hs.length ? [px, py] : [cx, cy];
+    ctx.save();
+    ctx.strokeStyle = G.alfa(C.acento, 0.7); ctx.lineWidth = 1.1; ctx.setLineDash([3, 4]);
+    ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(esc.x(0), esc.y(ys[0])); ctx.stroke();
+    ctx.restore();
+    cabina(ctx, C, tx, ty, C.senal, 6);
+    cabina(ctx, C, esc.x(0), esc.y(ys[0]), C.senal, 4);
+  }
+
+  (function () {
+    const a = { forma: 'cuadrada', n: 3, t: 0.7 };
+    const mandos = document.getElementById('ancla-mandos');
+    let L = null;
+    const redibujar = () => { if (L) L.dibujar(); };
+    const lect = Curso.lecturas(mandos, [{ id: 'vel', nombre: 'Turns of each Ferris wheel' }]);
+    const velocidades = () => S.armonicosForma(a.forma, a.n).map(q => q.k).join(' · ');
+    const refrescar = () => { lect.fijar('vel', velocidades()); redibujar(); };
+    Curso.mando(mandos, { etiqueta: 'Ferris wheels mounted', clase: 'respuesta', min: 1, max: 10, paso: 1, valor: a.n, formato: v => num(v) + (v === 1 ? ' Ferris wheel' : ' Ferris wheels'), alCambiar: v => { a.n = Math.round(v); refrescar(); } });
+    Curso.eleccion(mandos, { etiqueta: 'Shape you are after', opciones: [{ valor: 'cuadrada', texto: 'Square' }, { valor: 'sierra', texto: 'Sawtooth' }, { valor: 'triangular', texto: 'Triangle' }], valor: a.forma, alCambiar: v => { a.forma = v; refrescar(); } });
+    const fila = filaBotones(mandos);
+    Curso.audio.boton(fila, () => ({ x: S.serieFourier({ forma: a.forma, n: a.n, f: 220, fs: 16000, dur: 1.2 }), fs: 16000, volumen: 0.5 }), 'Listen to the sum');
+    L = G.lienzo('#ancla-escena', {
+      alto: altoEscena(350, 290),
+      etiqueta: 'A chain of Ferris wheels mounted on top of each other; the cabin of the last one draws on the right a wave that looks more and more like the chosen shape',
+      dibujar: (ctx, w, h, C) => dibujarAncla(ctx, w, h, C, a),
+    });
+    Curso.animar(L, (t, dt) => { if (dt > 0) a.t += dt; L.dibujar(); }, { boton: fila });
+    refrescar();
+  })();
+
+  // ── Reto 1 · Haz callar a la noria (arrastrar un punto: tamaño y desfase) ───────────────────────────────────
+  // La noria A es fija: tamaño 1, a 2 vueltas por segundo. La B, de la misma velocidad, se coloca arrastrando su cabina:
+  // el ángulo es el desfase (pasos de 5°) y la distancia al centro, el tamaño (pasos de 0,05, hasta 1,5).
+  // La suma mide |1 + a·e^{iφ}|; hay que dejarla en menos de 0,05.
+  (function () {
+    const F = 2, PASO_A = 0.05, PASO_G = 5, AMAX = 1.5;
+    const e = { a: 0.6, g: 60 };
+    const tamanoSuma = () => Math.sqrt(1 + e.a * e.a + 2 * e.a * Math.cos(e.g * RAD));
+    const pl = panel('#r1-paneles', 'The Ferris wheels · drag the orange one'), pa = panel('#r1-paneles', 'The heights');
+    let geo = null, reto = null;
+    const L1 = G.lienzo(pl.escena, {
+      alto: altoEscena(240, 250), rol: 'slider',
+      etiqueta: 'Two Ferris wheels seen from the front: the ink one, fixed, and the orange one, whose cabin you can drag; the green arrow is the sum',
+      dibujar: (ctx, w, h, C) => {
+        const sc = (Math.min(w, h) / 2 - 12) / 2.2, cx = w / 2, cy = h / 2;
+        geo = { sc, cx, cy };
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.eje, 0.45); ctx.lineWidth = 1; ctx.setLineDash([2, 4]);
+        ctx.beginPath(); ctx.moveTo(cx - 2.5 * sc, Math.round(cy) + 0.5); ctx.lineTo(cx + 2.5 * sc, Math.round(cy) + 0.5); ctx.moveTo(Math.round(cx) + 0.5, cy - 2.5 * sc); ctx.lineTo(Math.round(cx) + 0.5, cy + 2.5 * sc); ctx.stroke();
+        ctx.restore();
+        aro(ctx, cx, cy, sc, C.cuerpo, 0.4);
+        const bx = cx + sc * e.a * Math.cos(e.g * RAD), by = cy - sc * e.a * Math.sin(e.g * RAD);
+        const sx = cx + sc * (1 + e.a * Math.cos(e.g * RAD)), sy = cy - sc * e.a * Math.sin(e.g * RAD);
+        // el paralelogramo de la suma
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.acento, 0.45); ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(cx + sc, cy); ctx.lineTo(sx, sy); ctx.lineTo(bx, by); ctx.stroke();
+        ctx.restore();
+        brazo(ctx, cx, cy, cx + sc, cy, C.cuerpo, 0.9, 2);
+        cabina(ctx, C, cx + sc, cy, C.cuerpo, 5);
+        if (e.a > 0.02) brazo(ctx, cx, cy, bx, by, C.respuesta, 0.95, 2);
+        if (tamanoSuma() > 0.04) brazo(ctx, cx, cy, sx, sy, C.senal, 1, 3);
+        cabina(ctx, C, bx, by, C.respuesta, 9);
+        if (tamanoSuma() > 0.04) cabina(ctx, C, sx, sy, C.senal, 4.5);
+        G.texto(ctx, cx + sc + 9, cy + (by < cy ? 16 : -8), 'A', { color: C.suave, tam: 11, C });
+        G.texto(ctx, bx + (bx < cx ? -10 : 12), by + (by < cy ? -10 : 16), 'B', { color: C.respuesta, tam: 11, peso: 600, C });
+        if (tamanoSuma() > 0.3) G.texto(ctx, sx + (sx < cx ? -10 : 10), sy + (sy < cy ? -10 : 16), 'A+B', { color: C.senal, tam: 11, peso: 600, alinear: sx < cx ? 'right' : 'left', C });
+        else G.texto(ctx, cx + 8, cy - 8, 'sum ≈ 0', { color: C.senal, tam: 10, C });
+      },
+    });
+    const L2 = G.lienzo(pa.escena, {
+      alto: altoEscena(240, 250),
+      etiqueta: 'The heights over time: Ferris wheel A in ink, B in orange, and their sum in green',
+      dibujar: (ctx, w, h, C) => {
+        const filas = leyenda(ctx, C, [{ color: C.cuerpo, texto: 'A' }, { color: C.respuesta, texto: 'B' }, { color: C.senal, texto: 'sum' }], 14, 14, w - 28);
+        const caja = { x: 12, y: 20 + filas * 17, w: w - 24, h: h - 20 - filas * 17 - 34 };
+        const esc = G.ejes(ctx, { caja, x: [0, 1], y: [-2.7, 2.7], marcasX: [0, 0.5, 1], marcasY: false, formatoX: v => num(v, 1), etiquetaX: 'time (s)', C });
+        G.curva(ctx, esc, t => Math.sin(TAU * F * t), { color: C.cuerpo, ancho: 1.4, alfa: 0.7, halo: false, n: 300, C });
+        G.curva(ctx, esc, t => e.a * Math.sin(TAU * F * t + e.g * RAD), { color: C.respuesta, ancho: 1.8, n: 300, C });
+        G.curva(ctx, esc, t => Math.sin(TAU * F * t) + e.a * Math.sin(TAU * F * t + e.g * RAD), { color: C.senal, ancho: 2.6, n: 300, C });
+      },
+    });
+    const fila = document.getElementById('r1-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'a', nombre: 'Size of B', clase: 'respuesta' },
+      { id: 'g', nombre: 'Offset of B', clase: 'respuesta' },
+      { id: 's', nombre: 'Size of the sum', clase: 'senal' },
+    ]);
+    const botones = filaBotones(fila);
+    Curso.audio.boton(botones, () => {
+      const fs = 16000, x1 = S.seno({ f: 220, fs, dur: 1.2, amp: 0.25 }), x2 = S.seno({ f: 220, fs, dur: 1.2, amp: 0.25 * e.a, fase: e.g * RAD });
+      return { x: S.suma(x1, x2), fs, volumen: 0.8, normalizar: false };
+    }, 'Listen to the sum');
+    const estado = () => {
+      const s = tamanoSuma();
+      lect.fijar('a', num(e.a, 2));
+      lect.fijar('g', e.g + '°');
+      lect.fijar('s', num(s, 2));
+      lect.clase('s', s <= 0.05 ? 'destacada' : 'senal');
+      L1.canvas.setAttribute('aria-valuenow', String(e.g));
+      L1.canvas.setAttribute('aria-valuetext', 'Ferris wheel B of size ' + num(e.a, 2) + ' with an offset of ' + e.g + ' degrees; the sum measures ' + num(s, 2));
+    };
+    const cambio = () => { estado(); L1.dibujar(); L2.dibujar(); Curso.cambio('reto-1'); };
+    const poner = p => {
+      if (!geo) return;
+      const dx = (p.x - geo.cx) / geo.sc, dy = (geo.cy - p.y) / geo.sc, r = Math.hypot(dx, dy);
+      e.a = limitar(Math.round(r / PASO_A) * PASO_A, 0, AMAX);
+      if (r > 0.12) e.g = ((Math.round(Math.atan2(dy, dx) / RAD / PASO_G) * PASO_G) % 360 + 360) % 360;
+      cambio();
+    };
+    Curso.arrastre(L1, { eje: 'ambos', alBajar: p => poner(p), alMover: p => poner(p) });
+    L1.canvas.tabIndex = 0;
+    L1.canvas.setAttribute('aria-valuemin', '0');
+    L1.canvas.setAttribute('aria-valuemax', '359');
+    L1.canvas.addEventListener('keydown', ev => {
+      const d = { ArrowLeft: [0, PASO_G], ArrowRight: [0, -PASO_G], ArrowUp: [PASO_A, 0], ArrowDown: [-PASO_A, 0] }[ev.key];
+      if (!d) return;
+      ev.preventDefault();
+      e.a = limitar(Math.round((e.a + d[0]) / PASO_A) * PASO_A, 0, AMAX);
+      e.g = (((e.g + d[1]) % 360) + 360) % 360;
+      cambio();
+    });
+    estado();
+    reto = Curso.reto('reto-1', {
+      titulo: 'Silence the Ferris wheel', nivel: 'fácil',
+      comprobar: () => {
+        const s = tamanoSuma();
+        if (s <= 0.05) return { ok: true, mensaje: 'The sum has gone still: Ferris wheel B goes up exactly as much as A goes down.' };
+        const sentido = e.a > 1 ? 'it is too big' : 'it is too small';
+        if (Math.abs(e.a - 1) > 0.1) return { ok: false, mensaje: 'To cancel it completely, B has to be the same size as A: right now ' + sentido + '. The sum measures ' + num(s, 2) + '.' };
+        const falta = Math.abs(((e.g - 180 + 540) % 360) - 180);
+        return { ok: false, mensaje: 'The size is right. Now look for the offset: you are about ' + (Math.round(falta / 5) * 5) + '° away from B going up exactly when A goes down.' };
+      },
+      resolver: () => { e.a = 1; e.g = 180; cambio(); },
+      pista: [
+        'The orange cabin has to be up when the ink one is down, and both at the same distance from the center.',
+        'Put in terms of the arrows: the orange one has to be the same length as the ink one and point exactly the opposite way, half a turn away (180°).',
+      ],
+      exito: '<p>Adding waves means adding heights point by point. If one goes up exactly when the other goes down by the same amount, the sum is zero at every moment. Noise-canceling headphones make that second Ferris wheel: they measure the noise outside and play its opposite. Try pressing “Listen to the sum” with B offset by 180° and with B in step.</p>',
+    });
+  })();
+
+  // ── Reto 2 · Una flor de cuatro pétalos (elegir y deslizador) ──────────────────────────────────────────────
+  // z(t) = e^{it} + r·e^{ikt}: la primera noria da una vuelta por periodo y la segunda, k. La figura se repite |k − 1|
+  // veces por vuelta. Se enseña la figura entera (verde) y las dos norias (tinta y naranja) con la cabina final en marcha.
+  (function () {
+    const e = { k: 2, r: 0.5, t: 0.6 };
+    const pasos = () => Math.abs(e.k - 1);
+    const L = G.lienzo('#r2-escena', {
+      alto: altoEscena(290, 310),
+      etiqueta: 'An ink Ferris wheel with an orange one mounted on its cabin; the cabin of the orange one draws a closed figure in green',
+      dibujar: (ctx, w, h, C) => {
+        const items = [{ color: C.cuerpo, texto: 'first Ferris wheel' }, { color: C.respuesta, texto: 'second Ferris wheel' }, { color: C.senal, texto: 'the figure' }];
+        const filas = leyenda(ctx, C, items, 14, 16, w - 28);
+        const cx = w / 2, cy = 24 + filas * 17 + (h - 24 - filas * 17) / 2, R = Math.min((h - 24 - filas * 17) / 2 - 8, w / 2 - 12), sc = R / (1 + Math.max(e.r, 0.6));
+        // la figura entera
+        ctx.save();
+        ctx.lineJoin = 'round';
+        if (C.oscuro) { ctx.strokeStyle = G.alfa(C.senal, 0.22); ctx.lineWidth = 6; ctx.beginPath(); for (let i = 0; i <= 720; i++) { const u = TAU * i / 720; const x = cx + sc * (Math.cos(u) + e.r * Math.cos(e.k * u)), y = cy - sc * (Math.sin(u) + e.r * Math.sin(e.k * u)); if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); } ctx.stroke(); }
+        ctx.strokeStyle = C.senal; ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        for (let i = 0; i <= 720; i++) { const u = TAU * i / 720; const x = cx + sc * (Math.cos(u) + e.r * Math.cos(e.k * u)), y = cy - sc * (Math.sin(u) + e.r * Math.sin(e.k * u)); if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
+        ctx.stroke();
+        ctx.restore();
+        // las norias
+        const th = TAU * e.t / 6;
+        aro(ctx, cx, cy, sc, C.cuerpo, 0.4);
+        const x1 = cx + sc * Math.cos(th), y1 = cy - sc * Math.sin(th);
+        brazo(ctx, cx, cy, x1, y1, C.cuerpo, 0.8, 1.8);
+        aro(ctx, x1, y1, sc * e.r, C.respuesta, 0.85, 1.7);
+        const x2 = x1 + sc * e.r * Math.cos(e.k * th), y2 = y1 - sc * e.r * Math.sin(e.k * th);
+        brazo(ctx, x1, y1, x2, y2, C.respuesta, 0.95, 2.2);
+        cabina(ctx, C, x1, y1, C.cuerpo, 4);
+        cabina(ctx, C, x2, y2, C.senal, 6);
+      },
+    });
+    const fila = document.getElementById('r2-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'k', nombre: 'Turns of the second', clase: 'respuesta' },
+      { id: 'n', nombre: 'The figure repeats', clase: 'senal' },
+    ]);
+    const botones = filaBotones(fila);
+    const mandos = document.getElementById('r2-mandos');
+    const estado = () => {
+      lect.fijar('k', entero(e.k) + (Math.abs(e.k) === 1 ? ' turn' : ' turns'));
+      lect.fijar('n', pasos() === 0 ? 'never: it is a circle' : num(pasos()) + (pasos() === 1 ? ' time per turn' : ' times per turn'));
+    };
+    const cambio = () => { estado(); L.dibujar(); };
+    const eK = Curso.eleccion(mandos, { etiqueta: 'Turns of the second (negative: reversed)', opciones: [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5].map(v => ({ valor: v, texto: entero(v) })), valor: e.k, reto: 'reto-2', alCambiar: v => { e.k = v; cambio(); } });
+    const mR = Curso.mando(mandos, { etiqueta: 'Size of the second', clase: 'respuesta', min: 0.1, max: 1, paso: 0.05, valor: e.r, formato: v => num(v, 2) + ' of the first', reto: 'reto-2', alCambiar: v => { e.r = v; cambio(); } });
+    Curso.animar(L, (t, dt) => { if (dt > 0) e.t += dt; L.dibujar(); }, { boton: botones });
+    estado();
+    Curso.reto('reto-2', {
+      titulo: 'A four-petal flower', nivel: 'fácil',
+      comprobar: () => {
+        const n = pasos();
+        if (n === 4 && e.r >= 0.3) return { ok: true, mensaje: 'Four petals: ' + entero(e.k) + ' − 1 gives ' + (e.k > 1 ? '' : '−') + '4, and the figure repeats four times per turn.' };
+        if (n === 4) return { ok: false, mensaje: 'The speeds are the right ones, but with a second Ferris wheel this small the petals are barely noticeable. Make it a bit bigger.' };
+        if (n === 0) return { ok: false, mensaje: 'If the two Ferris wheels turn equally fast, the figure is a circle: the second one only shifts it.' };
+        return { ok: false, mensaje: n < 4 ? 'Now the figure repeats ' + num(n) + (n === 1 ? ' time' : ' times') + ' per turn; look for a speed that repeats it 4 times.' : 'You overshot: now the figure repeats ' + num(n) + ' times per turn, and you are looking for 4.' };
+      },
+      resolver: () => { eK.fijar(-3); mR.fijar(0.5); },
+      pista: [
+        'Try making the second Ferris wheel turn the other way, with a negative speed.',
+        'The number of petals is the difference between the two speeds, counting the direction: the first makes 1 turn and the second, k.',
+      ],
+      exito: '<p>A Ferris wheel mounted on another no longer draws a circle: two spins that combine draw flowers, stars, and loops, and the number of petals is the difference between their speeds. Greek astronomers used this trick, epicycles, to follow the planets.</p>',
+    });
+  })();
+
+  // ── Reto 3 · La receta de la onda cuadrada (arrastrar barras) ───────────────────────────────────────────────
+  // Nueve barras, una por armónico (de 1 a 9). La suma de sus senos se compara con una onda cuadrada de altura π/4, que es
+  // la que sale de la receta 1, 0, 1/3, 0, 1/5, 0, 1/7, 0, 1/9. Se acepta cada barra a 0,03 de la receta.
+  (function () {
+    const K = 9, TOL = 0.03, REF = Math.PI / 4;
+    const B = [1, 0, 1 / 3, 0, 1 / 5, 0, 1 / 7, 0, 1 / 9];
+    const e = { a: [1, 0, 0, 0, 0, 0, 0, 0, 0], sel: 2 };
+    const suma = u => { let s = 0; for (let k = 0; k < K; k++) s += e.a[k] * Math.sin((k + 1) * u); return s; };
+    const parecido = () => {
+      let err = 0, ref = 0;
+      for (let i = 0; i < 400; i++) { const u = TAU * (i + 0.5) / 400, r = u < Math.PI ? REF : -REF, d = suma(u) - r; err += d * d; ref += r * r; }
+      return Math.max(0, 100 * (1 - Math.sqrt(err / ref)));
+    };
+    const pb = panel('#r3-paneles', 'The recipe · drag the bars'), pw = panel('#r3-paneles', 'The sum');
+    let escB = null, activa = null;
+    const Lb = G.lienzo(pb.escena, {
+      alto: altoEscena(250, 270), rol: 'slider',
+      etiqueta: 'Nine bars, one per harmonic, that you can drag up or down to change the size of each Ferris wheel',
+      dibujar: (ctx, w, h, C) => {
+        const caja = { x: 34, y: 12, w: w - 34 - 10, h: h - 12 - 34 };
+        escB = G.ejes(ctx, { caja, x: [0.4, K + 0.6], y: [-1.1, 1.1], marcasX: [1, 2, 3, 4, 5, 6, 7, 8, 9], marcasY: [-1, -0.5, 0, 0.5, 1], formatoX: v => num(v), formatoY: v => num(v, 1), etiquetaX: 'harmonic', C });
+        ctx.save();
+        const xsel = escB.x(e.sel + 1), anchoSel = caja.w / K * 0.8;
+        ctx.fillStyle = G.alfa(C.acento, 0.14);
+        ctx.fillRect(xsel - anchoSel / 2, caja.y, anchoSel, caja.h);
+        ctx.restore();
+        const xs = e.a.map((_, i) => i + 1);
+        G.barras(ctx, escB, xs, e.a, { color: C.espectro, anchoPx: Math.max(10, caja.w / K * 0.6), alfa: 0.9, C });
+        // la receta se enseña con un hueco: no la doy hecha, pero las barras se dibujan con borde
+        for (let k = 0; k < K; k++) {
+          const px = escB.x(k + 1), py = escB.y(e.a[k]);
+          ctx.fillStyle = C.espectro;
+          ctx.beginPath(); ctx.arc(px, py, 4.5, 0, TAU); ctx.fill();
+          ctx.strokeStyle = C.pantalla; ctx.lineWidth = 1.5; ctx.stroke();
+        }
+      },
+    });
+    const Lw = G.lienzo(pw.escena, {
+      alto: altoEscena(250, 270),
+      etiqueta: 'The sum of the nine Ferris wheels, in green, over a dotted reference square wave',
+      dibujar: (ctx, w, h, C) => {
+        const filas = leyenda(ctx, C, [{ color: C.senal, texto: 'your sum' }, { color: C.cuerpo, texto: 'square wave' }], 14, 14, w - 28);
+        const caja = { x: 12, y: 20 + filas * 17, w: w - 24, h: h - 20 - filas * 17 - 34 };
+        const esc = G.ejes(ctx, { caja, x: [0, 2], y: [-1.7, 1.7], marcasX: [0, 1, 2], marcasY: false, formatoX: v => num(v) + (v === 1 ? ' period' : ''), C });
+        G.linea(ctx, esc, [0, 0, 0.5, 0.5, 1, 1, 1.5, 1.5, 2], [0, REF, REF, -REF, -REF, REF, REF, -REF, -REF], { color: C.cuerpo, guiones: [5, 4], ancho: 1.6, alfa: 0.75, halo: false, C });
+        G.curva(ctx, esc, t => suma(TAU * t), { color: C.senal, ancho: 2.4, n: 500, C });
+      },
+    });
+    const fila = document.getElementById('r3-fila');
+    const lect = Curso.lecturas(fila, [{ id: 'p', nombre: 'Match with the square wave', clase: 'senal' }, { id: 'b', nombre: 'Selected bar' }]);
+    const botones = filaBotones(fila);
+    Curso.audio.boton(botones, () => {
+      const x = S.sumaArmonicos({ f0: 220, amplitudes: e.a.slice(), fs: 16000, dur: 1.2 });
+      return S.pico(x) > 1e-6 ? { x, fs: 16000, volumen: 0.5 } : null;
+    }, 'Listen to your sum');
+    Curso.audio.boton(botones, () => ({ x: S.serieFourier({ forma: 'cuadrada', n: 17, f: 220, fs: 16000, dur: 1.2 }), fs: 16000, volumen: 0.5 }), 'Listen to a square wave');
+    const estado = () => {
+      const p = parecido();
+      lect.fijar('p', num(p, 0) + '%');
+      lect.fijar('b', 'harmonic ' + (e.sel + 1) + ': ' + num(e.a[e.sel], 2));
+      lect.clase('p', p > 97 ? 'destacada' : 'senal');
+      Lb.canvas.setAttribute('aria-valuenow', String(e.sel + 1));
+      Lb.canvas.setAttribute('aria-valuetext', 'Harmonic ' + (e.sel + 1) + ' with size ' + num(e.a[e.sel], 2));
+    };
+    const cambio = () => { estado(); Lb.dibujar(); Lw.dibujar(); Curso.cambio('reto-3'); };
+    const poner = (k, v) => {
+      let x = limitar(Math.round(v * 100) / 100, -1, 1);
+      if (Math.abs(x) < 0.03) x = 0;
+      e.a[k] = x; e.sel = k;
+      cambio();
+    };
+    Curso.arrastre(Lb, {
+      eje: 'ambos',
+      alBajar: p => { if (!escB) return false; activa = limitar(Math.round(escB.xi(p.x)) - 1, 0, K - 1); poner(activa, escB.yi(p.y)); },
+      alMover: p => { if (activa !== null) poner(activa, escB.yi(p.y)); },
+      alSoltar: () => { activa = null; },
+    });
+    Lb.canvas.tabIndex = 0;
+    Lb.canvas.setAttribute('aria-valuemin', '1');
+    Lb.canvas.setAttribute('aria-valuemax', String(K));
+    Lb.canvas.addEventListener('keydown', ev => {
+      if (ev.key === 'ArrowRight') { ev.preventDefault(); e.sel = Math.min(K - 1, e.sel + 1); cambio(); }
+      else if (ev.key === 'ArrowLeft') { ev.preventDefault(); e.sel = Math.max(0, e.sel - 1); cambio(); }
+      else if (ev.key === 'ArrowUp' || ev.key === 'ArrowDown') { ev.preventDefault(); poner(e.sel, e.a[e.sel] + (ev.key === 'ArrowUp' ? 0.02 : -0.02)); }
+    });
+    estado();
+    Curso.reto('reto-3', {
+      titulo: 'The square wave recipe', nivel: 'medio',
+      comprobar: () => {
+        const fallos = e.a.map((v, i) => ({ k: i + 1, d: v - B[i] })).filter(q => Math.abs(q.d) > TOL).sort((x, y) => Math.abs(y.d) - Math.abs(x.d));
+        if (!fallos.length) return { ok: true, mensaje: 'The sum is now a square wave: only odd harmonics, each one smaller.' };
+        const q = fallos[0], resto = fallos.length - 1;
+        const cola = resto > 0 ? ' And ' + resto + (resto === 1 ? ' more bar is' : ' more bars are') + ' still to adjust.' : '';
+        if (q.k % 2 === 0) return { ok: false, mensaje: 'Harmonic ' + q.k + ' should not be there: in the square wave the even ones are zero.' + cola };
+        return { ok: false, mensaje: 'Harmonic ' + q.k + ' is ' + (q.d < 0 ? 'too small' : 'too large') + '.' + cola };
+      },
+      resolver: () => { e.a = B.slice(); cambio(); },
+      pista: [
+        'Only the odd harmonics are needed: 1, 3, 5, 7, and 9. The rest stay at zero.',
+        'Each odd one weighs less than the previous: the third, a third of the first; the fifth, a fifth, and so on.',
+      ],
+      exito: '<p>The square wave is a simple recipe: only odd harmonics, each one smaller, 1, 1/3, 1/5, 1/7… The more you add, the straighter the sides get. If you listen to the sum with each harmonic you add, you will notice that each one adds a bit more brightness.</p>',
+    });
+  })();
+
+  // ── Reto 4 · ¿Flauta, cuerda o clarinete? (escuchar y elegir) ──────────────────────────────────────────────
+  // Tres recetas sintéticas y simplificadas para la misma nota (Re4, 293,66 Hz). Se pueden oír una a una; después suena
+  // una al azar y hay que decir cuál era. «Ver la onda» da una vía visual para quien no puede oír.
+  (function () {
+    const F0 = 293.66, FS = 16000;
+    const arm = (n, f) => Array.from({ length: n }, (_, i) => f(i + 1));
+    const RECETAS = [
+      { id: 'flauta', nombre: 'Soft flute', corto: 'the flute', amp: [1, 0.1, 0.03], dato: 'It is the soft flute: almost a single Ferris wheel, the cleanest and roundest sound.' },
+      { id: 'cuerda', nombre: 'Bowed string', corto: 'the string', amp: arm(16, k => 1 / k), dato: 'It is the bowed string: it carries all the harmonics, and fairly strong ones, which is why it sounds the brightest.' },
+      { id: 'clarinete', nombre: 'Low clarinet', corto: 'the clarinet', amp: arm(15, k => (k % 2 ? 1 / k : 0.05 / k)), dato: 'It is the low clarinet: mostly odd harmonics, like the square wave, and almost no even ones.' },
+    ];
+    const sonido = r => S.sumaArmonicos({ f0: F0, amplitudes: r.amp, fs: FS, dur: 1.2 });
+    const azar = Curso.azar();
+    let ronda = null, racha = 0, ultimo = '', verOnda = false, anterior = -1;
+    const cont = document.getElementById('r4-recetas');
+    const barras = RECETAS.map(r => {
+      const p = panel(cont, r.nombre);
+      Curso.audio.boton(p.cabeza, () => ({ x: sonido(r), fs: FS, volumen: 0.5 }), 'Listen', { clase: 'peque' });
+      return G.lienzo(p.escena, {
+        alto: 110, etiqueta: 'The recipe of the ' + r.nombre.toLowerCase() + ': the size of each harmonic, in amber bars',
+        dibujar: (ctx, w, h, C) => {
+          const esc = G.ejes(ctx, { caja: { x: 10, y: 8, w: w - 20, h: h - 28 }, x: [0.4, 16.6], y: [0, 1.1], marcasX: false, marcasY: false, rejilla: false, C });
+          G.barras(ctx, esc, r.amp.map((_, i) => i + 1), r.amp, { color: C.espectro, anchoPx: Math.max(3, (w - 20) / 16 * 0.62), C });
+          G.texto(ctx, w / 2, h - 6, 'harmonics 1, 2, 3…', { alinear: 'center', color: C.tenue, tam: 10, C });
+        },
+      });
+    });
+    // La onda del sonido misterioso (unos 12 ms)
+    const escenaOnda = crear('div', { class: 'escena' });
+    cont.parentNode.insertBefore(escenaOnda, document.getElementById('r4-fila'));
+    const onda = G.lienzo(escenaOnda, {
+      alto: 120, etiqueta: 'The waveform of the mystery sound, about twelve milliseconds (shown after you answer or with “Show the wave”)',
+      dibujar: (ctx, w, h, C) => {
+        if (!ronda) return;
+        if (!verOnda && !ronda.respondida) { G.texto(ctx, w / 2, h / 2, 'listen to it', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C }); return; }
+        const r = RECETAS[ronda.i];
+        const f = t => { let s = 0; r.amp.forEach((a, i) => { s += a * Math.sin(TAU * (i + 1) * F0 * t); }); return s; };
+        let pico = 0;
+        for (let i = 0; i < 400; i++) pico = Math.max(pico, Math.abs(f(i / 400 / F0)));
+        const esc = G.ejes(ctx, { caja: { x: 10, y: 10, w: w - 20, h: h - 30 }, x: [0, 0.012], y: [-1.1, 1.1], marcasX: [0, 0.004, 0.008, 0.012], formatoX: v => num(v * 1000) + ' ms', marcasY: false, C });
+        G.curva(ctx, esc, t => f(t) / pico, { color: C.senal, ancho: 2, n: 500, C });
+        if (ronda.respondida) G.texto(ctx, w - 12, 22, r.nombre, { alinear: 'right', color: C.suave, tam: 11, fondo: G.alfa(C.superficie, 0.85), C });
+      },
+    });
+    const fila = document.getElementById('r4-fila');
+    const rachaEl = crear('span', { class: 'racha' });
+    fila.appendChild(rachaEl);
+    const botones = filaBotones(fila);
+    Curso.audio.boton(botones, () => (ronda ? { x: sonido(RECETAS[ronda.i]), fs: FS, volumen: 0.5 } : null), 'Listen to the mystery sound');
+    const b = Curso.botones(botones, [
+      ...RECETAS.map((r, i) => ({ id: r.id, texto: 'It’s ' + r.corto, alPulsar: () => responder(i) })),
+      { id: 'otra', texto: 'Another round', icono: 'otra', tipo: 'principal', alPulsar: () => nuevaRonda() },
+      { id: 'ver', texto: 'Show the wave', icono: 'ojo', tipo: 'discreto', pulsado: false, alPulsar: on => { verOnda = on; onda.dibujar(); } },
+    ]);
+    function nuevaRonda() {
+      let i = azar.entero(0, 2);
+      if (i === anterior) i = (i + 1 + azar.entero(0, 1)) % 3;
+      anterior = i;
+      ronda = { i, respondida: false };
+      Curso.audio.parar();
+      pintar();
+    }
+    function responder(j) {
+      if (!ronda || ronda.respondida) return;
+      ronda.respondida = true;
+      const real = RECETAS[ronda.i];
+      if (j === ronda.i) {
+        racha += 1;
+        ultimo = 'Right. ' + real.dato + (racha < 3 ? ' You have ' + racha + (racha === 1 ? ' correct answer.' : ' in a row.') : '');
+      } else {
+        racha = 0;
+        ultimo = 'No: ' + real.dato.charAt(0).toLowerCase() + real.dato.slice(1) + ' Look at its recipe and listen to it again.';
+      }
+      pintar();
+      Curso.cambio('reto-4');
+    }
+    function pintar() {
+      rachaEl.innerHTML = '';
+      rachaEl.append(crear('span', { class: 'puntos', 'aria-hidden': 'true' }, [0, 1, 2].map(i => crear('i', { class: i < racha ? 'si' : '' }))), 'Correct in a row: ' + Math.min(racha, 3) + ' of 3');
+      const r = ronda && ronda.respondida;
+      for (const x of RECETAS) b[x.id].disabled = !!r;
+      b.otra.hidden = !r;
+      onda.dibujar();
+    }
+    nuevaRonda();
+    Curso.reto('reto-4', {
+      titulo: 'Flute, string, or clarinet?', nivel: 'medio',
+      comprobar: () => ({ ok: racha >= 3, mensaje: ultimo }),
+      resolver: () => { racha = 3; ultimo = ''; pintar(); },
+      pista: [
+        'The soft flute is almost a single Ferris wheel: if it sounds clean and without harshness, it is the flute.',
+        'The clarinet lacks almost all the even harmonics, and that recipe is the one of the square wave; the string has them all, and it is the brightest.',
+      ],
+      exito: '<p>Same note, different recipe, different sound. These are simplified recipes: a real instrument is also recognized by how each note starts, by its vibrato, and by how its recipe changes with loudness, so timbre is the recipe and something more.</p>',
+    });
+  })();
+
+  // ── Reto 5 · El fleco que no baja (elegir cuántos armónicos y escribir un número) ───────────────────────────
+  // Onda cuadrada de −1 a 1 (salto de 2) con n armónicos impares. El primer pico está a T/(4n) del salto y mide
+  // (4/π)·Σ… ≈ 1,179 con muchos: un 8,95 % del salto. Hay que llegar a n ≥ 26 (T/(4n) < T/100) y decir el %.
+  (function () {
+    const NS = [1, 2, 4, 8, 16, 26, 50, 100, 200];
+    const e = { n: 4 };
+    const parcial = (n, t) => { let s = 0; for (let m = 0; m < n; m++) { const k = 2 * m + 1; s += Math.sin(TAU * k * t) / k; } return 4 / Math.PI * s; };
+    const pico = n => { const alt = parcial(n, 1 / (4 * n)); return { alt, pct: (alt - 1) / 2 * 100 }; };
+    const pa = panel('#r5-paneles', 'The whole wave'), pz = panel('#r5-paneles', 'A magnifying glass on the jump');
+    const Le = G.lienzo(pa.escena, {
+      alto: altoEscena(210, 230),
+      etiqueta: 'The sum of the chosen odd harmonics, in green, over the dotted square wave, in one period',
+      dibujar: (ctx, w, h, C) => {
+        const filas = leyenda(ctx, C, [{ color: C.senal, texto: 'your sum' }, { color: C.cuerpo, texto: 'square wave' }], 14, 14, w - 28);
+        const caja = { x: 40, y: 20 + filas * 17, w: w - 52, h: h - 20 - filas * 17 - 34 };
+        const esc = G.ejes(ctx, { caja, x: [0, 1], y: [-1.6, 1.6], marcasX: [0, 0.5, 1], marcasY: [-1, 0, 1], formatoY: v => num(v, 1), formatoX: v => num(v, 1) + (v === 1 ? ' period' : ''), C });
+        G.linea(ctx, esc, [0, 0, 0.5, 0.5, 1, 1], [-1, 1, 1, -1, -1, 1], { color: C.cuerpo, guiones: [5, 4], ancho: 1.5, alfa: 0.75, halo: false, C });
+        G.curva(ctx, esc, t => parcial(e.n, t), { color: C.senal, ancho: 1.9, n: e.n > 50 ? 3200 : 1200, C });
+      },
+    });
+    const Lz = G.lienzo(pz.escena, {
+      alto: altoEscena(210, 230),
+      etiqueta: 'A zoom on the first jump of the sum: the fringe that overshoots the top of the square wave',
+      dibujar: (ctx, w, h, C) => {
+        const caja = { x: 40, y: 16, w: w - 52, h: h - 16 - 34 };
+        const esc = G.ejes(ctx, { caja, x: [0, 0.12], y: [0.6, 1.4], marcasX: [0, 0.04, 0.08, 0.12], marcasY: [0.8, 1, 1.2], formatoX: v => num(v, 2), formatoY: v => num(v, 1), etiquetaX: 'time, in periods', C });
+        G.linea(ctx, esc, [0, 0.12], [1, 1], { color: C.cuerpo, guiones: [5, 4], ancho: 1.5, alfa: 0.8, halo: false, C });
+        G.texto(ctx, caja.x + caja.w - 4, esc.y(1) + 14, 'the top of the square wave', { alinear: 'right', color: C.suave, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+        ctx.save();
+        ctx.strokeStyle = C.plantilla; ctx.lineWidth = 1.4; ctx.setLineDash([4, 3]);
+        const xm = Math.round(esc.x(0.01)) + 0.5;
+        ctx.beginPath(); ctx.moveTo(xm, caja.y); ctx.lineTo(xm, caja.y + caja.h); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, xm + 5, caja.y + 12, '1/100 of a period', { color: C.plantilla, tam: 10, peso: 600, C });
+        G.curva(ctx, esc, t => parcial(e.n, t), { color: C.senal, ancho: 2, desde: 0.00005, hasta: 0.12, n: 900, C });
+        const p = pico(e.n);
+        cabina(ctx, C, esc.x(1 / (4 * e.n)), esc.y(p.alt), C.respuesta, 5.5);
+      },
+    });
+    const fila = document.getElementById('r5-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'd', nombre: 'The fringe is at', clase: 'respuesta' },
+      { id: 'a', nombre: 'Height of the peak (the top is 1)', clase: 'senal' },
+    ]);
+    const mandos = document.getElementById('r5-mandos');
+    let reto = null;
+    const eN = Curso.eleccion(mandos, { etiqueta: 'Odd harmonics', opciones: NS.map(v => ({ valor: v, texto: num(v) })), valor: e.n, reto: 'reto-5', alCambiar: v => { e.n = v; estado(); Le.dibujar(); Lz.dibujar(); } });
+    const campo = Curso.campo(mandos, { etiqueta: 'How far it sticks out (% of the jump)', unidad: '%', marcador: 'how much?', decimales: 1, alEnviar: () => reto.revisar() });
+    function estado() {
+      const p = pico(e.n);
+      lect.fijar('d', '1/' + num(4 * e.n) + ' of a period');
+      lect.fijar('a', num(p.alt, 3));
+    }
+    estado();
+    reto = Curso.reto('reto-5', {
+      titulo: 'The fringe that does not shrink', nivel: 'medio', auto: false,
+      comprobar: () => {
+        const v = campo.valor, cerca = e.n >= 26;
+        if (!cerca) { campo.marcar(null); return { ok: false, mensaje: 'The first fringe is 1/' + num(4 * e.n) + ' of a period from the jump, and you are looking for less than 1/100. Raise the number of harmonics.' }; }
+        if (!Number.isFinite(v)) return { ok: false, mensaje: 'The fringe is now stuck to the jump. Now measure how far it overshoots and write it as a percentage of the jump.' };
+        if (v >= 8 && v <= 10) { campo.marcar('bien'); return { ok: true, mensaje: 'That is it: around 9% of the jump.' }; }
+        campo.marcar('mal');
+        if (v >= 16 && v <= 20) return { ok: false, mensaje: 'That figure is the overshoot measured against the amplitude (1). The jump goes from −1 to 1 and measures 2, double: divide by 2.' };
+        return { ok: false, mensaje: 'Not yet. The peak goes past the top (1) by what the reading shows, and the whole jump measures 2: divide the excess by 2 and turn it into a percentage.' };
+      },
+      resolver: () => { eN.fijar(26); campo.fijar(9); },
+      pista: [
+        'More harmonics bring the fringe closer to the jump: to the right you have options with many.',
+        'The reading says how high the peak reaches and the top is 1. What sticks out, divided by the jump (which goes from −1 to 1 and measures 2), is the fraction you are looking for.',
+      ],
+      exito: '<p>The fringe is now stuck to the jump, but look at its height: it is still around 9% of the jump, just as with 10 Ferris wheels, and it will not drop with a thousand. This is the Gibbs phenomenon: the fringes get narrower, but they do not flatten. That is why a filter that cuts off sharply makes the edges “ring.”</p>',
+    });
+  })();
+
+  // ── Reto 6 · Dibuja con norias (dibujar con el dedo y deslizador) ───────────────────────────────────────────
+  // Un contorno cerrado de 256 puntos (por longitud de arco), sin su media, se descompone con la FFT en norias que giran a
+  // un lado y a otro. La copia usa las N más grandes. Error = distancia máxima entre la copia y el dibujo, en % del
+  // tamaño de la figura. Con la estrella de la lección bastan 10 norias para bajar del 2 %; con un dibujo propio se dejan 40.
+  (function () {
+    const NP = 256, UMBRAL = 2, LIM_ESTRELLA = 10, LIM_PROPIA = 40, NMAX = 60;
+    const fig = { xs: null, ys: null, re: null, im: null, orden: [], err: [], propia: false };
+    const e = { n: 3, t: 0.15, dibujando: false, trazo: [], aviso: '' };
+    let geo = null;
+
+    // Los vértices de una estrella de cinco puntas (y hacia arriba).
+    const estrella = () => {
+      const V = [];
+      for (let i = 0; i < 5; i++) { const a = Math.PI / 2 + i * TAU / 5, b = a + Math.PI / 5; V.push([Math.cos(a), Math.sin(a)], [0.42 * Math.cos(b), 0.42 * Math.sin(b)]); }
+      return V;
+    };
+    // Polígono cerrado → NP puntos repartidos por longitud de arco, centrados en su media y a escala (lado mayor = 2).
+    function fijarFigura(poligono, propia) {
+      const m = poligono.length, L = [0];
+      for (let i = 0; i < m; i++) { const a = poligono[i], b = poligono[(i + 1) % m]; L.push(L[i] + Math.hypot(b[0] - a[0], b[1] - a[1])); }
+      const tot = L[m];
+      if (!(tot > 0)) return false;
+      const xs = new Float64Array(NP), ys = new Float64Array(NP);
+      let j = 0;
+      for (let k = 0; k < NP; k++) {
+        const s = tot * k / NP;
+        while (j < m - 1 && L[j + 1] < s) j++;
+        const a = poligono[j], b = poligono[(j + 1) % m], seg = L[j + 1] - L[j], u = seg > 0 ? (s - L[j]) / seg : 0;
+        xs[k] = a[0] + u * (b[0] - a[0]); ys[k] = a[1] + u * (b[1] - a[1]);
+      }
+      let mx = 0, my = 0;
+      for (let k = 0; k < NP; k++) { mx += xs[k]; my += ys[k]; }
+      mx /= NP; my /= NP;
+      let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+      for (let k = 0; k < NP; k++) { xs[k] -= mx; ys[k] -= my; x0 = Math.min(x0, xs[k]); x1 = Math.max(x1, xs[k]); y0 = Math.min(y0, ys[k]); y1 = Math.max(y1, ys[k]); }
+      const tam = Math.max(x1 - x0, y1 - y0);
+      if (!(tam > 0)) return false;
+      for (let k = 0; k < NP; k++) { xs[k] *= 2 / tam; ys[k] *= 2 / tam; }
+      const re = xs.slice(), im = ys.slice();
+      S.fft(re, im);
+      const orden = Array.from({ length: NP }, (_, i) => i).sort((p, q) => Math.hypot(re[q], im[q]) - Math.hypot(re[p], im[p]));
+      Object.assign(fig, { xs, ys, re, im, orden, propia, err: [null] });
+      for (let n = 1; n <= NMAX; n++) fig.err.push(error(n));
+      return true;
+    }
+    // Reconstrucción con las n norias mayores → { x, y } (Float64Array).
+    function reconstruir(n) {
+      const R = new Float64Array(NP), I = new Float64Array(NP);
+      for (let i = 0; i < n; i++) { const k = fig.orden[i]; R[k] = fig.re[k]; I[k] = fig.im[k]; }
+      S.ifft(R, I);
+      return { x: R, y: I };
+    }
+    function error(n) {
+      const r = reconstruir(n);
+      let m = 0;
+      for (let k = 0; k < NP; k++) m = Math.max(m, Math.hypot(r.x[k] - fig.xs[k], r.y[k] - fig.ys[k]));
+      return 100 * m / 2;
+    }
+    fijarFigura(estrella(), false);
+
+    const L = G.lienzo('#r6-escena', {
+      alto: altoEscena(300, 330), rol: 'img',
+      etiqueta: 'An ink figure, the star or the one you draw, and in green the copy made with the sum of Ferris wheels; if there are few Ferris wheels, you can see them mounted on top of each other',
+      dibujar: (ctx, w, h, C) => {
+        const sc = (Math.min(w, h) / 2 - 16) / 1.2, cx = w / 2, cy = h / 2 + 8;
+        geo = { sc, cx, cy };
+        const items = [{ color: C.cuerpo, texto: 'the drawing' }, { color: C.senal, texto: 'the copy with Ferris wheels' }];
+        if (e.n <= 12 && e.n > 1) items.push({ color: C.respuesta, texto: 'the last one added' });
+        leyenda(ctx, C, items, 14, 14, w - 28);
+        if (e.dibujando && !e.trazo.length) {
+          G.texto(ctx, w / 2, h / 2, 'Draw a closed figure with your finger or the mouse', { alinear: 'center', base: 'middle', color: C.suave, tam: 12, C });
+        }
+        // el dibujo
+        if (!e.trazo.length) {
+          ctx.save();
+          ctx.strokeStyle = G.alfa(C.cuerpo, 0.8); ctx.lineWidth = 1.6; ctx.setLineDash([2, 4]); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+          ctx.beginPath();
+          for (let k = 0; k <= NP; k++) { const i = k % NP, x = cx + sc * fig.xs[i], y = cy - sc * fig.ys[i]; if (k) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
+          ctx.stroke();
+          ctx.restore();
+          // la copia
+          const r = reconstruir(e.n);
+          ctx.save();
+          ctx.lineJoin = 'round';
+          const trazar = () => { ctx.beginPath(); for (let k = 0; k <= NP; k++) { const i = k % NP, x = cx + sc * r.x[i], y = cy - sc * r.y[i]; if (k) ctx.lineTo(x, y); else ctx.moveTo(x, y); } ctx.stroke(); };
+          if (C.oscuro) { ctx.strokeStyle = G.alfa(C.senal, 0.22); ctx.lineWidth = 6; trazar(); }
+          ctx.strokeStyle = C.senal; ctx.lineWidth = 2.2; trazar();
+          ctx.restore();
+          // las norias, si son pocas, y la cabina final
+          const u = e.t * 0.12 % 1;
+          let px = cx, py = cy, ultimo = null;
+          for (let i = 0; i < e.n; i++) {
+            const k = fig.orden[i], kk = k < NP / 2 ? k : k - NP;
+            const re = fig.re[k] / NP, im = fig.im[k] / NP, th = TAU * kk * u;
+            const dx = re * Math.cos(th) - im * Math.sin(th), dy = re * Math.sin(th) + im * Math.cos(th);
+            const nx = px + sc * dx, ny = py - sc * dy;
+            if (e.n <= 12) {
+              const r1 = sc * Math.hypot(re, im), esUltima = i === e.n - 1 && e.n > 1;
+              aro(ctx, px, py, r1, esUltima ? C.respuesta : C.cuerpo, esUltima ? 0.9 : 0.3, esUltima ? 1.6 : 1);
+              brazo(ctx, px, py, nx, ny, esUltima ? C.respuesta : C.cuerpo, esUltima ? 0.95 : 0.6, esUltima ? 2 : 1.3);
+            }
+            ultimo = [nx, ny]; px = nx; py = ny;
+          }
+          if (ultimo) cabina(ctx, C, ultimo[0], ultimo[1], C.senal, 5.5);
+        } else {
+          ctx.save();
+          ctx.strokeStyle = C.acento; ctx.lineWidth = 2.4; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+          ctx.beginPath(); e.trazo.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.stroke();
+          ctx.restore();
+        }
+      },
+    });
+    const fila = document.getElementById('r6-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'n', nombre: 'Ferris wheels in the copy', clase: 'respuesta' },
+      { id: 'e', nombre: 'Largest error', clase: 'senal' },
+    ]);
+    const botones = filaBotones(fila);
+    const nota = crear('p', { class: 'nota-reto' }, '');
+    document.getElementById('r6-mandos').before(nota);
+    const limite = () => (fig.propia ? LIM_PROPIA : LIM_ESTRELLA);
+    const estado = () => {
+      const er = fig.err[e.n];
+      lect.fijar('n', num(e.n));
+      lect.fijar('e', num(er, 2) + '% of the size');
+      lect.clase('e', er < UMBRAL && e.n <= limite() ? 'destacada' : 'senal');
+      nota.textContent = e.aviso || (fig.propia ? 'This is your drawing. With your own figure we allow up to ' + LIM_PROPIA + ' Ferris wheels.' : 'The star has points, and points call for fast Ferris wheels. With a figure of your own, we allow up to ' + LIM_PROPIA + ' Ferris wheels.');
+      L.canvas.style.touchAction = e.dibujando ? 'none' : 'pan-y';
+    };
+    const cambio = () => { estado(); L.dibujar(); Curso.cambio('reto-6'); };
+    const mN = Curso.mando('#r6-mandos', { etiqueta: 'Ferris wheels in the copy', clase: 'respuesta', min: 1, max: NMAX, paso: 1, valor: e.n, formato: v => num(v) + (v === 1 ? ' Ferris wheel' : ' Ferris wheels'), reto: 'reto-6', alCambiar: v => { e.n = Math.round(v); estado(); L.dibujar(); } });
+    Curso.arrastre(L, {
+      eje: 'ambos',
+      alBajar: p => { if (!e.dibujando) return false; e.trazo = [[p.x, p.y]]; e.aviso = ''; L.dibujar(); },
+      alMover: p => {
+        const u = e.trazo[e.trazo.length - 1];
+        if (Math.hypot(p.x - u[0], p.y - u[1]) >= 2.5) { e.trazo.push([p.x, p.y]); L.dibujar(); }
+      },
+      alSoltar: () => {
+        const t = e.trazo;
+        e.dibujando = false; e.trazo = [];
+        let ok = false;
+        if (t.length >= 12 && geo) {
+          const poli = t.map(p => [(p[0] - geo.cx) / geo.sc, (geo.cy - p[1]) / geo.sc]);
+          ok = fijarFigura(poli, true);
+        }
+        e.aviso = ok ? '' : 'That stroke is too short. Press “Draw my own” and draw a bigger figure.';
+        if (!ok) fijarFigura(estrella(), false);
+        cambio();
+      },
+    });
+    Curso.botones(botones, [
+      { id: 'dibujar', texto: 'Draw my own', icono: 'otra', alPulsar: () => { e.dibujando = true; e.trazo = []; e.aviso = 'Draw a closed figure, in a single stroke, on the canvas.'; estado(); L.dibujar(); } },
+      { id: 'estrella', texto: 'Back to the star', tipo: 'discreto', alPulsar: () => { fijarFigura(estrella(), false); e.dibujando = false; e.trazo = []; e.aviso = ''; cambio(); } },
+    ]);
+    Curso.animar(L, (t, dt) => { if (dt > 0) e.t += dt; if (!e.trazo.length) L.dibujar(); }, { boton: botones });
+    estado();
+    Curso.reto('reto-6', {
+      titulo: 'Draw with Ferris wheels', nivel: 'difícil',
+      comprobar: () => {
+        const er = fig.err[e.n], lim = limite();
+        if (er < UMBRAL && e.n <= lim) return { ok: true, mensaje: 'With ' + num(e.n) + (e.n === 1 ? ' Ferris wheel' : ' Ferris wheels') + ', the largest error is ' + num(er, 1) + '% of the size.' };
+        if (er < UMBRAL) return { ok: false, mensaje: 'It is already below 2%, but with ' + num(e.n) + ' Ferris wheels. Try to do it with ' + lim + ' or fewer.' };
+        if (e.n >= lim) return { ok: false, mensaje: 'With ' + num(e.n) + ' Ferris wheels there is still ' + num(er, 1) + '% error.' + (fig.propia ? ' Your drawing has very sharp corners or fine curls; try a smoother figure or go back to the star.' : '') };
+        return { ok: false, mensaje: 'It still shows: the error is ' + num(er, 1) + '%. Add Ferris wheels; the points are the last thing to be refined.' };
+      },
+      resolver: () => { fijarFigura(estrella(), false); e.dibujando = false; e.trazo = []; e.aviso = ''; mN.fijar(10); cambio(); },
+      pista: [
+        'With few Ferris wheels the copy is a rounded figure. The big, slow Ferris wheels give the general shape and the small, fast ones refine the points: keep adding and see when you stop noticing the difference.',
+        'With the star, ten Ferris wheels are more than enough: the error drops below 2% well before that.',
+      ],
+      exito: '<p>Any closed outline is a sum of Ferris wheels. The big, slow ones give the general shape; the small, fast ones, the points, just as the corners of the square wave needed many fast Ferris wheels. That is how Homer Simpson was drawn with a thousand epicycles in 2008.</p>',
+    });
+  })();
+
+  // ── En tu voz: tu «aaa», tu «iii» o tu silbido como una pila de norias ──────────────────────────────────────
+  // Se elige un trozo estable de 0,4 s (el que menos cambia de nota, entre los que suenan), se mide su nota por
+  // autocorrelación y se lee el tamaño de los armónicos k·f0 en el espectro (ventana de Hann). Con esa receta se vuelve a
+  // sumar un número elegido de norias. Todo a 16 kHz.
+  (function () {
+    const FS = 16000, VENT = 0.4, KMAX = 20;
+    const OPC = [1, 2, 3, 5, 10, 20];
+    const st = { x: null, dur: 0, vent: VENT, inicio: 0, f0: null, amps: null, K: 0, nivelRuido: 0, ref: null, norias: 5, aviso: '' };
+    const lab = Curso.voz('#voz-lab', {
+      ejemplos: ['aaaIii', 'aaa', 'iii', 'silbido'], fsAnalisis: FS, fsEjemplos: FS, alCargar: cargar,
+      alTocarVista: t => mover(t - st.vent / 2),
+      alDibujarVista: (ctx, esc, C) => {
+        if (!st.x) return;
+        const x0 = esc.x(st.inicio), x1 = Math.max(x0 + 3, esc.x(st.inicio + st.vent));
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.plantilla, 0.2);
+        ctx.fillRect(x0 - 2, esc.caja.y - 2, x1 - x0 + 4, esc.caja.h + 4);
+        ctx.strokeStyle = C.plantilla; ctx.lineWidth = 1.5;
+        ctx.strokeRect(Math.round(x0 - 2) + 0.5, esc.caja.y - 2, Math.round(x1 - x0 + 4), esc.caja.h + 4);
+        ctx.restore();
+      },
+    });
+
+    const lect = Curso.lecturas(lab.panel, [
+      { id: 'nota', nombre: 'Your note (fundamental)', clase: 'senal' },
+      { id: 'fuerte', nombre: 'Strongest harmonic' },
+      { id: 'norias', nombre: 'Ferris wheels you add', clase: 'respuesta' },
+    ]);
+    const escena = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena);
+    const vista = G.lienzo(escena, {
+      alto: altoEscena(230, 260),
+      etiqueta: 'Your recipe: the size of each harmonic of the note you recorded, in amber bars',
+      dibujar: dibujarReceta,
+    });
+    const nota = crear('p', { class: 'nota-reto' }, '');
+    lab.panel.appendChild(nota);
+    const mandos = crear('div', { class: 'mandos' });
+    lab.panel.appendChild(mandos);
+    const eNor = Curso.eleccion(mandos, { etiqueta: 'Ferris wheels you add', opciones: OPC.map(v => ({ valor: v, texto: String(v) })), valor: st.norias, alCambiar: v => { st.norias = v; refrescar(); } });
+    const filaA = crear('div', { class: 'botones' });
+    lab.panel.appendChild(filaA);
+    Curso.audio.boton(filaA, () => {
+      if (!st.x) return null;
+      const i0 = Math.round(st.inicio * FS), seg = st.x.slice(i0, i0 + Math.round(st.vent * FS));
+      return seg.length ? { x: seg, fs: FS, volumen: 0.8 } : null;
+    }, 'Listen to the excerpt');
+    Curso.audio.boton(filaA, () => {
+      if (!st.amps) return null;
+      const n = Math.min(st.norias, st.K), a = st.amps.slice(0, n);
+      const x = S.sumaArmonicos({ f0: st.f0, amplitudes: a, fs: FS, dur: 1.5 });
+      return S.pico(x) > 1e-9 ? { x, fs: FS, volumen: 0.5 } : null;
+    }, 'Listen to the sum of Ferris wheels');
+    const b = Curso.botones(filaA, [
+      { id: 'ref', texto: 'Save as reference', alPulsar: () => { if (st.amps) { st.ref = { amps: st.amps.slice(), f0: st.f0 }; b.quitar.hidden = false; vista.dibujar(); } } },
+      { id: 'quitar', texto: 'Remove reference', tipo: 'discreto', alPulsar: () => { st.ref = null; b.quitar.hidden = true; vista.dibujar(); } },
+      { id: 'mitad', texto: 'The note is half', tipo: 'discreto', alPulsar: () => corregir(0.5) },
+      { id: 'doble', texto: 'The note is double', tipo: 'discreto', alPulsar: () => corregir(2) },
+    ]);
+    b.quitar.hidden = true;
+
+    const pot2 = n => { let p = 1; while (p < n) p *= 2; return p; };
+    // Elige el trozo más estable: entre los trozos que suenan (más de un tercio del máximo), el que menos cambia de nota.
+    function elegirTrozo(x) {
+      const dur = x.length / FS;
+      st.vent = Math.min(VENT, dur);
+      if (dur <= VENT + 0.05) return 0;
+      const marco = Math.round(0.05 * FS), salto = Math.round(0.025 * FS), rms = [], f0 = [];
+      for (let i = 0; i + marco <= x.length; i += salto) {
+        const tr = x.subarray(i, i + marco);
+        const r = S.rms(tr);
+        rms.push(r);
+        let f = NaN;
+        if (r > 1e-4) { const est = S.tonoAutocorrelacion(tr, FS, { fmin: 70, fmax: 2000, criterio: 'primero' }); if (est.valor > 0.6) f = est.f0; }
+        f0.push(f);
+      }
+      const mx = Math.max(...rms, 1e-9), nv = Math.round((st.vent - 0.05) / 0.025) + 1;
+      let mejor = -1, puntos = Infinity;
+      for (let j = 0; j + nv <= rms.length; j++) {
+        let suena = true, s = 0, s2 = 0, n = 0;
+        for (let q = j; q < j + nv; q++) {
+          if (rms[q] < mx / 3) suena = false;
+          if (Number.isFinite(f0[q])) { const l = Math.log2(f0[q]); s += l; s2 += l * l; n++; }
+        }
+        const sd = n >= nv * 0.7 ? Math.sqrt(Math.max(0, s2 / n - (s / n) * (s / n))) : 1;
+        const coste = (suena ? 0 : 10) + sd;
+        if (coste < puntos) { puntos = coste; mejor = j; }
+      }
+      return mejor < 0 ? 0 : mejor * salto / FS;
+    }
+
+    function cargar(x) {
+      st.x = x; st.dur = x.length / FS; st.ref = null; b.quitar.hidden = true;
+      st.inicio = elegirTrozo(x);
+      analizar();
+      lab.redibujarVista();
+    }
+    function mover(inicio) {
+      if (!st.x) return;
+      st.inicio = limitar(inicio, 0, Math.max(0, st.dur - st.vent));
+      analizar();
+      lab.redibujarVista();
+    }
+    function corregir(factor) {
+      if (!st.f0) return;
+      medir(st.f0 * factor);
+      refrescar();
+    }
+    // Espectro del trozo actual, guardado para corregir la octava sin recalcular.
+    let sp = null, df = 1;
+    function pico(f, rel) {
+      const a = Math.max(1, Math.floor(f * (1 - rel) / df)), c = Math.min(sp.mag.length - 2, Math.ceil(f * (1 + rel) / df));
+      let m = 0, im = a;
+      for (let i = a; i <= c; i++) if (sp.mag[i] > m) { m = sp.mag[i]; im = i; }
+      return { m, f: im * df };
+    }
+    function analizar() {
+      st.f0 = null; st.amps = null; st.K = 0; st.aviso = '';
+      const i0 = Math.round(st.inicio * FS), seg = st.x.slice(i0, i0 + Math.round(st.vent * FS));
+      if (seg.length < Math.round(0.06 * FS) || S.rms(seg) < 1e-4) { st.aviso = 'There is no clear sound in this excerpt. Move the window over the recording to a spot where your note sounds.'; refrescar(); return; }
+      sp = S.espectro(seg, FS, { ventana: 'hann', nfft: 16384 });
+      df = sp.f[1] - sp.f[0];
+      const arr = Array.from(sp.mag.subarray(Math.floor(100 / df), Math.floor(7500 / df))).sort((p, q) => p - q);
+      st.nivelRuido = arr.length ? arr[Math.floor(arr.length / 2)] : 0;
+      const est = S.tonoAutocorrelacion(seg, FS, { fmin: 70, fmax: 2000, criterio: 'primero' });
+      if (!(est.f0 > 0) || est.valor < 0.5) { st.aviso = 'I cannot find a clear note in this excerpt (it sounds more like noise or a mixture). Move the window to a spot with a sustained vowel or whistle.'; refrescar(); return; }
+      let f0 = pico(est.f0, 0.04).f;
+      // el peine: si entre los dientes de la nota hay tanta energía como en los dientes, la nota es la mitad
+      const dientes = (f, desde) => { let s = 0, n = 0; for (let j = 1; j <= 8 && (j + desde) * f < 7000; j++) { s += pico((j + desde) * f, 0.03).m; n++; } return n ? s / n : 0; };
+      if (f0 / 2 >= 60 && dientes(f0, -0.5) > 0.3 * dientes(f0, 0) && dientes(f0, -0.5) > 8 * st.nivelRuido) f0 /= 2;
+      medir(f0);
+      refrescar();
+    }
+    // Lee el tamaño de los armónicos k·f0.
+    function medir(f0) {
+      st.f0 = f0;
+      const K = Math.max(1, Math.min(KMAX, Math.floor(7000 / f0)));
+      const m = [];
+      let f = f0;
+      for (let k = 1; k <= K; k++) { const p = pico(k * f0, 0.025); m.push(p.m); }
+      const mx = Math.max(...m);
+      if (!(mx > 8 * st.nivelRuido)) { st.amps = null; st.aviso = 'The harmonics do not stand out above the background noise. Move the microphone closer or pick a spot where it sounds louder.'; return; }
+      st.K = K;
+      st.amps = m.map(v => (v > Math.max(0.012 * mx, 3 * st.nivelRuido) ? v / mx : 0));
+      st.aviso = '';
+      void f;
+    }
+    function refrescar() {
+      const a = st.amps;
+      if (a) {
+        const n = nombreNota(st.f0), fuerte = a.indexOf(Math.max(...a)) + 1;
+        lect.fijar('nota', num(st.f0, 1) + ' Hz · ' + n);
+        lect.fijar('fuerte', 'harmonic ' + fuerte);
+        lect.fijar('norias', num(Math.min(st.norias, st.K)));
+      } else { lect.fijar('nota', '—'); lect.fijar('fuerte', '—'); lect.fijar('norias', '—'); }
+      let texto = st.aviso;
+      if (!texto && a) {
+        const fuerte = a.indexOf(Math.max(...a)) + 1;
+        const partes = [];
+        if (st.f0 > 400) partes.push('The note is high: below 8 kHz only ' + st.K + ' harmonics fit.');
+        if (a.length >= 3 && a[0] < 0.3 && fuerte > 1) partes.push('Bar 1 comes out low: either your voice has little fundamental or the microphone attenuates the low frequencies, and you would still hear the same note (missing fundamental).');
+        if (a.slice(3).every(v => v === 0) && a.length > 3) partes.push('Almost everything is in the first bars: it is a sound close to a single Ferris wheel, like a whistle.');
+        partes.push('If the note it measures is not yours, try “The note is half” or “The note is double.” Bars that do not stand out from the background noise are drawn at zero.');
+        texto = partes.join(' ');
+      }
+      nota.textContent = texto;
+      vista.dibujar();
+    }
+    const nombreNota = f => { const q = S.nombreNota(f), c = Math.round(q.cents); return q.nombre + (Math.abs(c) >= 5 ? ' (' + (c > 0 ? '+' : '−') + Math.abs(c) + ' cents)' : ''); };
+    function dibujarReceta(ctx, w, h, C) {
+      if (!st.amps) {
+        G.texto(ctx, w / 2, h / 2, st.x ? 'no clear note in this excerpt' : 'Record, upload audio, or pick an example', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C });
+        return;
+      }
+      const items = [{ color: C.espectro, texto: 'your recipe' }];
+      if (st.ref) items.push({ color: C.cuerpo, texto: 'the reference' });
+      items.push({ color: C.senal, texto: 'the Ferris wheels you add' });
+      const filas = leyenda(ctx, C, items, 14, 14, w - 28);
+      const K = Math.max(st.K, st.ref ? st.ref.amps.length : 0, 4);
+      const caja = { x: 40, y: 32 + filas * 17, w: w - 40 - 12, h: h - 32 - filas * 17 - 40 };
+      const esc = G.ejes(ctx, { caja, x: [0.4, K + 0.6], y: [0, 1.1], marcasX: K <= 10 ? K : [1, 5, 10, 15, 20].filter(v => v <= K), marcasY: [0, 0.5, 1], formatoX: v => num(v), formatoY: v => num(v, 1), etiquetaX: 'harmonic (1 = your note, 2 = double…)', etiquetaY: 'size', C });
+      const px = Math.max(3, caja.w / K * 0.6);
+      const xs = st.amps.map((_, i) => i + 1);
+      G.barras(ctx, esc, xs, st.amps, { color: C.espectro, anchoPx: px, alfa: 0.9, C });
+      if (st.ref) {
+        ctx.save();
+        ctx.strokeStyle = C.cuerpo; ctx.lineWidth = 1.5; ctx.setLineDash([3, 2]);
+        st.ref.amps.forEach((v, i) => { if (v > 0) ctx.strokeRect(Math.round(esc.x(i + 1) - px / 2 - 2) + 0.5, esc.y(v), px + 4, esc.y(0) - esc.y(v)); });
+        ctx.restore();
+      }
+      // las norias que se suman, en verde por encima de las barras
+      const n = Math.min(st.norias, st.K);
+      ctx.save();
+      ctx.strokeStyle = C.senal; ctx.lineWidth = 3; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(esc.x(0.6), esc.y(1.07)); ctx.lineTo(esc.x(n + 0.4), esc.y(1.07)); ctx.stroke();
+      ctx.restore();
+    }
+    void eNor;
+  })();
+})();
+</script>
+</body></html>

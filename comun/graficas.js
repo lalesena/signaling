@@ -12,6 +12,9 @@
 
   const TAU = Math.PI * 2;
   const doc = typeof document !== 'undefined' ? document : null;
+  // Idioma de la página: <html lang="en…"> → 'en'; si no, 'es' (el idioma por defecto). Graficas.idioma.
+  const idioma = (() => { try { return doc && /^en/i.test((doc.documentElement.getAttribute('lang') || '').trim()) ? 'en' : 'es'; } catch (e) { return 'es'; } })();
+  const EN = idioma === 'en';
   const limitar = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
   const FUENTE_MONO = '"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace';
   const FUENTE_TEXTO = 'Literata, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif';
@@ -200,7 +203,9 @@
   }
 
   // ── Números ────────────────────────────────────────────────────────────────────────────────────────────
-  // Formato español: coma decimal, punto de miles (también en cuatro cifras: 3.000) y signo menos tipográfico.
+  // Formato según el idioma de la página, con signo menos tipográfico:
+  //   español: coma decimal y punto de miles (también en cuatro cifras: 3.000);
+  //   inglés: punto decimal y coma de miles (3,000).
   function num(x, decimales) {
     if (x == null || !Number.isFinite(+x)) return '—';
     x = +x;
@@ -213,8 +218,8 @@
     let s = Math.abs(x).toFixed(d);
     if (decimales == null && s.indexOf('.') >= 0) s = s.replace(/0+$/, '').replace(/\.$/, '');
     let [ent, dec] = s.split('.');
-    ent = ent.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    const r = dec ? ent + ',' + dec : ent;
+    ent = ent.replace(/\B(?=(\d{3})+(?!\d))/g, EN ? ',' : '.');
+    const r = dec ? ent + (EN ? '.' : ',') + dec : ent;
     const cero = /^[0.,]*$/.test(r);
     return (x < 0 && !cero ? '−' : '') + r;
   }
@@ -1014,8 +1019,8 @@
       }
       ctx.moveTo(x0, Math.round(yr - 13) + 0.5); ctx.lineTo(xMax, Math.round(yr - 13) + 0.5);
       ctx.stroke();
-      texto(ctx, x0, yr, 'ahora', { color: C.tenue, tam: 11, alinear: 'left', base: 'alphabetic', C });
-      texto(ctx, xMax, yr, 'hace ' + num(segundos) + ' s', { color: C.tenue, tam: 11, alinear: 'right', C });
+      texto(ctx, x0, yr, EN ? 'now' : 'ahora', { color: C.tenue, tam: 11, alinear: 'left', base: 'alphabetic', C });
+      texto(ctx, xMax, yr, (EN ? num(segundos) + ' s ago' : 'hace ' + num(segundos) + ' s'), { color: C.tenue, tam: 11, alinear: 'right', C });
     }
     ctx.restore();
 
@@ -1085,7 +1090,7 @@
     ejes, linea, curva, puntos, tallos, barras, area,
     mapa, leyenda, magma, texto, flecha, cuadricula,
     noria, muelle, historia, escenaNoria, altoNoria, trazaEnfriada,
-    FUENTE_MONO, FUENTE_TEXTO,
+    FUENTE_MONO, FUENTE_TEXTO, idioma,
   };
   if (typeof module === 'object' && module.exports) module.exports = Graficas;
   else raiz.Graficas = Graficas;

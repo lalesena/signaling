@@ -1,0 +1,1119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Convolution: every sound leaves its echo · Signals</title>
+<meta name="description" content="Lesson 7 of the visual course “Signals, from Zero to Expert”: the impulse response and convolution as a sum of stamps, with rooms, echoes, the moving average and out-of-focus photos, six challenges and your own clap.">
+<link rel="stylesheet" href="../comun/fuentes.css">
+<link rel="stylesheet" href="../comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e07">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Level 3 · Lesson 7</p>
+    <h1>Convolution: every sound leaves its echo</h1>
+    <aside class="pregunta">
+      <p>A clap in the living room sounds dry, and the same clap in the bathroom keeps ringing for quite a while. A studio can make your voice sound as if you were singing inside a cathedral without you ever leaving home, and all it needs is a recording of a balloon that someone popped there once. A balloon is a noise that lasts an instant, nothing like a voice, and yet it tells you how anything would sound in that room. How does that work?</p>
+    </aside>
+    <ul class="meta"><li>About 50 minutes</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>The idea in one picture</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Seven input sticks, in green, that you can raise and lower by dragging them. Each one stamps a copy of the stamp, in orange, as tall as the stick and placed at its position. Below, in ink, the sum of all the stamps: the output.</figcaption>
+    </figure>
+    <p>A digital signal is, as you saw in <a href="e02.html">lesson 2</a>, a row of sticks, one for each sample, with the height the signal has at that instant. Imagine that, as it passes through a system, each stick stops being a stick and stamps a copy of a fixed shape, the stamp, as tall as the stick and placed at its instant. A tall stick stamps a big stamp, a short one stamps a small one, and one that points down stamps it upside down. What comes out is the sum of all the stamps, which overlap one another, and that sum is the <b class="termino">convolution</b>.</p>
+    <p>Drag the input sticks and watch how their stamps and the output change. Try a single stick: the output is then the stamp itself, and that is almost the whole idea, because a system is completely described by the stamp a single stick leaves. Then change the shape of the stamp: a long tail smears what goes in, a moving average blurs it, and an echo repeats it.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Step by step</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>One stamp for each stick</h3>
+      <p>Clap once in the living room and once in the bathroom. The one in the living room dies away quickly, and the one in the bathroom keeps ringing like a tail that slowly fades, because the sound bounces off the hard walls and reaches your ears again and again, a little weaker each time. That tail does not depend on how you clap: it is a characteristic of the room. An <b class="termino">impulse</b> is a sound so brief that it barely has time to have a shape, a single stick, and the shortest one in digital audio is a single sample; a clap comes close to it, and a bursting balloon even closer. What the room returns in response to an impulse, its fingerprint, is the <b class="termino">impulse response</b>, and it is exactly the stamp in the picture.</p>
+      <p>Two rules explain why that fingerprint is enough to know what the room will do with any sound. The first is that if you clap twice as hard, the tail comes out twice as strong, and if you put two sounds together, the room responds to each one on its own and adds up the responses. The second is that if you clap one second later, the same tail comes out one second later, because the room does not change over time. A system that obeys both rules is a <b class="termino">linear time-invariant (LTI) system</b>, and rooms, the filters of <a href="e06.html">lesson 6</a>, lenses and the moving average all are, at least approximately. With those two rules, your voice is a row of sticks and the room responds to each stick with its stamp.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">This is the input: three green sticks. Get the output drawn by the dashed line by stamping one stamp for each stick on the lane below.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="fila" id="r1-fila"></div>
+        <p class="nota-reto">Tap one of the columns of the lane: the height of your tap is the size of the stamp, and below zero it comes out upside down. Tap a stamp on its head to remove it, or tap at another height to change it. With the keyboard, focus the canvas with the Tab key, choose a column with the left and right arrows, change the size with the up and down arrows (with Shift, in big steps) and remove the stamp with Delete.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>The fingerprint of a room</h3>
+      <p>The impulse response of a room can be seen at a glance: a bang at the start, a few early reflections off the nearest walls, and a tail that fades away. What sets a living room apart from a bathroom or a cathedral is mostly how long it takes to fade. That tail is the <b class="termino">reverberation</b>, and it is measured with the <b class="termino" data-termino="Reverberation time (T60)">reverberation time</b>, the T60: the time it takes to drop by 60 dB, the decibels of <a href="e05.html">lesson 5</a>, which means falling to one millionth of the power.</p>
+      <p>To give your voice the fingerprint of a cathedral you need its impulse response, and to have it you have to measure it. Acousticians use a short, loud bang, such as a starter pistol or a bursting balloon, or a sweep of tones that rises through a loudspeaker and is later undone with a calculation; the sweep is the most precise and the bang the most practical. Your clap is the homemade version: imperfect, but enough to hear the idea. In studios, convolution reverb arrived as a device in 1999, with the Sony DRE-S777, which the magazine <i>Sound On Sound</i> presented as the first commercial real-time convolution reverb, and as software in 2001, with Altiverb, according to its own maker.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">Hagia Sophia, with balloons</span>
+        <p>In 2010, the Stanford researcher Bissera Pentcheva walked into Hagia Sophia, in Istanbul, with a bag of balloons: an assistant popped them with a pin tied to a pole under the dome, and the tail was recorded, with more than ten seconds of reverberation, according to the CCRMA project <i>Icons of Sound</i>. A balloon is not usable as it is, because it does not radiate equally in all directions and its spectrum has gaps that color the sound, so the team processed the recordings. With them, a choir was able to sing live at Stanford as if it were inside the basilica.</p>
+      </aside>
+      <p>How long a tail can last is shown by the Guinness record: 75 seconds, measured in 2012 in an abandoned oil tank at Inchindown, in Scotland, with a starter pistol. Guinness calls it an “echo,” but it is reverberation.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Listen to the same clap in three mystery rooms, A, B and C, and say which room each one sounds like. At the top you have the impulse response of each room.</p>
+        <div class="escena" id="r2-escena"></div>
+        <div class="fila" id="r2-fila"></div>
+        <div class="mandos" id="r2-mandos"></div>
+        <p class="nota-reto">If you cannot hear the sounds, look only at the drawings: each sound is a clap convolved with one of the three responses.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>The echo, the simplest stamp</h3>
+      <p>The simplest stamp you can imagine has only two sticks: one at instant zero, which is the direct sound, and another one, weaker and later, which is a copy. That is a mountain echo: your voice goes out, and a while later it comes back, weaker. Convolving with that stamp adds your voice to a copy of itself, delayed and a bit fainter. A room is the same thing, but with thousands of sticks, one for each possible reflection, and that is why a clear echo is heard as an echo and a room with thousands of them is heard as one continuous tail.</p>
+      <p>Convolution does not care which one is the voice and which one is the room: it makes no difference whether you put the voice into the stamp or the stamp into the voice. Some reverb programs take advantage of that, and accept any sound as a “room,” for example a piano chord.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">This syllable has gone through an echo. Drag the orange echo stick until your output covers the dashed one: further right, the echo arrives later, and higher up, it sounds louder.</p>
+        <div class="escena" id="r3-escena"></div>
+        <div class="fila" id="r3-fila"></div>
+        <p class="nota-reto">Drag the head of the orange stick, or tap wherever you want to place it. With the keyboard, focus the canvas with the Tab key, change the delay with the left and right arrows and the strength with the up and down arrows.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>The moving average, once more</h3>
+      <p>In <a href="e06.html">lesson 6</a> the moving average was the simplest filter of all: replace each data point with the average of the last <i>N</i>. Seen with stamps, it is a rectangle: each input stick stamps <i>N</i> equal sticks of height 1/<i>N</i>, and the output is the sum of all of them. The longer the stamp, the more samples are averaged and the more the random noise drops, which it does with the square root of <i>N</i>. In exchange, a jump gets smeared: it takes as many samples to rise as the stamp is long.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">There is a step buried in noise. Lengthen the rectangular stamp until the noise drops to a third, without the step taking more than 20 samples to rise.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="fila" id="r4-fila"></div>
+        <p class="nota-reto">Drag the right edge of the orange rectangle, or tap wherever you want to place it. With the keyboard, focus the canvas with the Tab key and use the left and right arrows.</p>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>Photos have stamps too</h3>
+      <p>In an out-of-focus photo, every point of light has turned into a disk; if the camera moved, into a streak, and with air turbulence, into a soft blotch. That stamp of light is called the <b class="termino">point spread function</b>, and the blurry photo is the sum of the stamps of all its points, just as the output of a room is the sum of the tails of all the sounds. The only difference is that the stamp has two dimensions and the sticks are pixels.</p>
+      <p>In 1990, the Hubble telescope sent back blurry photos because the edge of its main mirror was 2 microns too flat, according to ESA. Since the stamp each star left was known, astronomers tried to peel it off with calculations, and that is called <b class="termino">deconvolution</b>: undoing the convolution to recover the original image. It worked only halfway, because where the stamp erases something that information is lost, and when you try to recover it the noise shoots up. The definitive fix came in December 1993, with corrective mirrors installed by astronauts.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">This photo of a city at night came out blurry and its stamp is unknown. Find the shape and size of the stamp that gives the blurry photo on the right.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>Adding stamps is multiplying spectra</h3>
+      <p>There is a bridge between this lesson and the previous one. When the equalizer multiplied the spectrum by a curve, it did so in frequency, and when a room adds up stamps, it does so in time, but they are the same operation seen in two ways. The <b class="termino">convolution theorem</b> says that convolving in time is multiplying the spectra, so the frequency response of a filter is the spectrum of its stamp. That is why a room cannot create notes: it only raises, lowers and delays the ones that were already there. If new frequencies appear, something is not linear, such as saturation.</p>
+      <p>It also explains why an echo is a filter. A two-stick stamp adds the signal to a delayed copy, and that sum reinforces the frequencies at which the copy arrives in phase with the original and cancels those at which it arrives in antiphase, which draws a comb in frequency. The bridge also has a practical use: stamping by hand is extremely expensive, because with a 2 s stamp at 48,000 samples per second each output sample takes 96,000 multiplications, about 4.6 billion per second per channel. That is why reverb programs switch to frequency with the FFT of <a href="e05.html">lesson 5</a>, multiply, and switch back.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">You have a 2,000 Hz note that you want to keep and a 1,000 Hz whistle that you want to silence. Choose the delay and the strength of a two-stick stamp that completely silences the whistle without touching the note.</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>In your voice</h2>
+    <p><b>What to record.</b> The claps from the reference recording, section 6: three loud, dry claps in your room and three more in the bathroom or on the stairs, with a couple of seconds between one and the next. Record with the microphone if your browser allows it; if not, upload audio recorded with your phone or try the synthetic examples.</p>
+    <p><b>What to look at.</b> The lab finds the claps and, for the one you choose, cuts out its stamp: from a little before the bang until the tail sinks into the background noise. It shows you that stamp and how long it takes to fade, with an estimate of the reverberation time, and convolves a synthetic phrase with it so you can hear it inside your room. Compare a clap in the bedroom with one in the bathroom: with hard, tiled walls, the tail is usually longer and denser. Keep in mind that the clap has its own color and that some phone apps trim the tails, so what comes out is not exactly what an acoustician would measure.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>What to remember</h2>
+    <ol class="tres">
+      <li>Each input sample stamps a copy of the stamp, scaled to its height and placed at its instant, and the output is the sum of all the stamps: that is convolution.</li>
+      <li>The impulse response is the complete fingerprint of a linear time-invariant system, such as a room, a filter or a lens: what it returns in response to an impulse is enough to predict what it will do with any signal.</li>
+      <li>Adding stamps in time is multiplying spectra in frequency, and that is why the stamp seen in frequency is the curve of an equalizer: a system like that raises, lowers and delays notes, but does not create them.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Common mistakes</h2>
+    <ul class="errores">
+      <li><b>“Convolving is multiplying the two signals point by point.”</b> That is what happens with their spectra. In time, convolving is adding shifted and scaled stamps.</li>
+      <li><b>“A clap is a perfect impulse.”</b> It is brief, but it has its own color and carries noise, and the response you get is that of the room seen through the clap.</li>
+      <li><b>“Reverberation adds new notes.”</b> A linear time-invariant system only multiplies the frequencies that were already there and delays them. If new frequencies appear, something is nonlinear, such as saturation.</li>
+      <li><b>“If I know the stamp, I can recover the perfect photo.”</b> Where the stamp erases a frequency, the information is lost, and when you try to recover it the noise shoots up. Hubble was only partly corrected with calculations.</li>
+      <li><b>“Passing the voice through the room is not the same as passing the room through the voice.”</b> Convolution is commutative: it does not matter which one you call the signal and which the stamp, and that is why a reverb program can use a piano chord as the room.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Open</span>
+      <h2>Math corner</h2>
+      <span class="resumen">The formulas, for those who want them. Each one comes after its reading in words.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>Linear and time-invariant</h3>
+      <p>A system is linear if the response to a mix is the mix of the responses, and time-invariant if delaying the input only delays the output:</p>
+      <div class="tex">\mathcal{S}\{a\,x_1 + b\,x_2\} = a\,\mathcal{S}\{x_1\} + b\,\mathcal{S}\{x_2\}, \qquad \mathcal{S}\{x[n - n_0]\} = y[n - n_0]</div>
+
+      <h3>The signal, as a row of sticks</h3>
+      <p>Every signal is the sum of shifted impulses, each with the height of its sample, where <span class="tex">\delta[n]</span> is the impulse, a stick of height 1 at instant zero:</p>
+      <div class="tex">x[n] = \sum_{k} x[k]\, \delta[n - k]</div>
+
+      <h3>The sum of stamps</h3>
+      <p>The output is the sum of stamps: each sample <span class="tex">x[k]</span> stamps the impulse response <span class="tex">h</span>, scaled by its height and shifted to <span class="tex">k</span>. That sum is written with an asterisk:</p>
+      <div class="tex">y[n] = (x * h)[n] = \sum_{k} x[k]\, h[n - k]</div>
+
+      <h3>Length and order</h3>
+      <p>If the input has <span class="tex">L</span> samples and the stamp <span class="tex">M</span>, the result has <span class="tex">L + M - 1</span>, because the last stick stamps a stamp that sticks out <span class="tex">M - 1</span> samples. And it makes no difference which one is the signal and which the stamp:</p>
+      <div class="tex">\text{length}(x * h) = L + M - 1, \qquad x * h = h * x</div>
+
+      <h3>The bridge to frequency</h3>
+      <p>Convolving in time is multiplying in frequency:</p>
+      <div class="tex">Y(f) = X(f)\, H(f)</div>
+
+      <h3>The echo, a two-stick stamp</h3>
+      <p>An echo is a two-stick stamp, the direct sound and a copy of strength <span class="tex">g</span> delayed by <span class="tex">D</span> samples. In frequency it is a comb that reinforces and cancels alternating frequencies:</p>
+      <div class="tex">h[n] = \delta[n] + g\,\delta[n - D], \qquad H(f) = 1 + g\, e^{-i 2\pi f D / f_s}</div>
+      <p>Its size is the following, and with <span class="tex">g = 1</span> it cancels completely at the frequencies where the delay is half a turn, one and a half turns, and so on:</p>
+      <div class="tex">|H(f)| = \sqrt{1 + g^2 + 2g\,\cos\!\left(2\pi f D / f_s\right)}, \qquad f = \frac{f_s}{D}\left(m + \tfrac{1}{2}\right),\; m = 0, 1, 2, \dots</div>
+
+      <h3>The moving average</h3>
+      <p>The moving average is a rectangular stamp of <span class="tex">N</span> samples, all of height <span class="tex">1/N</span>, which was studied in <a href="e06.html">lesson 6</a>:</p>
+      <div class="tex">h[n] = \frac{1}{N} \quad (0 \le n \le N-1), \qquad h[n] = 0 \ \text{otherwise}</div>
+
+      <h3>A blurry photo</h3>
+      <p>A blurry photo is the sharp photo <span class="tex">f</span> convolved in two dimensions with the stamp of light <span class="tex">p</span>, the point spread function:</p>
+      <div class="tex">g[m, n] = \sum_{k}\sum_{l} f[k, l]\; p[m - k,\, n - l]</div>
+
+      <h3>Convolving with the FFT</h3>
+      <p>With the FFT you pad with zeros up to at least <span class="tex">L + M - 1</span>, multiply the spectra and come back. Without the padding, the stamps that stick out would wrap around and overlap:</p>
+      <div class="tex">x * h = \mathrm{IFFT}\big(\mathrm{FFT}(x_{\text{padded}}) \cdot \mathrm{FFT}(h_{\text{padded}})\big), \qquad N_{\text{FFT}} \ge L + M - 1</div>
+
+      <h3>Undoing a stamp</h3>
+      <p>Undoing a stamp is dividing spectra, and where <span class="tex">H</span> is almost zero the noise shoots up, which is why a brake <span class="tex">K</span> is added:</p>
+      <div class="tex">\hat{X}(f) = \frac{Y(f)}{H(f)} \quad\longrightarrow\quad \hat{X}(f) = \frac{H^{*}(f)\, Y(f)}{|H(f)|^{2} + K}</div>
+      <p>And to remove an echo it is enough to subtract from the recording a delayed copy of what has already been cleaned, a filter that uses its own output and is studied in <a href="e08.html">lesson 8</a>:</p>
+      <div class="tex">\hat{x}[n] = y[n] - g\, \hat{x}[n - D]</div>
+
+      <h3>The reverberation time</h3>
+      <p>The reverberation time is how long the energy of the tail takes to fall by 60 dB. It is estimated with the energy that remains from each instant to the end:</p>
+      <div class="tex">E(t) = \int_t^{\infty} h^2(\tau)\, d\tau, \qquad T_{60} = \text{time at which } 10\log_{10}\frac{E(t)}{E(0)} \text{ drops by } 60\ \text{dB}</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Further reading</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Open book</span>Steven W. Smith, <i>The Scientist and Engineer's Guide to Digital Signal Processing</i>, <a href="http://www.dspguide.com/CH6.PDF">chapter 6</a>. Convolution explained as a sum of scaled and shifted impulse responses: the stamps.</li>
+      <li><span class="tipo">Open book</span>Allen B. Downey, <i>Think DSP</i>, <a href="https://greenteapress.com/thinkdsp/html/thinkdsp011.html">chapter 10</a>. Linear time-invariant systems with a gunshot recorded in a room and a violin placed inside it, with code.</li>
+      <li><span class="tipo">Open book</span>Steven W. Smith, <i>dspguide</i>, chapters <a href="http://www.dspguide.com/CH24.PDF">24</a> and <a href="http://www.dspguide.com/CH18.PDF">18</a>. The first deals with images: the point spread function, blur and convolution in two dimensions. The second, how to convolve with the FFT and why it is faster.</li>
+      <li><span class="tipo">Project</span>CCRMA (Stanford), <i>Icons of Sound</i>: <a href="https://ccrma.stanford.edu/groups/iconsofsound/auralization">“Auralization”</a>. The balloons of Hagia Sophia and live convolution with a choir.</li>
+      <li><span class="tipo">Popular science</span>ESA/Hubble, <a href="https://esahubble.org/about/history/servicing_mission_1/">“Servicing Mission 1”</a>. The flawed mirror of 1990 and the 1993 repair.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>New terms</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Quiz</h2>
+  </section>
+
+</main>
+
+<script src="temario.js"></script>
+<script src="../comun/graficas.js"></script>
+<script src="../comun/senal.js"></script>
+<script src="../comun/curso.js"></script>
+<script src="datos/e07.js"></script>
+<script>
+// Lección 7 · La convolución: cada sonido deja su eco. La imagen ancla (los sellos), los seis retos y el laboratorio
+// «En tu voz». Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo.
+// Convenios de color: la entrada, en verde; el sello (la respuesta al impulso), en naranja; la salida, en tinta; el
+// ruido y el pitido que se quiere apagar, en coral; lo que sirve de objetivo, discontinuo.
+(function () {
+  'use strict';
+  const G = Graficas, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const altoMov = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+  const fHz = v => (v >= 1000 ? num(v / 1000, Math.abs(v / 1000 - Math.round(v / 1000)) < 1e-9 ? 0 : 1) + ' kHz' : num(v) + ' Hz');
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); (typeof contenedor === 'string' ? document.querySelector(contenedor) : contenedor).appendChild(f); return f; };
+  const pico = x => { let m = 0; for (let i = 0; i < x.length; i++) { const a = Math.abs(x[i]); if (a > m) m = a; } return m; };
+  const separador = (ctx, w, C) => { ctx.save(); ctx.strokeStyle = C.linea; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, 0.5); ctx.lineTo(w, 0.5); ctx.stroke(); ctx.restore(); };
+  const redondear = (v, paso) => Math.round(v / paso) * paso;
+  // ── La idea en una imagen: los sellos ───────────────────────────────────────────────────────────────────
+  // Siete palitos de entrada que se arrastran, tres formas de sello y la salida, que es la suma de los sellos. Una
+  // animación va estampando los sellos de uno en uno y, al terminar, los deja todos a la vista unos segundos; con
+  // movimiento reducido arranca parada y enseña la imagen completa.
+  (function () {
+    const N = 7, NT = N + 6 - 1;
+    const SELLOS = {
+      cola: { texto: 'Tail of a room', h: [1, 0.54, 0.29, 0.16, 0.09, 0.05] },
+      media: { texto: 'Moving average', h: [0.5, 0.5, 0.5, 0.5] },
+      eco: { texto: 'Echo', h: [1, 0, 0, 0.6] },
+    };
+    const st = { x: [0.9, 0, 0.5, 0, -0.7, 0.3, 0], forma: 'cola', hasta: N, quieto: 0, sel: 0, enfocada: false, arrastrando: false };
+    const cont = document.getElementById('ancla-escena');
+    const MX = { izquierda: 44, derecha: 12 };
+    const EJE_X = [-0.8, NT - 0.2], MARCAS = Array.from({ length: NT }, (_, i) => i);
+    let escA = null;
+    // Cuánto de cada sello está ya estampado: 1 los que ya están, una fracción el que se está estampando.
+    const visible = (i, hasta) => { const k = Math.floor(hasta); return i < k ? 1 : i === k ? hasta - k : 0; };
+    const salida = hasta => Senal.convolucion(Float64Array.from(st.x, (v, i) => v * visible(i, hasta)), Float64Array.from(SELLOS[st.forma].h));
+    const LA = G.lienzo(cont, {
+      alto: altoMov(104, 118), rol: 'slider',
+      etiqueta: 'Seven input sticks, in green, that you drag up or down',
+      dibujar: (ctx, w, h, C) => {
+        const esc = escA = G.ejes(ctx, { margen: { ...MX, arriba: 8, abajo: 4 }, x: EJE_X, y: [-1.35, 1.35], marcasX: MARCAS, formatoX: () => '', marcasY: [-1, 0, 1], formatoY: v => num(v), cero: true, C });
+        if (st.enfocada || st.arrastrando) {
+          const x = esc.x(st.sel), y = esc.y(st.x[st.sel]);
+          ctx.save(); ctx.strokeStyle = C.acento; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 11, 0, TAU); ctx.stroke(); ctx.restore();
+        }
+        G.tallos(ctx, esc, MARCAS.slice(0, N), st.x, { color: C.senal, radio: 5.5, C });
+        G.texto(ctx, esc.caja.x + esc.caja.w - 6, esc.caja.y + 12, 'input', { alinear: 'right', color: C.tenue, tam: 11, C });
+      },
+    });
+    const LB = G.lienzo(cont, {
+      alto: altoMov(104, 118),
+      etiqueta: 'The orange stamps that each input stick leaves, with their size and position',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 8, abajo: 4 }, x: EJE_X, y: [-1.35, 1.35], marcasX: MARCAS, formatoX: () => '', marcasY: [-1, 0, 1], formatoY: v => num(v), cero: true, C });
+        separador(ctx, w, C);
+        const sello = SELLOS[st.forma].h;
+        for (let i = 0; i < N; i++) {
+          const v = visible(i, st.hasta);
+          if (!v || !st.x[i]) continue;
+          const xs = [], ys = [], d = (i - (N - 1) / 2) * 0.07;
+          sello.forEach((a, j) => { if (a) { xs.push(i + j + d); ys.push(st.x[i] * a); } });
+          ctx.save(); ctx.globalAlpha = 0.9 * v;
+          G.tallos(ctx, esc, xs, ys, { color: C.respuesta, radio: 3.6, ancho: 1.4, C });
+          ctx.restore();
+        }
+        G.texto(ctx, esc.caja.x + esc.caja.w - 6, esc.caja.y + 12, 'stamps', { alinear: 'right', color: C.tenue, tam: 11, C });
+      },
+    });
+    const LC = G.lienzo(cont, {
+      alto: altoMov(130, 150),
+      etiqueta: 'The output, in ink: the sum of all the stamps, sample by sample',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 8, abajo: 22 }, x: EJE_X, y: [-2.9, 2.9], marcasX: MARCAS, formatoX: v => num(v), marcasY: [-2, 0, 2], formatoY: v => num(v), cero: true, C });
+        separador(ctx, w, C);
+        const y = salida(st.hasta);
+        G.tallos(ctx, esc, MARCAS, Array.from({ length: NT }, (_, i) => y[i] || 0), { color: C.cuerpo, radio: 4.4, C });
+        G.texto(ctx, esc.caja.x + esc.caja.w - 6, esc.caja.y + 12, 'output (per sample)', { alinear: 'right', color: C.tenue, tam: 11, C });
+      },
+    });
+    const todos = () => { LA.dibujar(); LB.dibujar(); LC.dibujar(); };
+    const tocado = () => { st.hasta = N; st.quieto = performance.now() + 4500; todos(); };
+
+    const mandos = document.getElementById('ancla-mandos');
+    Curso.eleccion(mandos, { etiqueta: 'Stamp shape', opciones: Object.entries(SELLOS).map(([valor, s]) => ({ valor, texto: s.texto })), valor: st.forma, alCambiar: v => { st.forma = v; tocado(); } });
+    const fila = filaBotones(mandos);
+    Curso.botones(fila, [
+      { id: 'solo', texto: 'A single stick', alPulsar: () => { st.x = [0, 0, 1, 0, 0, 0, 0]; tocado(); } },
+      { id: 'azar', texto: 'Random input', alPulsar: () => {
+        const az = Curso.azar();
+        do { st.x = Array.from({ length: N }, () => (az.real() < 0.45 ? 0 : redondear(az.real(-1, 1), 0.1) + 0)); } while (!st.x.some(v => v));
+        tocado();
+      } },
+    ]);
+    Curso.animar(LB, t => { st.hasta = performance.now() < st.quieto ? N : Math.min(N, (N + 1.2 * t) % (N + 2.5)); todos(); }, { boton: fila });
+
+    const aria = () => {
+      LA.canvas.setAttribute('aria-valuenow', String(st.x[st.sel]));
+      LA.canvas.setAttribute('aria-valuetext', 'Stick ' + (st.sel + 1) + ' of ' + N + ': height ' + num(st.x[st.sel], 1));
+    };
+    const poner = (i, v) => { st.sel = limitar(i, 0, N - 1); st.x[st.sel] = limitar(redondear(v, 0.1), -1, 1) + 0; aria(); tocado(); };
+    Curso.arrastre(LA, {
+      eje: 'y',
+      alBajar: p => { if (!escA) return false; st.arrastrando = true; poner(Math.round(escA.xi(p.x)), escA.yi(p.y)); },
+      alMover: p => poner(st.sel, escA.yi(p.y)),
+      alSoltar: () => { st.arrastrando = false; LA.dibujar(); },
+    });
+    LA.canvas.tabIndex = 0;
+    LA.canvas.setAttribute('aria-valuemin', '-1');
+    LA.canvas.setAttribute('aria-valuemax', '1');
+    LA.canvas.addEventListener('focus', () => { st.enfocada = true; LA.dibujar(); });
+    LA.canvas.addEventListener('blur', () => { st.enfocada = false; LA.dibujar(); });
+    LA.canvas.addEventListener('keydown', ev => {
+      const k = ev.key;
+      if (k === 'ArrowLeft') st.sel = Math.max(0, st.sel - 1);
+      else if (k === 'ArrowRight') st.sel = Math.min(N - 1, st.sel + 1);
+      else if (k === 'ArrowUp') st.x[st.sel] = limitar(redondear(st.x[st.sel] + (ev.shiftKey ? 0.5 : 0.1), 0.1), -1, 1) + 0;
+      else if (k === 'ArrowDown') st.x[st.sel] = limitar(redondear(st.x[st.sel] - (ev.shiftKey ? 0.5 : 0.1), 0.1), -1, 1) + 0;
+      else return;
+      ev.preventDefault(); aria(); tocado();
+    });
+    aria();
+  })();
+  // ── Reto 1 · Estampa los sellos (tocar para colocar) ────────────────────────────────────────────────────
+  // Tres palitos de entrada en t = 0,05, 0,20 y 0,45 s (alturas 1, 0,5 y −0,8) y un sello de «ding» que decae en
+  // 0,15 s. Se toca el carril de abajo para poner un sello en una de sus 12 columnas (cada 0,05 s); la altura del
+  // toque es el tamaño del sello. La salida que se ve es la convolución real (Senal.convolucion) de lo que se ha puesto.
+  (function () {
+    const FS = 400, DUR = 0.7, DT = 0.05, NS = 12, nOut = Math.round(DUR * FS);
+    const OBJ = [{ s: 1, a: 1 }, { s: 4, a: 0.5 }, { s: 9, a: -0.8 }];
+    const sello = (() => {
+      const n = Math.round(0.15 * FS), h = new Float64Array(n);
+      let m = 0;
+      for (let i = 0; i < n; i++) { const t = i / FS; h[i] = Math.exp(-t / 0.04) * Math.sin(TAU * 20 * t); m = Math.max(m, Math.abs(h[i])); }
+      return h.map(v => v / m);
+    })();
+    const salida = lista => {
+      const x = new Float64Array(nOut);
+      for (const p of lista) x[Math.round(p.s * DT * FS)] += p.a;
+      return Senal.convolucion(x, sello).subarray(0, nOut);
+    };
+    const objetivo = salida(OBJ);
+    const st = { sellos: new Array(NS).fill(null), cur: 1, enfocada: false };
+    const lista = () => st.sellos.map((a, s) => (a === null ? null : { s, a })).filter(Boolean);
+    let escB = null;
+    const escena = document.getElementById('r1-escena');
+    const MX = { izquierda: 44, derecha: 12 };
+    const LA = G.lienzo(escena, {
+      alto: altoMov(110, 124),
+      etiqueta: 'The input: three green sticks, at 0.05, 0.2 and 0.45 seconds, with heights 1, 0.5 and minus 0.8. In the corner, the stamp: a ding that fades out in 0.15 seconds.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 10, abajo: 6 }, x: [0, DUR], y: [-1.35, 1.35], marcasX: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6], formatoX: () => '', marcasY: [-1, 0, 1], formatoY: v => num(v), cero: true, C });
+        G.tallos(ctx, esc, OBJ.map(p => p.s * DT), OBJ.map(p => p.a), { color: C.senal, radio: 5.5, C });
+        G.texto(ctx, esc.caja.x + esc.caja.w - 6, esc.caja.y + 12, 'input', { alinear: 'right', color: C.tenue, tam: 11, C });
+        const ix = esc.x(0.51), iw = esc.x(0.69) - ix, e2 = G.ejes(ctx, { caja: { x: ix, y: esc.y(1.2), w: iw, h: esc.y(-1.2) - esc.y(1.2) }, x: [0, 0.15], y: [-1.1, 1.1], soloEscala: true, C });
+        G.linea(ctx, e2, null, sello, { t0: 0, dt: 1 / FS, color: C.respuesta, ancho: 2, C });
+        G.texto(ctx, ix + iw / 2, esc.y(-1.2) + 11, 'the stamp', { alinear: 'center', color: C.tenue, tam: 10, C });
+      },
+    });
+    const LB = G.lienzo(escena, {
+      alto: altoMov(190, 220), rol: 'application',
+      etiqueta: 'The output lane, with twelve columns spaced 0.05 seconds apart: tap them to place a stamp. The target output is dashed and yours is in ink.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = escB = G.ejes(ctx, { margen: { ...MX, arriba: 10, abajo: 22 }, x: [0, DUR], y: [-1.45, 1.45], marcasX: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6], formatoX: v => num(v, 1) + (v > 0.55 ? ' s' : ''), marcasY: [-1, 0, 1], formatoY: v => num(v), cero: true, C });
+        separador(ctx, w, C);
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.eje, 0.28); ctx.lineWidth = 1; ctx.setLineDash([2, 4]);
+        ctx.beginPath();
+        for (let s = 0; s < NS; s++) { const px = Math.round(esc.x(s * DT)) + 0.5; ctx.moveTo(px, esc.caja.y); ctx.lineTo(px, esc.caja.y + esc.caja.h); }
+        ctx.stroke();
+        ctx.restore();
+        const t = Float64Array.from({ length: nOut }, (_, i) => i / FS);
+        G.linea(ctx, esc, t, objetivo, { color: C.cuerpo, guiones: [6, 5], alfa: 0.7, halo: false, ancho: 2, C });
+        const L = lista();
+        for (const p of L) {
+          const y = new Float64Array(nOut), i0 = Math.round(p.s * DT * FS);
+          for (let k = 0; k < sello.length && i0 + k < nOut; k++) y[i0 + k] = p.a * sello[k];
+          G.linea(ctx, esc, t, y, { color: C.respuesta, alfa: 0.55, halo: false, ancho: 1.5, C });
+        }
+        if (L.length) G.linea(ctx, esc, t, salida(L), { color: C.cuerpo, ancho: 2.6, C });
+        else G.texto(ctx, esc.caja.x + esc.caja.w / 2, esc.y(-1.05), 'Tap a column to place a stamp', { alinear: 'center', color: C.suave, tam: 12, fondo: G.alfa(C.pantalla, 0.85), C });
+        for (const p of L) G.puntos(ctx, esc, [p.s * DT], [p.a], { color: C.respuesta, radio: 6, borde: C.pantalla, C });
+        if (st.enfocada) {
+          const x = esc.x(st.cur * DT), a = st.sellos[st.cur];
+          ctx.save();
+          ctx.fillStyle = G.alfa(C.acento, 0.14); ctx.fillRect(x - 9, esc.caja.y, 18, esc.caja.h);
+          ctx.strokeStyle = C.acento; ctx.lineWidth = 1.5; ctx.strokeRect(Math.round(x - 9) + 0.5, esc.caja.y + 0.5, 18, esc.caja.h - 1);
+          if (a !== null) { ctx.beginPath(); ctx.arc(x, esc.y(a), 10.5, 0, TAU); ctx.stroke(); }
+          ctx.restore();
+        }
+      },
+    });
+    const fila = document.getElementById('r1-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'n', nombre: 'Stamps placed' },
+      { id: 'parecido', nombre: 'Match with the output', clase: 'respuesta' },
+    ]);
+    Curso.botones(filaBotones(fila), [{ id: 'quitar', texto: 'Remove the stamps', tipo: 'discreto', peque: true, alPulsar: () => { st.sellos.fill(null); cambio(); } }]);
+    function lecturas() {
+      const L = lista(), y = salida(L);
+      let e = 0, o = 0;
+      for (let i = 0; i < nOut; i++) { e += (y[i] - objetivo[i]) * (y[i] - objetivo[i]); o += objetivo[i] * objetivo[i]; }
+      lect.fijar('n', String(L.length));
+      lect.fijar('parecido', num(Math.max(0, 100 * (1 - Math.sqrt(e / o))), 0) + '%');
+      LB.canvas.setAttribute('aria-valuetext', L.length ? 'Stamps at ' + L.map(p => num(p.s * DT, 2) + ' s, with height ' + num(p.a, 1)).join('; ') : 'No stamps');
+    }
+    function cambio() { lecturas(); LB.dibujar(); Curso.cambio('reto-1'); }
+    // Un toque pone el sello de la columna con la altura del toque; si ya había uno y el toque cae sobre su cabeza,
+    // lo quita.
+    const poner = (s, a) => {
+      const actual = st.sellos[s];
+      if (actual !== null && Math.abs(a - actual) <= 0.2) st.sellos[s] = null;
+      else if (Math.abs(a) < 0.1) st.sellos[s] = null;
+      else st.sellos[s] = limitar(redondear(a, 0.1), -1.3, 1.3) + 0;
+      st.cur = s;
+      cambio();
+    };
+    LB.canvas.classList.add('tocable');
+    LB.canvas.addEventListener('click', ev => {
+      if (!escB) return;
+      const r = LB.canvas.getBoundingClientRect(), px = ev.clientX - r.left, py = ev.clientY - r.top;
+      if (px < escB.caja.x - 8 || px > escB.caja.x + escB.caja.w + 8) return;
+      poner(limitar(Math.round(escB.xi(px) / DT), 0, NS - 1), escB.yi(py));
+    });
+    LB.canvas.tabIndex = 0;
+    LB.canvas.addEventListener('focus', () => { st.enfocada = true; LB.dibujar(); });
+    LB.canvas.addEventListener('blur', () => { st.enfocada = false; LB.dibujar(); });
+    LB.canvas.addEventListener('keydown', ev => {
+      const k = ev.key, paso = ev.shiftKey ? 0.5 : 0.1, a = st.sellos[st.cur];
+      if (k === 'ArrowLeft') st.cur = Math.max(0, st.cur - 1);
+      else if (k === 'ArrowRight') st.cur = Math.min(NS - 1, st.cur + 1);
+      else if (k === 'ArrowUp' || k === 'ArrowDown') {
+        const v = limitar(redondear((a === null ? 0 : a) + (k === 'ArrowUp' ? paso : -paso), 0.1), -1.3, 1.3) + 0;
+        st.sellos[st.cur] = Math.abs(v) < 0.05 ? null : v;
+        cambio();
+      } else if (k === 'Delete' || k === 'Backspace') { st.sellos[st.cur] = null; cambio(); }
+      else return;
+      ev.preventDefault(); LB.dibujar();
+    });
+    lecturas();
+    Curso.reto('reto-1', {
+      titulo: 'One stamp for each stick', nivel: 'fácil',
+      comprobar: () => {
+        const L = lista();
+        if (!L.length) return { ok: false };
+        const extra = L.filter(p => !OBJ.some(o => o.s === p.s));
+        if (extra.length) return { ok: false, mensaje: 'You have a stamp where the input has no stick. Each stick, and only the sticks, stamps a stamp at its own instant.' };
+        const falta = OBJ.filter(o => !L.some(p => p.s === o.s));
+        if (falta.length) return { ok: false, mensaje: falta.length === 1 ? 'Almost: one stick of the input still has no stamp.' : 'Keep going: some sticks of the input still have no stamp.' };
+        for (const o of OBJ) {
+          const p = L.find(q => q.s === o.s);
+          if (Math.sign(p.a) !== Math.sign(o.a)) return { ok: false, mensaje: 'The stick at ' + num(o.s * DT, 2) + ' s points ' + (o.a < 0 ? 'down' : 'up') + ': its stamp has to come out ' + (o.a < 0 ? 'upside down' : 'right side up') + '.' };
+          if (Math.abs(p.a - o.a) > 0.15) return { ok: false, mensaje: 'The stamp at ' + num(o.s * DT, 2) + ' s is too ' + (Math.abs(p.a) > Math.abs(o.a) ? 'big' : 'small') + ': it has to be as tall as its stick.' };
+        }
+        return { ok: true, mensaje: 'Three sticks, three stamps: the output matches the dashed line.' };
+      },
+      resolver: () => { st.sellos.fill(null); for (const o of OBJ) st.sellos[o.s] = o.a; st.cur = 1; cambio(); },
+      pista: [
+        'Each stick of the input leaves its stamp at its own instant: the first at 0.05 s, the second at 0.2 s and the third at 0.45 s.',
+        'The size of the stamp is the height of the stick and, if the stick points down, the stamp comes out upside down. Tap at the height of each stick: 1, 0.5 and −0.8.',
+      ],
+      exito: '<p>That is convolving: each sample leaves a copy of the stamp, at its size and in its place, and the output is the sum of all of them. A voice has thousands of samples per second, so that means thousands of stamps overlapping one another.</p>',
+    });
+  })();
+  // ── Reto 2 · Adivina la sala (escuchar y elegir) ────────────────────────────────────────────────────────
+  // Tres respuestas al impulso sintéticas (Senal.ejemplos.respuestaSala con T60 de 0,3, 1,2 y 6 s) y la misma palmada
+  // convolucionada con cada una. Los sonidos A, B y C salen de las salas en un orden que cambia en cada visita.
+  (function () {
+    const FS = 16000;
+    const SALAS = [{ id: 'salon', texto: 'Living room', t60: 0.3 }, { id: 'bano', texto: 'Bathroom', t60: 1.2 }, { id: 'catedral', texto: 'Cathedral', t60: 6 }];
+    const irs = [null, null, null], sonidos = [null, null, null];
+    const ir = i => irs[i] || (irs[i] = Senal.ejemplos.respuestaSala(FS, { t60: SALAS[i].t60 }));
+    let clap = null;
+    const palmada = () => {
+      if (!clap) { const az = Senal.azar(3), n = Math.round(0.08 * FS); clap = new Float64Array(n); for (let i = 0; i < n; i++) clap[i] = az.normal() * Math.exp(-i / (0.004 * FS)); }
+      return clap;
+    };
+    const sonido = i => {
+      if (!sonidos[i]) { const y = Senal.convolucion(palmada(), ir(i)), k = 0.8 / (pico(y) || 1); sonidos[i] = Float64Array.from(y, v => v * k); }
+      return sonidos[i];
+    };
+    const perm = Curso.azar().barajar([0, 1, 2]);
+    const resp = [null, null, null];
+    const LA = G.lienzo('#r2-escena', {
+      alto: altoMov(250, 280),
+      etiqueta: 'The impulse responses of three rooms, on the same time axis from zero to six and a half seconds: the living room fades out quickly, the bathroom takes longer and the cathedral lasts several seconds',
+      dibujar: (ctx, w, h, C) => {
+        const fila = (h - 8) / 3;
+        SALAS.forEach((s, r) => {
+          const ultima = r === 2, caja = { x: 14, y: 6 + r * fila, w: w - 28, h: fila - (ultima ? 22 : 12) };
+          const esc = G.ejes(ctx, { caja, x: [0, 6.6], y: [-1.1, 1.1], marcasY: false, marcasX: ultima ? [0, 1, 2, 3, 4, 5, 6] : [0, 1, 2, 3, 4, 5, 6], formatoX: ultima ? v => num(v) + ' s' : () => '', rejilla: false, cero: true, C });
+          G.linea(ctx, esc, null, ir(r), { t0: 0, dt: 1 / FS, color: C.respuesta, ancho: 1.1, halo: false, C });
+          G.texto(ctx, esc.caja.x + esc.caja.w - 4, esc.caja.y + 12, s.texto, { alinear: 'right', color: C.suave, tam: 11, peso: 600, C });
+        });
+      },
+    });
+    const fila = document.getElementById('r2-fila');
+    ['A', 'B', 'C'].forEach((letra, k) => Curso.audio.boton(fila, () => ({ x: sonido(perm[k]), fs: FS, volumen: 0.8 }), 'Sound ' + letra));
+    const mandos = document.getElementById('r2-mandos');
+    const elecciones = ['A', 'B', 'C'].map((letra, k) => Curso.eleccion(mandos, {
+      etiqueta: 'Sound ' + letra + ' was recorded in…', opciones: SALAS.map(s => ({ valor: s.id, texto: s.texto })), valor: '', reto: 'reto-2',
+      alCambiar: v => { resp[k] = v; },
+    }));
+    Curso.reto('reto-2', {
+      titulo: 'Guess the room', nivel: 'fácil',
+      comprobar: () => {
+        if (resp.some(v => !v)) return { ok: false };
+        const bien = resp.filter((v, k) => v === SALAS[perm[k]].id).length;
+        if (bien === 3) return { ok: true, mensaje: 'All three right: the longer the tail takes to fade, the more reverberant the room.' };
+        return { ok: false, mensaje: 'You got ' + bien + ' of 3. Listen again and compare how long each sound takes to fade with the tails in the drawings.' };
+      },
+      resolver: () => elecciones.forEach((e, k) => e.fijar(SALAS[perm[k]].id)),
+      pista: [
+        'Look at how long each drawing takes to fade: that is what you hear as a tail behind the clap.',
+        'The cathedral is the one that keeps sounding when the others have already gone quiet, and the living room is the one that leaves almost no tail.',
+      ],
+      exito: '<p>The fingerprint of a room is in its impulse response: how long it takes to fade and how. With it you can put any sound inside that room, which is exactly what studios do with a cathedral.</p>',
+    });
+  })();
+
+  // ── Reto 3 · El eco de la montaña (arrastrar sobre el lienzo, en dos dimensiones) ───────────────────────
+  // El sello tiene dos palitos: el sonido directo (1, en el instante cero) y un eco que se arrastra: a la derecha,
+  // más retraso; hacia arriba, más fuerza. La salida es Senal.convolucion de una sílaba sintética con ese sello.
+  (function () {
+    const FS = 8000, T_MAX = 0.6, D_OBJ = 0.3, G_OBJ = 0.5;
+    const silaba = (() => {
+      const v = Senal.ejemplos.vocal(FS, { vocal: 'a', f0: 140, dur: 0.14 }), n = v.length, y = new Float64Array(n);
+      for (let i = 0; i < n; i++) y[i] = v[i] * Math.pow(Math.sin(Math.PI * (i + 0.5) / n), 2);
+      const k = 0.8 / (pico(y) || 1);
+      return y.map(a => a * k);
+    })();
+    const salidaDe = (d, g) => {
+      const nd = Math.round(d * FS), h = new Float64Array(nd + 1);
+      h[0] = 1; h[nd] += g;
+      return Senal.convolucion(silaba, h);
+    };
+    const objetivo = salidaDe(D_OBJ, G_OBJ);
+    const st = { d: 0.12, g: 0.8, enfocada: false };
+    let esc3 = null;
+    const MX = { izquierda: 44, derecha: 14 };
+    const escena = document.getElementById('r3-escena');
+    const LA = G.lienzo(escena, {
+      alto: altoMov(136, 150), rol: 'application',
+      etiqueta: 'The two-stick stamp: the direct sound, at instant zero, and the echo, an orange stick with a head that you drag right or left to change the delay and up or down to change the strength',
+      dibujar: (ctx, w, h, C) => {
+        const esc = esc3 = G.ejes(ctx, { margen: { ...MX, arriba: 12, abajo: 22 }, x: [-0.03, T_MAX + 0.04], y: [-0.08, 1.3], marcasX: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6], formatoX: v => num(v, 1) + (v > 0.55 ? ' s' : ''), marcasY: [0, 0.5, 1], formatoY: v => num(v, 1), cero: true, C });
+        G.tallos(ctx, esc, [0], [1], { color: C.respuesta, radio: 5, C });
+        G.texto(ctx, esc.x(0) + 9, esc.y(1) + 4, 'direct', { color: C.tenue, tam: 10, C });
+        G.tallos(ctx, esc, [st.d], [st.g], { color: C.respuesta, radio: 8, C });
+        if (st.enfocada) { ctx.save(); ctx.strokeStyle = C.acento; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(esc.x(st.d), esc.y(st.g), 13, 0, TAU); ctx.stroke(); ctx.restore(); }
+        G.texto(ctx, Math.min(esc.x(st.d) + 12, esc.caja.x + esc.caja.w - 4), Math.max(esc.y(st.g) - 6, esc.caja.y + 11), 'echo', { alinear: esc.x(st.d) + 40 > esc.caja.x + esc.caja.w ? 'right' : 'left', color: C.suave, tam: 11, peso: 600, C });
+      },
+    });
+    const LB = G.lienzo(escena, {
+      alto: altoMov(150, 175),
+      etiqueta: 'The syllable with your echo, in ink, against the syllable with the echo you have to get, dashed',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 8, abajo: 22 }, x: [-0.03, T_MAX + 0.04], y: [-1.3, 1.3], marcasX: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6], formatoX: v => num(v, 1) + (v > 0.55 ? ' s' : ''), marcasY: false, cero: true, C });
+        separador(ctx, w, C);
+        G.linea(ctx, esc, null, objetivo, { t0: 0, dt: 1 / FS, color: C.cuerpo, guiones: [5, 4], alfa: 0.65, halo: false, ancho: 1.6, C });
+        G.linea(ctx, esc, null, salidaDe(st.d, st.g), { t0: 0, dt: 1 / FS, color: C.cuerpo, ancho: 1.9, C });
+        G.texto(ctx, esc.caja.x + 6, esc.caja.y + 12, 'output', { color: C.tenue, tam: 11, C });
+      },
+    });
+    const fila = document.getElementById('r3-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'd', nombre: 'Echo delay', clase: 'respuesta' },
+      { id: 'g', nombre: 'Echo strength', clase: 'respuesta' },
+    ]);
+    const botones = filaBotones(fila);
+    const sonido = tuyo => { const y = tuyo ? salidaDe(st.d, st.g) : objetivo, k = 0.8 / Math.max(pico(objetivo), pico(salidaDe(st.d, st.g)), 1e-9); return { x: Float64Array.from(y, v => v * k), fs: FS, volumen: 1, normalizar: false }; };
+    Curso.audio.boton(botones, () => sonido(false), 'Hear the target', { clase: 'peque' });
+    Curso.audio.boton(botones, () => sonido(true), 'Hear yours', { clase: 'peque' });
+    function lecturas() {
+      lect.fijar('d', num(st.d * 1000, 0) + ' ms');
+      lect.fijar('g', num(st.g, 2));
+      LA.canvas.setAttribute('aria-valuetext', 'Echo with a delay of ' + num(st.d * 1000, 0) + ' milliseconds and a strength of ' + num(st.g, 2));
+    }
+    const poner = (d, g, avisar = true) => {
+      st.d = limitar(redondear(d, 0.01), 0.01, T_MAX) + 0; st.g = limitar(redondear(g, 0.05), 0, 1) + 0;
+      lecturas(); LA.dibujar(); LB.dibujar();
+      if (avisar) Curso.cambio('reto-3');
+    };
+    Curso.arrastre(LA, {
+      eje: 'ambos',
+      alBajar: p => { if (!esc3) return false; poner(esc3.xi(p.x), esc3.yi(p.y)); },
+      alMover: p => poner(esc3.xi(p.x), esc3.yi(p.y)),
+    });
+    LA.canvas.tabIndex = 0;
+    LA.canvas.addEventListener('focus', () => { st.enfocada = true; LA.dibujar(); });
+    LA.canvas.addEventListener('blur', () => { st.enfocada = false; LA.dibujar(); });
+    LA.canvas.addEventListener('keydown', ev => {
+      const k = ev.key;
+      if (k === 'ArrowLeft') poner(st.d - 0.01, st.g);
+      else if (k === 'ArrowRight') poner(st.d + 0.01, st.g);
+      else if (k === 'ArrowUp') poner(st.d, st.g + 0.05);
+      else if (k === 'ArrowDown') poner(st.d, st.g - 0.05);
+      else return;
+      ev.preventDefault();
+    });
+    lecturas();
+    Curso.reto('reto-3', {
+      titulo: 'The mountain echo', nivel: 'medio',
+      comprobar: () => {
+        const ed = st.d - D_OBJ, eg = st.g - G_OBJ;
+        if (Math.abs(ed) <= 0.011 && Math.abs(eg) <= 0.051) return { ok: true, mensaje: 'Your echo arrives at ' + num(st.d * 1000, 0) + ' ms with strength ' + num(st.g, 2) + ': the output matches the dashed line.' };
+        if (Math.abs(ed) > 0.011) return { ok: false, mensaje: 'The copy in your output arrives ' + (ed > 0 ? 'too late' : 'too early') + ': look at where the copy in the dashed line starts.' };
+        return { ok: false, mensaje: 'The copy arrives on time, but your echo sounds ' + (eg > 0 ? 'too loud' : 'too faint') + ' compared with the dashed line.' };
+      },
+      resolver: () => poner(D_OBJ, G_OBJ),
+      pista: [
+        'In the dashed output, measure how long the copy of the syllable takes to arrive: that is the delay of the echo.',
+        'The copy is half the size of the original, so the head of the orange stick goes at half height.',
+      ],
+      exito: '<p>An echo is the simplest stamp: two sticks. Convolving with it adds your voice to a fainter, later copy. A room is the same with thousands of sticks, and a moving average, with many equal sticks packed together.</p>',
+    });
+  })();
+
+  // ── Reto 4 · La media móvil es un sello (arrastrar el borde del sello) ──────────────────────────────────
+  // Un escalón de altura 1 enterrado en ruido (σ = 0,5), 160 muestras. El sello es un rectángulo de N muestras de
+  // altura 1/N: la media móvil centrada (Senal.mediaMovil). Se arrastra su borde derecho. El ruido baja a 1/√N y
+  // el escalón tarda N muestras en subir.
+  (function () {
+    const NN = 160, ESC = 70, NMAX = 40, MX = { izquierda: 44, derecha: 14 };
+    const az = Senal.azar(4);
+    const limpia = Float64Array.from({ length: NN }, (_, i) => (i >= ESC ? 1 : 0));
+    const ruidosa = Float64Array.from(limpia, v => v + 0.5 * az.normal());
+    const st = { N: 1, enfocada: false };
+    const idx = Float64Array.from({ length: NN }, (_, i) => i);
+    let escB = null;
+    const salida = () => Senal.mediaMovil(ruidosa, st.N, { centrada: true });
+    const escena = document.getElementById('r4-escena');
+    const LA = G.lienzo(escena, {
+      alto: altoMov(170, 200),
+      etiqueta: 'A step buried in noise: the measurement, in green; the clean step, dashed; and the output of the moving average, in ink',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 10, abajo: 22 }, x: [0, NN], y: [-1.5, 2.5], marcasX: [0, 40, 80, 120, 160], formatoX: v => num(v), marcasY: [0, 1, 2], formatoY: v => num(v), cero: true, C });
+        G.linea(ctx, esc, idx, ruidosa, { color: C.senal, ancho: 1.2, alfa: 0.75, halo: false, C });
+        G.linea(ctx, esc, idx, limpia, { color: C.cuerpo, guiones: [5, 4], alfa: 0.6, halo: false, ancho: 1.5, C });
+        G.linea(ctx, esc, idx, salida(), { color: C.cuerpo, ancho: 2.5, C });
+        G.texto(ctx, esc.caja.x + 6, esc.caja.y + 12, 'green: measurement · ink: output', { color: C.tenue, tam: 10, C });
+      },
+    });
+    const LB = G.lienzo(escena, {
+      alto: altoMov(96, 110), rol: 'slider',
+      etiqueta: 'The stamp of the moving average: an orange rectangle of N samples whose right edge you drag',
+      dibujar: (ctx, w, h, C) => {
+        const esc = escB = G.ejes(ctx, { margen: { ...MX, arriba: 10, abajo: 22 }, x: [-1, NMAX + 3], y: [0, 1.45], marcasX: [0, 10, 20, 30, 40], formatoX: v => num(v), marcasY: false, cero: true, C });
+        separador(ctx, w, C);
+        const x0 = esc.x(-0.5), x1 = esc.x(st.N - 0.5), y1 = esc.y(1), y0 = esc.y(0);
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.respuesta, 0.3); ctx.fillRect(x0, y1, x1 - x0, y0 - y1);
+        ctx.strokeStyle = C.respuesta; ctx.lineWidth = 2; ctx.strokeRect(x0 + 0.5, y1 + 0.5, x1 - x0 - 1, y0 - y1 - 1);
+        ctx.restore();
+        G.puntos(ctx, esc, [st.N - 0.5], [0.5], { color: C.respuesta, radio: 8, borde: C.pantalla, C });
+        if (st.enfocada) { ctx.save(); ctx.strokeStyle = C.acento; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(esc.x(st.N - 0.5), esc.y(0.5), 13, 0, TAU); ctx.stroke(); ctx.restore(); }
+        G.texto(ctx, Math.min(x1 + 14, esc.caja.x + esc.caja.w - 4), esc.y(1.12), 'stamp of ' + st.N + (st.N === 1 ? ' sample' : ' samples') + ', each one worth 1/' + st.N, { alinear: x1 + 14 + 230 > esc.caja.x + esc.caja.w ? 'right' : 'left', color: C.suave, tam: 11, C });
+      },
+    });
+    const fila = document.getElementById('r4-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'ruido', nombre: 'Noise divided by', clase: 'respuesta' },
+      { id: 'subida', nombre: 'The step takes to rise', clase: 'respuesta' },
+    ]);
+    function lecturas() {
+      lect.fijar('ruido', num(Math.sqrt(st.N), 1));
+      lect.fijar('subida', st.N === 1 ? 'one sample' : num(st.N) + ' samples');
+      LB.canvas.setAttribute('aria-valuenow', String(st.N));
+      LB.canvas.setAttribute('aria-valuetext', 'Stamp of ' + st.N + ' samples: the noise drops by a factor of ' + num(Math.sqrt(st.N), 1) + ' and the step takes ' + st.N + ' samples to rise');
+    }
+    const poner = (n, avisar = true) => { st.N = limitar(Math.round(n), 1, NMAX); lecturas(); LA.dibujar(); LB.dibujar(); if (avisar) Curso.cambio('reto-4'); };
+    Curso.arrastre(LB, { eje: 'x', alBajar: p => { if (!escB) return false; poner(escB.xi(p.x) + 0.5); }, alMover: p => poner(escB.xi(p.x) + 0.5) });
+    LB.canvas.tabIndex = 0;
+    LB.canvas.setAttribute('aria-valuemin', '1');
+    LB.canvas.setAttribute('aria-valuemax', String(NMAX));
+    LB.canvas.addEventListener('focus', () => { st.enfocada = true; LB.dibujar(); });
+    LB.canvas.addEventListener('blur', () => { st.enfocada = false; LB.dibujar(); });
+    LB.canvas.addEventListener('keydown', ev => {
+      const k = ev.key;
+      if (k === 'ArrowLeft' || k === 'ArrowDown') poner(st.N - (ev.shiftKey ? 5 : 1));
+      else if (k === 'ArrowRight' || k === 'ArrowUp') poner(st.N + (ev.shiftKey ? 5 : 1));
+      else return;
+      ev.preventDefault();
+    });
+    lecturas();
+    Curso.reto('reto-4', {
+      titulo: 'The moving average is a stamp', nivel: 'medio',
+      comprobar: () => {
+        const r = Math.sqrt(st.N);
+        if (r >= 3 && st.N <= 20) return { ok: true, mensaje: 'With ' + st.N + ' samples the noise drops by a factor of ' + num(r, 1) + ' and the step takes ' + st.N + ' samples to rise.' };
+        if (st.N === 1) return { ok: false };
+        if (r < 3) return { ok: false, mensaje: 'So far the noise only drops by a factor of ' + num(r, 1) + ': you need to average more samples, that is, a longer stamp.' };
+        return { ok: false, mensaje: 'The noise already drops, but the step takes ' + st.N + ' samples to rise: you have gone past 20.' };
+      },
+      resolver: () => poner(12),
+      pista: [
+        'The noise drops with the square root of the number of samples you average.',
+        'To divide the noise by 3 you need to average at least 9 samples, and for the step to take no more than 20 to rise, no more than 20.',
+      ],
+      exito: '<p>The moving average is a convolution with a flat stamp. The longer the stamp, the less noise, but the more the jumps get smeared: the step takes as many samples to rise as the stamp is long. You always have to choose between cleaning up and keeping the jumps.</p>',
+    });
+  })();
+
+  // ── Reto 5 · Desenfoca la foto (elegir la forma y fijar el tamaño del sello) ────────────────────────────
+  // Una ciudad nocturna sintética de 128 × 80 píxeles, dibujada con números y desenfocada con un disco de radio 4
+  // (Senal.convolucion2). Hay que encontrar la forma y el tamaño del sello que da la foto borrosa.
+  (function () {
+    const W = 128, H = 80, R_OBJ = 4, RMAX = 10;
+    const FORMAS = [{ valor: 'disco', texto: 'Disk' }, { valor: 'cuadrado', texto: 'Square' }, { valor: 'gauss', texto: 'Soft blotch' }, { valor: 'raya', texto: 'Horizontal streak' }];
+    const st = { forma: 'disco', r: 1.5 };
+    let datos = null;
+    function ciudad() {
+      const img = new Float64Array(W * H), az = Senal.azar(7);
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) img[y * W + x] = 0.14 + 0.16 * (y / H);
+      for (let k = 0; k < 16; k++) img[az.entero(1, 40) * W + az.entero(2, W - 3)] = 1;
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const d = Math.hypot(x - 104, y - 16); if (d <= 6) img[y * W + x] = 0.85; }
+      let x0 = 0;
+      while (x0 < W) {
+        const ancho = az.entero(14, 22), alto = az.entero(22, 50), x1 = Math.min(W, x0 + ancho);
+        for (let y = H - alto; y < H; y++) for (let x = x0; x < x1 - 1; x++) img[y * W + x] = 0.03;
+        for (let y = H - alto + 3; y < H - 2; y += 4) for (let x = x0 + 2; x < x1 - 3; x += 4) if (az.real() < 0.55) img[y * W + x] = 0.95;
+        x0 = x1;
+      }
+      return img;
+    }
+    function nucleo(forma, r) {
+      if (r < 0.25) return { k: Float64Array.of(1), kw: 1, kh: 1 };
+      const R = forma === 'gauss' ? Math.ceil(1.5 * r) : Math.ceil(r), kw = 2 * R + 1, kh = forma === 'raya' ? 1 : kw, k = new Float64Array(kw * kh);
+      let s = 0;
+      for (let j = 0; j < kh; j++) for (let i = 0; i < kw; i++) {
+        const dx = i - R, dy = forma === 'raya' ? 0 : j - R, d = Math.hypot(dx, dy);
+        let v;
+        if (forma === 'disco') v = limitar(r + 0.5 - d, 0, 1);
+        else if (forma === 'cuadrado') v = limitar(r + 0.5 - Math.abs(dx), 0, 1) * limitar(r + 0.5 - Math.abs(dy), 0, 1);
+        else if (forma === 'gauss') v = Math.exp(-d * d / (2 * (r / 2) * (r / 2)));
+        else v = limitar(r + 0.5 - Math.abs(dx), 0, 1);
+        k[j * kw + i] = v; s += v;
+      }
+      for (let i = 0; i < k.length; i++) k[i] /= s;
+      return { k, kw, kh };
+    }
+    const desenfocar = (img, forma, r) => { const n = nucleo(forma, r); return Senal.convolucion2(img, W, H, n.k, n.kw, n.kh, { borde: 'repetir' }); };
+    function preparar() { if (!datos) { const nitida = ciudad(); datos = { nitida, objetivo: desenfocar(nitida, 'disco', R_OBJ), mia: null, clave: '' }; } return datos; }
+    const tuya = () => { const d = preparar(), c = st.forma + '|' + st.r; if (d.clave !== c) { d.mia = desenfocar(d.nitida, st.forma, st.r); d.clave = c; } return d.mia; };
+    const diferencia = () => {
+      const d = preparar(), m = tuya();
+      let e = 0, mn = Infinity, mx = -Infinity;
+      for (let i = 0; i < m.length; i++) { e += (m[i] - d.objetivo[i]) * (m[i] - d.objetivo[i]); mn = Math.min(mn, d.objetivo[i]); mx = Math.max(mx, d.objetivo[i]); }
+      return 100 * Math.sqrt(e / m.length) / (mx - mn);
+    };
+    // Una imagen en gris dibujada en un lienzo auxiliar y ampliada sin suavizar, para que se vean los píxeles.
+    const auxiliar = document.createElement('canvas');
+    auxiliar.width = W; auxiliar.height = H;
+    const pintar = (ctx, img, x, y, w, h) => {
+      const a = auxiliar.getContext('2d'), im = a.createImageData(W, H);
+      for (let i = 0; i < W * H; i++) { const v = Math.round(255 * Math.pow(limitar(img[i], 0, 1), 0.8)); im.data[4 * i] = v; im.data[4 * i + 1] = v; im.data[4 * i + 2] = Math.min(255, v + 6); im.data[4 * i + 3] = 255; }
+      a.putImageData(im, 0, 0);
+      ctx.save(); ctx.imageSmoothingEnabled = false; ctx.drawImage(auxiliar, x, y, w, h); ctx.restore();
+    };
+    const disposicion = w => { const cols = w >= 720 ? 4 : 2, hueco = 12, cw = Math.floor((w - hueco * (cols + 1)) / cols), ch = Math.round(cw * H / W); return { cols, hueco, cw, ch, filas: 4 / cols, alto: (4 / cols) * (ch + 26) + 6 }; };
+    const L = G.lienzo('#r5-escena', {
+      alto: w => disposicion(w).alto,
+      etiqueta: 'Four images: the sharp photo of a city at night, the blurry photo you have to get, the photo your stamp gives, and your stamp, enlarged',
+      dibujar: (ctx, w, h, C) => {
+        const d = preparar(), m = tuya(), g = disposicion(w);
+        const celdas = [['sharp photo', d.nitida], ['blurry photo (target)', d.objetivo], ['yours', m], ['your stamp, enlarged', null]];
+        celdas.forEach(([rotulo, img], i) => {
+          const col = i % g.cols, fila = Math.floor(i / g.cols), x = g.hueco + col * (g.cw + g.hueco), y = 4 + fila * (g.ch + 26);
+          G.texto(ctx, x, y + 11, rotulo, { color: C.suave, tam: 11, C });
+          if (img) pintar(ctx, img, x, y + 16, g.cw, g.ch);
+          else {
+            ctx.save();
+            ctx.fillStyle = C.superficie2 || G.alfa(C.cuerpo, 0.08); ctx.fillRect(x, y + 16, g.cw, g.ch);
+            const n = nucleo(st.forma, st.r);
+            let mx = 0;
+            for (const v of n.k) if (v > mx) mx = v;
+            const px = Math.max(1, Math.floor(Math.min((g.cw - 8) / n.kw, (g.ch - 8) / Math.max(1, n.kh)))), ox = x + (g.cw - px * n.kw) / 2, oy = y + 16 + (g.ch - px * n.kh) / 2;
+            for (let j = 0; j < n.kh; j++) for (let k = 0; k < n.kw; k++) { const v = n.k[j * n.kw + k] / mx; if (v > 0.02) { ctx.fillStyle = G.alfa(C.respuesta, Math.min(1, v)); ctx.fillRect(Math.round(ox + k * px), Math.round(oy + j * px), px, px); } }
+            ctx.restore();
+          }
+        });
+      },
+    });
+    const mandos = document.getElementById('r5-mandos');
+    const eleccion = Curso.eleccion(mandos, { etiqueta: 'Stamp shape', opciones: FORMAS, valor: st.forma, reto: 'reto-5', alCambiar: v => { st.forma = v; actualizar(); } });
+    const tam = Curso.mando(mandos, { etiqueta: 'Stamp size', clase: 'respuesta', min: 0, max: RMAX, paso: 0.5, valor: st.r, formato: v => 'radius of ' + num(v, 1) + ' pixels', reto: 'reto-5', alCambiar: v => { st.r = v; actualizar(); } });
+    eleccion.el.style.gridColumn = '1 / -1';
+    const lect = Curso.lecturas(document.getElementById('r5-fila'), [
+      { id: 'dif', nombre: 'Difference from the blurry photo', clase: 'respuesta' },
+    ]);
+    function actualizar() { lect.fijar('dif', num(diferencia(), 1) + '%'); L.dibujar(); }
+    Curso.alVerse(L.canvas, () => { preparar(); actualizar(); });
+    Curso.reto('reto-5', {
+      titulo: 'Blur the photo', nivel: 'medio',
+      comprobar: () => {
+        preparar();
+        if (st.forma === 'disco' && Math.abs(st.r - R_OBJ) <= 0.5) return { ok: true, mensaje: 'A disk with a radius of about ' + num(st.r, 1) + ' pixels: that is the shape of a lens blur, and the difference from the blurry photo is only ' + num(diferencia(), 1) + '%.' };
+        if (st.r < 0.5) return { ok: false };
+        if (st.forma !== 'disco') return { ok: false, mensaje: 'Compare a lit window in your photo with the same one in the blurry photo: does the shape of the blotch look like the one your stamp leaves?' };
+        return { ok: false, mensaje: 'The shape is the right one, but your blotch is too ' + (st.r > R_OBJ ? 'big' : 'small') + ': compare the size of the windows with those in the blurry photo.' };
+      },
+      resolver: () => { eleccion.fijar('disco'); tam.fijar(R_OBJ); },
+      pista: [
+        'Look at a single window or star in the blurry photo: every point of light in the sharp photo has turned into a blotch, and that blotch is the stamp.',
+        'The blotches have hard edges and are round, like the blur of a lens. Try a radius of about 4 pixels.',
+      ],
+      exito: '<p>An out-of-focus lens turns every point into a disk, a shaken camera turns it into a streak, and hot air turns it into a soft blotch. The blurry photo is the sum of all those stamps of light, just as the output of a room is the sum of all the tails. And that is why people can try to peel them off, as they did with Hubble, although only halfway.</p>',
+    });
+  })();
+
+  // ── Reto 6 · Sumar sellos es multiplicar espectros (dos deslizadores) ───────────────────────────────────
+  // Un sello de dos palitos, [1, g en D muestras], a 16.000 Hz. Su respuesta en frecuencia (Senal.respuesta) es un
+  // peine: hay que apagar un pitido de 1.000 Hz y dejar pasar una nota de 2.000 Hz.
+  (function () {
+    const FS = 16000, F_PITIDO = 1000, F_NOTA = 2000, DMAX = 3, SUELO = -45;
+    const st = { d: 1, g: 0.5 };
+    const nd = () => Math.round(st.d * FS / 1000);
+    const sello = () => { const n = nd(), b = new Float64Array(n + 1); b[0] = 1; b[n] += st.g; return b; };
+    const FR = Float64Array.from({ length: 321 }, (_, i) => i * 12.5);
+    const ganancias = () => Senal.respuesta({ b: sello(), a: [1] }, FS, [F_PITIDO, F_NOTA]).magDb;
+    const MX = { izquierda: 44, derecha: 14 };
+    const escena = document.getElementById('r6-escena');
+    const LA = G.lienzo(escena, {
+      alto: altoMov(104, 118),
+      etiqueta: 'The two-stick stamp: the direct sound and the echo, in orange, with the delay in milliseconds',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 10, abajo: 22 }, x: [-0.15, DMAX + 0.3], y: [-0.08, 1.35], marcasX: [0, 0.5, 1, 1.5, 2, 2.5, 3], formatoX: v => num(v, 1) + (v === 3 ? ' ms' : ''), marcasY: [0, 0.5, 1], formatoY: v => num(v, 1), cero: true, C });
+        G.tallos(ctx, esc, [0, nd() / FS * 1000], [1, st.g], { color: C.respuesta, radio: 5.5, C });
+        G.texto(ctx, esc.caja.x + esc.caja.w - 6, esc.caja.y + 12, 'stamp (milliseconds)', { alinear: 'right', color: C.tenue, tam: 11, C });
+      },
+    });
+    const LB = G.lienzo(escena, {
+      alto: altoMov(170, 195),
+      etiqueta: 'The frequency response of the stamp, from zero to four thousand hertz, with the 1,000 Hz whistle in coral and the 2,000 Hz note in green',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 22, abajo: 22 }, x: [0, 4000], y: [SUELO, 9], marcasX: [0, 1000, 2000, 3000, 4000], formatoX: fHz, marcasY: [-40, -20, 0], formatoY: v => num(v), etiquetaY: 'stamp response (dB)', cero: true, C });
+        separador(ctx, w, C);
+        const r = Senal.respuesta({ b: sello(), a: [1] }, FS, FR).magDb;
+        G.linea(ctx, esc, FR, Float64Array.from(r, v => Math.max(v, SUELO - 5)), { color: C.respuesta, ancho: 2.5, C });
+        const [gp, gn] = ganancias();
+        G.puntos(ctx, esc, [F_PITIDO], [Math.max(gp, SUELO + 1)], { color: C.ruido, radio: 6, borde: C.pantalla, C });
+        G.puntos(ctx, esc, [F_NOTA], [Math.max(gn, SUELO + 1)], { color: C.senal, radio: 6, borde: C.pantalla, C });
+        G.texto(ctx, esc.x(F_PITIDO) - 9, Math.min(esc.y(gp) - 10, esc.caja.y + esc.caja.h - 18), 'whistle', { alinear: 'right', color: C.ruido, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+        G.texto(ctx, esc.x(F_NOTA) + 9, Math.min(esc.y(gn) - 10, esc.caja.y + esc.caja.h - 18), 'note', { color: C.senal, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+      },
+    });
+    const mandos = document.getElementById('r6-mandos');
+    const mD = Curso.mando(mandos, { etiqueta: 'Echo delay', clase: 'respuesta', min: 0, max: DMAX, paso: 1000 / FS, valor: st.d, formato: v => num(v, 2) + ' ms', reto: 'reto-6', alCambiar: v => { st.d = v; cambio(); } });
+    const mG = Curso.mando(mandos, { etiqueta: 'Echo strength', clase: 'respuesta', min: 0, max: 1, paso: 0.01, valor: st.g, formato: v => num(v, 2), reto: 'reto-6', alCambiar: v => { st.g = v; cambio(); } });
+    const fila = document.getElementById('r6-fila');
+    const lect = Curso.lecturas(fila, [
+      { id: 'p', nombre: '1,000 Hz whistle', clase: 'ruido' },
+      { id: 'n', nombre: '2,000 Hz note', clase: 'senal' },
+    ]);
+    const botones = filaBotones(fila);
+    const tonos = () => { const x = new Float64Array(Math.round(1.4 * FS)); for (let i = 0; i < x.length; i++) x[i] = 0.3 * Math.sin(TAU * F_PITIDO * i / FS) + 0.3 * Math.sin(TAU * F_NOTA * i / FS); return x; };
+    Curso.audio.boton(botones, () => ({ x: tonos(), fs: FS, volumen: 0.6, normalizar: false }), 'Hear the whistle and the note', { clase: 'peque' });
+    Curso.audio.boton(botones, () => ({ x: Senal.convolucion(tonos(), sello()).subarray(0, Math.round(1.4 * FS)), fs: FS, volumen: 0.6, normalizar: false }), 'Hear with your stamp', { clase: 'peque' });
+    const dbTxt = v => (v < SUELO ? 'below −45 dB' : (v > 0.05 ? '+' : '') + num(v, 1) + ' dB');
+    function cambio() {
+      const [gp, gn] = ganancias();
+      lect.fijar('p', dbTxt(gp));
+      lect.fijar('n', dbTxt(gn));
+      LA.dibujar(); LB.dibujar();
+    }
+    cambio();
+    Curso.reto('reto-6', {
+      titulo: 'Adding stamps is multiplying spectra', nivel: 'difícil',
+      comprobar: () => {
+        const [gp, gn] = ganancias();
+        if (gp <= -30 && gn >= -1) return { ok: true, mensaje: 'The whistle drops to ' + dbTxt(gp) + ' and the note stays at ' + dbTxt(gn) + ': your stamp silences one frequency and lets the other through.' };
+        if (st.d === 0) return { ok: false, mensaje: 'With the echo stuck to the direct sound there is no delay: the two copies add up at every frequency. Pull the echo apart.' };
+        if (gp > -30 && st.g < 0.9) return { ok: false, mensaje: 'To cancel a frequency, the copy has to be worth almost the same as the original, so that when they add up in antiphase they subtract. Raise the strength of the echo.' };
+        if (gp > -30) return { ok: false, mensaje: 'The whistle is still at ' + dbTxt(gp) + '. Look for a delay at which the copy arrives exactly half a turn from the whistle: that way it goes up when the original goes down.' };
+        return { ok: false, mensaje: 'You have silenced the whistle, but the 2,000 Hz note also drops (' + dbTxt(gn) + '). Try another delay that silences the whistle without silencing the note.' };
+      },
+      resolver: () => { mD.fijar(0.5); mG.fijar(1); },
+      pista: [
+        'A 1,000 Hz whistle makes one turn every millisecond. If the copy arrives half a turn later, the copy goes the opposite way from the original and the two cancel.',
+        'Half a turn of 1,000 Hz is 0.5 ms. With that delay and the strength at maximum, the whistle disappears, and at 2,000 Hz those 0.5 ms are one whole turn, so the note adds up with itself.',
+      ],
+      exito: '<p>A two-stick stamp is a filter: in frequency it draws a comb that reinforces some frequencies and cancels others, exactly the ones your delay leaves at half a turn. That is the convolution theorem: adding stamps in time is multiplying the spectrum by the frequency response of the stamp. And that is why a room, which is an enormous stamp, is an equalizer with delays.</p>',
+    });
+  })();
+
+
+  // ── En tu voz · tu palmada como sello ───────────────────────────────────────────────────────────────────
+  // El audio llega a 16.000 Hz. Se buscan las palmadas, se recorta el sello de la que elijas, se enseña su
+  // caída y una estimación del T60, y se convoluciona con él una frase sintética (Senal.convolucion, por FFT).
+  (function () {
+    const FS = 16000;
+    // ── Análisis puro del laboratorio: encontrar palmadas, recortar el sello y estimar el T60 ─────────────────
+    const pot2 = n => { let p = 16; while (p * 2 <= n) p *= 2; return p; };
+    // Las palmadas: picos de la envolvente (máximo de |x| cada 5 ms) a menos de 20 dB del máximo y separados al menos 0,4 s.
+    function buscarPalmadas(x, fs) {
+      const w = Math.max(1, Math.round(0.005 * fs)), nb = Math.floor(x.length / w), env = new Float64Array(nb);
+      let mx = 0;
+      for (let b = 0; b < nb; b++) { let m = 0; for (let k = b * w; k < (b + 1) * w; k++) { const a = Math.abs(x[k]); if (a > m) m = a; } env[b] = m; if (m > mx) mx = m; }
+      if (!(mx > 1e-4)) return [];
+      const med = Array.from(env).sort((a, b) => a - b)[nb >> 1];
+      if (mx < 8 * med) return [];   // sin un golpe claro sobre el ruido de fondo
+      const lista = [];
+      for (let b = 1; b < nb - 1; b++) {
+        if (env[b] < 0.1 * mx || env[b] < env[b - 1] || env[b] <= env[b + 1]) continue;
+        const t = b * w / fs, ult = lista[lista.length - 1];
+        if (ult && t - ult.t < 0.4) { if (env[b] > ult.nivel) { ult.t = t; ult.nivel = env[b]; } } else lista.push({ t, nivel: env[b] });
+      }
+      return lista.map(p => {
+        // El pico exacto, dentro de la ventana de 5 ms de su envolvente (y un poco antes)
+        let k0 = Math.max(0, Math.round(p.t * fs) - w), k1 = Math.min(x.length - 1, Math.round(p.t * fs) + 2 * w), km = k0;
+        for (let k = k0; k <= k1; k++) if (Math.abs(x[k]) > Math.abs(x[km])) km = k;
+        return { t: km / fs, i: km, nivel: Math.abs(x[km]) };
+      });
+    }
+    // Decibelios de la energía media de tramas de 20 ms que empiezan en «desde»
+    const tramasDb = (x, fs, desde, hasta) => {
+      const n = Math.max(1, Math.round(0.02 * fs)), out = [];
+      for (let i = desde; i + n <= hasta; i += n) { let s = 0; for (let k = i; k < i + n; k++) s += x[k] * x[k]; out.push(10 * Math.log10(s / n + 1e-14)); }
+      return out;
+    };
+    // El sello de una palmada: desde 2 ms antes del pico hasta que la cola se hunde en el ruido de fondo (percentil 10
+    // de las tramas, más 3 dB), a 60 dB del pico, 50 ms antes de la palmada siguiente o 2 s como mucho.
+    function recortarSello(x, fs, palmadas, k) {
+      const p = palmadas[k], ini = Math.max(0, p.i - Math.round(0.002 * fs));
+      const todas = tramasDb(x, fs, 0, x.length).sort((a, b) => a - b);
+      const suelo = (todas.length ? todas[Math.floor(0.1 * (todas.length - 1))] : -140) + 3;
+      const tope = Math.min(x.length, ini + Math.round(2 * fs), palmadas[k + 1] ? Math.round((palmadas[k + 1].t - 0.05) * fs) : x.length);
+      const n = Math.max(1, Math.round(0.02 * fs));
+      let pico = -Infinity, fin = Math.min(tope, ini + n);
+      for (let i = ini, j = 0; i + n <= tope; i += n, j++) {
+        let s = 0;
+        for (let q = i; q < i + n; q++) s += x[q] * x[q];
+        const db = 10 * Math.log10(s / n + 1e-14);
+        if (j === 0) pico = db;
+        fin = i + n;
+        if (j > 0 && (db <= suelo || db <= pico - 60)) break;
+      }
+      fin = Math.max(fin, Math.min(tope, ini + Math.round(0.05 * fs)));
+      const h = Float64Array.from(x.subarray(ini, fin));
+      const f0 = Math.floor(h.length * 0.8);
+      for (let i = f0; i < h.length; i++) h[i] *= 0.5 * (1 + Math.cos(Math.PI * (i - f0) / (h.length - f0)));
+      let m = 0;
+      for (let i = 0; i < h.length; i++) m = Math.max(m, Math.abs(h[i]));
+      if (m > 0) for (let i = 0; i < h.length; i++) h[i] /= m;
+      let saturadas = 0;
+      for (let i = Math.max(0, p.i - 8); i < Math.min(x.length, p.i + 8); i++) if (Math.abs(x[i]) >= 0.99) saturadas++;
+      return { h, duracion: h.length / fs, saturada: saturadas >= 3 };
+    }
+    // La caída de la energía (curva de Schroeder: lo que queda de energía desde cada instante hasta el final, en dB)
+    // y el T60 estimado con la pendiente entre −5 y −25 dB.
+    function caida(h, fs) {
+      const n = h.length, e = new Float64Array(n);
+      let s = 0;
+      for (let i = n - 1; i >= 0; i--) { s += h[i] * h[i]; e[i] = s; }
+      const db = Float64Array.from(e, v => 10 * Math.log10(v / (e[0] || 1) + 1e-12));
+      const cruza = nivel => { for (let i = 0; i < n; i++) if (db[i] <= nivel) return i / fs; return null; };
+      const t5 = cruza(-5), t25 = cruza(-25);
+      return { db, t60: t5 !== null && t25 !== null && t25 > t5 ? 3 * (t25 - t5) : null, t5, t25 };
+    }
+    const st = { x: null, palmadas: [], k: 0, sello: null, caida: null, frase: null, humeda: null, mezcla: 0.7, nombre: '' };
+    const frase = () => st.frase || (st.frase = Senal.ejemplos.frase(FS));
+    const lab = Curso.voz('#voz-lab', {
+      ejemplos: ['palmadas', { id: 'bano', nombre: 'Bathroom only', crear: fs => Senal.ejemplos.palmadas(fs, { sala: 'bano' }) }, { id: 'habitacion', nombre: 'Bedroom only', crear: fs => Senal.ejemplos.palmadas(fs, { sala: 'habitacion' }) }],
+      fsAnalisis: FS, fsEjemplos: FS, alCargar: cargar,
+      alDibujarVista: (ctx, esc, C) => {
+        st.palmadas.forEach((p, k) => {
+          const x = esc.x(p.t), elegida = k === st.k;
+          ctx.save();
+          ctx.strokeStyle = elegida ? C.acento : G.alfa(C.respuesta, 0.7); ctx.lineWidth = elegida ? 2 : 1.2;
+          ctx.beginPath(); ctx.moveTo(Math.round(x) + 0.5, esc.caja.y); ctx.lineTo(Math.round(x) + 0.5, esc.caja.y + esc.caja.h); ctx.stroke();
+          ctx.fillStyle = elegida ? C.acento : C.respuesta;
+          ctx.beginPath(); ctx.arc(x, esc.caja.y + 5, elegida ? 5 : 3.5, 0, TAU); ctx.fill();
+          ctx.restore();
+        });
+      },
+      alTocarVista: t => {
+        if (!st.palmadas.length) return;
+        let mejor = 0;
+        st.palmadas.forEach((p, k) => { if (Math.abs(p.t - t) < Math.abs(st.palmadas[mejor].t - t)) mejor = k; });
+        elegir(mejor);
+      },
+    });
+    const mandos = crear('div', { class: 'mandos' });
+    lab.panel.appendChild(mandos);
+    const fila = filaBotones(lab.panel);
+    Curso.botones(fila, [
+      { id: 'ant', texto: 'Previous clap', tipo: 'discreto', peque: true, alPulsar: () => elegir(st.k - 1) },
+      { id: 'sig', texto: 'Next clap', tipo: 'discreto', peque: true, alPulsar: () => elegir(st.k + 1) },
+    ]);
+    const mezcla = Curso.mando(mandos, { etiqueta: 'Phrase mix: dry or with your room', clase: 'respuesta', min: 0, max: 100, paso: 5, valor: 70, formato: v => (v === 0 ? 'dry only' : v === 100 ? 'your room only' : num(v) + '% your room'), alCambiar: v => { st.mezcla = v / 100; } });
+    const filaSonido = filaBotones(lab.panel);
+    Curso.audio.boton(filaSonido, () => (st.sello ? { x: frase(), fs: FS, volumen: 0.8 } : null), 'Hear the dry phrase', { clase: 'peque' });
+    Curso.audio.boton(filaSonido, () => (st.sello ? mezclada() : null), 'Hear the phrase in your room', { clase: 'peque' });
+    Curso.audio.boton(filaSonido, () => (st.sello ? { x: st.sello.h, fs: FS, volumen: 0.8 } : null), 'Hear your stamp', { clase: 'peque' });
+    const lect = Curso.lecturas(lab.panel, [
+      { id: 'palmada', nombre: 'Chosen clap' },
+      { id: 'dur', nombre: 'Stamp duration', clase: 'respuesta' },
+      { id: 't60', nombre: 'T60 (estimate)', clase: 'respuesta' },
+    ]);
+    const MX = { izquierda: 44, derecha: 14 };
+    const escena = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena);
+    const LA = G.lienzo(escena, {
+      alto: altoMov(120, 140),
+      etiqueta: 'The stamp cut from your clap: the waveform in orange',
+      dibujar: (ctx, w, h, C) => {
+        const s = st.sello, dur = s ? Math.max(s.duracion, 0.1) : 1;
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 10, abajo: 22 }, x: [0, dur], y: [-1.15, 1.15], marcasY: false, formatoX: v => num(v, v < 1 ? 2 : 1) + ' s', cero: true, C });
+        if (!s) { G.texto(ctx, w / 2, h / 2, 'No claps to show', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+        G.linea(ctx, esc, null, s.h, { t0: 0, dt: 1 / FS, color: C.respuesta, ancho: 1.3, C });
+        G.texto(ctx, esc.caja.x + 6, esc.caja.y + 12, 'your stamp', { color: C.tenue, tam: 11, C });
+      },
+    });
+    const escena2 = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena2);
+    const LB = G.lienzo(escena2, {
+      alto: altoMov(130, 150),
+      etiqueta: 'The energy decay of your stamp, in decibels, with the line used to estimate the reverberation time',
+      dibujar: (ctx, w, h, C) => {
+        const s = st.sello, c = st.caida, dur = s ? Math.max(s.duracion, 0.1) : 1;
+        const esc = G.ejes(ctx, { margen: { ...MX, arriba: 10, abajo: 22 }, x: [0, dur], y: [-70, 3], marcasY: [-60, -40, -20, 0], formatoY: v => num(v), formatoX: v => num(v, v < 1 ? 2 : 1) + ' s', cero: false, C });
+        separador(ctx, w, C);
+        if (!s || !c) return;
+        G.linea(ctx, esc, null, Float64Array.from(c.db, v => Math.max(v, -70)), { t0: 0, dt: 1 / FS, color: C.respuesta, ancho: 2, C });
+        if (c.t60 !== null) {
+          const pend = -20 / (c.t25 - c.t5), ta = c.t5 + 5 / pend, tb = c.t5 - 60 / pend;
+          G.linea(ctx, esc, [ta, tb], [0, -65], { color: C.cuerpo, guiones: [5, 4], alfa: 0.75, halo: false, ancho: 1.4, C });
+        }
+        G.texto(ctx, esc.caja.x + esc.caja.w - 4, esc.caja.y + 13, 'energy remaining (dB)', { alinear: 'right', color: C.tenue, tam: 10, C });
+      },
+    });
+    const nota = crear('p', { class: 'nota-reto' }, '');
+    lab.panel.appendChild(nota);
+
+    function cargar(x, fs, nombre) {
+      st.x = x; st.nombre = nombre || '';
+      st.palmadas = x.length >= FS * 0.2 ? buscarPalmadas(x, FS) : [];
+      // Por defecto, la cuarta si hay seis (la primera del baño); si no, la de en medio.
+      st.k = st.palmadas.length >= 6 ? 3 : Math.floor(st.palmadas.length / 2);
+      recortar();
+    }
+    function elegir(k) {
+      if (!st.palmadas.length) return;
+      st.k = limitar(k, 0, st.palmadas.length - 1);
+      recortar();
+    }
+    function recortar() {
+      st.humeda = null;
+      if (st.palmadas.length) {
+        st.sello = recortarSello(st.x, FS, st.palmadas, st.k);
+        st.caida = caida(st.sello.h, FS);
+      } else { st.sello = null; st.caida = null; }
+      refrescar();
+    }
+    // La frase convolucionada con el sello, con relleno hasta la longitud completa (L + M − 1).
+    function humeda() {
+      if (!st.humeda) {
+        const y = Senal.convolucion(frase(), st.sello.h), k = pico(frase()) / (pico(y) || 1);
+        st.humeda = Float64Array.from(y, v => v * k);
+      }
+      return st.humeda;
+    }
+    function mezclada() {
+      const seca = frase(), hum = humeda(), y = new Float64Array(hum.length), m = st.mezcla;
+      for (let i = 0; i < y.length; i++) y[i] = (1 - m) * (i < seca.length ? seca[i] : 0) + m * hum[i];
+      return { x: y, fs: FS, volumen: 0.8 };
+    }
+    function refrescar() {
+      const s = st.sello, c = st.caida;
+      lect.fijar('palmada', s ? (st.k + 1) + ' of ' + st.palmadas.length + ', at ' + num(st.palmadas[st.k].t, 1) + ' s' : '—');
+      lect.fijar('dur', s ? num(s.duracion, 2) + ' s' : '—');
+      lect.fijar('t60', s && c && c.t60 !== null ? 'about ' + num(c.t60, 1) + ' s' : '—');
+      let aviso = '';
+      if (!st.x) aviso = '';
+      else if (!s) aviso = 'I could not find any clear clap: I look for dry bangs that stand out from the background noise, at least 0.4 s apart. Try clapping harder and closer to the microphone, or choose the example.';
+      else if (s.saturada) aviso = 'The chosen clap is clipped, with flat peaks, and the stamp will come out harsh. Record farther from the microphone or with less force.';
+      else if (s.duracion < 0.1) aviso = 'This stamp lasts less than 0.1 s: your app may have trimmed the tail, or the room may be very dry.';
+      else if (c && c.t60 === null) aviso = 'The tail sinks into the background noise before dropping 25 dB, so I cannot estimate the T60. With another clap, or in a quieter room, it will work.';
+      else aviso = 'The stamp runs from a little before the bang until the tail sinks into the background noise. The T60 is estimated with the slope between −5 and −25 dB, and it is only an estimate: a clap is not a perfect impulse.';
+      nota.textContent = aviso;
+      lab.redibujarVista && lab.redibujarVista();
+      LA.dibujar(); LB.dibujar();
+    }
+    refrescar();
+  })();
+})();
+</script>
+</body>
+</html>

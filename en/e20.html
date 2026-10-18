@@ -1,0 +1,1599 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Following the ridge · Signals</title>
+<meta name="description" content="Lesson 20 of the visual course “Signals, from Zero to Expert”: how to go from the image of a time-frequency map to a pitch curve, why detectors get the octave wrong and how to avoid it, with six challenges and your own voice.">
+<link rel="stylesheet" href="../comun/fuentes.css">
+<link rel="stylesheet" href="../comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e20">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Level 5 · Lesson 20</p>
+    <h1>Following the ridge: from the image to the pitch curve</h1>
+    <aside class="pregunta">
+      <p>Synchrosqueezing leaves a sharp image, with one thin line for each voice or whistle, but a tuner does not want an image: it wants a number at every instant. When you ask a program for that number, it sometimes answers that a low voice is singing an octave higher or, the other way around, an octave lower, even though to you it sounds perfectly clear. How can a machine get it wrong like that, and what is done to keep it from happening?</p>
+    </aside>
+    <ul class="meta"><li>About 50 minutes</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>The idea in one picture</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>The map of a whistle, seen from above, is a landscape in which color is height. A walker with a flashlight crosses it from left to right along the ridge, and only sees what is nearby. Next to it, the relief of the instant the walker is at is drawn. With “Memoryless walker,” another one appears that starts from the highest point of the map and always follows the highest neighbor, and gets lost.</figcaption>
+    </figure>
+    <p>In <a href="e19.html">lesson 19</a>, synchrosqueezing sent each little piece of energy to the row of its real speed, and the wide bands of the spectrogram turned into thin lines. That image already contains the note at each instant, but to get it out you have to travel along it, and doing that well is like walking at night along the ridge of a mountain: the sensible thing is to follow the highest ground, and at the same time not to make impossible leaps toward the peak across the way.</p>
+    <p>Move the jump penalty and watch what happens to the walker. With no penalty, any bright burst tempts the walker and off it goes; with a moderate penalty, the walker follows the whistle and jumps over the silence; and with a huge one, the walker stays at its height and stops following the melody. The whole lesson is about finding and understanding that middle ground.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Step by step</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>From the image to the curve</h3>
+      <p>In a spectrogram like the one in <a href="e11.html">lesson 11</a>, time goes to the right, frequency goes up and color says how much energy there is. If you look at the map as a relief seen from above, with color as height, each component of the sound is an elongated mountain range, and the <b class="termino">ridge</b> is the line that joins its highest points.</p>
+      <p>That line has a concrete meaning. When a Ferris wheel changes speed slowly, as in <a href="e15.html">lesson 15</a>, its energy concentrates along a curve that follows that speed, and the classic work of Delprat and coauthors (1992) shows it for wavelets and for Gaussian windows. That is why the ridge is a good estimate of the instantaneous frequency, and traveling along it from one end to the other gives a curve with one value per instant: the <b class="termino">pitch curve</b>. That trip, from image to curve, is called <b class="termino">ridge extraction</b>.</p>
+      <p>In a whistle, which is almost a single Ferris wheel, the ridge is clean: a bright band that rises and falls. In the challenge you trace it yourself, by hand, and then you listen to your path as a pure tone to check that it sounds almost the same as the whistle.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Draw the ridge of the whistle: drag across the map from left to right, following the brightest band, from the left edge to the right edge.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="fila" id="r1-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>The shortcut: always climb to the highest point</h3>
+      <p>The simplest thing is to keep, at each instant, the brightest point of the map’s column. It is a <b class="termino" data-termino="Greedy method">greedy method</b>: it remembers nothing of what it did before and only looks at what is in front of it. With a clean whistle it works, because the band is the brightest thing of all.</p>
+      <p>It fails as soon as something stronger than the whistle shows up elsewhere. A snap, a door slamming or a consonant draws a very bright blob that lasts a few hundredths of a second, and the greedy method jumps to it and comes back afterward. In a silence, it does something worse: it keeps choosing the brightest point of the column, which is now pure background noise, and invents a note that nobody played.</p>
+      <p>In the challenge, the orange curve is the one the greedy method produces, and you have to find the places where it departs from the whistle. With “Hear the greedy curve” you can hear how it sounds at each one.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">The orange curve is the one the greedy method produces. Tap the map at the three places where it leaves the whistle; if you tap a mark again, it is removed.</p>
+        <div class="escena" id="r2-escena"></div>
+        <div class="fila" id="r2-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>Penalizing jumps</h3>
+      <p>The solution is to score the whole path instead of each instant separately. A path earns points for the energy of the cells it passes through and loses points every time it jumps from one row to another, the more the bigger the jump: that is the <b class="termino">jump penalty</b>. A bright burst is only worth it if what you gain from it is more than it costs to go there and back.</p>
+      <p>That is how Carmona, Hwang and Torrésani (1997) framed it for the ridges of the wavelet transform: the best curve is the one that passes through a lot of energy without changing height abruptly or bending too much. With zero penalty the greedy method returns, and with a huge penalty the walker no longer leaves its row and does not follow the melody. Between the two extremes there is a range that works, and finding it is the challenge.</p>
+      <p>The signal in the challenge is a synthetic voice singing A, C, E and A. As in many voices, the second harmonic is almost as strong as the fundamental, and in two stretches the fundamental almost disappears, so the brightest ridge is an octave above the note. To follow the note you have to trust what happens before and after, not just the brightest thing at that instant.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Adjust the jump penalty so that the green curve follows the melody without climbing to the octave above and without arriving late at the new notes.</p>
+        <div class="escena" id="r3-escena"></div>
+        <div class="mandos" id="r3-mandos"></div>
+        <div class="fila" id="r3-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>You do not need to try every path</h3>
+      <p>There are a huge number of possible paths: with five heights and six instants there are already 15,625, and on a real map the number explodes. Trying them all is impossible, but you do not need to. For each cell it is enough to remember the best path that reaches it and where it came from; on reaching the last column you choose the best cell and go back following those bread crumbs. This way of searching is <b class="termino">dynamic programming</b>, and the number of calculations grows with the length of the signal, not explosively.</p>
+      <p>With the jump penalty, the version used for pitch is called the <b class="termino">Viterbi algorithm</b>. Andrew Viterbi published it in 1967 to decode messages that arrive with noise, and according to Forney’s (2005) historical review, by then it was already running in about a billion mobile phones. Following a ridge is the same problem: choosing, among a huge number of paths, the one that best explains what you see.</p>
+      <p>Pitch detectors use it for this reason. The one in Praat, a free voice analysis program, notes several pitch candidates per instant, including one that says “there is no voice here,” and looks for the cheapest path: every octave jump costs, and so does every time the voice turns on or off. The author of that method, Paul Boersma (1993), found that on a steady sound this step eliminates octave errors even when they affect 40% of the instants. Later, pYIN (Mauch and Dixon, 2014) combined the candidate proposal of YIN, which you will see two steps further on, with Viterbi decoding.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Choose one cell in each column to get the highest possible score: you add up the energy of the cells you pass through and pay a penalty for every row you jump.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="mandos" id="r4-mandos"></div>
+        <div class="fila" id="r4-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>Two lines, crossings and silences</h3>
+      <p>A map can have more than one ridge, for example two people whistling. To get several, you extract the best one, erase a band around it and repeat. Carmona, Hwang and Torrésani (1999) went further with a method that releases many chains of “crazy climbers” onto the map at once and links their traces while allowing gaps, and they tested it on speech.</p>
+      <p>Silences call for something else. A tracker that always has to give a note invents one where there is none, so one more option is needed, “there is no note here,” with a cost for entering and leaving it. Praat calls that distinction <b class="termino">voiced and unvoiced</b>: voiced is an instant with a voice that has pitch, and unvoiced is a silence, a whisper or an “s.”</p>
+      <p>Crossings are the hard case. When two whistles cross, forming an X, penalizing only the jumps is not enough, because bouncing off and going straight cost the same, and the path goes off with the brightest branch. You also have to penalize a change of slope, like the curvature term of Carmona and colleagues: that is the <b class="termino">inertia</b>, the walker who passes through the saddle of the X without turning. Even with inertia, the energy map does not keep track of who is who: if the two whistlers really did bounce, the image would be almost the same.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Two whistles cross: one rises and the other falls. Make line 1, the green one, go through the crossing and keep straight instead of bouncing.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>From the ridge to the note: the octave error</h3>
+      <p>The pitch of a voice is its fundamental, the slowest Ferris wheel of the stack of epicycles from <a href="e03.html">lesson 3</a>; the others turn two, three, four times faster and are its harmonics. But the brightest ridge is not always the fundamental. In some vowels almost all the energy is in one harmonic, and over a classic telephone, which barely lets anything through below 300 Hz, the fundamental of an adult voice, which usually lies between 90 and 255 Hz, disappears. The ear still hears the right note because it recognizes the family of harmonics, and that is called the <b class="termino">missing fundamental</b>. A detector that only looks at the highest peak, on the other hand, will say an octave or more above: that is the <b class="termino">octave error</b>.</p>
+      <p>Detectors that compare the signal with a shifted copy of itself, like the autocorrelation of <a href="e09.html">lesson 9</a>, have the opposite problem. A signal that repeats every period also repeats every two and every three, and if the match at two periods wins, the note comes out an octave lower: the <b class="termino">subharmonic error</b>. De Cheveigné and Kawahara (2002) warn that “octave error” is a misnomer, because the ratio between the note that comes out and the true one does not have to be two.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">Auto-Tune</span>
+        <p>Harold Hildebrand’s patent (filed in 1998) measures the period of the voice with formulas derived from autocorrelation and acknowledges this problem: some vowels have very little energy at the fundamental, and the method detects the harmonic, so it also checks the double lag. Then it moves the voice to the nearest note of the scale. If that correction is instantaneous, the voice jumps from note to note without sliding, the robot effect made famous by Cher’s “Believe” (1998).</p>
+      </aside>
+      <p><b class="termino">YIN</b> is a detector that takes the definition of period literally, the smallest shift that leaves the signal unchanged. It measures how much the signal changes when it is shifted, normalizes that measure so that small shifts do not look like periods, and keeps the first valley that drops below an <b class="termino">absolute threshold</b>, not the deepest one. In the original paper, with a speech database, the gross errors (estimates that depart more than 20% from the reference) go down step by step from 10.0% for autocorrelation to 0.50% for the complete method.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">A karaoke game from the inside</span>
+        <p>The free karaoke game UltraStar Deluxe, inspired by SingStar, does not understand the lyrics: it compares pitch. According to its code, which you can read, it tries 49 notes, from C2 to C6, measures which one fits best using a difference function and, before scoring, moves your note to the octave of the song. Then it allows 2, 1 or 0 semitones of margin depending on the difficulty. That is why you can sing a song meant for another voice an octave lower without losing points.</p>
+      </aside>
+      <p>In the challenge, the detector analyzes a synthetic “a” vowel singing eight low notes. At the top you see the difference curve of one instant, with its valleys, and at the bottom the pitch curve of the whole melody, with the gross errors in red.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">Choose the rule and the threshold so that the detector gets the note right at almost every instant: fewer than 5% gross errors.</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>In your voice</h2>
+    <p><b>What to record.</b> A short melody, sung or whistled, of about ten seconds, which is segment 7 of the series’ reference recording. If there is someone to do it with, also record segment 8: two people whistling at the same time, one rising and one falling. Record with the microphone if your browser allows it; if not, upload audio recorded with your phone or try the synthetic examples.</p>
+    <p><b>What to look at.</b> The lab decides whether it is a voice or a whistle, draws the map with the notes labeled and plots the pitch curve on top. Change the method and notice where the highest peak goes wrong and how the path fixes it. With “Send through a phone,” frequencies below 300 Hz and above 3,400 Hz are removed: in a low voice, the octave error of the first method will appear. The orange curve is your melody moved to the nearest note, as a karaoke game does; with the correction speed at zero, the voice jumps from note to note. With the two-whistles example you can follow two lines at once, with and without inertia, and hear each one.</p>
+    <p>With a cracked voice or a lot of reverberation, or if the recording is clipped, detectors fail more; with consonants, whispers and breaths, a good curve should fall silent. If the audio has nothing to follow, the lab says so instead of inventing a curve.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>What to remember</h2>
+    <ol class="tres">
+      <li>The ridge is the line of peaks of a component on the time-frequency map, and following it turns the image into a curve with one value per instant. Keeping the brightest thing at each instant is not enough: a burst, a silence or a strong harmonic throws it off.</li>
+      <li>A good tracker scores the whole path, with a penalty for jumping, another for changing slope and the option of staying silent. Dynamic programming finds it without trying every path, by keeping for each cell the best path that reaches it.</li>
+      <li>A machine gets the octave wrong because the signal allows it: what repeats every period repeats every two, and sometimes the fundamental is not there. That is why detectors use rules like the first valley below a threshold, and the context of the whole path.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Common mistakes</h2>
+    <ul class="errores">
+      <li><b>“The note at each instant is the brightest point of the map.”</b> It fails with noise, with silences and, above all, with voices whose second or third harmonic is stronger than the fundamental, like vowels with little energy at the bottom or a voice over the phone. You have to look at the whole path and, for pitch, at the family of harmonics.</li>
+      <li><b>“The more you penalize jumps, the better.”</b> A huge penalty leaves the walker standing still: it does not follow note changes, it flattens vibrato and it can stay entirely on the wrong harmonic. The penalty is a balance that is adjusted to the type of signal.</li>
+      <li><b>“Octave error is always double or half.”</b> The detector can pick three periods, an octave and a fifth below, or the third harmonic, an octave and a fifth above. There are also upward errors caused by a strong resonance of the mouth.</li>
+      <li><b>“After a crossing, the brightest line is still the same voice.”</b> The energy map carries no labels: bouncing and crossing draw almost the same X. You need inertia, penalizing slope changes, or extra clues such as the timbre or the loudness of each source.</li>
+      <li><b>“Dynamic programming tries every path.”</b> It only keeps, for each point, the best path that reaches it. In the grid of challenge 4 there are 15,625 paths and about 130 calculations are enough.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Open</span>
+      <h2>Math corner</h2>
+      <span class="resumen">The formulas, for whoever wants them. Each one comes after its reading in words.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>The shortcut</h3>
+      <p>The greedy method picks, at each instant, the row with the most energy:</p>
+      <div class="tex">\hat k(t) = \arg\max_{k}\, E(t,k)</div>
+
+      <h3>The cost of Carmona, Hwang and Torrésani</h3>
+      <p>A curve is good if it passes through a lot of energy, changes height little and bends little. In continuous time, with <span class="tex">T</span> the transform and <span class="tex">\varphi(t)</span> the curve, you look for the minimum of</p>
+      <div class="tex">\mathcal{E}(\varphi) = -\int \bigl|T\bigl(t,\varphi(t)\bigr)\bigr|^2\,dt + \int \Bigl(\lambda\,\varphi'(t)^2 + \mu\,\varphi''(t)^2\Bigr)\,dt</div>
+      <p>and on a grid, with <span class="tex">c_t</span> the row chosen at each instant, you maximize its discrete version, where <span class="tex">\lambda</span> is the jump penalty and <span class="tex">\mu</span> the penalty for changing slope, the inertia:</p>
+      <div class="tex">J(c) = \sum_t E(t,c_t) - \lambda \sum_t (c_t - c_{t-1})^2 - \mu \sum_t (c_t - 2c_{t-1} + c_{t-2})^2</div>
+
+      <h3>Dynamic programming</h3>
+      <p>The best score that can arrive at row <span class="tex">k</span> at instant <span class="tex">t</span> is its energy plus the best that could be brought from the previous instant, paying for the jump. You also keep which row it came from, to go back at the end:</p>
+      <div class="tex">D(t,k) = E(t,k) + \max_{|j-k|\le J}\Bigl[D(t-1,j) - \lambda\,(k-j)^2\Bigr]</div>
+      <p>The work grows with the number of instants, of rows and of allowed jumps, and not with all the possible paths, which are <span class="tex">n_F</span> to the power <span class="tex">n_T</span>:</p>
+      <div class="tex">\text{calculations} \approx n_T\, n_F\,(2J+1) \qquad\text{versus}\qquad n_F^{\,n_T}\ \text{paths}</div>
+
+      <h3>The cost of Praat</h3>
+      <p>The penalties of each transition are added up and the strength of the chosen candidates is subtracted. A jump between two notes costs in proportion to the octaves it spans, and turning the voice on or off has its own cost (Boersma, 1993):</p>
+      <div class="tex">\text{cost} = \sum_{n=2}^{N} \mathrm{tr}(F_{n-1},F_n) - \sum_{n=1}^{N} R_n, \qquad \mathrm{tr}(F_1,F_2) = \begin{cases} 0 & \text{both unvoiced}\\ C_{\text{v/u}} & \text{one unvoiced}\\ C_{\text{oct}}\,\bigl|\log_2 (F_1/F_2)\bigr| & \text{both voiced}\end{cases}</div>
+
+      <h3>The YIN difference function</h3>
+      <p>It measures how much the signal changes when it is compared with itself shifted by <span class="tex">\tau</span> samples, in a window of <span class="tex">W</span> samples. The second form says it is autocorrelation seen upside down: where autocorrelation has a peak, the difference has a valley.</p>
+      <div class="tex">d_t(\tau) = \sum_{j=t+1}^{t+W} \bigl(x_j - x_{j+\tau}\bigr)^2 = r_t(0) + r_{t+\tau}(0) - 2\,r_t(\tau)</div>
+
+      <h3>The cumulative normalization</h3>
+      <p>Each value is divided by the mean of the previous ones, so that very small shifts do not look like periods. The period <span class="tex">\tau^\ast</span> is the first local minimum with <span class="tex">d'</span> below the threshold, which is 0.1 in the paper, or, if there is none, the global minimum:</p>
+      <div class="tex">d'_t(\tau) = \begin{cases} 1 &amp; \tau = 0\\[2pt] \dfrac{d_t(\tau)}{\frac{1}{\tau}\sum_{j=1}^{\tau} d_t(j)} &amp; \tau > 0\end{cases} \qquad f_0 = \frac{f_s}{\tau^\ast}</div>
+
+      <h3>Semitones and cents</h3>
+      <p>Musical distance depends on the ratio of frequencies, not on their difference. An octave is 12 semitones or 1,200 cents, and the 20% error that YIN uses to define a gross error is about 316 cents, a little over three semitones:</p>
+      <div class="tex">n_{\text{semitones}} = 12\log_2\frac{f_2}{f_1}, \qquad \text{cents} = 1200\log_2\frac{f_2}{f_1}, \qquad 1200\log_2 1.2 \approx 316</div>
+
+      <h3>The karaoke notes</h3>
+      <p>For each candidate note, the mean difference between the signal and its copy shifted by one period is measured, wrapping around at the end of the excerpt, and the one with the least difference is chosen. The 49 candidate notes of UltraStar Deluxe are:</p>
+      <div class="tex">D_C(\tau) = \frac{1}{N}\sum_{n=0}^{N-1}\bigl|x\bigl((n+\tau)\bmod N\bigr) - x(n)\bigr|, \qquad f_i = 440\cdot 2^{(i-33)/12},\ i = 0,\dots,48</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Further reading</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Article</span>de Cheveigné, A. and Kawahara, H. (2002). <a href="https://cagnazzo.wp.imt.fr/files/2013/05/2002_JASA_YIN.pdf"><i>YIN, a fundamental frequency estimator for speech and music</i></a>. <i>JASA</i> 111(4). The reference paper on octave error, told step by step, with the error rate of each step.</li>
+      <li><span class="tipo">Article and manual</span>Boersma, P. (1993). <a href="https://www.fon.hum.uva.nl/paul/papers/Proceedings_1993.pdf"><i>Accurate short-term analysis of the fundamental frequency and the harmonics-to-noise ratio of a sampled sound</i></a>, and the Praat manual, <a href="https://www.fon.hum.uva.nl/praat/manual/pitch_analysis_by_raw_autocorrelation.html">“Pitch analysis by raw autocorrelation.”</a> Praat’s detector, with its path finder and its costs explained, in a free program you can install.</li>
+      <li><span class="tipo">Article</span>Forney, G. D. (2005). <a href="https://arxiv.org/abs/cs/0504020"><i>The Viterbi algorithm: a personal history</i></a>. The history of the algorithm, from noisy messages to mobile phones.</li>
+      <li><span class="tipo">Article</span>Carmona, R. A., Hwang, W. L. and Torrésani, B. (1999). <a href="https://hal.science/hal-01223139"><i>Multiridge detection and time-frequency reconstruction</i></a>. <i>IEEE Trans. Signal Processing</i> 47(2). Multiple ridges with “crazy climbers,” tested on speech. The HAL archive site may ask for a browser check.</li>
+      <li><span class="tipo">Open source</span><a href="https://github.com/UltraStar-Deluxe/USDX">UltraStar Deluxe</a>, a free karaoke game: the files <code>src/base/URecord.pas</code> and <code>src/base/UNote.pas</code> show how it detects and scores a note. A real karaoke game from the inside, readable.</li>
+      <li><span class="tipo">Patent</span><a href="https://patents.google.com/patent/US5973252A/en">US 5,973,252, “Pitch detection and intonation correction apparatus and method”</a>. Auto-Tune explained by its inventor, with the warning about octave error.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>New terms</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Quiz</h2>
+  </section>
+
+</main>
+
+<script src="temario.js"></script>
+<script src="../comun/graficas.js"></script>
+<script src="../comun/senal.js"></script>
+<script src="../comun/curso.js"></script>
+<script src="datos/e20.js"></script>
+<script>
+(function () {
+'use strict';
+
+// ── Cálculo de la lección: funciones puras, sin tocar la página ──────────────────────────────────────────────
+const NUM = (() => {
+  const TAU = 2 * Math.PI;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const suave = u => u * u * (3 - 2 * u);
+  const FS = 8000;
+
+  // Silbido sintético con ley de frecuencia fi(t) (Hz) y de amplitud amp(t). Las ráfagas son [t0, f0, amplitud, duración].
+  // Siempre lleva un ruido de fondo a −40 dB.
+  function silbido({ dur, fi, amp, rafagas = [], semilla = 1, fs = FS }) {
+    const az = Senal.azar(semilla), n = Math.round(fs * dur), x = new Float64Array(n);
+    let ph = 0;
+    for (let i = 0; i < n; i++) { const t = i / fs; ph += TAU * fi(t) / fs; x[i] = amp(t) * Math.sin(ph); }
+    for (const [t0, f0, a, d = 0.06] of rafagas) {
+      const i0 = Math.round(t0 * fs), L = Math.round(d * fs);
+      for (let i = 0; i < L && i0 + i < n; i++) x[i0 + i] += a * Math.sin(Math.PI * i / L) * Math.sin(TAU * f0 * i / fs);
+    }
+    const r = Math.pow(10, -40 / 20);
+    for (let i = 0; i < n; i++) x[i] += r * az.normal();
+    return x;
+  }
+  // Ganancia de un silbido que se interrumpe entre a y b (s): el hueco es un silencio de verdad, con rampas cortas.
+  const hueco = (t, a, b, rampa = 0.015) => (t < a - rampa || t >= b + rampa ? 1 : t < a ? 1 - suave((t - (a - rampa)) / rampa) : t < b ? 0 : suave((t - b) / rampa));
+
+  // Imagen ancla: una melodía silbada con dos escalones, un hueco y dos ráfagas más débiles que la nota más fuerte.
+  function ancla(semilla = 3) {
+    const ley = t => {
+      let f, a;
+      if (t < 0.45) { f = 1250; a = 0.55; }
+      else if (t < 0.57) { const u = suave((t - 0.45) / 0.12); f = 1250 + 500 * u; a = 0.55 + 0.45 * u; }
+      else if (t < 1.25) { f = 1750; a = 1; }
+      else if (t < 1.5) { f = 1450; a = 0.7; }
+      else if (t < 1.62) { const u = suave((t - 1.5) / 0.12); f = 1450 - 400 * u; a = 0.7 - 0.15 * u; }
+      else { f = 1050; a = 0.55; }
+      return [f * (1 + 0.012 * Math.sin(TAU * 5.5 * t) * (t > 0.2 ? 1 : 0)), a];
+    };
+    const HUECO = [1.0, 1.25];
+    const x = silbido({ dur: 2, fi: t => ley(t)[0], amp: t => ley(t)[1] * hueco(t, HUECO[0], HUECO[1]), rafagas: [[0.22, 2800, 0.9], [1.74, 600, 0.9]], semilla });
+    return { x, fs: FS, dur: 2, hueco: HUECO, rafagas: [{ t: 0.25, f: 2800 }, { t: 1.77, f: 600 }], fi: t => (t >= HUECO[0] && t < HUECO[1] ? NaN : ley(t)[0]) };
+  }
+  // Reto 1: un silbido que sube y baja despacio.
+  function sube(semilla = 5) {
+    const fi = t => 1500 + 400 * Math.sin(TAU * 0.5 * t);
+    return { x: silbido({ dur: 2, fi, amp: () => 1, semilla }), fs: FS, dur: 2, fi };
+  }
+  // Reto 2: un silbido que sube de 1.200 a 1.400 Hz, con un hueco de silencio y dos golpes 6 dB más fuertes.
+  function rafagas(semilla = 7) {
+    const HUECO = [0.9, 1.2], fi = t => 1200 + 100 * t;
+    const x = silbido({ dur: 2, fi, amp: t => hueco(t, HUECO[0], HUECO[1]), rafagas: [[0.4, 3000, 2], [1.6, 600, 2]], semilla });
+    return { x, fs: FS, dur: 2, hueco: HUECO, golpes: [{ t: 0.43, f: 3000 }, { t: 1.63, f: 600 }], fi: t => (t >= HUECO[0] && t < HUECO[1] ? NaN : fi(t)) };
+  }
+  // Reto 3: una voz que canta la3, do4, mi4 y la3 (0,5 s cada nota) con armónicos 1/k, el segundo reforzado, dos tramos de
+  // fundamental muy débil y ruido a 10 dB.
+  const NOTAS3 = [220, 261.63, 329.63, 220];
+  function vozDebil(semilla = 11) {
+    const az = Senal.azar(semilla), dn = 0.5, N = Math.round(FS * dn * NOTAS3.length), x = new Float64Array(N), ph = new Float64Array(N);
+    let p = 0;
+    for (let i = 0; i < N; i++) { p += TAU * NOTAS3[Math.min(3, Math.floor(i / FS / dn))] / FS; ph[i] = p; }
+    const debil = [[0.62, 0.8], [1.15, 1.33]], amp1 = new Float64Array(N).fill(1);
+    for (const [a, b] of debil) for (let i = Math.round(a * FS); i < Math.round(b * FS); i++) amp1[i] = 0.12;
+    const fases = []; for (let k = 2; k <= 8; k++) fases[k] = az.real(0, TAU);
+    for (let i = 0; i < N; i++) {
+      let v = amp1[i] * Math.cos(ph[i]);
+      for (let k = 2; k <= 8; k++) v += (1 / k) * Math.cos(k * ph[i] + fases[k]) * (k === 2 ? 1.6 : 1);
+      x[i] = v;
+    }
+    const sd = Senal.rms(x);
+    for (let i = 0; i < N; i++) x[i] = x[i] / sd + Math.pow(10, -10 / 20) * az.normal();
+    return { x, fs: FS, dur: N / FS, debil, notas: NOTAS3, dn, fi: t => NOTAS3[Math.min(3, Math.floor(t / dn))] };
+  }
+  // Reto 5: dos silbidos que se cruzan en 0,75 s y 1.450 Hz; uno sube y se apaga, el otro baja y se enciende.
+  function cruce(semilla = 5) {
+    const az = Senal.azar(semilla), dur = 1.5, n = Math.round(FS * dur), x = new Float64Array(n);
+    const fA = t => 1000 + 600 * t, fB = t => 1900 - 600 * t;
+    let pa = az.real(0, TAU), pb = az.real(0, TAU);
+    for (let i = 0; i < n; i++) {
+      const t = i / FS; pa += TAU * fA(t) / FS; pb += TAU * fB(t) / FS;
+      x[i] = (1 - 0.6 * t / dur) * Math.cos(pa) + (0.4 + 0.6 * t / dur) * Math.cos(pb) + 0.01 * az.normal();
+    }
+    return { x, fs: FS, dur, fA, fB, tCruce: 0.75, fCruce: 1450 };
+  }
+  // Reto 6: una vocal «a» (formantes en torno a 700, 1.200 y 2.600 Hz) que canta ocho notas de 0,4 s, con algo de
+  // inestabilidad de tono y ruido a 20 dB.
+  const NOTAS6 = [110, 123.47, 138.59, 146.83, 164.81, 196, 220, 130.81];
+  function vocalMelodia(semilla = 7) {
+    const az = Senal.azar(semilla), n = Math.round(0.4 * FS), N = n * NOTAS6.length, x = new Float64Array(N);
+    const formantes = [[700, 110], [1200, 120], [2600, 160]];
+    NOTAS6.forEach((f0, q) => {
+      const K = [];
+      for (let k = 1; k * f0 < FS / 2 - 100; k++) {
+        let a = 0; for (const [F, bw] of formantes) a += 1 / (1 + Math.pow((k * f0 - F) / bw, 2));
+        K.push({ k, a: a / Math.sqrt(k), fase: az.real(0, TAU) });
+      }
+      let acum = 0, ph = 0;
+      for (let i = 0; i < n; i++) {
+        acum += az.normal(); ph += TAU * f0 * (1 + 0.004 * acum / Math.sqrt(i + 1)) / FS;
+        let v = 0; for (const h of K) v += h.a * Math.cos(h.k * ph + h.fase);
+        x[q * n + i] = v;
+      }
+    });
+    const sd = Senal.rms(x);
+    for (let i = 0; i < N; i++) x[i] = x[i] / sd + Math.pow(10, -20 / 20) * az.normal();
+    return { x, fs: FS, dur: N / FS, notas: NOTAS6, dn: 0.4, fi: t => NOTAS6[Math.min(NOTAS6.length - 1, Math.floor(t / 0.4))] };
+  }
+
+  // ── Mapas tiempo-frecuencia en dB ──
+  // Lineal (las filas del STFT entre fmin y fmax) o logarítmico (fps filas por semitono desde fmin). y es la coordenada
+  // vertical de cada fila: hercios en el lineal y semitonos sobre fmin en el logarítmico.
+  function mapaTF(x, fs, { n = 256, salto = 32, fmin = 0, fmax = fs / 2, fps = 0, ventana = 'hann' } = {}) {
+    const T = Senal.stft(x, fs, { n, salto, ventana }), P = Senal.potencia(T), nT = T.nT, df = T.f[1] - T.f[0];
+    fmax = Math.min(fmax, T.f[T.nF - 1]);
+    let nF, f, y, Pm;
+    if (!fps) {
+      const k0 = Math.max(0, Math.ceil(fmin / df - 1e-9)), k1 = Math.min(T.nF - 1, Math.floor(fmax / df + 1e-9));
+      nF = k1 - k0 + 1; Pm = new Float32Array(nF * nT); Pm.set(P.subarray(k0 * nT, (k1 + 1) * nT));
+      f = new Float64Array(nF); for (let k = 0; k < nF; k++) f[k] = T.f[k0 + k];
+      y = f;
+    } else {
+      nF = Math.floor(12 * fps * Math.log2(fmax / fmin) + 1e-9) + 1;
+      f = new Float64Array(nF); y = new Float64Array(nF); Pm = new Float32Array(nF * nT);
+      for (let k = 0; k < nF; k++) {
+        f[k] = fmin * Math.pow(2, k / (12 * fps)); y[k] = k / fps;
+        const u = f[k] / df, i0 = Math.min(T.nF - 2, Math.floor(u)), w = u - i0;
+        for (let j = 0; j < nT; j++) {
+          const a = Math.sqrt(P[i0 * nT + j]), b = Math.sqrt(P[(i0 + 1) * nT + j]), m = a * (1 - w) + b * w;
+          Pm[k * nT + j] = m * m;
+        }
+      }
+    }
+    const db = new Float32Array(nF * nT); let max = -Infinity;
+    for (let i = 0; i < db.length; i++) { const v = Pm[i] > 0 ? 10 * Math.log10(Pm[i]) : -120; db[i] = v < -120 ? -120 : v; if (db[i] > max) max = db[i]; }
+    return { P: Pm, db, nF, nT, t: T.t, f, y, dur: x.length / fs, max, log: !!fps, fmin: f[0], fmax: f[nF - 1], fps, fs };
+  }
+  // Fila de un mapa más cercana a una frecuencia (Hz), y coordenada vertical de una frecuencia.
+  function filaDe(M, hz) {
+    if (M.log) return limitar(Math.round(12 * M.fps * Math.log2(hz / M.fmin)), 0, M.nF - 1);
+    return limitar(Math.round((hz - M.f[0]) / (M.f[1] - M.f[0])), 0, M.nF - 1);
+  }
+  const yDeHz = (M, hz) => (M.log ? 12 * Math.log2(hz / M.fmin) : hz);
+  // La curva de filas (Int32Array) a hercios.
+  function curvaHz(M, filas) { const f = new Float64Array(filas.length); for (let j = 0; j < f.length; j++) f[j] = M.f[filas[j]]; return f; }
+
+  // ── Crestas ──
+  // Energía en dB recortada a «rango» dB bajo el máximo y llevada a [0, 1].
+  function energiaDb(P, rango = 40) {
+    let pm = 0; for (let i = 0; i < P.length; i++) if (P[i] > pm) pm = P[i];
+    const E = new Float32Array(P.length);
+    if (!(pm > 0)) return E;
+    for (let i = 0; i < P.length; i++) E[i] = limitar(1 + 10 * Math.log10(P[i] / pm + 1e-12) / rango, 0, 1);
+    return E;
+  }
+  // Cresta por programación dinámica con castigo de salto (lam) y de cambio de pendiente (mu), de segundo orden: el estado
+  // es la fila y el último salto, y los saltos están limitados a ±J filas por columna. → Int32Array con la fila de cada columna.
+  function crestaInercia(E, nF, nT, lam, mu, J = 4) {
+    const ND = 2 * J + 1, INF = 1e18;
+    let D = new Float64Array(nF * ND).fill(INF), Dn = new Float64Array(nF * ND);
+    const atras = new Int8Array(nT * nF * ND);
+    for (let k = 0; k < nF; k++) D[k * ND + J] = -E[k * nT];
+    for (let j = 1; j < nT; j++) {
+      Dn.fill(INF);
+      for (let k = 0; k < nF; k++) {
+        const e = E[k * nT + j];
+        for (let d = -J; d <= J; d++) {
+          const kp = k - d;
+          if (kp < 0 || kp >= nF) continue;
+          let mejor = INF, arg = 0;
+          for (let dp = -J; dp <= J; dp++) { const v = D[kp * ND + dp + J] + mu * (d - dp) * (d - dp); if (v < mejor) { mejor = v; arg = dp; } }
+          if (mejor >= INF) continue;
+          Dn[k * ND + d + J] = mejor + lam * d * d - e;
+          atras[(j * nF + k) * ND + d + J] = arg;
+        }
+      }
+      const t = D; D = Dn; Dn = t;
+    }
+    let kb = 0, db = 0, mb = INF;
+    for (let k = 0; k < nF; k++) for (let d = -J; d <= J; d++) if (D[k * ND + d + J] < mb) { mb = D[k * ND + d + J]; kb = k; db = d; }
+    const c = new Int32Array(nT);
+    c[nT - 1] = kb;
+    let k = kb, d = db;
+    for (let j = nT - 1; j > 0; j--) { const dp = atras[(j * nF + k) * ND + d + J]; k -= d; d = dp; c[j - 1] = k; }
+    return c;
+  }
+  // Dos crestas: la mejor, se borra una franja de ±borrar filas a su alrededor y se repite.
+  function dosCrestasInercia(E, nF, nT, lam, mu, borrar = 8, J = 4) {
+    const E2 = Float32Array.from(E), res = [];
+    for (let r = 0; r < 2; r++) {
+      const c = crestaInercia(E2, nF, nT, lam, mu, J);
+      res.push(c);
+      for (let j = 0; j < nT; j++) for (let k = Math.max(0, c[j] - borrar); k <= Math.min(nF - 1, c[j] + borrar); k++) E2[k * nT + j] = 0;
+    }
+    return res;
+  }
+  // Camino de más puntuación en una rejilla de energías G[fila][columna] (fila 0 arriba), con un castigo por fila saltada.
+  // → { puntuacion, tabla[fila][columna] (lo mejor que puede llegar a cada casilla), camino (una fila por columna) }
+  function mejorCamino(G, castigo) {
+    const nF = G.length, nT = G[0].length, D = G.map(() => new Array(nT).fill(0)), B = G.map(() => new Array(nT).fill(0));
+    for (let f = 0; f < nF; f++) D[f][0] = G[f][0];
+    for (let j = 1; j < nT; j++) for (let f = 0; f < nF; f++) {
+      let m = -Infinity, a = 0;
+      for (let g = 0; g < nF; g++) { const v = D[g][j - 1] - castigo * Math.abs(f - g); if (v > m) { m = v; a = g; } }
+      D[f][j] = G[f][j] + m; B[f][j] = a;
+    }
+    let fb = 0; for (let f = 1; f < nF; f++) if (D[f][nT - 1] > D[fb][nT - 1]) fb = f;
+    const camino = new Array(nT); camino[nT - 1] = fb;
+    for (let j = nT - 1; j > 0; j--) camino[j - 1] = B[camino[j]][j];
+    return { puntuacion: D[fb][nT - 1], tabla: D, camino };
+  }
+  function puntuar(G, camino, castigo) {
+    let e = 0, s = 0;
+    camino.forEach((f, j) => { e += G[f][j]; if (j) s += Math.abs(f - camino[j - 1]); });
+    return { energia: e, saltos: s, castigo: castigo * s, puntuacion: e - castigo * s };
+  }
+
+  // ── Sonido ──
+  // Un tono que sigue una curva de tono (f en Hz, NaN donde no hay nota) muestreada en los instantes ts.
+  function tonoDeCurva(ts, f, fsOut, dur) {
+    const n = Math.max(1, Math.round(dur * fsOut)), y = new Float64Array(n), dt = ts.length > 1 ? ts[1] - ts[0] : dur;
+    const a = Math.exp(-1 / (0.006 * fsOut));
+    let ph = 0, amp = 0, fAct = 440;
+    const val = j => f[limitar(j, 0, f.length - 1)];
+    for (let i = 0; i < n; i++) {
+      const u = (i / fsOut - ts[0]) / dt, j0 = Math.floor(u), w = u - j0, fa = val(j0), fb = val(j0 + 1);
+      let fi = NaN;
+      if (Number.isFinite(fa) && Number.isFinite(fb)) fi = fa + (fb - fa) * w;
+      else if (Number.isFinite(fa) && w < 0.5) fi = fa;
+      else if (Number.isFinite(fb) && w >= 0.5) fi = fb;
+      if (Number.isFinite(fi)) fAct = fi;
+      amp = a * amp + (1 - a) * (Number.isFinite(fi) ? 1 : 0);
+      ph += TAU * fAct / fsOut;
+      y[i] = 0.9 * amp * Math.sin(ph);
+    }
+    return y;
+  }
+
+  // ── YIN ──
+  // d′(τ) para τ = 0…tauMax en la ventana de W muestras que empieza en i0 (la misma cuenta que Senal.yin).
+  function difNorm(x, i0, W, tauMax) {
+    const d = new Float64Array(tauMax + 1), dp = new Float64Array(tauMax + 1);
+    for (let tau = 1; tau <= tauMax; tau++) { let s = 0; for (let i = 0; i < W; i++) { const a = x[i0 + i] - x[i0 + i + tau]; s += a * a; } d[tau] = s; }
+    dp[0] = 1;
+    let cum = 0;
+    for (let tau = 1; tau <= tauMax; tau++) { cum += d[tau]; dp[tau] = cum > 0 ? d[tau] * tau / cum : 1; }
+    return dp;
+  }
+  // Mínimos locales de d′ entre tauMin y tauMax.
+  function valles(dp, tauMin, tauMax) {
+    const v = [];
+    for (let i = Math.max(2, tauMin); i <= Math.min(tauMax, dp.length - 2); i++) if (dp[i] < dp[i - 1] && dp[i] <= dp[i + 1]) v.push(i);
+    return v;
+  }
+
+  return { TAU, FS, limitar, suave, ancla, sube, rafagas, vozDebil, cruce, vocalMelodia, mapaTF, filaDe, yDeHz, curvaHz,
+    energiaDb, crestaInercia, dosCrestasInercia, mejorCamino, puntuar, tonoDeCurva, difNorm, valles };
+})();
+// ── Cálculo del laboratorio «En tu voz»: funciones puras que aguantan cualquier audio ─────────────────────────
+const LAB = (() => {
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const MIN_DB = -40;          // por debajo de esto, respecto a lo más fuerte, no hay nota que seguir
+
+  // Nivel de cada trama (dB sobre la más fuerte) con ventana de n muestras cada «salto»; las tramas están centradas en j·salto.
+  function niveles(x, n, salto) {
+    const nT = Math.max(1, Math.ceil(x.length / salto)), e = new Float64Array(nT), h = n >> 1;
+    let max = 0;
+    for (let j = 0; j < nT; j++) {
+      let s = 0, c = 0;
+      for (let i = Math.max(0, j * salto - h); i < Math.min(x.length, j * salto + h); i++) { s += x[i] * x[i]; c++; }
+      e[j] = c ? s / c : 0;
+      if (e[j] > max) max = e[j];
+    }
+    const db = new Float64Array(nT);
+    for (let j = 0; j < nT; j++) db[j] = max > 1e-12 && e[j] > 0 ? 10 * Math.log10(e[j] / max) : -Infinity;
+    return { db, maxDb: max > 0 ? 10 * Math.log10(max) : -Infinity };
+  }
+  // ¿Hay algo que seguir? Un audio casi mudo no tiene curva de tono.
+  const hayNota = N => N.maxDb > -50;
+  const sonoras = (N, umbral = MIN_DB) => Array.from(N.db, v => (hayNota(N) && v > umbral ? 1 : 0));
+
+  // ¿Voz o silbido? En un silbido domina un solo pico por encima de unos 600 Hz y casi no hay nada más.
+  function detectarModo(x, fs) {
+    const n = Math.min(x.length, Math.round(0.5 * fs));
+    if (n < 512) return 'voz';
+    const bloque = Math.round(0.1 * fs), nb = Math.floor(x.length / bloque), k = Math.max(1, Math.round(n / bloque));
+    let mejor = 0, inicio = 0, acc = 0;
+    const eb = new Float64Array(nb);
+    for (let b = 0; b < nb; b++) for (let i = b * bloque; i < (b + 1) * bloque; i++) eb[b] += x[i] * x[i];
+    for (let b = 0; b < nb; b++) { acc += eb[b]; if (b >= k) acc -= eb[b - k]; if (b >= k - 1 && acc > mejor) { mejor = acc; inicio = b - k + 1; } }
+    if (!(mejor > 1e-9)) return 'voz';
+    const seg = x.slice(inicio * bloque, inicio * bloque + n), E = Senal.espectro(seg, fs, { ventana: 'hann', nfft: Senal.siguientePotencia2(n) });
+    let k1 = 0;
+    for (let i = 0; i < E.f.length; i++) if (E.f[i] > 100 && (k1 === 0 || E.mag[i] > E.mag[k1])) k1 = i;
+    const f1 = E.f[k1], m1 = E.mag[k1];
+    if (!(m1 > 1e-6)) return 'voz';
+    let m2 = 0;
+    for (let i = 0; i < E.f.length; i++) if (E.f[i] > 100 && Math.abs(E.f[i] - f1) > 0.12 * f1 + 60) m2 = Math.max(m2, E.mag[i]);
+    return f1 > 600 && 20 * Math.log10(m2 / m1 + 1e-12) < -16 ? 'silbido' : 'voz';
+  }
+  // «Pasar por teléfono»: lo que queda entre 300 y 3.400 Hz.
+  const telefono = (x, fs) => Senal.filtfilt(Senal.butterworth(4, [300, 3400], fs, 'pasoBanda'), x);
+
+  // ── Candidatos de YIN en cada trama ──
+  // Para cada trama, los valles de d′ que bajan de varios umbrales (como hace pYIN con una distribución de umbrales):
+  // [{ f, c }] con c = d′ (0 es un periodo perfecto). → { t, cand: [[…]], n }
+  function candidatosYin(x, fs, { fmin, fmax, n, salto, umbrales = [0.05, 0.1, 0.15, 0.25, 0.4, 0.6] }) {
+    const tauMin = Math.max(2, Math.floor(fs / fmax)), tauMax = Math.max(tauMin + 3, Math.ceil(fs / fmin));
+    const nFr = x.length >= n + tauMax ? Math.floor((x.length - n - tauMax) / salto) + 1 : 0, t = new Float64Array(nFr), cand = [];
+    for (let j = 0; j < nFr; j++) {
+      const s = j * salto, dp = NUM.difNorm(x, s, n, tauMax), lista = [];
+      t[j] = (s + n / 2) / fs;
+      const poner = tau => {
+        let tf = tau;
+        if (tau > 1 && tau < tauMax) { const a = dp[tau - 1], b = dp[tau], c = dp[tau + 1], den = a - 2 * b + c; if (den > 0) tf = tau + 0.5 * (a - c) / den; }
+        const f = fs / tf;
+        if (!lista.some(q => Math.abs(Math.log2(q.f / f)) < 0.02)) lista.push({ f, c: dp[tau] });
+      };
+      for (const u of umbrales) {
+        for (let k = tauMin; k <= tauMax; k++) if (dp[k] < u) { while (k + 1 <= tauMax && dp[k + 1] < dp[k]) k++; poner(k); break; }
+      }
+      let g = tauMin; for (let k = tauMin + 1; k <= tauMax; k++) if (dp[k] < dp[g]) g = k;
+      poner(g);
+      lista.sort((a, b) => a.c - b.c);
+      cand.push(lista.slice(0, 5));
+    }
+    return { t, cand, n: nFr };
+  }
+  // Viterbi sobre los candidatos y el estado «aquí no hay nota» (sordo). Los costes son los de Praat: 0,35 por octava
+  // saltada, 0,14 por pasar de sonoro a sordo, y 0,45 de coste de declarar sordo un instante con sonido.
+  function viterbiTono(cand, sonora, { octava = 0.35, cambio = 0.14, sordo = 0.45 } = {}) {
+    const nT = cand.length, f = new Float64Array(nT).fill(NaN);
+    if (!nT) return f;
+    const D = [], B = [];
+    for (let j = 0; j < nT; j++) {
+      const K = cand[j].length, d = new Float64Array(K + 1), b = new Int16Array(K + 1);
+      const local = i => (i < K ? cand[j][i].c + (sonora[j] ? 0 : 1) : (sonora[j] ? sordo : 0));
+      for (let i = 0; i <= K; i++) {
+        if (!j) { d[i] = local(i); continue; }
+        const Kp = cand[j - 1].length;
+        let m = Infinity, a = 0;
+        for (let q = 0; q <= Kp; q++) {
+          let tr;
+          if (i < K && q < Kp) tr = octava * Math.abs(Math.log2(cand[j][i].f / cand[j - 1][q].f));
+          else tr = i === K && q === Kp ? 0 : cambio;
+          const v = D[j - 1][q] + tr;
+          if (v < m) { m = v; a = q; }
+        }
+        d[i] = m + local(i); b[i] = a;
+      }
+      D.push(d); B.push(b);
+    }
+    let i = 0; for (let q = 1; q < D[nT - 1].length; q++) if (D[nT - 1][q] < D[nT - 1][i]) i = q;
+    for (let j = nT - 1; j >= 0; j--) { f[j] = i < cand[j].length ? cand[j][i].f : NaN; if (j) i = B[j][i]; }
+    return f;
+  }
+
+  // ── Notas ──
+  const semitonos = f => 12 * Math.log2(f / 440) + 69;
+  // La curva llevada a la nota del semitono más cercano (modo karaoke) y suavizada con una constante de tiempo en ms
+  // (0 = instantánea, el efecto robot). dt es el tiempo entre tramas, en s.
+  function corregir(f, dt, ms) {
+    const y = new Float64Array(f.length).fill(NaN), a = ms > 0 ? Math.exp(-dt / (ms / 1000)) : 0;
+    let prev = NaN;
+    for (let j = 0; j < f.length; j++) {
+      if (!Number.isFinite(f[j])) { prev = NaN; continue; }
+      const objetivo = Math.round(semitonos(f[j]));
+      const s = Number.isFinite(prev) ? a * prev + (1 - a) * objetivo : objetivo;
+      y[j] = 440 * Math.pow(2, (s - 69) / 12); prev = s;
+    }
+    return y;
+  }
+  // Resumen de una curva de tono.
+  function resumen(f) {
+    const v = Array.from(f).filter(Number.isFinite).sort((a, b) => a - b), n = v.length;
+    if (!n) return null;
+    let desvio = 0, saltos = 0, prev = NaN;
+    for (let j = 0; j < f.length; j++) {
+      if (!Number.isFinite(f[j])) { prev = NaN; continue; }
+      desvio += Math.abs(Senal.nombreNota(f[j]).cents);
+      if (Number.isFinite(prev) && Math.abs(12 * Math.log2(f[j] / prev)) >= 9) saltos++;
+      prev = f[j];
+    }
+    const q = p => v[Math.min(n - 1, Math.floor(p * n))];
+    return { n, grave: q(0.03), aguda: q(0.97), mediana: q(0.5), desvio: desvio / n, saltos };
+  }
+
+  return { MIN_DB, niveles, hayNota, sonoras, detectarModo, telefono, candidatosYin, viterbiTono, corregir, resumen, semitonos };
+})();
+// ── Piezas comunes de dibujo ─────────────────────────────────────────────────────────────────────────────────
+const G = Graficas, TAU = NUM.TAU, num = Curso.num, crear = Curso.crear;
+const { limitar, suave } = NUM;
+const altoDe = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+
+// Marcas del eje vertical de un mapa en escala de notas: una por cada La, con su nombre y sus hercios.
+function marcasNotas(M) {
+  const out = [];
+  for (let f = 27.5; f <= M.fmax * 1.001; f *= 2) if (f >= M.fmin * 0.999) out.push({ v: NUM.yDeHz(M, f), texto: Senal.nombreNota(f).nombre + ' · ' + num(Math.round(f)) });
+  return out;
+}
+// Un mapa tiempo-frecuencia con sus ejes, su rejilla y su leyenda en dB. La frecuencia va hacia arriba y el tiempo, hacia la derecha.
+// M viene de NUM.mapaTF. Opciones: derecha (margen), leyendaX, leyenda (false la quita), dinamica (dB visibles), etiquetaY.
+// → la escala de los ejes (esc.x, esc.y, esc.xi, esc.yi, esc.caja)
+function pintarMapa(ctx, w, h, C, M, o = {}) {
+  const m = Object.assign({ izquierda: M.log ? (M.fmax >= 2000 ? 82 : 68) : 46, derecha: o.leyenda === false ? 10 : 58, arriba: 24, abajo: 30 }, o.margen);
+  if (o.derecha != null) m.derecha = o.derecha;
+  const caja = { x: m.izquierda, y: m.arriba, w: Math.max(40, w - m.izquierda - m.derecha), h: Math.max(40, h - m.arriba - m.abajo) };
+  const dy = M.y[1] - M.y[0], yr = [M.y[0] - dy / 2, M.y[M.nF - 1] + dy / 2];
+  let marcas;
+  if (M.log) marcas = marcasNotas(M);
+  else marcas = G.marcasBonitas(M.f[0], M.f[M.nF - 1], Math.max(2, Math.round(caja.h / 50))).map(v => ({ v, texto: num(v) }));
+  const esc = G.ejes(ctx, {
+    caja, x: [0, M.dur], y: yr, marcasX: Math.max(2, Math.round(caja.w / 62)), marcasY: marcas.map(q => q.v),
+    formatoX: v => num(v, v % 1 ? 1 : 0), formatoY: v => (marcas.find(q => q.v === v) || {}).texto || '',
+    etiquetaX: 'time (s)', etiquetaY: o.etiquetaY || (M.log ? 'note and frequency (Hz)' : 'frequency (Hz)'), rejilla: false, C,
+  });
+  const rango = [M.max - (o.dinamica ?? 60), M.max];
+  G.mapa(ctx, esc, { datos: M.db, nF: M.nF, nT: M.nT, t: M.t, f: M.y, rango });
+  // Rejilla sobre el mapa: un trazo fino por semitono (si caben) y uno más claro en cada marca.
+  ctx.save();
+  ctx.beginPath(); ctx.rect(caja.x, caja.y, caja.w, caja.h); ctx.clip();
+  if (M.log) {
+    const paso = caja.h / ((M.nF - 1) / M.fps);
+    if (paso >= 5) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 1; ctx.beginPath();
+      for (let s = 0; s <= (M.nF - 1) / M.fps; s++) { const py = Math.round(esc.y(s)) + 0.5; ctx.moveTo(caja.x, py); ctx.lineTo(caja.x + caja.w, py); }
+      ctx.stroke();
+    }
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 1; ctx.setLineDash([2, 4]); ctx.beginPath();
+  for (const q of marcas) { const py = Math.round(esc.y(q.v)) + 0.5; ctx.moveTo(caja.x, py); ctx.lineTo(caja.x + caja.w, py); }
+  ctx.stroke();
+  ctx.restore();
+  ctx.save(); ctx.strokeStyle = C.eje; ctx.lineWidth = 1; ctx.strokeRect(caja.x + 0.5, caja.y + 0.5, caja.w - 1, caja.h - 1); ctx.restore();
+  if (o.leyenda !== false) G.leyenda(ctx, { x: o.leyendaX ?? caja.x + caja.w + 12, y: caja.y + 16, alto: Math.max(40, caja.h - 16), rango, etiqueta: 'dB', C });
+  return esc;
+}
+// Una curva sobre un mapa: un trazo oscuro debajo para que se lea sobre cualquier color del magma.
+function trazoMapa(ctx, esc, xs, ys, color, { ancho = 2.2, guiones = null, borde = true, alfa = 1, hasta = Infinity } = {}) {
+  const c = esc.caja, p = new Path2D();
+  let abierto = false;
+  for (let i = 0; i < xs.length && xs[i] <= hasta; i++) {
+    if (!Number.isFinite(ys[i])) { abierto = false; continue; }
+    const px = esc.x(xs[i]), py = esc.y(ys[i]);
+    if (abierto) p.lineTo(px, py); else { p.moveTo(px, py); abierto = true; }
+  }
+  ctx.save();
+  ctx.beginPath(); ctx.rect(c.x - 2, c.y - 2, c.w + 4, c.h + 4); ctx.clip();
+  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  if (borde) { ctx.setLineDash([]); ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.lineWidth = ancho + 2.8; ctx.stroke(p); }
+  ctx.setLineDash(guiones || []); ctx.strokeStyle = alfa < 1 ? G.alfa(color, alfa) : color; ctx.lineWidth = ancho; ctx.stroke(p);
+  ctx.restore();
+}
+// Hercios → coordenada vertical del mapa.
+const aY = (M, hz) => { const y = new Float64Array(hz.length); for (let i = 0; i < y.length; i++) y[i] = Number.isFinite(hz[i]) ? NUM.yDeHz(M, hz[i]) : NaN; return y; };
+const hzDeY = (M, y) => (M.log ? M.fmin * Math.pow(2, y / 12) : y);
+// Una fila de botones dentro de un contenedor.
+const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); (typeof contenedor === 'string' ? document.querySelector(contenedor) : contenedor).appendChild(f); return f; };
+// Rótulo con fondo sobre una escena.
+const rotulo = (ctx, C, x, y, txt, o = {}) => G.texto(ctx, x, y, txt, Object.assign({ color: C.suave, tam: 11, fondo: G.alfa(C.pantalla, 0.82), C }, o));
+// ── La idea en una imagen: un paisaje de energía y un caminante con linterna ────────────────────────────────
+// El mapa se mira desde arriba como un relieve. El caminante recorre el camino que elige el programa (programación
+// dinámica con castigo por saltar); el «caminante sin memoria» es el método voraz de Senal.crestaVoraz.
+(function () {
+  const sig = NUM.ancla();
+  const M = NUM.mapaTF(sig.x, sig.fs, { n: 256, salto: 32, fmin: 400, fmax: 3600 });
+  const dtCol = M.t[1] - M.t[0], CICLO = 8, PASEO = 6.4;
+  const e = { castigo: 3, miope: false, u: 0.32, ruta: null, rutaF: null };
+  const voraz = NUM.curvaHz(M, Senal.crestaVoraz(M.P, M.nF, M.nT));
+  const calcular = () => { e.ruta = NUM.curvaHz(M, Senal.cresta(M.P, M.nF, M.nT, { penalizacion: e.castigo < 0.0105 ? 0 : e.castigo })); };
+  calcular();
+  const L = G.lienzo('#ancla-escena', {
+    alto: altoDe(270, 340),
+    etiqueta: 'A time-frequency map seen from above as a landscape: a walker with a flashlight travels along the ridge of a whistle from left to right, without making impossible leaps. At one side you see the relief of the instant the walker is at.',
+    dibujar: (ctx, w, h, C) => {
+      const perfil = w >= 600, PW = 96;
+      // Con relieve a un lado, la leyenda va a la derecha del relieve.
+      const esc = pintarMapa(ctx, w, h, C, M, { derecha: perfil ? 58 + PW + 22 : 58, leyenda: !perfil });
+      const c = esc.caja;
+      const tw = e.u * sig.dur, j = limitar(Math.round(tw / dtCol), 0, M.nT - 1);
+      // Rótulos de lo que hay en el paisaje.
+      for (const r of sig.rafagas) rotulo(ctx, C, esc.x(r.t), esc.y(r.f) - 9, 'burst', { alinear: 'center' });
+      rotulo(ctx, C, esc.x((sig.hueco[0] + sig.hueco[1]) / 2), esc.y(2150), 'silence', { alinear: 'center' });
+      // Sombra fuera de la linterna: el caminante solo ve lo que tiene cerca.
+      const xw = esc.x(M.t[j]), yw = esc.y(e.ruta[j]);
+      ctx.save();
+      ctx.beginPath(); ctx.rect(c.x, c.y, c.w, c.h); ctx.clip();
+      const sombra = ctx.createRadialGradient(xw, yw, 40, xw, yw, Math.max(c.w, c.h) * 0.55);
+      sombra.addColorStop(0, 'rgba(0,0,0,0)'); sombra.addColorStop(1, 'rgba(0,0,0,0.42)');
+      ctx.fillStyle = sombra; ctx.fillRect(c.x, c.y, c.w, c.h);
+      ctx.restore();
+      // El camino elegido: tenue por delante, fuerte por detrás.
+      const ys = aY(M, e.ruta);
+      trazoMapa(ctx, esc, M.t, ys, C.senal, { ancho: 1.6, alfa: 0.45, borde: false });
+      trazoMapa(ctx, esc, M.t, ys, C.senal, { ancho: 2.8, hasta: M.t[j] });
+      // El caminante sin memoria.
+      if (e.miope) {
+        const yv = aY(M, voraz);
+        trazoMapa(ctx, esc, M.t, yv, C.respuesta, { ancho: 1.6, alfa: 0.5, borde: false, guiones: [5, 4] });
+        trazoMapa(ctx, esc, M.t, yv, C.respuesta, { ancho: 2.6, hasta: M.t[j], guiones: [5, 4] });
+        const xv = esc.x(M.t[j]), yvv = esc.y(NUM.yDeHz(M, voraz[j]));
+        ctx.save();
+        ctx.beginPath(); ctx.rect(c.x, c.y, c.w, c.h); ctx.clip();
+        ctx.fillStyle = C.respuesta; ctx.strokeStyle = 'rgba(0,0,0,0.7)'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(xv, yvv, 5, 0, TAU); ctx.fill(); ctx.stroke();
+        ctx.restore();
+        // Su punto de salida: el más alto de todo el mapa.
+        let im = 0; for (let i = 1; i < M.P.length; i++) if (M.P[i] > M.P[im]) im = i;
+        const kS = Math.floor(im / M.nT), jS = im % M.nT;
+        ctx.save();
+        ctx.strokeStyle = C.respuesta; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.arc(esc.x(M.t[jS]), esc.y(M.y[kS]), 8, 0, TAU); ctx.stroke();
+        ctx.restore();
+        rotulo(ctx, C, esc.x(M.t[jS]), esc.y(M.y[kS]) + 24, 'starts here', { alinear: 'center', color: C.respuesta });
+      }
+      // La linterna y el caminante.
+      ctx.save();
+      ctx.beginPath(); ctx.rect(c.x, c.y, c.w, c.h); ctx.clip();
+      ctx.globalCompositeOperation = 'lighter';
+      const luz = ctx.createRadialGradient(xw, yw, 0, xw, yw, 46);
+      luz.addColorStop(0, 'rgba(255,238,180,0.50)'); luz.addColorStop(0.45, 'rgba(255,230,150,0.16)'); luz.addColorStop(1, 'rgba(255,230,150,0)');
+      ctx.fillStyle = luz; ctx.beginPath(); ctx.arc(xw, yw, 46, 0, TAU); ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = C.senal; ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.arc(xw, yw, 6, 0, TAU); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      // El relieve del instante: la columna del mapa, tumbada a un lado y con el mismo eje de frecuencias.
+      if (perfil) {
+        const x0 = c.x + c.w + 12, rango = [M.max - 60, M.max];
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.superficie2, 0.7); ctx.fillRect(x0, c.y, PW, c.h);
+        ctx.beginPath(); ctx.rect(x0, c.y, PW, c.h); ctx.clip();
+        const pts = new Path2D();
+        for (let k = 0; k < M.nF; k++) {
+          const v = limitar((M.db[k * M.nT + j] - rango[0]) / (rango[1] - rango[0]), 0, 1), px = x0 + 3 + v * (PW - 6), py = esc.y(M.y[k]);
+          if (k) pts.lineTo(px, py); else pts.moveTo(px, py);
+        }
+        ctx.lineJoin = 'round';
+        if (C.oscuro) { ctx.strokeStyle = G.alfa(C.espectro, 0.18); ctx.lineWidth = 6; ctx.stroke(pts); }
+        ctx.strokeStyle = C.espectro; ctx.lineWidth = 1.8; ctx.stroke(pts);
+        ctx.setLineDash([3, 3]); ctx.strokeStyle = G.alfa(C.senal, 0.8); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x0, yw); ctx.lineTo(x0 + PW, yw); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, x0 + PW / 2, c.y - 8, 'relief right now', { alinear: 'center', color: C.tenue, tam: 10, C });
+        ctx.save(); ctx.strokeStyle = C.eje; ctx.lineWidth = 1; ctx.strokeRect(x0 + 0.5, c.y + 0.5, PW - 1, c.h - 1); ctx.restore();
+        G.leyenda(ctx, { x: x0 + PW + 14, y: c.y + 16, alto: Math.max(40, c.h - 16), rango, etiqueta: 'dB', C });
+      }
+      rotulo(ctx, C, c.x + 6, c.y + c.h - 8, e.castigo < 0.0105 ? 'jump penalty: none' : 'jump penalty: ' + num(e.castigo, e.castigo < 1 ? 2 : e.castigo < 10 ? 1 : 0), { color: C.texto });
+    },
+  });
+  const mandos = document.getElementById('ancla-mandos');
+  let anim = null;
+  const cambiar = () => { calcular(); if (!anim || !anim.corriendo) L.dibujar(); };
+  Curso.mando(mandos, {
+    etiqueta: 'Jump penalty', clase: 'senal', min: 0.01, max: 1000, paso: 0, escala: 'log', valor: e.castigo,
+    formato: v => (v < 0.0105 ? 'none' : num(v, v < 1 ? 2 : v < 10 ? 1 : 0)),
+    alCambiar: v => { e.castigo = v; cambiar(); },
+  });
+  const fila = crear('div', { class: 'botones' });
+  mandos.appendChild(fila);
+  Curso.botones(fila, [{ id: 'miope', texto: 'Memoryless walker', pulsado: false, alPulsar: on => { e.miope = on; if (!anim || !anim.corriendo) L.dibujar(); } }]);
+  anim = Curso.animar(L, (t, dt) => {
+    if (t > 0) e.u = Math.min(1, (t % CICLO) / PASEO);
+    L.dibujar();
+  }, { boton: fila });
+})();
+// ── Reto 1 · Camina por la cresta (arrastrar sobre el lienzo) ─────────────────────────────────────────────
+(function () {
+  const sig = NUM.sube();
+  const M = NUM.mapaTF(sig.x, sig.fs, { n: 256, salto: 32, fmin: 500, fmax: 2600 });
+  const dtCol = M.t[1] - M.t[0], df = M.f[1] - M.f[0];
+  const e = { f: new Float64Array(M.nT).fill(NaN), previo: null, tocado: false, kb: { j: 0, f: 1500 }, enfocado: false };
+  let esc = null;
+  const columna = t => limitar(Math.round(t / dtCol), 0, M.nT - 1);
+  const L = G.lienzo('#r1-escena', {
+    alto: altoDe(250, 310), rol: 'slider',
+    etiqueta: 'Time-frequency map of a whistle that rises and falls over two seconds. You draw the ridge by dragging from left to right, or with the keyboard arrows.',
+    dibujar: (ctx, w, h, C) => {
+      esc = pintarMapa(ctx, w, h, C, M, {});
+      if (!e.tocado) {
+        // Pista de dónde empezar: un anillo en el borde izquierdo.
+        const x0 = esc.x(0.04), y0 = esc.y(1500);
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255,255,255,0.95)'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
+        ctx.beginPath(); ctx.arc(x0, y0, 14, 0, TAU); ctx.stroke();
+        ctx.restore();
+        rotulo(ctx, C, x0 + 22, y0 - 18, 'start here');
+      }
+      trazoMapa(ctx, esc, M.t, e.f, C.respuesta, { ancho: 3 });
+      if (e.enfocado) {
+        const px = esc.x(M.t[e.kb.j]), py = esc.y(e.kb.f);
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.arc(px, py, 7, 0, TAU); ctx.stroke();
+        ctx.restore();
+      }
+    },
+  });
+  const lect = Curso.lecturas('#r1-fila', [
+    { id: 'tramo', nombre: 'Stretch covered' },
+    { id: 'error', nombre: 'Average error', clase: 'respuesta' },
+  ]);
+  const dentro = p => esc && p.x >= esc.caja.x - 10 && p.x <= esc.caja.x + esc.caja.w + 10 && p.y >= esc.caja.y - 10 && p.y <= esc.caja.y + esc.caja.h + 10;
+  const punto = p => ({ t: limitar(esc.xi(p.x), 0, sig.dur), f: limitar(esc.yi(p.y), M.f[0], M.f[M.nF - 1]) });
+  function poner(a, b) {
+    const j0 = columna(a.t), j1 = columna(b.t), lo = Math.min(j0, j1), hi = Math.max(j0, j1);
+    for (let j = lo; j <= hi; j++) e.f[j] = lo === hi ? b.f : a.f + (b.f - a.f) * limitar((j - j0) / (j1 - j0), 0, 1);
+  }
+  function medir() {
+    let n = 0, s = 0, signo = 0;
+    for (let j = 0; j < M.nT; j++) if (Number.isFinite(e.f[j])) { const d = e.f[j] - sig.fi(M.t[j]); n++; s += Math.abs(d); signo += d; }
+    return { cobertura: n / M.nT, error: n ? s / n : NaN, signo: n ? signo / n : 0, n };
+  }
+  function estado() {
+    const m = medir();
+    lect.fijar('tramo', num(Math.round(100 * m.cobertura)) + '%');
+    lect.fijar('error', m.n ? num(m.error, 0) + ' Hz' : '—');
+    L.canvas.setAttribute('aria-valuenow', String(Math.round(e.kb.f)));
+    L.canvas.setAttribute('aria-valuetext', 'Frequency ' + num(Math.round(e.kb.f)) + ' hertz at second ' + num(M.t[e.kb.j], 1) + '; you have covered ' + Math.round(100 * m.cobertura) + '% of the whistle');
+  }
+  const cambio = () => { estado(); L.dibujar(); Curso.cambio('reto-1'); };
+  Curso.arrastre(L, {
+    alBajar: p => { if (!dentro(p)) return false; const q = punto(p); e.previo = q; e.tocado = true; e.f[columna(q.t)] = q.f; e.kb = { j: columna(q.t), f: q.f }; cambio(); },
+    alMover: p => { const q = punto(p); poner(e.previo, q); e.previo = q; e.kb = { j: columna(q.t), f: q.f }; cambio(); },
+    alSoltar: () => { e.previo = null; },
+  });
+  L.canvas.tabIndex = 0;
+  L.canvas.setAttribute('aria-valuemin', String(M.f[0]));
+  L.canvas.setAttribute('aria-valuemax', String(M.f[M.nF - 1]));
+  L.canvas.addEventListener('focus', () => { e.enfocado = true; L.dibujar(); });
+  L.canvas.addEventListener('blur', () => { e.enfocado = false; L.dibujar(); });
+  L.canvas.addEventListener('keydown', ev => {
+    const k = e.kb;
+    if (ev.key === 'ArrowUp' || ev.key === 'ArrowDown') k.f = limitar(k.f + (ev.key === 'ArrowUp' ? df : -df), M.f[0], M.f[M.nF - 1]);
+    else if (ev.key === 'ArrowRight') { const j1 = Math.min(M.nT - 1, k.j + 12); for (let j = k.j; j <= j1; j++) e.f[j] = k.f; k.j = j1; }
+    else if (ev.key === 'ArrowLeft') k.j = Math.max(0, k.j - 12);
+    else return;
+    ev.preventDefault();
+    e.tocado = true;
+    if (ev.key !== 'ArrowLeft') e.f[k.j] = k.f;
+    cambio();
+  });
+  const bt = filaBotones('#r1-fila');
+  Curso.audio.boton(bt, () => ({ x: sig.x, fs: sig.fs, volumen: 0.5 }), 'Hear the whistle', { clase: 'peque' });
+  Curso.audio.boton(bt, () => ({ x: NUM.tonoDeCurva(M.t, e.f, sig.fs, sig.dur), fs: sig.fs, volumen: 0.5 }), 'Hear your path', { clase: 'peque' });
+  Curso.botones(bt, [{ id: 'borrar', texto: 'Clear', tipo: 'discreto', peque: true, alPulsar: () => { e.f.fill(NaN); e.kb = { j: 0, f: 1500 }; e.tocado = false; cambio(); } }]);
+  estado();
+  Curso.reto('reto-1', {
+    titulo: 'Walk along the ridge', nivel: 'fácil',
+    comprobar: () => {
+      const m = medir();
+      if (m.n < 8) return { ok: false };
+      if (m.cobertura >= 0.9 && m.error < 60) return { ok: true, mensaje: 'You have covered ' + num(Math.round(100 * m.cobertura)) + '% of the whistle with an average error of ' + num(m.error, 0) + ' Hz.' };
+      if (m.error >= 60 && m.n >= 20) return { ok: false, mensaje: 'You are drifting from the ridge (average error of ' + num(m.error, 0) + ' Hz): you are ' + (m.signo > 0 ? 'above' : 'below') + ' the brightest band. Clear it and follow the band.' };
+      return { ok: false, mensaje: 'You have covered ' + num(Math.round(100 * m.cobertura)) + '% of the whistle. Keep going to the right, all the way to the edge.' };
+    },
+    resolver: () => { for (let j = 0; j < M.nT; j++) e.f[j] = sig.fi(M.t[j]); e.tocado = true; e.kb = { j: M.nT - 1, f: sig.fi(sig.dur) }; estado(); L.dibujar(); },
+    pista: [
+      'Follow the brightest band of the map, the one with the most energy: that is the ridge. You do not need to be exact, because the average error only has to stay under 60 Hz, about two cells tall.',
+      'The band starts at about 1,500 Hz at the left edge and ends at the right one. With the keyboard, focus the map with the Tab key, go up and down with the up and down arrows and move forward with the right arrow.',
+    ],
+    exito: '<p>You have just done by hand what a ridge tracker does: staying at the highest point of each instant without losing the thread. In a whistle, which is almost a single Ferris wheel, that ridge is its instantaneous frequency, and if you listen to it as a pure tone it sounds almost the same as the whistle.</p>',
+  });
+})();
+
+// ── Reto 2 · ¿Dónde se equivoca el atajo? (tocar para colocar) ────────────────────────────────────────────
+(function () {
+  const sig = NUM.rafagas();
+  const M = NUM.mapaTF(sig.x, sig.fs, { n: 256, salto: 32, fmin: 400, fmax: 3600 });
+  const atajo = NUM.curvaHz(M, Senal.cresta(M.P, M.nF, M.nT, { penalizacion: 0 }));
+  const castigado = NUM.curvaHz(M, Senal.cresta(M.P, M.nF, M.nT, { penalizacion: 1 }));
+  // Los sitios donde el atajo se aparta del silbido (o donde no hay silbido): se juntan los tramos cercanos.
+  const zonas = [];
+  {
+    let ini = -1, fin = -1;
+    const mal = j => { const f = sig.fi(M.t[j]); return !Number.isFinite(f) || Math.abs(atajo[j] - f) > 62.5; };
+    for (let j = 0; j < M.nT; j++) {
+      if (mal(j)) { if (ini < 0) ini = j; fin = j; }
+      else if (ini >= 0 && j - fin > 15) { if (fin - ini >= 4) zonas.push({ t0: M.t[ini], t1: M.t[fin] }); ini = -1; }
+    }
+    if (ini >= 0 && fin - ini >= 4) zonas.push({ t0: M.t[ini], t1: M.t[fin] });
+  }
+  const MARGEN = 0.05;
+  const e = { marcas: [], ver: false, cursor: 0.5, enfocado: false };
+  let esc = null;
+  const L = G.lienzo('#r2-escena', {
+    alto: altoDe(250, 310), rol: 'slider',
+    etiqueta: 'Time-frequency map of a whistle with a gap of silence and two bursts of noise, and on top the orange curve that the greedy method produces. You tap the map to mark the places where the curve leaves the whistle.',
+    dibujar: (ctx, w, h, C) => {
+      esc = pintarMapa(ctx, w, h, C, M, {});
+      const c = esc.caja;
+      trazoMapa(ctx, esc, M.t, atajo, C.respuesta, { ancho: 2.2 });
+      if (e.ver) trazoMapa(ctx, esc, M.t, castigado, C.senal, { ancho: 3 });
+      ctx.save();
+      ctx.beginPath(); ctx.rect(c.x, c.y, c.w, c.h); ctx.clip();
+      e.marcas.forEach((t, i) => {
+        const x = esc.x(t);
+        ctx.setLineDash([4, 3]); ctx.strokeStyle = 'rgba(255,255,255,0.95)'; ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.moveTo(x, c.y); ctx.lineTo(x, c.y + c.h); ctx.stroke();
+      });
+      ctx.restore();
+      e.marcas.forEach((t, i) => {
+        const x = esc.x(t);
+        ctx.save();
+        ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(x, c.y + 11, 9, 0, TAU); ctx.fill();
+        ctx.restore();
+        G.texto(ctx, x, c.y + 11, String(i + 1), { alinear: 'center', base: 'middle', color: '#1e1638', tam: 11, peso: 600, C });
+      });
+      if (e.enfocado) {
+        const x = esc.x(e.cursor);
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1; ctx.setLineDash([1, 4]);
+        ctx.beginPath(); ctx.moveTo(x, c.y); ctx.lineTo(x, c.y + c.h); ctx.stroke();
+        ctx.restore();
+      }
+    },
+  });
+  L.canvas.classList.add('tocable');
+  const lect = Curso.lecturas('#r2-fila', [{ id: 'marcas', nombre: 'Marks placed' }, { id: 'sitios', nombre: 'Places found', clase: 'respuesta' }]);
+  const enZona = t => zonas.some(z => t >= z.t0 - MARGEN && t <= z.t1 + MARGEN);
+  function resultado() {
+    const halladas = zonas.filter(z => e.marcas.some(t => t >= z.t0 - MARGEN && t <= z.t1 + MARGEN)).length;
+    return { halladas, fuera: e.marcas.filter(t => !enZona(t)).length };
+  }
+  function estado() {
+    const r = resultado();
+    lect.fijar('marcas', String(e.marcas.length));
+    lect.fijar('sitios', r.halladas + ' of ' + zonas.length);
+    L.canvas.setAttribute('aria-valuenow', e.cursor.toFixed(2));
+    L.canvas.setAttribute('aria-valuetext', 'Cursor at ' + num(e.cursor, 2) + ' seconds; ' + e.marcas.length + ' marks placed');
+  }
+  const cambio = () => { estado(); L.dibujar(); Curso.cambio('reto-2'); };
+  function alternar(t, tol) {
+    const i = e.marcas.findIndex(m => Math.abs(m - t) <= tol);
+    if (i >= 0) e.marcas.splice(i, 1);
+    else if (e.marcas.length < 8) { e.marcas.push(t); e.marcas.sort((a, b) => a - b); }
+    cambio();
+  }
+  L.canvas.addEventListener('click', ev => {
+    if (!esc) return;
+    const r = L.canvas.getBoundingClientRect(), px = ev.clientX - r.left, py = ev.clientY - r.top, c = esc.caja;
+    if (px < c.x || px > c.x + c.w || py < c.y || py > c.y + c.h) return;
+    e.cursor = limitar(esc.xi(px), 0, sig.dur);
+    alternar(e.cursor, Math.abs(esc.xi(c.x + 12) - esc.xi(c.x)));
+  });
+  L.canvas.tabIndex = 0;
+  L.canvas.setAttribute('aria-valuemin', '0');
+  L.canvas.setAttribute('aria-valuemax', String(sig.dur));
+  L.canvas.addEventListener('focus', () => { e.enfocado = true; L.dibujar(); });
+  L.canvas.addEventListener('blur', () => { e.enfocado = false; L.dibujar(); });
+  L.canvas.addEventListener('keydown', ev => {
+    if (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft') { e.cursor = limitar(e.cursor + (ev.key === 'ArrowRight' ? 0.02 : -0.02), 0, sig.dur); estado(); L.dibujar(); }
+    else if (ev.key === 'Enter' || ev.key === ' ') alternar(e.cursor, 0.015);
+    else return;
+    ev.preventDefault();
+  });
+  const bt = filaBotones('#r2-fila');
+  Curso.audio.boton(bt, () => ({ x: sig.x, fs: sig.fs, volumen: 0.5 }), 'Hear the whistle', { clase: 'peque' });
+  Curso.audio.boton(bt, () => ({ x: NUM.tonoDeCurva(M.t, atajo, sig.fs, sig.dur), fs: sig.fs, volumen: 0.5 }), 'Hear the greedy curve', { clase: 'peque' });
+  Curso.botones(bt, [
+    { id: 'ver', texto: 'Show the penalized path', tipo: 'discreto', peque: true, pulsado: false, alPulsar: on => { e.ver = on; L.dibujar(); } },
+    { id: 'quitar', texto: 'Remove marks', tipo: 'discreto', peque: true, alPulsar: () => { e.marcas = []; cambio(); } },
+  ]);
+  estado();
+  Curso.reto('reto-2', {
+    titulo: 'Where does the greedy method go wrong?', nivel: 'fácil',
+    comprobar: () => {
+      const r = resultado();
+      if (r.halladas === zonas.length && r.fuera <= 1) return { ok: true, mensaje: 'All three places: the greedy method goes off with each burst and invents a note in the silence.' };
+      if (!e.marcas.length) return { ok: false };
+      if (r.fuera > 1) return { ok: false, mensaje: 'There are ' + r.fuera + ' marks in places where the greedy method follows the whistle fine. Remove the extra ones by tapping them again.' };
+      return { ok: false, mensaje: 'You have ' + r.halladas + ' of ' + zonas.length + ' places. Look for where the orange curve separates from the bright band' + (r.halladas < zonas.length ? ' and also notice where the whistle goes quiet.' : '.') };
+    },
+    resolver: () => { e.marcas = zonas.map(z => (z.t0 + z.t1) / 2); cambio(); },
+    pista: [
+      'Follow the orange curve from left to right and look for where it departs from the bright band of the whistle. There are three places, and in one of them there is no band at all.',
+      'Two are brief bursts of noise, stronger than the whistle, and the third is a silence. With “Hear the greedy curve” you can hear how the orange curve sounds at each one.',
+    ],
+    exito: '<p>The greedy method has no memory. A burst stronger than the whistle is enough to send it to another part of the map, and in a silence it invents a note out of the only thing there is, the background noise. To avoid that, you have to score the whole path and penalize jumps. With “Show the penalized path,” what you get appears in green.</p>',
+  });
+})();
+// ── Reto 3 · Ni saltarín ni perezoso (un deslizador y el oído) ────────────────────────────────────────────
+(function () {
+  const sig = NUM.vozDebil();
+  const M = NUM.mapaTF(sig.x, sig.fs, { n: 1024, salto: 80, fmin: 100, fmax: 1000, fps: 4 });
+  const e = { castigo: 0.005, hz: null, res: null };
+  const NOMBRES = ['A3', 'C4', 'E4', 'A3'];
+  function evaluar(hz) {
+    const err = new Float64Array(M.nT);
+    let suma = 0, oct = 0;
+    for (let j = 0; j < M.nT; j++) { err[j] = Math.abs(12 * Math.log2(hz[j] / sig.fi(M.t[j]))); suma += err[j]; if (Math.abs(err[j] - 12) < 1) oct++; }
+    const tarde = [0.5, 1, 1.5].map(cam => { for (let j = 0; j < M.nT; j++) if (M.t[j] >= cam && M.t[j] < cam + 0.3 && err[j] < 1) return M.t[j] - cam; return null; });
+    return { err: suma / M.nT, oct: 100 * oct / M.nT, tarde, retraso: Math.max(...tarde.map(t => (t == null ? Infinity : t))) };
+  }
+  function calcular() {
+    const filas = Senal.cresta(M.P, M.nF, M.nT, { penalizacion: e.castigo < 0.0052 ? 0 : e.castigo });
+    e.hz = NUM.curvaHz(M, filas);
+    e.res = evaluar(e.hz);
+  }
+  calcular();
+  // La verdad, en escalón, para dibujarla.
+  const verdadT = [], verdadF = [];
+  sig.notas.forEach((f, q) => { verdadT.push(q * sig.dn, (q + 1) * sig.dn); verdadF.push(f, f); });
+  const L = G.lienzo('#r3-escena', {
+    alto: altoDe(270, 330),
+    etiqueta: 'Time-frequency map on a note scale of a synthetic voice singing A, C, E and A. On top, the green curve that the program produces and, dotted, the true melody. In two stretches the fundamental almost disappears and its octave shines more.',
+    dibujar: (ctx, w, h, C) => {
+      const esc = pintarMapa(ctx, w, h, C, M, {});
+      const c = esc.caja;
+      // Los tramos con la fundamental débil.
+      for (const [a, b] of sig.debil) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(esc.x(a), c.y + c.h - 5); ctx.lineTo(esc.x(b), c.y + c.h - 5); ctx.stroke();
+        ctx.restore();
+      }
+      rotulo(ctx, C, esc.x((sig.debil[0][0] + sig.debil[0][1]) / 2), c.y + c.h - 11, 'weak fundamental', { alinear: 'center', tam: w < 560 ? 9 : 10 });
+      trazoMapa(ctx, esc, verdadT, aY(M, verdadF), 'rgba(255,255,255,0.95)', { ancho: 1.3, guiones: [2, 3], borde: false });
+      sig.notas.forEach((f, q) => rotulo(ctx, C, esc.x((q + 0.5) * sig.dn), esc.y(NUM.yDeHz(M, f)) + 16, NOMBRES[q], { alinear: 'center', tam: 10 }));
+      trazoMapa(ctx, esc, M.t, aY(M, e.hz), C.senal, { ancho: 3 });
+    },
+  });
+  const mando = Curso.mando('#r3-mandos', {
+    etiqueta: 'Jump penalty', clase: 'senal', min: 0.005, max: 10, paso: 0, escala: 'log', valor: e.castigo, reto: 'reto-3',
+    formato: v => (v < 0.0052 ? 'none' : num(v, v < 0.1 ? 3 : v < 1 ? 2 : 1)),
+    alCambiar: v => { e.castigo = v; actualizar(); },
+  });
+  const lect = Curso.lecturas('#r3-fila', [
+    { id: 'err', nombre: 'Average error' },
+    { id: 'oct', nombre: 'Extra octave', clase: 'respuesta' },
+    { id: 'tarde', nombre: 'Arrives late' },
+    { id: 'coste', nombre: 'Cost of a one-semitone jump' },
+  ]);
+  function actualizar() {
+    calcular();
+    const r = e.res;
+    lect.fijar('err', num(r.err, 2) + ' semitones');
+    lect.fijar('oct', num(r.oct, 0) + '% of the time');
+    lect.fijar('tarde', Number.isFinite(r.retraso) ? num(r.retraso, 2) + ' s' : 'never arrives');
+    lect.fijar('coste', num((e.castigo < 0.0052 ? 0 : e.castigo) * 16 * 10 / Math.LN10, 0) + ' dB');
+    L.dibujar();
+  }
+  const bt = filaBotones('#r3-fila');
+  Curso.audio.boton(bt, () => ({ x: sig.x, fs: sig.fs, volumen: 0.5 }), 'Hear the voice', { clase: 'peque' });
+  Curso.audio.boton(bt, () => ({ x: NUM.tonoDeCurva(M.t, e.hz, sig.fs, sig.dur), fs: sig.fs, volumen: 0.5 }), 'Hear the curve', { clase: 'peque' });
+  actualizar();
+  Curso.reto('reto-3', {
+    titulo: 'Neither jumpy nor lazy', nivel: 'medio',
+    comprobar: () => {
+      const r = e.res;
+      if (r.err < 0.5 && r.oct < 0.5 && r.retraso < 0.06) return { ok: true, mensaje: 'The curve follows the melody: average error of ' + num(r.err, 2) + ' semitones, no extra octave and the note changes right on time.' };
+      if (r.retraso === Infinity) return { ok: false, mensaje: 'With so much penalty the curve stays still on the octave above ' + num(r.oct, 0) + '% of the time and never reaches the note changes. Loosen it a little.' };
+      if (r.oct >= 2) return { ok: false, mensaje: 'The curve climbs to the octave above ' + num(r.oct, 0) + '% of the time, mostly where the fundamental is weak. It needs more penalty.' };
+      if (r.retraso >= 0.06) return { ok: false, mensaje: 'Almost: it arrives ' + num(r.retraso, 2) + ' s late at some note change. Lower the penalty a little.' };
+      return { ok: false, mensaje: 'The average error is ' + num(r.err, 2) + ' semitones. Try a somewhat different penalty.' };
+    },
+    resolver: () => mando.fijar(0.2),
+    pista: [
+      'With the penalty at “none,” look at the height the green curve jumps to in the two weak-fundamental stretches: it climbs to the bright line above, which is the second harmonic.',
+      'Raise the penalty until the curve stops climbing to the line above, but not so much that it stays still and arrives late at the new notes. A whole stretch of the control works, roughly from 0.05 to 1.',
+    ],
+    exito: '<p>You have found the walker’s balance: careful, so as not to jump to the ridge next door, which is an octave higher, and agile, so as to follow the melody. Voice analysis programs like Praat have this same control under the name “octave-jump cost.”</p>',
+  });
+})();
+
+// ── Reto 4 · Encuentra el camino más barato (tocar para colocar) ──────────────────────────────────────────
+(function () {
+  // Energías de cada casilla: la fila 5 está arriba y la 1 abajo; seis instantes.
+  const G4 = [[1, 2, 9, 2, 1, 2], [2, 1, 3, 4, 3, 7], [3, 4, 5, 7, 7, 4], [5, 4, 7, 3, 2, 1], [7, 7, 2, 1, 8, 1]];
+  const nF = G4.length, nT = G4[0].length;
+  const e = { sel: new Array(nT).fill(-1), castigo: 2, foco: { j: 0, f: 2 }, enfocado: false };
+  let geo = null;
+  const mejor = () => NUM.mejorCamino(G4, e.castigo);
+  const L = G.lienzo('#r4-escena', {
+    alto: w => Math.round(30 + nF * Math.min(48, (w - 64) / nT) + 10), rol: 'application',
+    etiqueta: 'A grid of five heights by six instants with an energy in each cell. You choose one cell at each instant; the path loses points for every row it jumps. With the keyboard, the arrows move the focus and Enter chooses.',
+    dibujar: (ctx, w, h, C) => {
+      const izq = 52, arriba = 30, ancho = Math.min(48, (w - izq - 12) / nT), alto = ancho;
+      geo = { izq, arriba, ancho, alto };
+      const cx = j => izq + (j + 0.5) * ancho, cy = f => arriba + (f + 0.5) * alto;
+      G.texto(ctx, izq, 14, 'instant', { color: C.tenue, tam: 10, C });
+      G.texto(ctx, izq - 8, 14, 'height', { alinear: 'right', color: C.tenue, tam: 10, C });
+      for (let j = 0; j < nT; j++) G.texto(ctx, cx(j), 26, String(j + 1), { alinear: 'center', color: C.tenue, tam: 11, C });
+      for (let f = 0; f < nF; f++) G.texto(ctx, izq - 8, cy(f), String(nF - f), { alinear: 'right', base: 'middle', color: C.tenue, tam: 11, C });
+      for (let f = 0; f < nF; f++) for (let j = 0; j < nT; j++) {
+        const v = G4[f][j], [r, g, b] = G.magma(0.08 + 0.92 * v / 9), lum = 0.299 * r + 0.587 * g + 0.114 * b;
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(izq + j * ancho + 1.5, arriba + f * alto + 1.5, ancho - 3, alto - 3);
+        G.texto(ctx, cx(j), cy(f), String(v), { alinear: 'center', base: 'middle', color: lum > 120 ? '#1a1030' : '#f4f1ff', tam: 14, peso: e.sel[j] === f ? 700 : 500, C });
+      }
+      // El camino elegido, con lo que cuesta cada salto.
+      ctx.save();
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      const pts = e.sel.map((f, j) => (f >= 0 ? [cx(j), cy(f)] : null));
+      for (let pasada = 0; pasada < 2; pasada++) {
+        ctx.strokeStyle = pasada ? C.senal : 'rgba(0,0,0,0.6)'; ctx.lineWidth = pasada ? 3.2 : 6;
+        ctx.beginPath();
+        let abierto = false;
+        pts.forEach(p => { if (!p) { abierto = false; return; } if (abierto) ctx.lineTo(p[0], p[1]); else { ctx.moveTo(p[0], p[1]); abierto = true; } });
+        ctx.stroke();
+      }
+      pts.forEach((p, j) => { if (!p) return; ctx.fillStyle = C.senal; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(p[0], p[1], 6, 0, TAU); ctx.fill(); ctx.stroke(); });
+      ctx.restore();
+      for (let j = 1; j < nT; j++) {
+        if (e.sel[j] < 0 || e.sel[j - 1] < 0 || e.sel[j] === e.sel[j - 1] || e.castigo === 0) continue;
+        const x = (cx(j) + cx(j - 1)) / 2, y = (cy(e.sel[j]) + cy(e.sel[j - 1])) / 2;
+        rotulo(ctx, C, x, y + 4, '−' + num(e.castigo * Math.abs(e.sel[j] - e.sel[j - 1])), { alinear: 'center', color: C.mal, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.92) });
+      }
+      if (e.enfocado) {
+        ctx.save();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.setLineDash([4, 3]);
+        ctx.strokeRect(izq + e.foco.j * ancho + 0.5, arriba + e.foco.f * alto + 0.5, ancho - 1, alto - 1);
+        ctx.restore();
+      }
+    },
+  });
+  L.canvas.classList.add('tocable');
+  const eleccion = Curso.eleccion('#r4-mandos', {
+    etiqueta: 'Penalty per row jumped', valor: 2, reto: 'reto-4',
+    opciones: [0, 1, 2, 3, 5].map(v => ({ valor: v, texto: String(v) })),
+    alCambiar: v => { e.castigo = v; const s = document.getElementById('r4-castigo'); if (s) s.textContent = String(v); estado(); L.dibujar(); },
+  });
+  const lect = Curso.lecturas('#r4-fila', [{ id: 'energia', nombre: 'Energy collected' }, { id: 'castigo', nombre: 'Penalty paid', clase: 'respuesta' }, { id: 'puntos', nombre: 'Score', clase: 'destacada' }]);
+  const camino = () => e.sel.map(f => (f >= 0 ? f : null));
+  function puntuacion() {
+    let en = 0, sal = 0;
+    e.sel.forEach((f, j) => { if (f >= 0) { en += G4[f][j]; if (j && e.sel[j - 1] >= 0) sal += Math.abs(f - e.sel[j - 1]); } });
+    return { energia: en, castigo: e.castigo * sal, puntos: en - e.castigo * sal, completo: e.sel.every(f => f >= 0), elegidas: e.sel.filter(f => f >= 0).length };
+  }
+  function estado() {
+    const p = puntuacion();
+    lect.fijar('energia', String(p.energia));
+    lect.fijar('castigo', String(p.castigo));
+    lect.fijar('puntos', String(p.puntos));
+    L.canvas.setAttribute('aria-label', 'Grid of five heights by six instants. You have chosen ' + p.elegidas + ' cells and have ' + p.puntos + ' points. Focus on instant ' + (e.foco.j + 1) + ', height ' + (nF - e.foco.f) + ', energy ' + G4[e.foco.f][e.foco.j] + '.');
+  }
+  const cambio = () => { estado(); L.dibujar(); Curso.cambio('reto-4'); };
+  function elegir(j, f) { e.sel[j] = e.sel[j] === f ? -1 : f; e.foco = { j, f }; cambio(); }
+  L.canvas.addEventListener('click', ev => {
+    if (!geo) return;
+    const r = L.canvas.getBoundingClientRect(), j = Math.floor((ev.clientX - r.left - geo.izq) / geo.ancho), f = Math.floor((ev.clientY - r.top - geo.arriba) / geo.alto);
+    if (j < 0 || j >= nT || f < 0 || f >= nF) return;
+    elegir(j, f);
+  });
+  L.canvas.tabIndex = 0;
+  L.canvas.addEventListener('focus', () => { e.enfocado = true; L.dibujar(); });
+  L.canvas.addEventListener('blur', () => { e.enfocado = false; L.dibujar(); });
+  L.canvas.addEventListener('keydown', ev => {
+    const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[ev.key];
+    if (d) { e.foco = { j: limitar(e.foco.j + d[0], 0, nT - 1), f: limitar(e.foco.f + d[1], 0, nF - 1) }; estado(); L.dibujar(); }
+    else if (ev.key === 'Enter' || ev.key === ' ') elegir(e.foco.j, e.foco.f);
+    else return;
+    ev.preventDefault();
+  });
+  Curso.botones(filaBotones('#r4-fila'), [{ id: 'borrar', texto: 'Start over', tipo: 'discreto', peque: true, alPulsar: () => { e.sel.fill(-1); cambio(); } }]);
+  estado();
+  // La tabla de la programación dinámica con castigo 2, para la segunda pista.
+  const tabla = (() => {
+    const T = NUM.mejorCamino(G4, 2).tabla;
+    let h = '<div class="tabla"><table><thead><tr><th>height</th>' + [1, 2, 3, 4, 5, 6].map(j => '<th>t' + j + '</th>').join('') + '</tr></thead><tbody>';
+    for (let f = 0; f < nF; f++) h += '<tr><th>' + (nF - f) + '</th>' + T[f].map(v => '<td>' + v + '</td>').join('') + '</tr>';
+    return h + '</tbody></table></div>';
+  })();
+  Curso.reto('reto-4', {
+    titulo: 'Find the cheapest path', nivel: 'medio',
+    comprobar: () => {
+      const p = puntuacion(), opt = mejor().puntuacion;
+      if (!p.elegidas) return { ok: false };
+      if (!p.completo) return { ok: false, mensaje: 'You still have ' + (nT - p.elegidas) + ' instants to choose.' };
+      if (p.puntos === opt) return { ok: true, mensaje: 'With ' + p.puntos + ' points: it is the best possible path.' };
+      return { ok: false, mensaje: 'You have ' + p.puntos + ' points and more is possible. Compare what each jump costs with what you gain from it.' };
+    },
+    resolver: () => { e.sel = mejor().camino.slice(); cambio(); },
+    pista: [
+      'The nines and the eight are far from everything else: is it worth going for them? A jump of four rows costs eight points, and the nine only adds four more than its neighbor next to it.',
+      'For each cell, write down the best total with which it can be reached. With a penalty of 2, those totals are:' + tabla + 'Choose the cell with the highest total in the last column and go back to the cell it came from.',
+    ],
+    exito: '<p>For each cell it is enough to remember the best path that reaches it and where it came from. Instead of trying all 15,625 possible paths, dynamic programming reaches the same result with about 130 calculations. It is what Viterbi used in 1967 to decode noisy messages, and what mobile phones and pitch detectors use today. Change the penalty to see the two extremes from before: with 0 the greedy method wins, with 5 a straight line wins.</p>',
+  });
+})();
+// ── Reto 5 · ¿Quién es quién después del cruce? (un interruptor y un deslizador) ─────────────────────────
+(function () {
+  const sig = NUM.cruce();
+  const M = NUM.mapaTF(sig.x, sig.fs, { n: 1024, salto: 160, fmin: 700, fmax: 2200 });
+  const E = NUM.energiaDb(M.P, 40);
+  const e = { inercia: false, mu: 1, lineas: null, res: null };
+  const sinInercia = Senal.crestas(M.P, M.nF, M.nT, { penalizacion: 1 }, 2, 8).map(c => NUM.curvaHz(M, c));
+  const pendiente = (hz, t0, t1) => {
+    let n = 0, mt = 0, mf = 0;
+    for (let j = 0; j < M.nT; j++) if (M.t[j] >= t0 && M.t[j] <= t1) { n++; mt += M.t[j]; mf += hz[j]; }
+    mt /= n; mf /= n;
+    let sxy = 0, sxx = 0;
+    for (let j = 0; j < M.nT; j++) if (M.t[j] >= t0 && M.t[j] <= t1) { sxy += (M.t[j] - mt) * (hz[j] - mf); sxx += (M.t[j] - mt) ** 2; }
+    return sxy / sxx;
+  };
+  const errorMedio = (hz, f) => { let s = 0; for (let j = 0; j < M.nT; j++) s += Math.abs(hz[j] - f(M.t[j])); return s / M.nT; };
+  function calcular() {
+    e.lineas = e.inercia ? NUM.dosCrestasInercia(E, M.nF, M.nT, 0.01, e.mu).map(c => NUM.curvaHz(M, c)) : sinInercia;
+    const [l1, l2] = e.lineas;
+    const a = (errorMedio(l1, sig.fA) + errorMedio(l2, sig.fB)) / 2, b = (errorMedio(l1, sig.fB) + errorMedio(l2, sig.fA)) / 2;
+    e.res = { err: Math.min(a, b), antes: pendiente(l1, 0.2, 0.6), despues: pendiente(l1, 0.9, 1.3) };
+  }
+  calcular();
+  const L = G.lienzo('#r5-escena', {
+    alto: altoDe(250, 310),
+    etiqueta: 'Time-frequency map of two whistles that cross: one rises and the other falls. On top, the two lines the program produces, green and orange, and, dotted, the line of the rising whistle.',
+    dibujar: (ctx, w, h, C) => {
+      const esc = pintarMapa(ctx, w, h, C, M, {});
+      const c = esc.caja, ts = Array.from(M.t, t => t), vA = ts.map(t => sig.fA(t));
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 1; ctx.setLineDash([2, 5]);
+      ctx.beginPath(); ctx.moveTo(esc.x(sig.tCruce), c.y); ctx.lineTo(esc.x(sig.tCruce), c.y + c.h); ctx.stroke();
+      ctx.restore();
+      trazoMapa(ctx, esc, ts, vA, 'rgba(255,255,255,0.95)', { ancho: 1.3, guiones: [2, 3], borde: false });
+      trazoMapa(ctx, esc, M.t, e.lineas[1], C.respuesta, { ancho: 2.8 });
+      trazoMapa(ctx, esc, M.t, e.lineas[0], C.senal, { ancho: 2.8 });
+      rotulo(ctx, C, esc.x(sig.tCruce) + 5, c.y + 14, 'crossing', { alinear: 'left' });
+      rotulo(ctx, C, esc.x(0.04), esc.y(sig.fA(0.04)) + 22, 'A', { tam: 12, peso: 600 });
+    },
+  });
+  const mandos = document.getElementById('r5-mandos');
+  const fila = crear('div', { class: 'botones' });
+  const mando = Curso.mando(mandos, {
+    etiqueta: 'Inertia', clase: 'senal', min: 0.1, max: 100, paso: 0, escala: 'log', valor: e.mu, reto: 'reto-5',
+    formato: v => num(v, v < 1 ? 2 : v < 10 ? 1 : 0),
+    alCambiar: v => { e.mu = v; recalcular(); },
+  });
+  mandos.appendChild(fila);
+  const bInercia = Curso.botones(fila, [{ id: 'inercia', texto: 'Use inertia', pulsado: false, alPulsar: on => fijarInercia(on) }]).inercia;
+  mando.input.disabled = true;
+  function fijarInercia(on) {
+    e.inercia = on;
+    bInercia.setAttribute('aria-pressed', String(on));
+    mando.input.disabled = !on;
+    recalcular();
+  }
+  const lect = Curso.lecturas('#r5-fila', [
+    { id: 'antes', nombre: 'Line 1 before' },
+    { id: 'despues', nombre: 'Line 1 after' },
+    { id: 'error', nombre: 'Error', clase: 'respuesta' },
+  ]);
+  function recalcular() {
+    calcular();
+    lect.fijar('antes', num(e.res.antes, 0) + ' Hz/s');
+    lect.fijar('despues', num(e.res.despues, 0) + ' Hz/s');
+    lect.fijar('error', num(e.res.err, 0) + ' Hz');
+    L.dibujar();
+    Curso.cambio('reto-5');
+  }
+  const bt = filaBotones('#r5-fila');
+  Curso.audio.boton(bt, () => ({ x: sig.x, fs: sig.fs, volumen: 0.5 }), 'Hear both', { clase: 'peque' });
+  Curso.audio.boton(bt, () => ({ x: NUM.tonoDeCurva(M.t, e.lineas[0], sig.fs, sig.dur), fs: sig.fs, volumen: 0.5 }), 'Hear line 1', { clase: 'peque' });
+  Curso.audio.boton(bt, () => ({ x: NUM.tonoDeCurva(M.t, e.lineas[1], sig.fs, sig.dur), fs: sig.fs, volumen: 0.5 }), 'Hear line 2', { clase: 'peque' });
+  recalcular();
+  Curso.reto('reto-5', {
+    titulo: 'Who is who after the crossing?', nivel: 'difícil',
+    comprobar: () => {
+      const r = e.res;
+      if (r.err < 30) return { ok: true, mensaje: 'Both lines cross and keep straight: average error of ' + num(r.err, 0) + ' Hz.' };
+      const rebota = r.antes * r.despues < 0;
+      if (!e.inercia || rebota) return { ok: false, mensaje: 'Line 1 ' + (rebota ? 'changes slope at the crossing (' + num(r.antes, 0) + ' Hz/s before and ' + num(r.despues, 0) + ' Hz/s after): it bounces' : 'does not go through the crossing') + '. To make it keep straight you have to penalize changing direction: turn on inertia' + (e.inercia ? ' and raise it.' : '.') };
+      if (Math.abs(r.antes) < 150 && Math.abs(r.despues) < 150) return { ok: false, mensaje: 'With so much inertia the lines go flat: they can no longer even follow the slope of the whistles. Lower it a little.' };
+      return { ok: false, mensaje: 'Almost: the lines cross, but they drift ' + num(r.err, 0) + ' Hz on average. Fine-tune the inertia.' };
+    },
+    resolver: () => { e.mu = 4.5; mando.fijar(4.5, false); fijarInercia(true); },
+    pista: [
+      'Look at the slope of line 1 just before and just after the crossing: if it changes sign, the line has bounced instead of going straight.',
+      'Penalizing jumps does not tell bouncing from going straight, because both cost the same. Turn on inertia, which penalizes slope changes, but not so much that the line cannot even turn: a value between 3 and 8 works.',
+    ],
+    exito: '<p>With only a jump penalty, bouncing and going straight cost the same, and the path goes off with the brightest branch. Inertia, which penalizes a change of slope, is what allows crossing. Even so, the energy map hardly tells who is who: if two whistlers really did bounce, the map would be almost the same.</p>',
+  });
+})();
+
+// ── Reto 6 · Caza el error de octava con YIN (elegir una regla y un umbral) ───────────────────────────────
+(function () {
+  const sig = NUM.vocalMelodia();
+  const fs = sig.fs, W = 200, TAU_MAX = 200, TAU_MIN = Math.floor(fs / 800), HOP = Math.round(0.01 * fs), NOTA = Math.round(sig.dn * fs);
+  const hondo = Senal.yin(sig.x, fs, { fmin: 40, fmax: 800, umbral: 0.1, n: W });
+  const nFr = hondo.t.length;
+  const memoria = new Map();
+  const yinCon = u => { const k = Math.round(u * 100); if (!memoria.has(k)) memoria.set(k, Senal.yin(sig.x, fs, { fmin: 40, fmax: 800, umbral: k / 100, n: W })); return memoria.get(k); };
+  const e = { regla: 'hondo', umbral: 0.1, j: 0, hz: null, res: null };
+  // Las tramas que cruzan un cambio de nota no cuentan: no tienen un tono verdadero.
+  const limpias = new Uint8Array(nFr), verdad = new Float64Array(nFr);
+  for (let j = 0; j < nFr; j++) {
+    const s = Math.round(hondo.t[j] * fs - W / 2), q0 = Math.floor(s / NOTA);
+    limpias[j] = q0 === Math.floor((s + W + TAU_MAX) / NOTA) ? 1 : 0;
+    verdad[j] = sig.notas[Math.min(sig.notas.length - 1, q0)];
+  }
+  function calcular() {
+    const y = e.regla === 'hondo' ? hondo : yinCon(e.umbral);
+    e.hz = new Float64Array(nFr);
+    for (let j = 0; j < nFr; j++) e.hz[j] = e.regla === 'hondo' ? y.candidato[j] : (Number.isFinite(y.f0[j]) ? y.f0[j] : y.candidato[j]);
+    let alto = 0, bajo = 0, n = 0;
+    for (let j = 0; j < nFr; j++) {
+      if (!limpias[j]) continue;
+      n++;
+      if (e.hz[j] > 1.2 * verdad[j]) alto++; else if (e.hz[j] < verdad[j] / 1.2) bajo++;
+    }
+    e.res = { gruesos: 100 * (alto + bajo) / n, alto: 100 * alto / n, bajo: 100 * bajo / n };
+  }
+  // El primer instante en que el valle más hondo se equivoca: para que se vea el fallo nada más empezar.
+  for (let j = 5; j < nFr; j++) if (limpias[j] && (hondo.candidato[j] < verdad[j] / 1.2 || hondo.candidato[j] > 1.2 * verdad[j])) { e.j = j; break; }
+  calcular();
+  const L = G.lienzo('#r6-escena', {
+    alto: altoDe(380, 420),
+    etiqueta: 'At the top, the normalized difference curve of YIN at one instant, with the threshold and the chosen valley. At the bottom, the pitch curve of the whole melody, with the true note dotted and the gross errors marked.',
+    dibujar: (ctx, w, h, C) => {
+      const arriba = { x: 52, y: 22, w: w - 52 - 14, h: Math.round((h - 26 - 74) * 0.46) };
+      const abajo = { x: 52, y: arriba.y + arriba.h + 44, w: arriba.w, h: h - (arriba.y + arriba.h + 44) - 30 };
+      // Panel de arriba: d′(τ) en el instante elegido.
+      const s0 = e.j * HOP, dp = NUM.difNorm(sig.x, s0, W, TAU_MAX), ms = tau => 1000 * tau / fs;
+      const esc1 = G.ejes(ctx, { caja: arriba, x: [0, ms(TAU_MAX)], y: [0, 1.5], marcasY: [0, 0.5, 1, 1.5], marcasX: Math.max(3, Math.round(arriba.w / 70)), formatoX: v => num(v, 0), etiquetaX: 'lag (ms)', etiquetaY: 'normalized difference d′', C });
+      const T0 = 1 / verdad[e.j];
+      ctx.save();
+      ctx.beginPath(); ctx.rect(arriba.x, arriba.y, arriba.w, arriba.h); ctx.clip();
+      ctx.setLineDash([2, 4]); ctx.strokeStyle = G.alfa(C.cuerpo, 0.5); ctx.lineWidth = 1;
+      for (let k = 1; k <= 3; k++) { const x = esc1.x(1000 * k * T0); ctx.beginPath(); ctx.moveTo(x, arriba.y); ctx.lineTo(x, arriba.y + arriba.h); ctx.stroke(); }
+      ctx.restore();
+      for (let k = 1; k <= 3; k++) if (1000 * k * T0 < ms(TAU_MAX) - 0.5) G.texto(ctx, esc1.x(1000 * k * T0) + 3, arriba.y + 12, k === 1 ? 'T' : k + 'T', { color: C.tenue, tam: 10, C });
+      const taus = Array.from({ length: TAU_MAX }, (_, i) => ms(i + 1));
+      G.linea(ctx, esc1, taus, Array.from(dp.subarray(1)), { color: C.plantilla, ancho: 2, C });
+      if (e.regla === 'primero') {
+        ctx.save(); ctx.setLineDash([6, 4]); ctx.strokeStyle = C.texto; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(arriba.x, esc1.y(e.umbral)); ctx.lineTo(arriba.x + arriba.w, esc1.y(e.umbral)); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, arriba.x + arriba.w - 4, esc1.y(e.umbral) - 5, 'threshold ' + num(e.umbral, 2), { alinear: 'right', color: C.texto, tam: 11, C });
+      }
+      const v = NUM.valles(dp, TAU_MIN, TAU_MAX);
+      G.puntos(ctx, esc1, v.map(ms), v.map(i => dp[i]), { color: C.plantilla, radio: 3, halo: false, C });
+      const elegido = fs / e.hz[e.j];
+      if (elegido > TAU_MIN - 1 && elegido <= TAU_MAX + 1) {
+        G.puntos(ctx, esc1, [ms(elegido)], [dp[Math.min(TAU_MAX, Math.round(elegido))]], { color: C.senal, radio: 6, borde: C.texto, C });
+        G.texto(ctx, limitar(esc1.x(ms(elegido)), arriba.x + 40, arriba.x + arriba.w - 40), esc1.y(dp[Math.min(TAU_MAX, Math.round(elegido))]) - 12, 'picks ' + num(e.hz[e.j], 0) + ' Hz', { alinear: 'center', color: C.senal, tam: 11, peso: 600, fondo: G.alfa(C.superficie, 0.85), C });
+      }
+      // Panel de abajo: la melodía.
+      const esc2 = G.ejes(ctx, { caja: abajo, x: [0, sig.dur], y: [80, 320], logY: true, marcasY: [100, 150, 200, 300], marcasX: Math.max(3, Math.round(abajo.w / 70)), formatoX: v => num(v, v % 1 ? 1 : 0), etiquetaX: 'time (s)', etiquetaY: 'detected frequency (Hz)', C });
+      const tv = [], fv = [];
+      sig.notas.forEach((f, q) => { tv.push(q * sig.dn, (q + 1) * sig.dn); fv.push(f, f); });
+      G.linea(ctx, esc2, tv, fv, { color: C.cuerpo, ancho: 1.6, guiones: [2, 4], halo: false, alfa: 0.8, C });
+      const ok = [], okf = [], mal = [], malf = [];
+      for (let j = 0; j < nFr; j++) {
+        if (!limpias[j]) continue;
+        const bueno = e.hz[j] <= 1.2 * verdad[j] && e.hz[j] >= verdad[j] / 1.2;
+        (bueno ? ok : mal).push(hondo.t[j]); (bueno ? okf : malf).push(limitar(e.hz[j], 80, 320));
+      }
+      G.puntos(ctx, esc2, ok, okf, { color: C.senal, radio: 2.2, halo: false, C });
+      G.puntos(ctx, esc2, mal, malf, { color: C.mal, radio: 3.2, halo: false, C });
+      const xj = esc2.x(hondo.t[e.j]);
+      ctx.save(); ctx.strokeStyle = G.alfa(C.acento, 0.8); ctx.lineWidth = 1.4; ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(xj, abajo.y); ctx.lineTo(xj, abajo.y + abajo.h); ctx.stroke(); ctx.restore();
+    },
+  });
+  const eleccion = Curso.eleccion('#r6-mandos', {
+    etiqueta: 'Rule', valor: e.regla, reto: 'reto-6',
+    opciones: [{ valor: 'hondo', texto: 'The deepest valley' }, { valor: 'primero', texto: 'The first valley below the threshold' }],
+    alCambiar: v => { e.regla = v; mUmbral.input.disabled = v === 'hondo'; actualizar(); },
+  });
+  const mUmbral = Curso.mando('#r6-mandos', {
+    etiqueta: 'Threshold', clase: 'senal', min: 0.01, max: 0.9, paso: 0.01, valor: e.umbral, decimales: 2, reto: 'reto-6',
+    alCambiar: v => { e.umbral = v; actualizar(); },
+  });
+  mUmbral.input.disabled = true;
+  const mInstante = Curso.mando('#r6-mandos', {
+    etiqueta: 'Instant', min: 0.1, max: sig.dur - 0.35, paso: 0.01, valor: hondo.t[e.j], formato: v => num(v, 2) + ' s',
+    alCambiar: v => { e.j = limitar(Math.round((v * fs - W / 2) / HOP), 0, nFr - 1); L.dibujar(); },
+  });
+  const lect = Curso.lecturas('#r6-fila', [
+    { id: 'gruesos', nombre: 'Gross errors' },
+    { id: 'alto', nombre: 'Too high', clase: 'respuesta' },
+    { id: 'bajo', nombre: 'Too low', clase: 'respuesta' },
+  ]);
+  function actualizar() {
+    calcular();
+    lect.fijar('gruesos', num(e.res.gruesos, 1) + '%');
+    lect.fijar('alto', num(e.res.alto, 1) + '%');
+    lect.fijar('bajo', num(e.res.bajo, 1) + '%');
+    L.dibujar();
+  }
+  const bt = filaBotones('#r6-fila');
+  Curso.audio.boton(bt, () => ({ x: sig.x, fs, volumen: 0.5 }), 'Hear the voice', { clase: 'peque' });
+  Curso.audio.boton(bt, () => ({ x: NUM.tonoDeCurva(hondo.t, e.hz, fs, sig.dur), fs, volumen: 0.5 }), 'Hear what was detected', { clase: 'peque' });
+  actualizar();
+  Curso.reto('reto-6', {
+    titulo: 'Hunt the octave error', nivel: 'difícil',
+    comprobar: () => {
+      const r = e.res;
+      if (r.gruesos < 5) return { ok: true, mensaje: 'Only ' + num(r.gruesos, 1) + '% gross errors: the detector gets the note right.' };
+      if (e.regla === 'hondo') return { ok: false, mensaje: 'The deepest valley is wrong ' + num(r.gruesos, 0) + '% of the time, almost always giving a note that is too low: it picks the valley at two or three periods.' };
+      if (r.alto > r.bajo) return { ok: false, mensaje: 'With a threshold this high, valleys that are not the period sneak in: ' + num(r.alto, 0) + '% of the notes come out too high. Lower it.' };
+      return { ok: false, mensaje: 'With a threshold this low almost no valley meets it and it goes back to picking the deepest one: ' + num(r.bajo, 0) + '% of the notes come out too low. Raise it.' };
+    },
+    resolver: () => { eleccion.fijar('primero'); mUmbral.fijar(0.25); },
+    pista: [
+      'With the deepest-valley rule, look at which multiple of the period the chosen valley falls on: the dotted line labeled 2T or 3T. Change the instant with the control below.',
+      'Choose the first valley below the threshold. With a very low threshold nothing crosses it, and then the deepest valley comes back; with a very high one, the wrinkles at the start get through. A whole range works, roughly from 0.15 to 0.4.',
+    ],
+    exito: '<p>YIN does not keep the deepest valley, but the first one that drops below the threshold: that is how it applies the definition of period, the smallest shift that leaves the signal unchanged. In the original paper that step reduced gross errors from 1.69% to 0.78%, on their database. With a threshold that is too high, the opposite error appears, a note that is too high.</p>',
+  });
+})();
+// ── En tu voz · tu curva de tono ─────────────────────────────────────────────────────────────────────────────
+// Un mapa tiempo-frecuencia con las notas rotuladas y, encima, la curva de tono de lo que cargues, con tres métodos
+// (el pico más alto, YIN y YIN con camino), el efecto «teléfono», el karaoke (la curva llevada a la nota más cercana) y,
+// para dos silbidos que se cruzan, dos líneas con y sin inercia.
+(function () {
+  const FS = 16000;
+  const st = { x: null, dur: 0, modo: 'auto', metodo: 'camino', silencio: -40, ms: 120, tel: false, karaoke: true, dos: false, inercia: false, p: null, r: null, rd: null };
+  const lab = Curso.voz('#voz-lab', {
+    ejemplos: ['melodia', 'dosSilbidos', 'aaa', 'silbidoQueSube'],
+    fsAnalisis: FS,
+    alCargar: x => { st.x = x; st.dur = x.length / FS; st.p = null; st.rd = null; preparar(); if (st.dos) preparar2(); },
+  });
+
+  // ── Cálculo ──
+  // Lo pesado, una vez por audio y por ajuste de modo: el mapa, los niveles y los candidatos de YIN.
+  function preparar() {
+    const x = st.tel ? LAB.telefono(st.x, FS) : st.x;
+    const modo = st.modo === 'auto' ? LAB.detectarModo(st.x, FS) : st.modo, silbido = modo === 'silbido';
+    const fsA = silbido ? FS : 8000, xa = silbido ? x : Senal.remuestrear(x, FS, fsA);
+    const o = silbido ? { fmin: 400, fmax: 4000, n: 512, salto: 160, nY: 512 } : { fmin: 70, fmax: 800, n: 1024, salto: 80, nY: 256 };
+    const p = { modo, silbido, fsA, xa, o, corto: xa.length < o.nY + fsA / o.fmin + 16 };
+    st.p = p;
+    p.N = LAB.niveles(xa, o.nY, o.salto);
+    p.hay = LAB.hayNota(p.N);
+    if (!p.corto && p.hay) {
+      p.M = NUM.mapaTF(xa, fsA, { n: o.n, salto: o.salto, fmin: o.fmin, fmax: silbido ? 4000 : 1000, fps: 3 });
+      p.cand = LAB.candidatosYin(xa, fsA, { fmin: o.fmin, fmax: o.fmax, n: o.nY, salto: o.salto });
+    }
+    curvas();
+  }
+  const sonoraEn = (t, p) => { const s = LAB.sonoras(p.N, st.silencio); return s[Math.min(s.length - 1, Math.max(0, Math.round(t * p.fsA / p.o.salto)))]; };
+  // La curva según el método y el umbral de silencio. → { t, f, dt }
+  function curvas() {
+    const p = st.p;
+    if (!p || p.corto || !p.hay) { st.r = null; actualizar(); return; }
+    const son = LAB.sonoras(p.N, st.silencio), o = p.o, M = p.M;
+    let t, f;
+    if (st.metodo === 'pico') {
+      t = Array.from(M.t); f = new Float64Array(M.nT);
+      for (let j = 0; j < M.nT; j++) {
+        let k = 0; for (let q = 1; q < M.nF; q++) if (M.P[q * M.nT + j] > M.P[k * M.nT + j]) k = q;
+        f[j] = son[Math.min(son.length - 1, j)] ? M.f[k] : NaN;
+      }
+    } else if (st.metodo === 'yin') {
+      const y = Senal.yin(p.xa, p.fsA, { fmin: o.fmin, fmax: o.fmax, umbral: 0.15, n: o.nY, salto: o.salto });
+      t = Array.from(y.t); f = new Float64Array(t.length);
+      for (let j = 0; j < t.length; j++) f[j] = Number.isFinite(y.f0[j]) && son[Math.min(son.length - 1, Math.round(t[j] * p.fsA / o.salto))] ? y.f0[j] : NaN;
+    } else {
+      t = Array.from(p.cand.t);
+      const sonC = t.map(tt => son[Math.min(son.length - 1, Math.round(tt * p.fsA / o.salto))]);
+      f = LAB.viterbiTono(p.cand.cand, sonC);
+    }
+    st.r = { t, f, dt: o.salto / p.fsA };
+    actualizar();
+  }
+  const karaoke = () => (st.r ? LAB.corregir(st.r.f, st.r.dt, st.ms) : null);
+  // Las dos líneas de un cruce, a 8 kHz y con un salto largo para que cada línea avance al menos una fila por paso.
+  function preparar2() {
+    const x = st.tel ? LAB.telefono(st.x, FS) : st.x, x8 = Senal.remuestrear(x, FS, 8000);
+    const M = NUM.mapaTF(x8, 8000, { n: 1024, salto: 480, fmin: 500, fmax: 3000 });
+    const E = NUM.energiaDb(M.P, 40);
+    const sin = Senal.crestas(M.P, M.nF, M.nT, { penalizacion: 1 }, 2, 8), con = NUM.dosCrestasInercia(E, M.nF, M.nT, 0.01, 4.5, 8, 8);
+    st.rd = { M, sin: sin.map(c => NUM.curvaHz(M, c)), con: con.map(c => NUM.curvaHz(M, c)), hay: LAB.hayNota(LAB.niveles(x8, 1024, 480)) };
+    actualizar();
+  }
+
+  // ── Vista ──
+  const escena = crear('div', { class: 'escena' });
+  lab.panel.appendChild(escena);
+  const L = G.lienzo(escena, {
+    alto: altoDe(300, 370),
+    etiqueta: 'Time-frequency map of the loaded audio, with the notes labeled, the pitch curve in green and, in orange, the melody moved to the nearest note.',
+    dibujar: (ctx, w, h, C) => {
+      const aviso = txt => G.texto(ctx, w / 2, h / 2, txt, { alinear: 'center', color: C.tenue, tam: 12, C });
+      if (st.dos) {
+        if (!st.rd) { aviso('Choose an audio clip to follow two lines'); return; }
+        if (!st.rd.hay) { aviso('There is nothing to follow in this audio'); return; }
+        const M = st.rd.M, esc = pintarMapa(ctx, w, h, C, M, {}), ls = st.inercia ? st.rd.con : st.rd.sin;
+        trazoMapa(ctx, esc, M.t, ls[1], C.respuesta, { ancho: 2.8 });
+        trazoMapa(ctx, esc, M.t, ls[0], C.senal, { ancho: 2.8 });
+        rotulo(ctx, C, esc.caja.x + 6, esc.caja.y + esc.caja.h - 8, st.inercia ? 'with inertia' : 'without inertia', { color: C.texto });
+        return;
+      }
+      const p = st.p;
+      if (!p) { aviso('Record, upload audio or choose an example'); return; }
+      if (p.corto) { aviso('The audio is too short to follow a note'); return; }
+      if (!p.hay) { aviso('There is no voice or whistle to follow in this audio'); return; }
+      const esc = pintarMapa(ctx, w, h, C, p.M, {});
+      if (st.r) {
+        if (st.karaoke) { const k = karaoke(); trazoMapa(ctx, esc, st.r.t, aY(p.M, k), C.respuesta, { ancho: 2.2 }); }
+        trazoMapa(ctx, esc, st.r.t, aY(p.M, st.r.f), C.senal, { ancho: 2.8 });
+      }
+    },
+  });
+
+  // ── Mandos ──
+  const mandos = crear('div', { class: 'mandos' });
+  lab.panel.appendChild(mandos);
+  Curso.eleccion(mandos, {
+    etiqueta: 'Type of sound', valor: 'auto',
+    opciones: [{ valor: 'auto', texto: 'Let it decide' }, { valor: 'voz', texto: 'Voice' }, { valor: 'silbido', texto: 'Whistle' }],
+    alCambiar: v => { st.modo = v; if (st.x) { preparar(); } },
+  });
+  Curso.eleccion(mandos, {
+    etiqueta: 'Method', valor: st.metodo,
+    opciones: [{ valor: 'pico', texto: 'Highest peak' }, { valor: 'yin', texto: 'YIN' }, { valor: 'camino', texto: 'YIN with path' }],
+    alCambiar: v => { st.metodo = v; curvas(); },
+  });
+  Curso.mando(mandos, { etiqueta: 'Silence threshold', min: -60, max: -20, paso: 1, valor: st.silencio, formato: v => num(v, 0) + ' dB', alCambiar: v => { st.silencio = v; curvas(); } });
+  Curso.mando(mandos, {
+    etiqueta: 'Correction speed', clase: 'respuesta', min: 0, max: 400, paso: 5, valor: st.ms,
+    formato: v => (v < 1 ? 'instant' : num(v, 0) + ' ms'), alCambiar: v => { st.ms = v; actualizar(); },
+  });
+  const fila = crear('div', { class: 'botones' });
+  lab.panel.appendChild(fila);
+  const bot = Curso.botones(fila, [
+    { id: 'tel', texto: 'Send through a phone', pulsado: false, alPulsar: on => { st.tel = on; if (st.x) { st.rd = null; preparar(); if (st.dos) preparar2(); } } },
+    { id: 'kar', texto: 'Show the karaoke', pulsado: true, alPulsar: on => { st.karaoke = on; L.dibujar(); } },
+    { id: 'dos', texto: 'Follow two lines', pulsado: false, alPulsar: on => { st.dos = on; if (on && !st.rd && st.x) preparar2(); actualizar(); } },
+    { id: 'ine', texto: 'Use inertia', pulsado: false, alPulsar: on => { st.inercia = on; L.dibujar(); } },
+  ]);
+  const filaAudio = crear('div', { class: 'botones' });
+  lab.panel.appendChild(filaAudio);
+  const tono = f => (f && st.r ? NUM.tonoDeCurva(st.r.t, f, FS, st.dur) : new Float64Array(1));
+  const lineaDos = i => NUM.tonoDeCurva(st.rd.M.t, (st.inercia ? st.rd.con : st.rd.sin)[i], 8000, st.dur);
+  Curso.audio.boton(filaAudio, () => ({ x: st.x || new Float64Array(1), fs: FS, volumen: 0.5 }), 'Hear the original', { clase: 'peque' });
+  const bCurva = Curso.audio.boton(filaAudio, () => (st.dos ? (st.rd ? { x: lineaDos(0), fs: 8000, volumen: 0.5 } : null) : { x: tono(st.r ? st.r.f : null), fs: FS, volumen: 0.5 }), 'Hear the curve', { clase: 'peque' });
+  const bKar = Curso.audio.boton(filaAudio, () => ({ x: tono(karaoke()), fs: FS, volumen: 0.5 }), 'Hear the karaoke', { clase: 'peque' });
+  const bL2 = Curso.audio.boton(filaAudio, () => (st.rd ? { x: lineaDos(1), fs: 8000, volumen: 0.5 } : null), 'Hear line 2', { clase: 'peque' });
+
+  const lect = Curso.lecturas(lab.panel, [
+    { id: 'modo', nombre: 'What I heard' },
+    { id: 'nota', nombre: 'Your central note', clase: 'senal' },
+    { id: 'desvio', nombre: 'You drift from the nearest note by', clase: 'respuesta' },
+    { id: 'con', nombre: 'Time with a note' },
+  ]);
+  const nota = crear('p', { class: 'nota-reto' }, 'Choose an audio clip or record your own to see its pitch curve.');
+  lab.panel.appendChild(nota);
+
+  function actualizar() {
+    const p = st.p;
+    bKar.el.hidden = st.dos; bL2.el.hidden = !st.dos; bot.kar.hidden = st.dos; bot.ine.hidden = !st.dos;
+    L.dibujar();
+    if (st.dos) {
+      lect.fijar('modo', 'two lines'); lect.fijar('nota', '—'); lect.fijar('desvio', '—'); lect.fijar('con', '—');
+      nota.textContent = st.rd && !st.rd.hay ? 'There is nothing to follow in this audio.' : 'After the crossing, which line belongs to whom? Without inertia, line 1 tends to bounce and take the brightest branch; with inertia, it keeps straight. With “Hear the curve” and “Hear line 2” you hear them separately, although the energy map cannot say which of the two branches belongs to which whistler.';
+      return;
+    }
+    if (!p) return;
+    lect.fijar('modo', p.modo === 'silbido' ? 'a whistle' : 'a voice');
+    if (p.corto || !p.hay || !st.r) {
+      lect.fijar('nota', '—'); lect.fijar('desvio', '—'); lect.fijar('con', '—');
+      nota.textContent = p.corto ? 'The audio is too short: record at least half a second of a note.' : 'There is no voice or whistle to follow: the lab prefers to say so rather than invent a curve.';
+      return;
+    }
+    const r = LAB.resumen(st.r.f);
+    if (!r) { lect.fijar('nota', 'I cannot find it'); lect.fijar('desvio', '—'); lect.fijar('con', '0%'); nota.textContent = 'With this method and this silence threshold no note is left. Lower the threshold or change the method.'; return; }
+    const nn = Senal.nombreNota(r.mediana);
+    lect.fijar('nota', nn.nombre + ' · ' + num(r.mediana, 0) + ' Hz');
+    lect.fijar('desvio', num(r.desvio, 0) + ' cents');
+    lect.fijar('con', num(100 * r.n / st.r.f.length, 0) + '%');
+    nota.textContent = (st.metodo === 'pico' && st.tel ? 'With the phone removing the low frequencies, the highest peak jumps to a harmonic and the note comes out an octave or more higher: switch to “YIN with path” and compare. ' : '')
+      + (st.ms < 1 ? 'With instant correction, the karaoke voice jumps from note to note without sliding: that is the robot effect.' : 'With slower correction, the karaoke voice keeps part of your slides and ornaments; take it to zero to hear the robot effect.');
+  }
+})();
+})();
+</script>
+</body>
+</html>

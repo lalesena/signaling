@@ -30,6 +30,180 @@
   });
   const esperar = ms => new Promise(r => setTimeout(r, ms));
 
+  // ── Idioma de la página ──────────────────────────────────────────────────────────────────────────────
+  // <html lang="en…"> → inglés; cualquier otra cosa → español (el idioma por defecto). Curso.idioma: 'es' | 'en'.
+  const idioma = (() => { try { return /^en/i.test((doc.documentElement.getAttribute('lang') || '').trim()) ? 'en' : 'es'; } catch (e) { return 'es'; } })();
+  const EN = idioma === 'en';
+  // El texto del código común se escribe en español; en las páginas inglesas, tr() lo cambia por su versión inglesa.
+  // {0}, {1}… se sustituyen por los argumentos. Una clave sin traducción sale en español y avisa una vez en la consola.
+  const DICC = {
+    // barra, tema y pie
+    'Curso y progreso de la lección': 'Course and lesson progress',
+    'Mapa del curso': 'Course map',
+    'Señales': 'Signals',
+    'Volver al principio de la lección': 'Back to the top of the lesson',
+    'Progreso: una muestra por reto y otra por el examen': 'Progress: one sample per challenge and one for the quiz',
+    '{0} de {1} retos conseguidos': '{0} of {1} challenges done',
+    'Reto {0}': 'Challenge {0}',
+    'Examen': 'Quiz',
+    'aprobado': 'passed',
+    'conseguido': 'done',
+    'visto con la solución': 'seen with the solution',
+    'por hacer': 'to do',
+    'Auto': 'Auto',
+    'Agua': 'Water',
+    'Papel': 'Paper',
+    'Tema automático: sigue al sistema. Pulsa para pasar a agua (oscuro).': 'Automatic theme: follows your system. Press to switch to water (dark).',
+    'Tema agua (oscuro). Pulsa para pasar a papel (claro).': 'Water theme (dark). Press to switch to paper (light).',
+    'Tema papel (claro). Pulsa para volver al automático.': 'Paper theme (light). Press to go back to automatic.',
+    'Lección {0} · {1}': 'Lesson {0} · {1}',
+    'Lección {0}': 'Lesson {0}',
+    'La pregunta que abre la lección {0}': 'The question that opens lesson {0}',
+    'Final del curso': 'End of the course',
+    'El examen final →': 'The final exam →',
+    'Lecciones': 'Lessons',
+    'Primera lección': 'First lesson',
+    'Última lección': 'Last lesson',
+    'Glosario': 'Glossary',
+    'Exámenes': 'Exams',
+    'Tu progreso se guarda solo en este navegador.': 'Your progress is saved only in this browser.',
+    'Nivel {0} · Lección {1}': 'Level {0} · Lesson {1}',
+    'Te llevas': 'You take away',
+    '{0} reto': '{0} challenge',
+    '{0} retos': '{0} challenges',
+    'examen de {0} preguntas': '{0}-question quiz',
+    'Todos los términos del curso, en el glosario →': 'All the course terms, in the glossary →',
+    'Las fórmulas se ven en LaTeX, tal cual, porque no se ha podido cargar KaTeX (¿sin conexión?).': 'The formulas appear as plain LaTeX because KaTeX could not be loaded (offline?).',
+    // retos
+    'Fácil': 'Easy',
+    'Medio': 'Medium',
+    'Difícil': 'Hard',
+    'Dificultad: {0}': 'Difficulty: {0}',
+    'Por hacer': 'To do',
+    'Pista': 'Hint',
+    'Otra pista': 'Another hint',
+    'Ver la solución': 'Show the solution',
+    'Comprobar': 'Check',
+    'Reiniciar': 'Reset',
+    'Conseguido': 'Done',
+    'Con la solución': 'With the solution',
+    'Conseguido.': 'Done.',
+    'No he podido comprobarlo: {0}': 'I could not check it: {0}',
+    'Así se resuelve. Juega con los mandos para verlo por ti mismo.': 'That is how it works out. Play with the controls to see it for yourself.',
+    'Todavía no. Sigue probando.': 'Not yet. Keep trying.',
+    // animaciones y audio
+    'Animar': 'Animate',
+    'Pausa': 'Pause',
+    'Pausar la animación': 'Pause the animation',
+    'Escuchar': 'Listen',
+    'Parar': 'Stop',
+    // laboratorio En tu voz
+    'El micrófono está bloqueado en esta ventana. Dentro del visor de claude.ai es lo normal: no deja grabar. Si abres el curso desde tu ordenador o desde su web, podrás grabar aquí mismo. Mientras, sube un audio grabado con el móvil o prueba con un ejemplo sintético.':
+      'The microphone is blocked in this window. Inside the claude.ai viewer that is normal: it does not allow recording. If you open the course from your computer or from its website, you will be able to record right here. In the meantime, upload audio recorded with your phone or try a synthetic example.',
+    'El micrófono está bloqueado en esta ventana': 'The microphone is blocked in this window',
+    'tu audio no sale del navegador': 'your audio never leaves your browser',
+    'Laboratorio: en tu voz': 'Lab: in your voice',
+    'En tu voz · laboratorio': 'In your voice · lab',
+    'Grabar': 'Record',
+    'Subir un audio': 'Upload audio',
+    'Ejemplos sintéticos': 'Synthetic examples',
+    'Nivel': 'Level',
+    'Toda la grabación cargada': 'The whole loaded recording',
+    'Graba, sube un audio o elige un ejemplo': 'Record, upload audio or pick an example',
+    'ejemplo sintético': 'synthetic example',
+    'muestras/s': 'samples/s',
+    'pico': 'peak',
+    'Tu grabación': 'Your recording',
+    'El audio está vacío.': 'The audio is empty.',
+    'Es largo: me quedo con los {0} s con más sonido (de {1} a {2} s).': 'It is long: I keep the {0} s with the most sound (from {1} to {2} s).',
+    'Casi no hay sonido (pico de {0} dBFS). Acerca el micrófono o sube el volumen de la grabación.': 'There is almost no sound (peak of {0} dBFS). Move the microphone closer or turn up the recording volume.',
+    'Satura: el {0} % de las muestras tocan el techo y la onda sale recortada. Aléjate un poco del micrófono.': 'Clipping: {0}% of the samples hit the ceiling and the wave comes out cut off. Move a little farther from the microphone.',
+    'Es muy corto: con un segundo o dos se ve mucho mejor.': 'It is very short: with a second or two it looks much better.',
+    'No he podido analizar este audio: {0}': 'I could not analyze this audio: {0}',
+    'Los ejemplos sintéticos necesitan comun/senal.js, y no ha cargado.': 'The synthetic examples need comun/senal.js, and it did not load.',
+    'No he podido generar el ejemplo «{0}»: {1}': 'I could not generate the example “{0}”: {1}',
+    'Leyendo «{0}»…': 'Reading “{0}”…',
+    'No puedo leer «{0}». Prueba con un WAV, un MP3 o un M4A grabado con el móvil.': 'I cannot read “{0}”. Try a WAV, an MP3 or an M4A recorded with your phone.',
+    'El navegador solo deja grabar en páginas seguras (https) o abiertas desde el disco. Sube un audio o prueba con un ejemplo.': 'Your browser only allows recording on secure pages (https) or pages opened from disk. Upload audio or try an example.',
+    'No encuentro ningún micrófono. Sube un audio grabado con el móvil o prueba con un ejemplo sintético.': 'I cannot find a microphone. Upload audio recorded with your phone or try a synthetic example.',
+    'El micrófono está ocupado por otra aplicación. Ciérrala y vuelve a probar, o sube un audio.': 'The microphone is in use by another application. Close it and try again, or upload audio.',
+    'No tengo permiso para usar el micrófono. Puedes darlo en el candado de la barra de direcciones, subir un audio o probar con un ejemplo.': 'I do not have permission to use the microphone. You can grant it with the lock icon in the address bar, upload audio or try an example.',
+    'Este navegador no tiene Web Audio: no puedo grabar.': 'This browser has no Web Audio: I cannot record.',
+    'Grabando. Silba o canta una nota larga; se para sola a los {0} s.': 'Recording. Whistle or sing a long note; it stops by itself after {0} s.',
+    'Graba al menos {0} s': 'Record at least {0} s',
+    // ejemplos sintéticos
+    'Silencio': 'Silence',
+    'Silbido': 'Whistle',
+    '«Aaa»': '“Aah”',
+    '«Eee»': '“Ehh”',
+    '«Iii»': '“Eee”',
+    '«Ooo»': '“Ooh”',
+    '«Uuu»': '“Ooo”',
+    '«Aaa» y luego «iii»': '“Aah” and then “eee”',
+    'Silbido que sube y baja': 'Whistle that rises and falls',
+    'Frase': 'Phrase',
+    'Palmadas': 'Claps',
+    'Melodía': 'Melody',
+    'Dos silbidos que se cruzan': 'Two whistles that cross',
+    'Diapasón': 'Tuning fork',
+    'Sirena': 'Siren',
+    'Acorde': 'Chord',
+    // examen
+    'básico': 'basic',
+    'medio': 'medium',
+    'reto': 'challenge',
+    'Pregunta {0} de {1}': 'Question {0} of {1}',
+    'Figura de la pregunta': 'Figure for the question',
+    'Verdadero': 'True',
+    'Falso': 'False',
+    'V': 'T',
+    'F': 'F',
+    'Tu respuesta': 'Your answer',
+    'Gráfica {0}': 'Graph {0}',
+    'Opción': 'Option',
+    'Figura que cambia con el deslizador': 'Figure that changes with the slider',
+    'Valor': 'Value',
+    'La buena: {0}.': 'The right one: {0}.',
+    'Las buenas: {0}.': 'The right ones: {0}.',
+    'Era verdadero.': 'It was true.',
+    'Era falso.': 'It was false.',
+    'La respuesta: {0}.': 'The answer: {0}.',
+    'La buena era la gráfica {0}.': 'The right one was graph {0}.',
+    'Una solución: {0}.': 'One solution: {0}.',
+    'El examen de esta lección todavía no está listo.': 'The quiz for this lesson is not ready yet.',
+    'Preguntas de varias lecciones, sacadas al azar de sus bancos.': 'Questions from several lessons, drawn at random from their banks.',
+    'Unas preguntas para comprobar que te llevas lo importante. Cambian en cada intento y cada una explica por qué.': 'A few questions to check that you are taking away what matters. They change on every attempt and each one explains why.',
+    '{0} preguntas': '{0} questions',
+    'de un banco de {0}': 'from a bank of {0}',
+    'se aprueba con el {0} %': 'the pass mark is {0}%',
+    'tu mejor nota: {0}': 'your best score: {0}',
+    '{0} de {1}': '{0} of {1}',
+    'Hacer otro intento': 'Try again',
+    'Empezar el examen': 'Start the quiz',
+    'Respondidas {0} de {1} · aciertos {2}': 'Answered {0} of {1} · correct {2}',
+    'Aprobado': 'Passed',
+    'Todavía no': 'Not yet',
+    'Has acertado {0} de {1}. Lee las explicaciones de las que has fallado: ahí está lo que conviene repasar.': 'You got {0} of {1} right. Read the explanations of the ones you missed: that is what is worth reviewing.',
+    'Necesitabas {0} de {1}. Repasa las explicaciones y vuelve a intentarlo: las preguntas cambian.': 'You needed {0} of {1}. Review the explanations and try again: the questions change.',
+    'Otro intento, con preguntas nuevas': 'Another attempt, with new questions',
+    // vocabulario fijo del contrato (TRADUCCION.md § 4) que una lección puede pedir con Curso.tr
+    'Lección': 'Lesson',
+    'Paso': 'Step',
+    'Sintético': 'Synthetic',
+    'Modelo simplificado': 'Simplified model',
+  };
+  const sinTraducir = new Set();
+  function tr(texto, ...args) {
+    let t = texto;
+    if (EN) {
+      if (Object.prototype.hasOwnProperty.call(DICC, texto)) t = DICC[texto];
+      else if (!sinTraducir.has(texto)) { sinTraducir.add(texto); console.warn('Curso.tr: sin traducción al inglés: «' + String(texto).slice(0, 80) + '»'); }
+    }
+    return args.length ? t.replace(/\{(\d+)\}/g, (m, i) => (args[i] == null ? '' : args[i])) : t;
+  }
+  const comillas = t => (EN ? '“' + t + '”' : '«' + t + '»');
+  const porciento = t => t + (EN ? '%' : ' %');
+
   const Curso = { version: '1.0' };
   let resolverListo;
   Curso.listo = new Promise(r => { resolverListo = r; });
@@ -65,12 +239,14 @@
   const normalizar = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\(.*?\)/g, '').replace(/\s+/g, ' ').trim();
   const slug = s => normalizar(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-  // Formato español de números: Curso.num(44100) → «44.100»; Curso.num(0.25, 2) → «0,25».
+  // Formato de números según el idioma de la página: en español Curso.num(44100) → «44.100» y Curso.num(0.25, 2)
+  // → «0,25»; en inglés → «44,100» y «0.25».
   function num(x, d) {
     if (G() && G().num) return G().num(x, d);
-    return Number.isFinite(+x) ? String(+x).replace('.', ',') : '—';
+    return Number.isFinite(+x) ? (EN ? String(+x) : String(+x).replace('.', ',')) : '—';
   }
   // Lee un número escrito por una persona: «0,25», «0.25», «44.100», «1/4», «−3», «2,5 s».
+  //   En una página inglesa, «1,000» es mil (coma de miles) y «1.000» es uno; en la española, al revés.
   //   unidades (opcional): { s: 1, ms: 0.001 } multiplica según la unidad escrita; una unidad desconocida da NaN.
   function leerNumero(texto, unidades) {
     if (typeof texto === 'number') return texto;
@@ -90,8 +266,8 @@
   function leerCifra(t) {
     const coma = t.lastIndexOf(','), punto = t.lastIndexOf('.');
     if (coma >= 0 && punto >= 0) t = coma > punto ? t.replace(/\./g, '').replace(',', '.') : t.replace(/,/g, '');
-    else if (coma >= 0) t = /^[-+]?[1-9]\d{0,2}(,\d{3}){2,}$/.test(t) ? t.replace(/,/g, '') : t.replace(',', '.');
-    else if (punto >= 0 && /^[-+]?[1-9]\d{0,2}(\.\d{3})+$/.test(t)) t = t.replace(/\./g, '');
+    else if (coma >= 0) t = (EN ? /^[-+]?[1-9]\d{0,2}(,\d{3})+$/ : /^[-+]?[1-9]\d{0,2}(,\d{3}){2,}$/).test(t) ? t.replace(/,/g, '') : t.replace(',', '.');
+    else if (punto >= 0 && (EN ? /^[-+]?[1-9]\d{0,2}(\.\d{3}){2,}$/ : /^[-+]?[1-9]\d{0,2}(\.\d{3})+$/).test(t)) t = t.replace(/\./g, '');
     if ((t.match(/[.,]/g) || []).length > 1) return NaN;
     return /^[-+]?$/.test(t) ? NaN : Number(t);
   }
@@ -114,8 +290,10 @@
       normal: () => { let a = 0; while (a === 0) a = u(); return Math.sqrt(-2 * Math.log(a)) * Math.cos(TAU * u()); },
     };
   }
-  // Nota musical más cercana a una frecuencia, con nombres en español: { nombre: 'La', octava: 4, centimos, frecuencia }
-  const NOTAS = ['Do', 'Do♯', 'Re', 'Re♯', 'Mi', 'Fa', 'Fa♯', 'Sol', 'Sol♯', 'La', 'La♯', 'Si'];
+  // Nota musical más cercana a una frecuencia, con nombres en español ('La') o ingleses ('A') según el idioma de la
+  // página: { nombre: 'La', octava: 4, centimos, frecuencia }
+  const NOTAS = EN ? ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B']
+    : ['Do', 'Do♯', 'Re', 'Re♯', 'Mi', 'Fa', 'Fa♯', 'Sol', 'Sol♯', 'La', 'La♯', 'Si'];
   function nota(f) {
     if (!(f > 0) || !Number.isFinite(f)) return null;
     const midi = 69 + 12 * Math.log2(f / 440);
@@ -237,8 +415,8 @@
   let botonTema = null;
   function pintarBotonTema() {
     if (!botonTema) return;
-    const titulo = { auto: 'Tema automático: sigue al sistema. Pulsa para pasar a agua (oscuro).', agua: 'Tema agua (oscuro). Pulsa para pasar a papel (claro).', papel: 'Tema papel (claro). Pulsa para volver al automático.' }[temaActual];
-    botonTema.innerHTML = ICONO.tema + '<span class="texto">' + NOMBRE_TEMA[temaActual] + '</span>';
+    const titulo = tr({ auto: 'Tema automático: sigue al sistema. Pulsa para pasar a agua (oscuro).', agua: 'Tema agua (oscuro). Pulsa para pasar a papel (claro).', papel: 'Tema papel (claro). Pulsa para volver al automático.' }[temaActual]);
+    botonTema.innerHTML = ICONO.tema + '<span class="texto">' + tr(NOMBRE_TEMA[temaActual]) + '</span>';
     botonTema.title = titulo;
     botonTema.setAttribute('aria-label', titulo);
   }
@@ -249,12 +427,12 @@
     if (doc.querySelector('.barra') || (doc.body && doc.body.hasAttribute('data-sin-barra'))) { barra = doc.querySelector('.barra'); return; }
     const id = Curso.leccion;
     const L = id && T() && T().porId ? T().porId[id] : null;
-    barra = crear('nav', { class: 'barra', 'aria-label': 'Curso y progreso de la lección' });
-    barra.appendChild(crear('a', { class: 'barra-marca', href: 'index.html', title: 'Mapa del curso', html: ICONO.noria + '<span class="texto">Señales</span>' }));
+    barra = crear('nav', { class: 'barra', 'aria-label': tr('Curso y progreso de la lección') });
+    barra.appendChild(crear('a', { class: 'barra-marca', href: 'index.html', title: tr('Mapa del curso'), html: ICONO.noria + '<span class="texto">' + tr('Señales') + '</span>' }));
     if (L) {
-      barra.appendChild(crear('a', { class: 'barra-leccion', href: '#', title: 'Volver al principio de la lección', onclick: ev => { ev.preventDefault(); raiz.scrollTo({ top: 0, behavior: reducido() ? 'auto' : 'smooth' }); } },
+      barra.appendChild(crear('a', { class: 'barra-leccion', href: '#', title: tr('Volver al principio de la lección'), onclick: ev => { ev.preventDefault(); raiz.scrollTo({ top: 0, behavior: reducido() ? 'auto' : 'smooth' }); } },
         crear('span', { class: 'num' }, String(L.n).padStart(2, '0')), crear('span', { class: 'titulo' }, L.titulo)));
-      muestrasEl = crear('div', { class: 'muestras', role: 'list', 'aria-label': 'Progreso: una muestra por reto y otra por el examen' });
+      muestrasEl = crear('div', { class: 'muestras', role: 'list', 'aria-label': tr('Progreso: una muestra por reto y otra por el examen') });
       cuentaEl = crear('span', { class: 'barra-cuenta', 'aria-live': 'polite' });
       barra.appendChild(crear('div', { class: 'barra-progreso' }, muestrasEl, cuentaEl));
     } else {
@@ -262,10 +440,28 @@
       barra.appendChild(crear('span', { class: 'barra-leccion' }, crear('span', { class: 'titulo' }, titulo)));
       barra.appendChild(crear('div', { class: 'barra-progreso' }));
     }
+    barra.appendChild(botonIdioma());
     botonTema = crear('button', { type: 'button', class: 'barra-tema', onclick: () => Curso.tema.siguiente() });
     barra.appendChild(botonTema);
     pintarBotonTema();
     doc.body.insertBefore(barra, doc.body.firstChild);
+  }
+  // Botón de idioma, con el aspecto del botón del tema: «EN» en las páginas españolas (enlaza a en/<archivo>) y
+  // «ES» en las inglesas (enlaza a ../<archivo>). El archivo es el último trozo de la ruta, o index.html.
+  function archivoActual() {
+    let a = '';
+    try { a = decodeURIComponent((location.pathname || '').split('/').pop() || ''); } catch (e) { a = (location.pathname || '').split('/').pop() || ''; }
+    return a || 'index.html';
+  }
+  function botonIdioma() {
+    if (!doc.getElementById('estilo-barra-idioma')) {
+      doc.head.appendChild(crear('style', { id: 'estilo-barra-idioma', text: 'a.barra-idioma { text-decoration: none; color: var(--texto-suave); } a.barra-idioma:hover { color: var(--texto); text-decoration: none; }' }));
+    }
+    const titulo = EN ? 'Leer esta página en español' : 'Read this page in English';
+    const destino = () => (EN ? '../' : 'en/') + archivoActual() + (location.hash || '');
+    const a = crear('a', { class: 'barra-tema barra-idioma', href: destino(), hreflang: EN ? 'es' : 'en', lang: EN ? 'es' : 'en', title: titulo, 'aria-label': titulo }, EN ? 'ES' : 'EN');
+    raiz.addEventListener('hashchange', () => { a.setAttribute('href', destino()); });
+    return a;
   }
   // Las muestras: los tallos siguen una sinusoide muestreada; se encienden al superar cada reto.
   function pintarMuestras() {
@@ -275,12 +471,12 @@
     const items = elementos.map((e, i) => {
       const R = retos.get(e.id);
       const p = Curso.progreso.reto(id, e.id);
-      return { href: '#' + e.id, nombre: 'Reto ' + (i + 1) + (R ? ': ' + R.titulo : ''), estado: p && p.ok ? (p.ayuda ? 'ayuda' : 'hecha') : '', examen: false };
+      return { href: '#' + e.id, nombre: tr('Reto {0}', i + 1) + (R ? ': ' + R.titulo : ''), estado: p && p.ok ? (p.ayuda ? 'ayuda' : 'hecha') : '', examen: false };
     });
     const hayExamen = !!doc.getElementById('examen');
     if (hayExamen) {
       const ex = Curso.progreso.examen(id);
-      items.push({ href: '#examen', nombre: 'Examen', estado: ex && ex.aprobado ? 'hecha' : '', examen: true });
+      items.push({ href: '#examen', nombre: tr('Examen'), estado: ex && ex.aprobado ? 'hecha' : '', examen: true });
     }
     muestrasEl.innerHTML = '';
     const n = items.length;
@@ -289,7 +485,7 @@
       if (Math.abs(v) < 0.3) v = v < 0 ? -0.3 : 0.3;
       const centro = 19, amp = 14.5;
       const yCab = centro - v * amp;
-      const estadoTxt = it.estado === 'hecha' ? (it.examen ? 'aprobado' : 'conseguido') : it.estado === 'ayuda' ? 'visto con la solución' : 'por hacer';
+      const estadoTxt = tr(it.estado === 'hecha' ? (it.examen ? 'aprobado' : 'conseguido') : it.estado === 'ayuda' ? 'visto con la solución' : 'por hacer');
       const a = crear('a', { class: 'muestra' + (it.estado ? ' ' + it.estado : '') + (it.examen ? ' examen' : ''), href: it.href, role: 'listitem', 'aria-label': it.nombre + ': ' + estadoTxt, title: it.nombre + ' · ' + estadoTxt },
         crear('span', { class: 'tallo', style: { top: Math.min(centro, yCab) + 'px', height: Math.abs(centro - yCab) + 'px' } }),
         crear('span', { class: 'cabeza', style: { top: yCab + 'px' } }));
@@ -304,12 +500,12 @@
     });
     const hechos = items.filter(i => !i.examen && i.estado).length;
     const total = items.filter(i => !i.examen).length;
-    if (cuentaEl) { cuentaEl.textContent = total ? hechos + '/' + total : ''; cuentaEl.title = hechos + ' de ' + total + ' retos conseguidos'; }
+    if (cuentaEl) { cuentaEl.textContent = total ? hechos + '/' + total : ''; cuentaEl.title = tr('{0} de {1} retos conseguidos', hechos, total); }
   }
 
   // ── Retos ──────────────────────────────────────────────────────────────────────────────────────────────
   const retos = new Map();
-  const NIVELES = { facil: ['Fácil', 1], medio: ['Medio', 2], dificil: ['Difícil', 3] };
+  const NIVELES = { facil: ['Fácil', 1], medio: ['Medio', 2], dificil: ['Difícil', 3], easy: ['Fácil', 1], medium: ['Medio', 2], hard: ['Difícil', 3] };
   // Curso.reto(id, { el, titulo, comprobar, resolver, pista, exito, auto = true, nivel, alReiniciar })
   //   comprobar() → true | false | { ok, mensaje }; resolver() deja los mandos en una solución válida.
   //   pista: texto o lista de una o dos pistas (aceptan HTML). exito: HTML de la mini-recompensa.
@@ -322,7 +518,7 @@
     el.classList.add('reto');
     const todos = [...doc.querySelectorAll('.reto')];
     const n = todos.indexOf(el) + 1 || retos.size + 1;
-    const titulo = o.titulo || el.getAttribute('data-titulo') || 'Reto ' + n;
+    const titulo = o.titulo || el.getAttribute('data-titulo') || tr('Reto {0}', n);
     const nivelClave = normalizar(o.nivel || el.getAttribute('data-nivel') || (n === 1 ? 'facil' : n >= Math.max(3, todos.length - 1) ? 'dificil' : 'medio')).replace(/\s/g, '');
     const [nivelNombre, nivelN] = NIVELES[nivelClave] || NIVELES.medio;
     const pistas = o.pista == null ? [] : Array.isArray(o.pista) ? o.pista : [o.pista];
@@ -334,13 +530,13 @@
       while (el.firstChild) cuerpo.appendChild(el.firstChild);
       el.appendChild(cuerpo);
     }
-    const chip = crear('span', { class: 'reto-chip' }, 'Por hacer');
+    const chip = crear('span', { class: 'reto-chip' }, tr('Por hacer'));
     const puntos = [1, 2, 3].map(k => crear('i', { class: k <= nivelN ? 'lleno' : '' }));
     const cabeza = crear('div', { class: 'reto-cabeza' },
-      crear('span', { class: 'reto-num' }, 'Reto ' + n),
+      crear('span', { class: 'reto-num' }, tr('Reto {0}', n)),
       crear('h4', { class: 'reto-titulo', id: id + '-titulo' }, titulo),
       crear('span', { class: 'reto-datos' },
-        crear('span', { class: 'reto-nivel', title: 'Dificultad: ' + nivelNombre.toLowerCase() }, puntos, crear('span', {}, nivelNombre)),
+        crear('span', { class: 'reto-nivel', title: tr('Dificultad: {0}', tr(nivelNombre).toLowerCase()) }, puntos, crear('span', {}, tr(nivelNombre))),
         chip));
     el.insertBefore(cabeza, el.firstChild);
     el.setAttribute('role', 'group');
@@ -349,9 +545,9 @@
     const mensajeEl = crear('p', { class: 'reto-mensaje', 'aria-live': 'polite' });
     const listaPistas = crear('ol', { class: 'reto-pistas' });
     const botones = crear('div', { class: 'botones' });
-    const bPista = crear('button', { type: 'button', class: 'boton peque discreto', html: ICONO.pista + '<span>Pista</span>' });
-    const bSolucion = crear('button', { type: 'button', class: 'boton peque discreto', html: ICONO.ojo + '<span>Ver la solución</span>', hidden: true });
-    const bComprobar = o.auto === false ? crear('button', { type: 'button', class: 'boton principal peque' }, 'Comprobar') : null;
+    const bPista = crear('button', { type: 'button', class: 'boton peque discreto', html: ICONO.pista + '<span>' + tr('Pista') + '</span>' });
+    const bSolucion = crear('button', { type: 'button', class: 'boton peque discreto', html: ICONO.ojo + '<span>' + tr('Ver la solución') + '</span>', hidden: true });
+    const bComprobar = o.auto === false ? crear('button', { type: 'button', class: 'boton principal peque' }, tr('Comprobar')) : null;
     if (pistas.length) botones.appendChild(bPista); else bSolucion.hidden = false;
     botones.appendChild(bSolucion);
     if (bComprobar) botones.appendChild(bComprobar);
@@ -365,7 +561,7 @@
       listaPistas.appendChild(crear('li', { html: pistas[vistas] }));
       vistas += 1;
       if (vistas >= pistas.length) { bPista.hidden = true; bSolucion.hidden = false; }
-      else bPista.querySelector('span').textContent = 'Otra pista';
+      else bPista.querySelector('span').textContent = tr('Otra pista');
     });
     bSolucion.addEventListener('click', () => {
       R.usoSolucion = true;
@@ -376,7 +572,7 @@
 
     function evaluar() {
       let r;
-      try { r = o.comprobar ? o.comprobar() : false; } catch (e) { console.error(e); return { ok: false, mensaje: 'No he podido comprobarlo: ' + e.message }; }
+      try { r = o.comprobar ? o.comprobar() : false; } catch (e) { console.error(e); return { ok: false, mensaje: tr('No he podido comprobarlo: {0}', e.message) }; }
       if (typeof r === 'boolean') return { ok: r };
       return { ok: !!(r && r.ok), mensaje: r && r.mensaje };
     }
@@ -387,7 +583,7 @@
     }
     function pintarConseguido(ayuda) {
       el.classList.add('conseguido');
-      chip.textContent = ayuda ? 'Con la solución' : 'Conseguido';
+      chip.textContent = ayuda ? tr('Con la solución') : tr('Conseguido');
       if (o.exito) { exito.innerHTML = o.exito; exito.hidden = false; }
     }
     R.revisar = manual => {
@@ -396,14 +592,14 @@
         const yaEnSesion = R.sesion;
         R.sesion = true;
         pintarConseguido(R.usoSolucion && !(Curso.progreso.reto(Curso.leccion, id) || {}).ok);
-        mensaje(r.mensaje || (R.usoSolucion ? 'Así se resuelve. Juega con los mandos para verlo por ti mismo.' : 'Conseguido.'), 'bien');
+        mensaje(r.mensaje || (R.usoSolucion ? tr('Así se resuelve. Juega con los mandos para verlo por ti mismo.') : tr('Conseguido.')), 'bien');
         if (!yaEnSesion && !enAutoprueba) {
           if (Curso.leccion) Curso.progreso.marcarReto(Curso.leccion, id, { ayuda: R.usoSolucion });
           pintarMuestras();
           emitir('reto', id, { ayuda: R.usoSolucion });
         }
       } else {
-        mensaje(r.mensaje || (manual ? 'Todavía no. Sigue probando.' : ''), manual && !r.mensaje ? 'mal' : '');
+        mensaje(r.mensaje || (manual ? tr('Todavía no. Sigue probando.') : ''), manual && !r.mensaje ? 'mal' : '');
       }
       return r.ok;
     };
@@ -414,7 +610,7 @@
       el.classList.remove('conseguido');
       mensaje('');
       const p = Curso.progreso.reto(Curso.leccion, id);
-      chip.textContent = p && p.ok ? (p.ayuda ? 'Con la solución' : 'Conseguido') : 'Por hacer';
+      chip.textContent = p && p.ok ? (p.ayuda ? tr('Con la solución') : tr('Conseguido')) : tr('Por hacer');
       try { o.alReiniciar && o.alReiniciar(); } catch (e) { console.error(e); }
     };
     R.api = {
@@ -427,7 +623,7 @@
     retos.set(id, R);
     // Si ya estaba conseguido en otra visita, se ve así desde el principio (y sigue siendo jugable).
     const previo = Curso.progreso.reto(Curso.leccion, id);
-    if (previo && previo.ok) { pintarConseguido(previo.ayuda); chip.textContent = previo.ayuda ? 'Con la solución' : 'Conseguido'; }
+    if (previo && previo.ok) { pintarConseguido(previo.ayuda); chip.textContent = previo.ayuda ? tr('Con la solución') : tr('Conseguido'); }
     if (montado) pintarMuestras();
     return R.api;
   };
@@ -686,8 +882,8 @@
     }
     const pintar = () => {
       if (!boton) return;
-      boton.innerHTML = (A.pausada ? ICONO.play : ICONO.pausa) + '<span>' + (A.pausada ? 'Animar' : 'Pausa') + '</span>';
-      boton.setAttribute('aria-label', A.pausada ? 'Animar' : 'Pausar la animación');
+      boton.innerHTML = (A.pausada ? ICONO.play : ICONO.pausa) + '<span>' + (A.pausada ? tr('Animar') : tr('Pausa')) + '</span>';
+      boton.setAttribute('aria-label', A.pausada ? tr('Animar') : tr('Pausar la animación'));
     };
     const actualizar = () => {
       if (A.visible && !A.pausada) { activas.add(A); arrancarBucle(); } else activas.delete(A);
@@ -836,12 +1032,12 @@
     function parar() { if (actual) actual.parar(); }
     // Curso.audio.boton(contenedor, () => ({ x, fs }) | ({ f, dur }), 'Escuchar', { textoParar, clase, volumen })
     //   Botón ▶/■ reutilizable. La función se llama en cada clic, así que puede devolver el estado del momento.
-    function boton(contenedor, fuenteFn, texto = 'Escuchar', o = {}) {
+    function boton(contenedor, fuenteFn, texto = tr('Escuchar'), o = {}) {
       const cont = buscar(contenedor);
       const b = crear('button', { type: 'button', class: 'boton audio' + (o.clase ? ' ' + o.clase : '') });
       let h = null;
       const pintar = sonando => {
-        b.innerHTML = (sonando ? ICONO.stop : ICONO.play) + '<span>' + escapar(sonando ? (o.textoParar || 'Parar') : texto) + '</span>';
+        b.innerHTML = (sonando ? ICONO.stop : ICONO.play) + '<span>' + escapar(sonando ? (o.textoParar || tr('Parar')) : texto) + '</span>';
         b.classList.toggle('sonando', sonando);
       };
       pintar(false);
@@ -867,22 +1063,22 @@
   // Ejemplos sintéticos de Senal.ejemplos, con el nombre que se ve en el botón. Corresponden a los tramos de la
   // grabación de referencia de la serie. Una lección puede pasar además los suyos: { id, nombre, crear: fs => x }.
   const EJEMPLOS = {
-    silencio: { nombre: 'Silencio', crear: (s, fs) => s.ejemplos.silencio(fs) },
-    silbido: { nombre: 'Silbido', crear: (s, fs) => s.ejemplos.silbido(fs) },
-    aaa: { nombre: '«Aaa»', crear: (s, fs) => s.ejemplos.vocal(fs, { vocal: 'a' }) },
-    eee: { nombre: '«Eee»', crear: (s, fs) => s.ejemplos.vocal(fs, { vocal: 'e' }) },
-    iii: { nombre: '«Iii»', crear: (s, fs) => s.ejemplos.vocal(fs, { vocal: 'i' }) },
-    ooo: { nombre: '«Ooo»', crear: (s, fs) => s.ejemplos.vocal(fs, { vocal: 'o' }) },
-    uuu: { nombre: '«Uuu»', crear: (s, fs) => s.ejemplos.vocal(fs, { vocal: 'u' }) },
-    aaaIii: { nombre: '«Aaa» y luego «iii»', crear: (s, fs) => s.ejemplos.aaaIii(fs) },
-    silbidoQueSube: { nombre: 'Silbido que sube y baja', crear: (s, fs) => s.ejemplos.silbidoQueSube(fs) },
-    frase: { nombre: 'Frase', crear: (s, fs) => s.ejemplos.frase(fs) },
-    palmadas: { nombre: 'Palmadas', crear: (s, fs) => s.ejemplos.palmadas(fs) },
-    melodia: { nombre: 'Melodía', crear: (s, fs) => s.ejemplos.melodia(fs) },
-    dosSilbidos: { nombre: 'Dos silbidos que se cruzan', crear: (s, fs) => s.ejemplos.dosSilbidos(fs) },
-    diapason: { nombre: 'Diapasón', crear: (s, fs) => s.ejemplos.diapason(fs) },
-    sirena: { nombre: 'Sirena', crear: (s, fs) => s.ejemplos.sirena(fs) },
-    acorde: { nombre: 'Acorde', crear: (s, fs) => s.ejemplos.acorde(fs) },
+    silencio: { nombre: tr('Silencio'), crear: (s, fs) => s.ejemplos.silencio(fs) },
+    silbido: { nombre: tr('Silbido'), crear: (s, fs) => s.ejemplos.silbido(fs) },
+    aaa: { nombre: tr('«Aaa»'), crear: (s, fs) => s.ejemplos.vocal(fs, { vocal: 'a' }) },
+    eee: { nombre: tr('«Eee»'), crear: (s, fs) => s.ejemplos.vocal(fs, { vocal: 'e' }) },
+    iii: { nombre: tr('«Iii»'), crear: (s, fs) => s.ejemplos.vocal(fs, { vocal: 'i' }) },
+    ooo: { nombre: tr('«Ooo»'), crear: (s, fs) => s.ejemplos.vocal(fs, { vocal: 'o' }) },
+    uuu: { nombre: tr('«Uuu»'), crear: (s, fs) => s.ejemplos.vocal(fs, { vocal: 'u' }) },
+    aaaIii: { nombre: tr('«Aaa» y luego «iii»'), crear: (s, fs) => s.ejemplos.aaaIii(fs) },
+    silbidoQueSube: { nombre: tr('Silbido que sube y baja'), crear: (s, fs) => s.ejemplos.silbidoQueSube(fs) },
+    frase: { nombre: tr('Frase'), crear: (s, fs) => s.ejemplos.frase(fs) },
+    palmadas: { nombre: tr('Palmadas'), crear: (s, fs) => s.ejemplos.palmadas(fs) },
+    melodia: { nombre: tr('Melodía'), crear: (s, fs) => s.ejemplos.melodia(fs) },
+    dosSilbidos: { nombre: tr('Dos silbidos que se cruzan'), crear: (s, fs) => s.ejemplos.dosSilbidos(fs) },
+    diapason: { nombre: tr('Diapasón'), crear: (s, fs) => s.ejemplos.diapason(fs) },
+    sirena: { nombre: tr('Sirena'), crear: (s, fs) => s.ejemplos.sirena(fs) },
+    acorde: { nombre: tr('Acorde'), crear: (s, fs) => s.ejemplos.acorde(fs) },
   };
   Curso.ejemplosVoz = EJEMPLOS;
   // ¿Deja el navegador usar el micrófono en esta página? false si una política (p. ej., la del visor de
@@ -897,8 +1093,7 @@
     return null;
   }
   const enVisor = () => { try { return raiz.self !== raiz.top; } catch (e) { return true; } };
-  const MENSAJE_SIN_MICRO = 'El micrófono está bloqueado en esta ventana. Dentro del visor de claude.ai es lo normal: no deja grabar. '
-    + 'Si abres el curso desde tu ordenador o desde su web, podrás grabar aquí mismo. Mientras, sube un audio grabado con el móvil o prueba con un ejemplo sintético.';
+  const MENSAJE_SIN_MICRO = tr('El micrófono está bloqueado en esta ventana. Dentro del visor de claude.ai es lo normal: no deja grabar. Si abres el curso desde tu ordenador o desde su web, podrás grabar aquí mismo. Mientras, sube un audio grabado con el móvil o prueba con un ejemplo sintético.');
   function remuestrear(x, de, a) {
     if (S() && S().remuestrear) { try { return Float64Array.from(S().remuestrear(x, de, a)); } catch (e) { /* respaldo local */ } }
     const r = a / de, n = Math.max(1, Math.floor(x.length * r));
@@ -957,19 +1152,19 @@
     const lista = (o.ejemplos || ['silbido', 'aaa']).map(e => (typeof e === 'object' ? e : EJEMPLOS[e] ? { id: e, ...EJEMPLOS[e] } : (console.warn('Curso.voz: no conozco el ejemplo «' + e + '»'), null))).filter(Boolean);
     const V = { actual: null, escVista: null };
     const led = crear('span', { class: 'led', 'aria-hidden': 'true' });
-    const derecha = crear('span', { class: 'derecha' }, 'tu audio no sale del navegador');
-    const lab = crear('div', { class: 'laboratorio', role: 'group', 'aria-label': 'Laboratorio: en tu voz' },
-      crear('div', { class: 'lab-cabeza' }, led, crear('span', {}, o.titulo || 'En tu voz · laboratorio'), derecha));
+    const derecha = crear('span', { class: 'derecha' }, tr('tu audio no sale del navegador'));
+    const lab = crear('div', { class: 'laboratorio', role: 'group', 'aria-label': tr('Laboratorio: en tu voz') },
+      crear('div', { class: 'lab-cabeza' }, led, crear('span', {}, o.titulo || tr('En tu voz · laboratorio')), derecha));
 
     // Fuentes de sonido
     const bGrabar = crear('button', { type: 'button', class: 'boton grabar' });
     const pintarGrabar = (estado, extra) => {
-      if (estado === 'grabando') bGrabar.innerHTML = ICONO.stop + '<span>Parar' + (extra ? ' · ' + extra : '') + '</span>';
-      else bGrabar.innerHTML = ICONO.grabar + '<span>Grabar</span>';
+      if (estado === 'grabando') bGrabar.innerHTML = ICONO.stop + '<span>' + tr('Parar') + (extra ? ' · ' + extra : '') + '</span>';
+      else bGrabar.innerHTML = ICONO.grabar + '<span>' + tr('Grabar') + '</span>';
     };
     pintarGrabar('reposo');
-    const archivo = crear('input', { type: 'file', accept: 'audio/*,video/*', 'aria-label': 'Subir un audio' });
-    const grupoEj = crear('div', { class: 'lab-grupo' }, crear('span', { class: 'nombre' }, 'Ejemplos sintéticos'));
+    const archivo = crear('input', { type: 'file', accept: 'audio/*,video/*', 'aria-label': tr('Subir un audio') });
+    const grupoEj = crear('div', { class: 'lab-grupo' }, crear('span', { class: 'nombre' }, tr('Ejemplos sintéticos')));
     const botonesEj = {};
     for (const e of lista) {
       const b = crear('button', { type: 'button', class: 'boton peque', onclick: () => V.ejemplo(e.id) }, e.nombre);
@@ -978,13 +1173,13 @@
     }
     lab.appendChild(crear('div', { class: 'lab-fuentes' },
       crear('div', { class: 'lab-grupo' }, bGrabar),
-      crear('div', { class: 'lab-grupo' }, crear('label', { class: 'lab-archivo' }, archivo, crear('span', { class: 'boton', html: ICONO.subir + '<span>Subir un audio</span>' }))),
+      crear('div', { class: 'lab-grupo' }, crear('label', { class: 'lab-archivo' }, archivo, crear('span', { class: 'boton', html: ICONO.subir + '<span>' + tr('Subir un audio') + '</span>' }))),
       lista.length ? grupoEj : null));
     const avisoEl = crear('p', { class: 'lab-aviso', hidden: true, 'aria-live': 'polite' });
     lab.appendChild(avisoEl);
     const estado = crear('div', { class: 'lab-estado' });
     lab.appendChild(estado);
-    const medidor = crear('div', { class: 'medidor', hidden: true }, crear('span', {}, 'Nivel'), crear('span', { class: 'barra-nivel' }, crear('i')));
+    const medidor = crear('div', { class: 'medidor', hidden: true }, crear('span', {}, tr('Nivel')), crear('span', { class: 'barra-nivel' }, crear('i')));
     lab.appendChild(crear('div', { class: 'lab-vista' }, medidor));
     const vistaCont = crear('div', { class: 'escena' });
     lab.lastChild.appendChild(vistaCont);
@@ -1003,11 +1198,11 @@
     // Vista de toda la grabación
     const vista = G().lienzo(vistaCont, {
       alto: w => (w < 520 ? 66 : 78),
-      etiqueta: 'Toda la grabación cargada',
+      etiqueta: tr('Toda la grabación cargada'),
       dibujar: (ctx, w, h, C) => {
         const a = V.actual;
         if (!a) {
-          G().texto(ctx, w / 2, h / 2, 'Graba, sube un audio o elige un ejemplo', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C });
+          G().texto(ctx, w / 2, h / 2, tr('Graba, sube un audio o elige un ejemplo'), { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C });
           V.escVista = null;
           return;
         }
@@ -1047,15 +1242,15 @@
       const db = a.pico > 0 ? 20 * Math.log10(a.pico) : -Infinity;
       estado.append(
         crear('span', { class: 'nombre-audio' }, a.nombre),
-        a.sintetico ? crear('span', { class: 'sintetico' }, 'ejemplo sintético') : null,
+        a.sintetico ? crear('span', { class: 'sintetico' }, tr('ejemplo sintético')) : null,
         crear('span', {}, num(a.duracion, a.duracion < 10 ? 1 : 0) + ' s'),
-        crear('span', {}, num(a.fs) + ' muestras/s'),
-        crear('span', {}, 'pico ' + (Number.isFinite(db) ? num(db, 0) + ' dBFS' : '−∞ dBFS')));
-      escuchar = Curso.audio.boton(estado, () => (V.actual ? { x: V.actual.x, fs: V.actual.fs, volumen: 0.8 } : null), 'Escuchar', { clase: 'peque' });
+        crear('span', {}, num(a.fs) + ' ' + tr('muestras/s')),
+        crear('span', {}, tr('pico') + ' ' + (Number.isFinite(db) ? num(db, 0) + ' dBFS' : '−∞ dBFS')));
+      escuchar = Curso.audio.boton(estado, () => (V.actual ? { x: V.actual.x, fs: V.actual.fs, volumen: 0.8 } : null), tr('Escuchar'), { clase: 'peque' });
     }
     // Carga cualquier audio: lo pasa a mono, le quita la continua, lo recorta y lo remuestrea si hace falta.
     V.cargar = (x, fs, nombre = 'Audio', op = {}) => {
-      if (!x || !x.length || !(fs > 0)) { aviso('El audio está vacío.', 'mal'); return false; }
+      if (!x || !x.length || !(fs > 0)) { aviso(tr('El audio está vacío.'), 'mal'); return false; }
       let y = Float64Array.from(x);
       let media = 0;
       for (let i = 0; i < y.length; i++) media += y[i];
@@ -1068,7 +1263,7 @@
         const ini = ventanaMasFuerte(y, fs, maxN);
         y = y.slice(ini, ini + maxN);
         recorte = [ini / fs, (ini + maxN) / fs];
-        avisos.push(['Es largo: me quedo con los ' + num(maxS) + ' s con más sonido (de ' + num(recorte[0], 1) + ' a ' + num(recorte[1], 1) + ' s).', '']);
+        avisos.push([tr('Es largo: me quedo con los {0} s con más sonido (de {1} a {2} s).', num(maxS), num(recorte[0], 1), num(recorte[1], 1)), '']);
       }
       let fsA = fs;
       if (o.fsAnalisis && Math.abs(o.fsAnalisis - fs) > 0.5) { y = remuestrear(y, fs, o.fsAnalisis); fsA = o.fsAnalisis; }
@@ -1076,9 +1271,9 @@
       for (let i = 0; i < y.length; i++) { const a = Math.abs(y[i]); if (a > pico) pico = a; }
       for (let i = 0; i < y.length; i++) if (Math.abs(y[i]) >= 0.985 * Math.max(pico, 0.5) && pico >= 0.98) techo++;
       const satFrac = techo / y.length;
-      if (pico < 0.003) avisos.push(['Casi no hay sonido (pico de ' + (pico > 0 ? num(20 * Math.log10(pico), 0) : '−∞') + ' dBFS). Acerca el micrófono o sube el volumen de la grabación.', 'mal']);
-      else if (satFrac > 0.002) avisos.push(['Satura: el ' + num(100 * satFrac, 1) + ' % de las muestras tocan el techo y la onda sale recortada. Aléjate un poco del micrófono.', 'mal']);
-      if (y.length / fsA < 0.25) avisos.push(['Es muy corto: con un segundo o dos se ve mucho mejor.', 'mal']);
+      if (pico < 0.003) avisos.push([tr('Casi no hay sonido (pico de {0} dBFS). Acerca el micrófono o sube el volumen de la grabación.', pico > 0 ? num(20 * Math.log10(pico), 0) : '−∞'), 'mal']);
+      else if (satFrac > 0.002) avisos.push([tr('Satura: el {0} % de las muestras tocan el techo y la onda sale recortada. Aléjate un poco del micrófono.', num(100 * satFrac, 1)), 'mal']);
+      if (y.length / fsA < 0.25) avisos.push([tr('Es muy corto: con un segundo o dos se ve mucho mejor.'), 'mal']);
       V.actual = { x: y, fs: fsA, nombre, sintetico: !!op.sintetico, pico, satFrac, duracion: y.length / fsA, recorte, fsOriginal: fs };
       if (escuchar) escuchar.parar();
       pintarEstado();
@@ -1091,7 +1286,7 @@
         try { o.alCargar(y, fsA, nombre, V.actual); }
         catch (e) {
           console.error(e);
-          aviso('No he podido analizar este audio: ' + e.message, 'mal');
+          aviso(tr('No he podido analizar este audio: {0}', e.message), 'mal');
           if (op.lanzar) throw e;
         }
       }
@@ -1101,10 +1296,10 @@
       const e = lista.find(x => x.id === id);
       if (!e) return false;
       const s = S();
-      if (!s && e.crear.length >= 2) { aviso('Los ejemplos sintéticos necesitan comun/senal.js, y no ha cargado.', 'mal'); return false; }
+      if (!s && e.crear.length >= 2) { aviso(tr('Los ejemplos sintéticos necesitan comun/senal.js, y no ha cargado.'), 'mal'); return false; }
       let x;
       try { x = e.crear.length >= 2 ? e.crear(s, fsEj) : e.crear(fsEj); }
-      catch (err) { console.error(err); aviso('No he podido generar el ejemplo «' + e.nombre + '»: ' + err.message, 'mal'); return false; }
+      catch (err) { console.error(err); aviso(tr('No he podido generar el ejemplo «{0}»: {1}', e.nombre, err.message), 'mal'); return false; }
       return V.cargar(x, fsEj, e.nombre, { sintetico: true, ejemplo: id });
     };
     V.redibujarVista = () => vista.dibujar();
@@ -1112,7 +1307,7 @@
     // Subir un audio (o soltarlo encima del laboratorio)
     async function leerArchivo(f) {
       if (!f) return;
-      aviso('Leyendo «' + f.name + '»…');
+      aviso(tr('Leyendo «{0}»…', f.name));
       try {
         const c = Curso.audio.contexto();
         if (!c) throw new Error('este navegador no tiene Web Audio');
@@ -1120,7 +1315,7 @@
         V.cargar(aMono(audio), audio.sampleRate, f.name, { sintetico: false });
       } catch (e) {
         console.warn(e);
-        aviso('No puedo leer «' + f.name + '». Prueba con un WAV, un MP3 o un M4A grabado con el móvil.', 'mal');
+        aviso(tr('No puedo leer «{0}». Prueba con un WAV, un MP3 o un M4A grabado con el móvil.', f.name), 'mal');
       }
     }
     archivo.addEventListener('change', () => { leerArchivo(archivo.files && archivo.files[0]); archivo.value = ''; });
@@ -1133,11 +1328,11 @@
     if (permitido === false) {
       aviso(MENSAJE_SIN_MICRO);
       bGrabar.disabled = true;
-      bGrabar.title = 'El micrófono está bloqueado en esta ventana';
+      bGrabar.title = tr('El micrófono está bloqueado en esta ventana');
     }
     async function empezarGrabacion() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        aviso(location.protocol === 'http:' ? 'El navegador solo deja grabar en páginas seguras (https) o abiertas desde el disco. Sube un audio o prueba con un ejemplo.' : MENSAJE_SIN_MICRO, 'mal');
+        aviso(location.protocol === 'http:' ? tr('El navegador solo deja grabar en páginas seguras (https) o abiertas desde el disco. Sube un audio o prueba con un ejemplo.') : MENSAJE_SIN_MICRO, 'mal');
         return;
       }
       let stream;
@@ -1146,14 +1341,14 @@
       } catch (e) {
         const nombre = e && e.name;
         let t = MENSAJE_SIN_MICRO;
-        if (nombre === 'NotFoundError' || nombre === 'OverconstrainedError') t = 'No encuentro ningún micrófono. Sube un audio grabado con el móvil o prueba con un ejemplo sintético.';
-        else if (nombre === 'NotReadableError') t = 'El micrófono está ocupado por otra aplicación. Ciérrala y vuelve a probar, o sube un audio.';
-        else if ((nombre === 'NotAllowedError' || nombre === 'SecurityError') && !enVisor()) t = 'No tengo permiso para usar el micrófono. Puedes darlo en el candado de la barra de direcciones, subir un audio o probar con un ejemplo.';
+        if (nombre === 'NotFoundError' || nombre === 'OverconstrainedError') t = tr('No encuentro ningún micrófono. Sube un audio grabado con el móvil o prueba con un ejemplo sintético.');
+        else if (nombre === 'NotReadableError') t = tr('El micrófono está ocupado por otra aplicación. Ciérrala y vuelve a probar, o sube un audio.');
+        else if ((nombre === 'NotAllowedError' || nombre === 'SecurityError') && !enVisor()) t = tr('No tengo permiso para usar el micrófono. Puedes darlo en el candado de la barra de direcciones, subir un audio o probar con un ejemplo.');
         aviso(t, 'mal');
         return;
       }
       const c = Curso.audio.contexto();
-      if (!c) { stream.getTracks().forEach(t => t.stop()); aviso('Este navegador no tiene Web Audio: no puedo grabar.', 'mal'); return; }
+      if (!c) { stream.getTracks().forEach(t => t.stop()); aviso(tr('Este navegador no tiene Web Audio: no puedo grabar.'), 'mal'); return; }
       try { await c.resume(); } catch (e) { /* sigue */ }
       const fuente = c.createMediaStreamSource(stream);
       const proc = c.createScriptProcessor(4096, 1, 1);
@@ -1174,13 +1369,13 @@
       grabacion = { stream, fuente, proc, mudo, trozos, fs: c.sampleRate, inicio: performance.now(), get total() { return total; }, get nivel() { return nivel; } };
       lab.classList.add('grabando');
       medidor.hidden = false;
-      aviso('Grabando. Silba o canta una nota larga; se para sola a los ' + num(maxS) + ' s.');
+      aviso(tr('Grabando. Silba o canta una nota larga; se para sola a los {0} s.', num(maxS)));
       const tic = () => {
         if (!grabacion) return;
         const s = (performance.now() - grabacion.inicio) / 1000;
         pintarGrabar('grabando', num(s, 1) + ' s');
         bGrabar.disabled = s < minS;
-        bGrabar.title = s < minS ? 'Graba al menos ' + num(minS) + ' s' : '';
+        bGrabar.title = s < minS ? tr('Graba al menos {0} s', num(minS)) : '';
         medidor.querySelector('i').style.width = (100 * Math.min(1, grabacion.nivel)).toFixed(1) + '%';
         requestAnimationFrame(tic);
       };
@@ -1199,7 +1394,7 @@
       const x = new Float64Array(g.total);
       let k = 0;
       for (const t of g.trozos) { x.set(t, k); k += t.length; }
-      V.cargar(x, g.fs, 'Tu grabación', { sintetico: false });
+      V.cargar(x, g.fs, tr('Tu grabación'), { sintetico: false });
     }
     bGrabar.addEventListener('click', () => { if (grabacion) terminarGrabacion(); else empezarGrabacion(); });
 
@@ -1276,7 +1471,7 @@
         crear('dt', {}, t.termino),
         crear('dd', {}, t.definicion || '', t.imagen ? crear('span', { class: 'imagen-ancla' }, t.imagen) : null)));
     }
-    if (!sec.querySelector('.terminos-glosario')) sec.appendChild(crear('p', { class: 'terminos-glosario' }, crear('a', { href: 'glosario.html' }, 'Todos los términos del curso, en el glosario →')));
+    if (!sec.querySelector('.terminos-glosario')) sec.appendChild(crear('p', { class: 'terminos-glosario' }, crear('a', { href: 'glosario.html' }, tr('Todos los términos del curso, en el glosario →'))));
   }
   // Fichas: al pasar o tocar un <b class="termino"> sale su definición.
   let ficha = null;
@@ -1322,7 +1517,7 @@
   // ── Examen ─────────────────────────────────────────────────────────────────────────────────────────────
   const TIPOS = ['opcion', 'varias', 'vf', 'numero', 'grafica', 'deslizador'];
   const LETRAS = 'ABCDEFGHIJ';
-  const NIVEL_PREGUNTA = { basico: 'básico', medio: 'medio', reto: 'reto' };
+  const NIVEL_PREGUNTA = { basico: 'básico', medio: 'medio', reto: 'reto' };   // se traducen al pintarlos
   // Una pregunta generada se rehace en cada intento: generar(azar) devuelve los campos de su tipo.
   function instanciar(p, a) {
     if (typeof p.generar !== 'function') return Object.assign({}, p);
@@ -1367,14 +1562,14 @@
     }
   }
   function textoRespuesta(q, orden) {
-    const op = i => '«' + String(q.opciones[i]).replace(/\*/g, '') + '»';
+    const op = i => comillas(String(q.opciones[i]).replace(/\*/g, ''));
     switch (q.tipo) {
-      case 'opcion': return 'La buena: ' + op(q.correcta) + '.';
-      case 'varias': return 'Las buenas: ' + q.correctas.map(op).join(', ') + '.';
-      case 'vf': return 'Era ' + (q.correcta ? 'verdadero' : 'falso') + '.';
-      case 'numero': return 'La respuesta: ' + num(q.respuesta, q.decimales) + (q.unidad ? ' ' + q.unidad : '') + '.';
-      case 'grafica': return 'La buena era la gráfica ' + LETRAS[orden.indexOf(q.correcta)] + '.';
-      case 'deslizador': return 'Una solución: ' + num(q.solucion, q.decimales) + (q.unidad ? ' ' + q.unidad : '') + '.';
+      case 'opcion': return tr('La buena: {0}.', op(q.correcta));
+      case 'varias': return tr('Las buenas: {0}.', q.correctas.map(op).join(', '));
+      case 'vf': return tr(q.correcta ? 'Era verdadero.' : 'Era falso.');
+      case 'numero': return tr('La respuesta: {0}.', num(q.respuesta, q.decimales) + (q.unidad ? ' ' + q.unidad : ''));
+      case 'grafica': return tr('La buena era la gráfica {0}.', LETRAS[orden.indexOf(q.correcta)]);
+      case 'deslizador': return tr('Una solución: {0}.', num(q.solucion, q.decimales) + (q.unidad ? ' ' + q.unidad : ''));
       default: return '';
     }
   }
@@ -1385,19 +1580,19 @@
     const lienzosP = [];
     const li = crear('li', { class: 'preg', id });
     li.appendChild(crear('div', { class: 'preg-cabeza' },
-      crear('span', { class: 'n' }, 'Pregunta ' + pos + ' de ' + total),
-      q.nivel ? crear('span', {}, NIVEL_PREGUNTA[q.nivel] || q.nivel) : null,
+      crear('span', { class: 'n' }, tr('Pregunta {0} de {1}', pos, total)),
+      q.nivel ? crear('span', {}, NIVEL_PREGUNTA[q.nivel] ? tr(NIVEL_PREGUNTA[q.nivel]) : q.nivel) : null,
       extra.leccion ? crear('span', {}, extra.leccion) : null));
     li.appendChild(crear('p', { class: 'preg-enunciado', id: id + '-e', html: md(q.enunciado) }));
     if (q.figura) {
       const f = crear('div', { class: 'preg-figura' });
       li.appendChild(f);
-      lienzosP.push(G().lienzo(f, { alto: q.altoFigura ?? 140, etiqueta: q.textoFigura || 'Figura de la pregunta', dibujar: (ctx, w, h, C) => q.figura(ctx, w, h, C) }));
+      lienzosP.push(G().lienzo(f, { alto: q.altoFigura ?? 140, etiqueta: q.textoFigura || tr('Figura de la pregunta'), dibujar: (ctx, w, h, C) => q.figura(ctx, w, h, C) }));
     }
-    if (q.audio) { const d = crear('div', { class: 'preg-audio' }); li.appendChild(d); Curso.audio.boton(d, q.audio, q.textoAudio || 'Escuchar'); }
+    if (q.audio) { const d = crear('div', { class: 'preg-audio' }); li.appendChild(d); Curso.audio.boton(d, q.audio, q.textoAudio || tr('Escuchar')); }
     const zona = crear('div', { class: 'preg-respuesta', role: 'group', 'aria-labelledby': id + '-e' });
     li.appendChild(zona);
-    const bComprobar = crear('button', { type: 'button', class: 'boton principal', disabled: true }, 'Comprobar');
+    const bComprobar = crear('button', { type: 'button', class: 'boton principal', disabled: true }, tr('Comprobar'));
     li.appendChild(crear('div', { class: 'preg-acciones' }, bComprobar));
     const retro = crear('div', { class: 'retro', hidden: true, 'aria-live': 'polite' });
     li.appendChild(retro);
@@ -1405,14 +1600,14 @@
     const habilitar = () => { bComprobar.disabled = leer() == null; };
     if (q.tipo === 'opcion' || q.tipo === 'varias' || q.tipo === 'vf') {
       const multiple = q.tipo === 'varias';
-      const ops = q.tipo === 'vf' ? ['Verdadero', 'Falso'] : q.opciones;
+      const ops = q.tipo === 'vf' ? [tr('Verdadero'), tr('Falso')] : q.opciones;
       orden = q.tipo === 'vf' || q.fijas ? ops.map((_, i) => i) : a.barajar(ops.map((_, i) => i));
       const ul = crear('ul', { class: q.tipo === 'vf' ? 'opciones vf' : 'opciones' });
       const inputs = orden.map((iOrig, k) => {
         const inp = crear('input', { type: multiple ? 'checkbox' : 'radio', name: id + '-o', value: String(iOrig) });
         inp.addEventListener('change', habilitar);
         ul.appendChild(crear('li', {}, crear('label', { class: 'opcion' }, inp,
-          crear('span', { class: 'marca', 'aria-hidden': 'true' }, q.tipo === 'vf' ? (iOrig === 0 ? 'V' : 'F') : LETRAS[k]),
+          crear('span', { class: 'marca', 'aria-hidden': 'true' }, q.tipo === 'vf' ? (iOrig === 0 ? tr('V') : tr('F')) : LETRAS[k]),
           crear('span', { class: 'texto', html: md(ops[iOrig]) }))));
         return inp;
       });
@@ -1429,7 +1624,7 @@
       };
       bloquear = () => { inputs.forEach(i => { i.disabled = true; }); ul.classList.add('bloqueada'); };
     } else if (q.tipo === 'numero') {
-      const campo = Curso.campo(zona, { etiqueta: 'Tu respuesta', unidad: q.unidad, unidades: q.unidades, marcador: q.marcador || '', alCambiar: habilitar, alEnviar: () => { if (!bComprobar.disabled) bComprobar.click(); } });
+      const campo = Curso.campo(zona, { etiqueta: tr('Tu respuesta'), unidad: q.unidad, unidades: q.unidades, marcador: q.marcador || '', alCambiar: habilitar, alEnviar: () => { if (!bComprobar.disabled) bComprobar.click(); } });
       leer = () => { const v = campo.valor; return Number.isFinite(v) ? v : null; };
       aplicar = () => { campo.fijar(q.respuesta); habilitar(); };
       marcar = ok => campo.marcar(ok ? 'bien' : 'mal');
@@ -1438,7 +1633,7 @@
       orden = q.fijas ? q.opciones.map((_, i) => i) : a.barajar(q.opciones.map((_, i) => i));
       const ul = crear('ul', { class: 'opciones-graficas' });
       const inputs = orden.map((iOrig, k) => {
-        const inp = crear('input', { type: 'radio', name: id + '-g', value: String(iOrig), 'aria-label': 'Gráfica ' + LETRAS[k] });
+        const inp = crear('input', { type: 'radio', name: id + '-g', value: String(iOrig), 'aria-label': tr('Gráfica {0}', LETRAS[k]) });
         inp.addEventListener('change', habilitar);
         const lienzoCont = crear('div');
         const lab = crear('label', { class: 'opcion-grafica' }, inp, crear('span', { class: 'letra', 'aria-hidden': 'true' }, LETRAS[k]), lienzoCont);
@@ -1446,7 +1641,7 @@
         return [inp, lienzoCont, iOrig];
       });
       zona.appendChild(ul);
-      for (const [, lc, iOrig] of inputs) lienzosP.push(G().lienzo(lc, { alto: q.altoOpcion ?? 112, etiqueta: 'Opción', dibujar: (ctx, w, h, C) => q.opciones[iOrig](ctx, w, h, C) }));
+      for (const [, lc, iOrig] of inputs) lienzosP.push(G().lienzo(lc, { alto: q.altoOpcion ?? 112, etiqueta: tr('Opción'), dibujar: (ctx, w, h, C) => q.opciones[iOrig](ctx, w, h, C) }));
       leer = () => { const s = inputs.find(([i]) => i.checked); return s ? +s[0].value : null; };
       aplicar = () => { for (const [i] of inputs) i.checked = +i.value === q.correcta; habilitar(); };
       marcar = () => { for (const [i] of inputs) { const lab = i.closest('.opcion-grafica'); if (+i.value === q.correcta) lab.classList.add('es-correcta'); else if (i.checked) lab.classList.add('fallo'); } };
@@ -1457,9 +1652,9 @@
       caja.appendChild(esc);
       zona.appendChild(caja);
       let valor = q.inicial ?? q.min;
-      const L = G().lienzo(esc, { alto: q.alto ?? 150, etiqueta: 'Figura que cambia con el deslizador', dibujar: (ctx, w, h, C) => q.dibujar(ctx, w, h, valor, C) });
+      const L = G().lienzo(esc, { alto: q.alto ?? 150, etiqueta: tr('Figura que cambia con el deslizador'), dibujar: (ctx, w, h, C) => q.dibujar(ctx, w, h, valor, C) });
       lienzosP.push(L);
-      const m = Curso.mando(caja, { etiqueta: q.etiqueta || 'Valor', min: q.min, max: q.max, paso: q.paso, valor, unidad: q.unidad, decimales: q.decimales, formato: q.formato, alCambiar: v => { valor = v; L.dibujar(); } });
+      const m = Curso.mando(caja, { etiqueta: q.etiqueta || tr('Valor'), min: q.min, max: q.max, paso: q.paso, valor, unidad: q.unidad, decimales: q.decimales, formato: q.formato, alCambiar: v => { valor = v; L.dibujar(); } });
       leer = () => m.valor;
       aplicar = () => { m.fijar(q.solucion); };
       marcar = () => {};
@@ -1519,7 +1714,7 @@
     cont.classList.add('examen');
     cont.innerHTML = '';
     if (!banco.length) {
-      cont.appendChild(crear('div', { class: 'examen-portada' }, crear('p', {}, 'El examen de esta lección todavía no está listo.')));
+      cont.appendChild(crear('div', { class: 'examen-portada' }, crear('p', {}, tr('El examen de esta lección todavía no está listo.'))));
       return { clave };
     }
     function portada() {
@@ -1528,14 +1723,14 @@
       cont.innerHTML = '';
       const p = Curso.progreso.examen(clave);
       const tarjeta = crear('div', { class: 'examen-portada' },
-        crear('p', {}, o.titulo || (multi ? 'Preguntas de varias lecciones, sacadas al azar de sus bancos.' : 'Unas preguntas para comprobar que te llevas lo importante. Cambian en cada intento y cada una explica por qué.')),
+        crear('p', {}, o.titulo || tr(multi ? 'Preguntas de varias lecciones, sacadas al azar de sus bancos.' : 'Unas preguntas para comprobar que te llevas lo importante. Cambian en cada intento y cada una explica por qué.')),
         crear('ul', { class: 'meta' },
-          crear('li', {}, n + ' preguntas'),
-          crear('li', {}, 'de un banco de ' + banco.length),
-          crear('li', {}, 'se aprueba con el ' + num(Math.round(aprobado * 100)) + ' %'),
-          p ? crear('li', {}, 'tu mejor nota: ' + (p.mejorAciertos != null && p.total ? p.mejorAciertos + ' de ' + p.total : num(Math.round(p.mejor * 100)) + ' %') + (p.aprobado ? ' · aprobado' : '')) : null));
+          crear('li', {}, tr('{0} preguntas', n)),
+          crear('li', {}, tr('de un banco de {0}', banco.length)),
+          crear('li', {}, tr('se aprueba con el {0} %', num(Math.round(aprobado * 100)))),
+          p ? crear('li', {}, tr('tu mejor nota: {0}', p.mejorAciertos != null && p.total ? tr('{0} de {1}', p.mejorAciertos, p.total) : porciento(num(Math.round(p.mejor * 100)))) + (p.aprobado ? ' · ' + tr('aprobado') : '')) : null));
       const botones = crear('div', { class: 'botones' });
-      const empezar = crear('button', { type: 'button', class: 'boton principal' }, p ? 'Hacer otro intento' : 'Empezar el examen');
+      const empezar = crear('button', { type: 'button', class: 'boton principal' }, p ? tr('Hacer otro intento') : tr('Empezar el examen'));
       empezar.addEventListener('click', () => intento(true));
       botones.appendChild(empezar);
       tarjeta.appendChild(botones);
@@ -1561,14 +1756,14 @@
         const hechas = resultados.filter(r => r !== null).length, bien = resultados.filter(r => r === true).length;
         marcador.innerHTML = '';
         marcador.append(crear('span', { class: 'puntos', 'aria-hidden': 'true' }, resultados.map(r => crear('i', { class: r === true ? 'si' : r === false ? 'no' : '' }))),
-          crear('span', {}, 'Respondidas ' + hechas + ' de ' + total + ' · aciertos ' + bien));
+          crear('span', {}, tr('Respondidas {0} de {1} · aciertos {2}', hechas, total, bien)));
       };
       pintarMarcador();
       elegidas.forEach((b, k) => {
         let q;
         try { q = instanciar(b.p, a); validarPregunta(q); } catch (e) { console.error('Pregunta ' + (b.p.id || b.leccion + '-p' + (b.i + 1)) + ': ' + e.message); resultados[k] = false; return; }
         const T_ = T();
-        const etiqueta = multi && T_ && T_.porId[b.leccion] ? 'Lección ' + T_.porId[b.leccion].n : null;
+        const etiqueta = multi && T_ && T_.porId[b.leccion] ? tr('Lección {0}', T_.porId[b.leccion].n) : null;
         const card = pintarPregunta(q, k + 1, total, a, ok => {
           resultados[k] = ok;
           pintarMarcador();
@@ -1586,12 +1781,12 @@
         const res = crear('div', { class: 'resultado', role: 'status' },
           crear('div', { class: 'nota-grande' }, String(bien), crear('small', {}, ' / ' + total)),
           crear('div', {},
-            crear('span', { class: 'sello' + (ok ? '' : ' no') }, ok ? 'Aprobado' : 'Todavía no'),
+            crear('span', { class: 'sello' + (ok ? '' : ' no') }, tr(ok ? 'Aprobado' : 'Todavía no')),
             crear('p', { style: { marginTop: '.6rem' } }, ok
-              ? 'Has acertado ' + bien + ' de ' + total + '. Lee las explicaciones de las que has fallado: ahí está lo que conviene repasar.'
-              : 'Necesitabas ' + necesita + ' de ' + total + '. Repasa las explicaciones y vuelve a intentarlo: las preguntas cambian.')),
+              ? tr('Has acertado {0} de {1}. Lee las explicaciones de las que has fallado: ahí está lo que conviene repasar.', bien, total)
+              : tr('Necesitabas {0} de {1}. Repasa las explicaciones y vuelve a intentarlo: las preguntas cambian.', necesita, total))),
           crear('div', { class: 'botones' },
-            crear('button', { type: 'button', class: 'boton principal', onclick: () => intento(true) }, 'Otro intento, con preguntas nuevas')));
+            crear('button', { type: 'button', class: 'boton principal', onclick: () => intento(true) }, tr('Otro intento, con preguntas nuevas'))));
         cont.appendChild(res);
         pintarMuestras();
         emitir('examen', clave, { aciertos: bien, total, aprobado: ok, progreso: p });
@@ -1655,7 +1850,7 @@
     try { katex = await cargarKatex(); } catch (e) {
       if (!contenedor.querySelector('.rincon-aviso')) {
         const cuerpo = contenedor.querySelector('.rincon-cuerpo') || contenedor;
-        cuerpo.insertBefore(crear('p', { class: 'rincon-aviso' }, 'Las fórmulas se ven en LaTeX, tal cual, porque no se ha podido cargar KaTeX (¿sin conexión?).'), cuerpo.firstChild);
+        cuerpo.insertBefore(crear('p', { class: 'rincon-aviso' }, tr('Las fórmulas se ven en LaTeX, tal cual, porque no se ha podido cargar KaTeX (¿sin conexión?).')), cuerpo.firstChild);
       }
       return { ok: true, errores: [], sinKatex: true };
     }
@@ -1691,9 +1886,9 @@
     const cab = doc.querySelector('.cabecera');
     if (!cab || !L) return;
     const ante = cab.querySelector('.antetitulo');
-    if (ante && !ante.textContent.trim()) ante.textContent = 'Nivel ' + L.nivel + ' · Lección ' + L.n;
+    if (ante && !ante.textContent.trim()) ante.textContent = tr('Nivel {0} · Lección {1}', L.nivel, L.n);
     if (L.llevas && !cab.querySelector('.llevas')) {
-      const p = crear('p', { class: 'llevas' }, crear('b', {}, 'Te llevas'), L.llevas);
+      const p = crear('p', { class: 'llevas' }, crear('b', {}, tr('Te llevas')), L.llevas);
       const preg = cab.querySelector('.pregunta');
       if (preg) preg.after(p); else cab.appendChild(p);
     }
@@ -1701,8 +1896,8 @@
     if (meta && !meta.querySelector('[data-auto]')) {
       const nRetos = doc.querySelectorAll('.reto').length;
       const d = datos[id];
-      if (nRetos) meta.appendChild(crear('li', { 'data-auto': '1' }, nRetos + (nRetos === 1 ? ' reto' : ' retos')));
-      if (d && d.examen && d.examen.n) meta.appendChild(crear('li', { 'data-auto': '1' }, 'examen de ' + d.examen.n + ' preguntas'));
+      if (nRetos) meta.appendChild(crear('li', { 'data-auto': '1' }, tr(nRetos === 1 ? '{0} reto' : '{0} retos', nRetos)));
+      if (d && d.examen && d.examen.n) meta.appendChild(crear('li', { 'data-auto': '1' }, tr('examen de {0} preguntas', d.examen.n)));
     }
   }
   function montarPie(id) {
@@ -1710,24 +1905,24 @@
     const lista = T().lecciones, L = T().porId[id];
     if (!L) return;
     const i = lista.indexOf(L), ant = lista[i - 1], sig = lista[i + 1];
-    const enlace = (l, flecha) => crear('a', { href: l.id + '.html' }, flecha === '←' ? '← Lección ' + l.n + ' · ' + l.corto : 'Lección ' + l.n + ' · ' + l.corto + ' →');
+    const enlace = (l, flecha) => crear('a', { href: l.id + '.html' }, flecha === '←' ? '← ' + tr('Lección {0} · {1}', l.n, l.corto) : tr('Lección {0} · {1}', l.n, l.corto) + ' →');
     const interior = crear('div', { class: 'pie-interior' });
     if (sig) {
       interior.append(
-        crear('p', { class: 'antetitulo' }, 'La pregunta que abre la lección ' + sig.n),
+        crear('p', { class: 'antetitulo' }, tr('La pregunta que abre la lección {0}', sig.n)),
         crear('p', { class: 'pie-abre' }, L.abre || sig.pregunta),
-        crear('a', { class: 'pie-siguiente', href: sig.id + '.html' }, 'Lección ' + sig.n + ' · ' + sig.titulo + ' →'));
+        crear('a', { class: 'pie-siguiente', href: sig.id + '.html' }, tr('Lección {0} · {1}', sig.n, sig.titulo) + ' →'));
     } else {
-      interior.append(crear('p', { class: 'antetitulo' }, 'Final del curso'), crear('p', { class: 'pie-abre' }, L.abre || ''),
-        crear('a', { class: 'pie-siguiente', href: 'examenes.html#final' }, 'El examen final →'));
+      interior.append(crear('p', { class: 'antetitulo' }, tr('Final del curso')), crear('p', { class: 'pie-abre' }, L.abre || ''),
+        crear('a', { class: 'pie-siguiente', href: 'examenes.html#final' }, tr('El examen final →')));
     }
-    interior.appendChild(crear('nav', { class: 'pie-nav', 'aria-label': 'Lecciones' },
-      ant ? enlace(ant, '←') : crear('span', { class: 'vacio' }, 'Primera lección'),
-      crear('a', { href: 'index.html' }, 'Mapa del curso'),
-      crear('a', { href: 'glosario.html' }, 'Glosario'),
-      crear('a', { href: 'examenes.html' }, 'Exámenes'),
-      sig ? enlace(sig, '→') : crear('span', { class: 'vacio' }, 'Última lección')));
-    interior.appendChild(crear('p', { class: 'pie-creditos' }, T().titulo + ' · ' + T().autor + ' · Alejandro Ena. Tu progreso se guarda solo en este navegador.'));
+    interior.appendChild(crear('nav', { class: 'pie-nav', 'aria-label': tr('Lecciones') },
+      ant ? enlace(ant, '←') : crear('span', { class: 'vacio' }, tr('Primera lección')),
+      crear('a', { href: 'index.html' }, tr('Mapa del curso')),
+      crear('a', { href: 'glosario.html' }, tr('Glosario')),
+      crear('a', { href: 'examenes.html' }, tr('Exámenes')),
+      sig ? enlace(sig, '→') : crear('span', { class: 'vacio' }, tr('Última lección'))));
+    interior.appendChild(crear('p', { class: 'pie-creditos' }, T().titulo + ' · ' + T().autor + ' · Alejandro Ena. ' + tr('Tu progreso se guarda solo en este navegador.')));
     doc.body.appendChild(crear('footer', { class: 'pie' }, interior));
   }
 
@@ -1822,7 +2017,7 @@
   };
 
   // ── Exportación ────────────────────────────────────────────────────────────────────────────────────────
-  Object.assign(Curso, { crear, escapar, md, num, leerNumero, azar, nota, slug, reducido, dosFotogramas, iconos: ICONO });
+  Object.assign(Curso, { crear, escapar, md, num, leerNumero, azar, nota, slug, reducido, dosFotogramas, iconos: ICONO, idioma, tr });
   raiz.Curso = Curso;
   aplicarTema(temaActual);
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', () => Curso.montar());

@@ -1434,3 +1434,15 @@ ul.recursos .tipo {
   body::before { display: none; }
   .rincon-cuerpo { display: block; }
 }
+
+/* ── Inglés ─────────────────────────────────────────────────────────────────────────────────────────────
+   Los rótulos que pone el CSS con «content». En las páginas con <html lang="en"> (carpeta en/) salen en inglés;
+   :lang(en) gana por especificidad a la regla española de arriba. */
+:lang(en) .pregunta::before { content: 'The question'; }
+:lang(en) .paso > h3::before { content: 'Step ' counter(paso); }
+:lang(en) .reto-objetivo::before { content: 'Goal'; }
+:lang(en) .reto-pistas li::before { content: 'Hint ' counter(pista); }
+:lang(en) .reto-exito::before { content: 'Done · what you just saw'; }
+:lang(en) .terminos .imagen-ancla::before { content: 'Picture: '; }
+:lang(en) .retro.bien::before { content: 'Right'; }
+:lang(en) .retro.mal::before { content: 'Not quite'; }

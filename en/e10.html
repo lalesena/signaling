@@ -1,0 +1,1034 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Noise has colors · Signals</title>
+<meta name="description" content="Lesson 10 of the visual course “Signals, from Zero to Expert”: what the color of a noise is, why the spectrum of a single chunk comes out hairy, and how averaging pulls a buried signal out of the noise, with six challenges and the silence of your room.">
+<link rel="stylesheet" href="../comun/fuentes.css">
+<link rel="stylesheet" href="../comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e10">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Level 3 · Lesson 10</p>
+    <h1>Noise has colors</h1>
+    <aside class="pregunta">
+      <p>Sleep and focus apps offer white, pink and brown noise, as if they were three cans of paint. But a noise is exactly what is left when there is no note, no rhythm and no words, and drawn out it is a trembling tangle with no color in sight. What has color in something you can’t even see?</p>
+    </aside>
+    <ul class="meta"><li>About 45 minutes</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>The idea in one picture</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Three noises with the same total power. On the left, one instant of each, in coral: three tangles that never repeat. On the right, the spectrum of each, in amber, with frequency in octaves and all three matched at 1,000 Hz; the number at the end of each line is how many decibels it drops per octave. With “Chunks averaged” you will see the tremble of the spectrum smooth out while its slope stays the same.</figcaption>
+    </figure>
+    <p>White light is a mixture of all colors in equal amounts, and the color of a light is the way it spreads its energy among them. Noise works much the same way, only the spread is across frequencies: drawn in time, a noise is always a tangle that never repeats, and what tells one apart from another is the shape of its spectrum, which can be flat, sloped or more steeply sloped.</p>
+    <p>The spectrum of a single instant comes out hairy, because the noise is different every time, but the slope is always there. Move the averaged chunks and you will see that averaging removes the tremble without moving the line: it throws away what changes and keeps what stays. That same idea will later pull a tiny signal out from under the noise.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Step by step</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>A tremble with no memory</h3>
+      <p>A <b class="termino">random noise</b> is a signal you can’t predict: even if you know every previous sample, you don’t know which one comes next. What does stay the same is its character, such as how loud it is or how it divides between low and high pitches, and that is why two different chunks of the same noise sound alike even though they look nothing alike.</p>
+      <p>The simplest is <b class="termino">white noise</b>, in which each sample has nothing to do with the one before, like a roll of dice. It is called white after light: white light carries all colors in equal amounts, and white noise carries the same power in every hertz. The random motion of electrons in a circuit produces white noise, and so does shower water landing on the tray, and it sounds like radio static.</p>
+      <p>The other two have more power in the low pitches: <b class="termino">pink noise</b> may remind you of rain, and <b class="termino">brown noise</b>, of a waterfall. Exactly what sets them apart is the subject of the steps ahead, but you can already listen to them.</p>
+      <aside class="nota">
+        <span class="antetitulo">Sleeping and focusing, according to the studies</span>
+        <p>Many people use these noises to sleep or to concentrate, and what the research says is more modest than the apps promise. A review of 38 studies on continuous noise and sleep concluded that the quality of the evidence that it helps you sleep is very low, with results ranging from better sleep to worse sleep. In a 2026 laboratory study with 25 healthy adults, pink noise reduced REM sleep, and earplugs protected better against aircraft noise. With babies, keep an eye on the volume: of 14 infant sleep machines, every one exceeded 50 decibels at 30 centimeters at maximum volume, which is the recommended limit in neonatal units, and three went above 85.</p>
+        <p>For concentration, a 2024 meta-analysis found a small benefit of white or pink noise in children and young people with ADHD, in laboratory tasks, and a slightly negative effect in those without it. For brown noise, so fashionable, it found not a single study. We don’t give health advice here: if something worries you, ask a professional.</p>
+      </aside>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Listen to the three noises and say which is white, which is pink and which is brown. All three sound equally loud: the only difference is how they spread their power between low and high pitches.</p>
+        <div class="columnas-2" id="r1-tonos"></div>
+        <p class="nota-reto">If you can’t listen, “Show the spectra” draws the one for each noise: white is the flattest, and the more a spectrum falls toward the high pitches, the lower that noise sounds.</p>
+        <div class="fila" id="r1-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>The noise that turned out to be the universe</h3>
+      <p>Every conductor, simply by being at some temperature, has electrons jiggling at random, and that jiggling produces <b class="termino">thermal noise</b>. J. B. Johnson measured it and H. Nyquist explained it, both in 1928. It is practically white in the radio and audio bands, and its power grows with temperature, so radio astronomers describe the noise of an antenna with a <b class="termino">noise temperature</b>: the temperature, in kelvin (degrees above absolute zero), at which a resistor would have to be to produce the same noise.</p>
+      <p>Between July 1964 and April 1965, Arno Penzias and Robert Wilson, of Bell Labs, measured the noise of a horn antenna about 6 meters long, in Holmdel (New Jersey), at 4,080 MHz. Pointing upward, the total noise temperature was 6.7 K. They could account for 2.3 K from the atmosphere, 0.8 K from losses in the antenna itself and less than 0.1 K from the back lobes, and about 3.5 K were still left over, the same in every direction and in every season of the year.</p>
+      <p>The excess did not rise when they pointed toward New York or toward the horizon and did not fit known radio sources, which have a different spectrum, so they suspected the antenna. Inside the horn, a pair of pigeons had nested and covered everything, as Wilson told it, with “a white dielectric material familiar to anyone who lives in a city.” They evicted the pigeons and cleaned up, and the temperature barely dropped. In the spring of 1965 they cleaned thoroughly again and covered the riveted joints with aluminum tape, and the excess did not drop either.</p>
+      <p>The explanation came through a conversation with Bernard Burke, of MIT, who told them about the work of Peebles in Dicke’s group at Princeton. Two letters were published together in <i>The Astrophysical Journal</i>: the measurement, by Penzias and Wilson, and its interpretation, by Dicke, Peebles, Roll and Wilkinson, because Penzias and Wilson left cosmology out of theirs on purpose. That excess was the <b class="termino">cosmic microwave background</b>, the glow left over from the young universe, and it earned them half of the 1978 Nobel Prize in Physics. Today its temperature is known far more precisely: 2.72548 K.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Be a radio astronomer: how many kelvin of noise are left over in the antenna once you subtract everything they could explain? Type the result.</p>
+        <div id="r2-datos"></div>
+        <div class="escena" id="r2-escena"></div>
+        <div class="mandos" id="r2-mandos"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>The color is the shape of the spectrum</h3>
+      <p>To see the color of a noise you have to look at its spectrum. The spectrum of a noise has no peaks like that of a note: it is a continuous curve that tells you how much power there is in each hertz, and that is why it is called the <b class="termino">power spectral density</b>. If you draw it in decibels and with frequency on an octave scale, where each mark is double the previous one, the colors of noise are straight lines. An octave is the jump from 500 to 1,000 Hz, for example, like between two equal notes on the piano, one low and one high.</p>
+      <p>White noise is a flat line: the same power in every hertz. Pink drops 3 decibels every time the frequency doubles, and brown drops 6. The other two colors are their mirror images: <b class="termino" data-termino="Blue and violet noise">blue and violet noise</b> rise 3 and 6 decibels per octave, and that is why they have more highs than lows.</p>
+      <p>The name of brown noise does not come from any color, but from Robert Brown, a botanist who in 1827 studied the random trembling of pollen particles in water. That trembling, one random step after another, is the recipe for brown noise: each sample is the previous one plus a small random step, so the signal wanders instead of jumping without memory, as white does. The more the spectrum falls toward the high pitches, the more slowly the signal changes, and that is why brown is drawn as slow hills and white as a swarm of ants.</p>
+      <aside class="nota">
+        <span class="antetitulo">Not every color is defined</span>
+        <p>Only some names have a standard definition, such as white and pink; others are informal. Gray, for example, is not a slope: it is white noise corrected with an equal-loudness curve, so that the ear perceives it as equally loud at all frequencies.</p>
+      </aside>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">This mystery noise has a color. Tilt the purple line, by dragging it over the drawing or with the slider, until it follows the fall of its amber spectrum.</p>
+        <div class="escena" id="r3-escena"></div>
+        <div class="mandos" id="r3-mandos"></div>
+        <div class="fila" id="r3-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>Why white noise hisses</h3>
+      <p>The fact that white noise spreads the same power in every hertz does not mean you hear it as equally low and high, and the reason lies in how frequencies are counted. An <b class="termino">octave band</b> is the strip between one frequency and its double, and each octave going up contains twice as many hertz as the one before: from 125 to 250 Hz there are 125 hertz, from 250 to 500 there are 250, and from 4,000 to 8,000 there are 4,000. With the same power in every hertz, each octave carries twice the energy of the one below it, which is 3 decibels more.</p>
+      <p>The ear counts notes in octaves, and that is why white noise sounds like a hiss, with half of its energy in the top octave. Pink noise corrects that split: its spectrum drops 3 decibels every time it goes up an octave, exactly what offsets the doubled number of hertz, so each octave carries the same energy. That is why it sounds balanced. Brown drops twice as much, with half the energy in each octave as in the previous one, and sounds low.</p>
+      <p>To turn white into pink, an equalizer like the one in <a href="e06.html">lesson 6</a> is enough: you lower each octave by 3 decibels more than the previous one. And to turn it into brown, a filter that feeds on its own output works, like those in <a href="e08.html">lesson 8</a>: if each output sample is the previous one plus the incoming sample, the result is a random walk.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">This is white noise divided into six octaves, and each bar is the energy of one. Drag the top of each bar until all the octaves carry the same energy, as in pink noise.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="fila" id="r4-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>One chunk is not enough</h3>
+      <p>If you compute the spectrum of one chunk of noise, you don’t get the clean line of the earlier drawings, but a hairy curve that wiggles about 5.6 decibels from one point to the next. That curve is called a <b class="termino">periodogram</b>, and it is hairy because the chunk is only one sample of a noise that comes out different every time.</p>
+      <p>What is hard to believe is that a longer chunk doesn’t fix it: it gives more resolution, that is, more points and closer together, but each point still jumps just as much. The way out is to cut the signal into many chunks, multiply each one by a Hann window, as in <a href="e05.html">lesson 5</a>, compute the spectrum of each chunk and average them. This is <b class="termino">Welch’s method</b>, and the tremble drops with the square root of the number of chunks: with about a hundred, which is typical, it comes down to around half a decibel.</p>
+      <p>The price is the one from the tuner in lesson 5. To have many chunks, each one has to be short, and a short chunk tells two nearby frequencies apart poorly. More chunks give a smoother but blurrier spectrum, and fewer chunks a sharper but hairier one, so you have to pick the middle ground according to what you want to see.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">This signal contains white noise and two tones, at 1,000 and 1,060 Hz. Choose the length of each chunk at which the two peaks show up separate and the noise floor comes out smooth.</p>
+        <div class="columnas-2" id="r5-paneles"></div>
+        <p class="nota-reto">In the first drawing, the purple line marks 3 dB below the lower peak: the valley between the two peaks has to fall below it. In the second, the purple band is ±1 dB around the average level: the floor is smooth when almost the whole curve fits inside.</p>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>Averaging to find what is hidden</h3>
+      <p>A noise is a nuisance to the extent that it covers up what you want to measure, and that extent is called the <b class="termino">signal-to-noise ratio</b>: how many times more power the signal has than the noise, usually in decibels. At 10 dB, the signal has ten times more power, which is about 3.2 times more amplitude; at 0 dB, the two have the same, and with negative values the noise wins.</p>
+      <p>Some signals are born far below the noise. When a click sounds in a newborn’s ear, the brainstem responds with an electrical signal of less than half a microvolt, an <b class="termino">evoked potential</b>, buried in a much larger electrical noise: about 2 µV if the baby is asleep and more than 20 µV if it moves. This test, auditory brainstem evoked potentials, is one of those used in newborn hearing screening in Spain. A single measurement won’t do, but the response always arrives the same and at the same instant after the click, and the noise doesn’t.</p>
+      <p>With <b class="termino">synchronized averaging</b>, which adds up hundreds of repetitions aligned with the click, the response adds up and the noise, which sometimes goes up and sometimes down, half cancels out. The remaining noise drops with the square root of the number of repetitions: with 100, it is down to a tenth, and with 10,000, to a hundredth. To divide it by ten you need a hundred times more repetitions, and that is why the test is done with the baby asleep: awake and moving, the noise is ten times larger and you would need a hundred times more.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">A baby’s brain response to a click is buried in noise. Add up sweeps until the response is three times larger than the noise that remains.</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="fila" id="r6-lecturas"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>In your voice</h2>
+    <p><b>What to record.</b> Segment 1 of the reference recording: the silence of your room, about 10 seconds with the phone still, without speaking or moving. Record with the microphone if your browser allows it; if not, upload audio recorded with your phone or try the synthetic example.</p>
+    <p><b>What to look at.</b> Silence is not zero: it has a spectrum with a shape. The lab computes the one for a single chunk, which comes out hairy, and the one for all the chunks averaged, which comes out smooth, and it measures the slope between 200 and 4,000 Hz to tell you which color your room resembles. The low rumble of a refrigerator, a fan or traffic tilts the spectrum toward pink or brown, while the electrical noise of the microphone itself tends to be flat, like white. The hum of the power line may also show up, at 50 Hz in Europe (60 Hz in much of the Americas), as in <a href="e01.html">lesson 1</a>, together with its multiples.</p>
+    <p>There are three precautions. Phone microphones are designed for the voice, roughly between 200 and 5,000 Hz according to the phyphox documentation, and outside that range the slope is not reliable; that is why the fit is done between 200 and 4,000 Hz. A compressed audio file, such as an MP3 or a voice message, can alter the faintest parts, so the color of a compressed silence can’t be fully trusted. And a bump or a cough dominates the average, so the lab discards the chunks with much more energy than the rest.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>What to remember</h2>
+    <ol class="tres">
+      <li>A random noise can’t be predicted, but it can be measured, and what has color is the shape of its spectrum: white spreads the same power in every hertz, pink the same energy in every octave, with a 3 dB drop per octave, and brown is a random walk that drops 6.</li>
+      <li>The spectrum of a single chunk of noise comes out hairy, and a longer chunk doesn’t fix it. You have to cut it into windowed chunks and average, which is Welch’s method, at the cost of losing resolution.</li>
+      <li>Averaging aligned repetitions keeps the signal and lowers the noise with the square root of their number: to divide it by ten you need a hundred times more repetitions. That is how a newborn’s brain response to a click shows up.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Common mistakes</h2>
+    <ul class="errores">
+      <li><b>“White means the values follow a bell curve.”</b> White is about the spectrum: the same power in every hertz, with samples unrelated to each other. Values spreading out in a bell shape, which is called Gaussian, is a different property: there is white noise that isn’t Gaussian and Gaussian noise that isn’t white.</li>
+      <li><b>“Pink is just white with fewer highs.”</b> Pink is a precise slope, 3 dB less per octave, which spreads the same energy across every octave. An arbitrary filter that removes highs does not give pink noise.</li>
+      <li><b>“A longer chunk gives a less noisy spectrum.”</b> It gives more resolution with the same level of noise. To smooth it you have to average chunks, and that costs resolution.</li>
+      <li><b>“Averaging twice as many times divides the noise by two.”</b> It divides it by the square root of two. To divide it by two you need four times more repetitions, and to divide it by ten, a hundred times more.</li>
+      <li><b>“It has been proven that white or pink noise helps you sleep.”</b> The published evidence is of very low quality, and in a recent laboratory study pink noise reduced REM sleep. For concentration, the only thing published is small effects in young people with ADHD.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Open</span>
+      <h2>Math corner</h2>
+      <span class="resumen">The formulas, for anyone who wants them. Each one comes after its reading in words.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>The signal-to-noise ratio</h3>
+      <p>The power of the signal is compared with that of the noise and given in decibels. With RMS amplitudes, the factor is 20 instead of 10 because power goes with the square of the amplitude:</p>
+      <div class="tex">\mathrm{SNR}_{\mathrm{dB}} = 10\,\log_{10}\frac{P_s}{P_n} = 20\,\log_{10}\frac{A_s}{A_n}</div>
+
+      <h3>The power spectral density</h3>
+      <p>It tells you how much power there is per hertz, and the power of a band is the area under the curve between its two frequencies:</p>
+      <div class="tex">P_{[f_1,\,f_2]} = \int_{f_1}^{f_2} S(f)\,\mathrm{d}f</div>
+
+      <h3>White noise</h3>
+      <p>A noise is white when its density is constant, and that is equivalent to each sample having nothing to do with the others: its autocorrelation, from <a href="e09.html">lesson 9</a>, is nonzero only at zero lag. With the variance <span class="tex">\sigma^2</span> and the Kronecker delta <span class="tex">\delta</span>:</p>
+      <div class="tex">S(f) = \text{constant} \quad\Longleftrightarrow\quad r[\ell] = \sigma^2\,\delta[\ell]</div>
+
+      <h3>The colors as powers of frequency</h3>
+      <p>The density of the colored noises falls like a power of frequency. In decibels per octave, the slope equals minus ten times <span class="tex">\beta</span> times the logarithm of 2: zero for white (<span class="tex">\beta = 0</span>), <span class="tex">-3.01</span> for pink (<span class="tex">\beta = 1</span>), <span class="tex">-6.02</span> for brown (<span class="tex">\beta = 2</span>), and <span class="tex">+3.01</span> and <span class="tex">+6.02</span> for blue and violet (<span class="tex">\beta = -1</span> and <span class="tex">\beta = -2</span>):</p>
+      <div class="tex">S(f) = \frac{C}{f^{\beta}}, \qquad \text{slope} = -10\,\beta\,\log_{10}2 \approx -3.01\,\beta \ \text{dB per octave}</div>
+
+      <h3>The energy of an octave</h3>
+      <p>The energy of an octave is the area under the density between a frequency <span class="tex">f</span> and its double. In white it grows with <span class="tex">f</span> (it doubles per octave), in pink it is always the same, and in brown it is cut in half per octave:</p>
+      <div class="tex">\int_{f}^{2f} \frac{C}{x^{\beta}}\,\mathrm{d}x = \begin{cases} C\,f & \beta = 0 \\ C\,\ln 2 & \beta = 1 \\ \dfrac{C}{2f} & \beta = 2 \end{cases}</div>
+
+      <h3>The random walk</h3>
+      <p>In brown noise, each sample is the previous one plus a random step <span class="tex">w[n]</span>. Far below half the sampling rate, its density falls like the inverse of the square of the frequency:</p>
+      <div class="tex">y[n] = y[n-1] + w[n] \;\Longrightarrow\; S_y(f) = \frac{\sigma^2}{4\,\sin^2(\pi f/f_s)} \approx \frac{\sigma^2 f_s^2}{4\pi^2 f^2} \quad (f \ll f_s)</div>
+
+      <h3>Averaging repetitions</h3>
+      <p>If each repetition is the same signal <span class="tex">s</span> plus a different noise with deviation <span class="tex">\sigma</span>, the average keeps <span class="tex">s</span> and divides the noise by the square root of <span class="tex">N</span>. The signal-to-noise ratio in power improves <span class="tex">N</span> times, which is <span class="tex">10\,\log_{10} N</span> decibels:</p>
+      <div class="tex">\bar{x}[n] = s[n] + \frac{1}{N}\sum_{k=1}^{N} w_k[n], \qquad \sigma_{\bar{x}} = \frac{\sigma}{\sqrt{N}}</div>
+
+      <h3>The periodogram</h3>
+      <p>It is the spectrum of a single chunk, with its window <span class="tex">w[n]</span>. For Gaussian noise, each value fluctuates as much as its own mean (it follows an exponential distribution), and that does not improve with the length of the chunk: the deviation is about 5.6 dB.</p>
+      <div class="tex">P(f) = \frac{1}{f_s \sum_n w[n]^2}\,\Big|\sum_{n} w[n]\,x[n]\,e^{-j2\pi f n/f_s}\Big|^2</div>
+
+      <h3>Welch’s method</h3>
+      <p>It averages <span class="tex">K</span> periodograms of windowed chunks. The relative deviation drops as one over the square root of <span class="tex">K</span> and, in decibels, comes out at about 4.34 over the square root of <span class="tex">K</span>:</p>
+      <div class="tex">\hat{S}_W(f) = \frac{1}{K}\sum_{k=1}^{K} P_k(f), \qquad \sigma_{\mathrm{dB}} \approx \frac{10}{\ln 10}\cdot\frac{1}{\sqrt{K}} \approx \frac{4.34}{\sqrt{K}}</div>
+
+      <h3>Thermal noise and noise temperature</h3>
+      <p>A conductor at temperature <span class="tex">T</span> gives a noise power proportional to <span class="tex">T</span> and to the bandwidth <span class="tex">B</span>, with Boltzmann’s constant <span class="tex">k</span>. That is why a noise can be measured as a temperature. At 290 K, <span class="tex">kT</span> is about <span class="tex">4.0\cdot 10^{-21}</span> watts per hertz, which is about <span class="tex">-174</span> dBm per hertz:</p>
+      <div class="tex">P = k\,T\,B, \qquad kT\big|_{290\,\mathrm{K}} \approx 4.0\cdot 10^{-21}\ \mathrm{W/Hz} \approx -174\ \mathrm{dBm/Hz}, \qquad T_A = \frac{P}{k\,B}</div>
+
+      <h3>The Penzias and Wilson arithmetic</h3>
+      <p>What is left over is what remains after subtracting the known contributions from the measured total:</p>
+      <div class="tex">T_{\text{excess}} = 6.7 - 2.3 - 0.8 - 0.1 \approx 3.5\ \mathrm{K}</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Further reading</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Open book</span>Smith, S. W., <i>The Scientist and Engineer's Guide to Digital Signal Processing</i>, <a href="https://www.dspguide.com/ch9.htm">ch. 9, “Applications of the DFT”</a>. Spectrum averaging, white noise, 1/f noise and power-line hum, with a complete, free example.</li>
+      <li><span class="tipo">Open book</span>Downey, A. B., <i>Think DSP</i>, <a href="https://greenteapress.com/thinkdsp/html/thinkdsp005.html">ch. 4, “Noise”</a>. White, Brownian, pink and Gaussian noise, with code to generate and listen to them.</li>
+      <li><span class="tipo">Lecture</span>Wilson, R. W. (1978). <a href="https://www.nobelprize.org/uploads/2018/06/wilson-lecture-1.pdf">“The cosmic microwave background radiation”</a>, Nobel lecture. The story told by one of its protagonists, pigeons included.</li>
+      <li><span class="tipo">Article</span>Penzias, A. A. and Wilson, R. W. (1965). <a href="https://articles.adsabs.harvard.edu/pdf/1965ApJ...142..419P">“A measurement of excess antenna temperature at 4080 Mc/s”</a>. <i>The Astrophysical Journal</i>, 142, 419–421. The original three-page paper, with the table of the arithmetic.</li>
+      <li><span class="tipo">Clinical guideline</span>British Society of Audiology (2026). <a href="https://www.thebsa.org.uk/wp-content/uploads/2026/06/OD100-Auditory-Brainstem-Response-ABR-Testing-in-Newborns-March-2026.pdf"><i>Recommended Procedure: Auditory Brainstem Response (ABR) Testing in Newborns</i></a>. How averaging is really done in a clinical test. It is technical.</li>
+      <li><span class="tipo">Open article</span>Basner, M. et al. (2026). <a href="https://doi.org/10.1093/sleep/zsag001">“Efficacy of pink noise and earplugs for mitigating the effects of intermittent environmental noise exposure on sleep”</a>. <i>SLEEP</i>, 49(5). The laboratory study on pink noise, earplugs and sleep.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>New terms</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Lesson quiz</h2>
+  </section>
+
+</main>
+
+<script src="temario.js"></script>
+<script src="../comun/graficas.js"></script>
+<script src="../comun/senal.js"></script>
+<script src="../comun/curso.js"></script>
+<script src="datos/e10.js"></script>
+<script>
+// Lección 10 · El ruido tiene colores: la imagen ancla, los seis retos y el laboratorio «En tu voz».
+// Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo; aquí solo va lo de esta lección.
+// Colores: ruido en coral, espectros en ámbar, señal en verde y plantillas (rectas y franjas objetivo) en púrpura.
+// Todos los espectros van en decibelios y con la frecuencia en escala de octavas.
+(function () {
+  'use strict';
+  const G = Graficas, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const FS = 16000;                                         // frecuencia de muestreo de los análisis
+  const FSA = 22050;                                        // y de los sonidos que se escuchan
+  const OCT = [125, 250, 500, 1000, 2000, 4000, 8000];
+  const hz = v => (v >= 1000 ? num(v / 1000) + 'k' : num(v));
+  const COLOR = {
+    blanco: { nombre: 'white', pend: 0 }, rosa: { nombre: 'pink', pend: -3.01 }, marron: { nombre: 'brown', pend: -6.02 },
+    azul: { nombre: 'blue', pend: 3.01 }, violeta: { nombre: 'violet', pend: 6.02 },
+  };
+  const ejesOct = (ctx, o) => G.ejes(ctx, Object.assign({ logX: true, marcasX: OCT, formatoX: hz }, o));
+
+  // El espectro de Welch de una señal, en dB por hercio (psdDb), y tres utilidades para leerlo.
+  const welch = (x, n, fs) => Senal.welch(x, fs || FS, { n, solape: 0.5 });
+  function nivelEn(W, f1, f2) {                             // nivel medio, en dB, de una franja
+    let s = 0, c = 0;
+    for (let k = 0; k < W.f.length; k++) if (W.f[k] >= f1 && W.f[k] <= f2) { s += W.psdDb[k]; c++; }
+    return c ? s / c : 0;
+  }
+  function ajuste(W, f1, f2) {                              // recta por mínimos cuadrados: dB frente a octavas
+    let n = 0, sx = 0, sy = 0, sxx = 0, sxy = 0;
+    for (let k = 0; k < W.f.length; k++) {
+      const f = W.f[k];
+      if (f < f1 || f > f2) continue;
+      const x = Math.log2(f / 1000), y = W.psdDb[k];
+      n++; sx += x; sy += y; sxx += x * x; sxy += x * y;
+    }
+    if (n < 3) return null;
+    const pend = (n * sxy - sx * sy) / (n * sxx - sx * sx);
+    return { pend, base: (sy - pend * sx) / n };            // base: el nivel de la recta en 1.000 Hz
+  }
+  function tramo(W, f1, f2, ref) {
+    const f = [], y = [];
+    for (let k = 0; k < W.f.length; k++) if (W.f[k] >= f1 && W.f[k] <= f2) { f.push(W.f[k]); y.push(W.psdDb[k] - (ref || 0)); }
+    return { f, y };
+  }
+
+  // Los tres ruidos que se escuchan: 2 s a 22,05 kHz, con la misma potencia (RMS 1) y el volumen puesto aparte.
+  const SEMILLA_AUDIO = { blanco: 101, rosa: 102, marron: 103 };
+  const audios = {};
+  const ruidoAudio = id => audios[id] || (audios[id] = Senal.ruido(id, 2 * FSA, SEMILLA_AUDIO[id]));
+  const sonidoRuido = id => ({ x: ruidoAudio(id), fs: FSA, volumen: 0.12, normalizar: false });
+
+  // ── La idea en una imagen: tres ruidos y sus espectros ───────────────────────────────────────────────
+  // Cada ruido es un buffer de 4 s. Se guardan los periodogramas de todos sus trozos de 64 ms (con solape del 50 %), y
+  // el espectro que se ve es el promedio de los últimos K desde el trozo actual: con K = 1 sale peludo y, con K
+  // grande, liso. Los tres espectros están igualados en 1.000 Hz con su nivel medio de largo plazo.
+  (function () {
+    const N = 1024, HOP = 512, LARGO = 64000, TIPOS = ['blanco', 'rosa', 'marron'], ETIQ = ['white', 'pink', 'brown'], PEND = [0, -3, -6];
+    const bufs = TIPOS.map((t, i) => Senal.ruido(t, LARGO, 21 + i));
+    const nTr = Math.floor((LARGO - N) / HOP) + 1;
+    const P = [], ref = [];
+    let fEj = null;
+    bufs.forEach(x => {
+      const lista = [];
+      let suma = 0, cuenta = 0;
+      for (let i = 0; i < nTr; i++) {
+        const W = Senal.welch(x.subarray(i * HOP, i * HOP + N), FS, { n: N });
+        if (!fEj) fEj = W.f;
+        lista.push(W.psd);
+        for (let k = 0; k < W.f.length; k++) if (W.f[k] >= 700 && W.f[k] <= 1400) { suma += W.psd[k]; cuenta++; }
+      }
+      P.push(lista);
+      ref.push(10 * Math.log10(suma / cuenta));
+    });
+    const k0 = fEj.findIndex(f => f >= 62), k1 = fEj.length - 1;
+    let cursor = 20, K = 6, acum = 0;
+    const promedio = c => {
+      const y = new Float64Array(k1 - k0 + 1);
+      for (let j = 0; j < K; j++) {
+        const p = P[c][(cursor - j + nTr * 4) % nTr];
+        for (let k = k0; k <= k1; k++) y[k - k0] += p[k];
+      }
+      for (let k = 0; k < y.length; k++) y[k] = 10 * Math.log10(y[k] / K) - ref[c];
+      return y;
+    };
+    const fPlano = Array.from(fEj.subarray(k0, k1 + 1));
+    const L = G.lienzo('#ancla-escena', {
+      alto: w => (w < 560 ? 410 : 280),
+      etiqueta: 'Three noises: white, pink and brown. On the left, one instant of each, in coral; on the right, its spectrum, in amber, which drops 0, 3 and 6 decibels per octave.',
+      dibujar: (ctx, w, h, C) => {
+        const estrecho = w < 560;
+        const zO = estrecho ? { x: 12, y: 8, w: w - 24, h: 150 } : { x: 12, y: 8, w: Math.round(w * 0.33), h: h - 16 };
+        const caja = estrecho
+          ? { x: 46, y: 190, w: w - 46 - 74, h: h - 190 - 38 }
+          : { x: zO.x + zO.w + 52, y: 24, w: w - (zO.x + zO.w + 52) - 84, h: h - 24 - 38 };
+        const alto = (zO.h - 2 * 10) / 3;
+        for (let c = 0; c < 3; c++) {
+          const y0 = zO.y + c * (alto + 10);
+          ctx.save();
+          ctx.fillStyle = G.alfa(C.cuerpo, C.oscuro ? 0.04 : 0.03);
+          ctx.fillRect(zO.x, y0, zO.w, alto);
+          ctx.restore();
+          const e = G.ejes(ctx, { caja: { x: zO.x, y: y0, w: zO.w, h: alto }, x: [0, 512 / FS], y: [-3.4, 3.4], soloEscala: true, C });
+          const i0 = cursor * HOP;
+          G.linea(ctx, e, null, bufs[c].subarray(i0, i0 + 512), { t0: 0, dt: 1 / FS, color: C.ruido, ancho: 1.3, C });
+          G.texto(ctx, zO.x + 6, y0 + 14, ETIQ[c], { color: C.suave, tam: 11, fondo: G.alfa(C.pantalla, 0.8), C });
+        }
+        const esc = ejesOct(ctx, { caja, x: [62, 8000], y: [-30, 30], marcasY: [-30, -20, -10, 0, 10, 20, 30], formatoY: v => num(v), etiquetaY: 'dB (matched at 1,000 Hz)', etiquetaX: 'frequency (Hz)', C });
+        for (let c = 0; c < 3; c++) {
+          G.linea(ctx, esc, [62, 8000], [PEND[c] * Math.log2(62 / 1000), PEND[c] * 3], { color: C.cuerpo, alfa: 0.4, guiones: [4, 4], ancho: 1, halo: false, C });
+          G.linea(ctx, esc, fPlano, promedio(c), { color: C.espectro, ancho: 1.8, C });
+          G.texto(ctx, caja.x + caja.w + 7, esc.y(PEND[c] * 3) + 4, ETIQ[c] + ' ' + (PEND[c] ? num(PEND[c]) : '0'), { color: C.texto, tam: 11, peso: 500, C });
+        }
+        G.puntos(ctx, esc, [1000], [0], { color: C.eje, radio: 3, halo: false, C });
+      },
+    });
+    const mandos = document.getElementById('ancla-mandos');
+    Curso.mando(mandos, {
+      etiqueta: 'Chunks averaged', min: 1, max: 100, paso: 1, valor: K, escala: 'log',
+      formato: v => num(Math.round(v)) + (Math.round(v) === 1 ? ' chunk' : ' chunks'),
+      alCambiar: v => { K = Math.round(v); L.dibujar(); },
+    });
+    const fila = crear('div', { class: 'botones' });
+    mandos.appendChild(fila);
+    TIPOS.forEach((t, i) => Curso.audio.boton(fila, () => sonidoRuido(t), 'Listen to ' + ETIQ[i] + ' noise', { clase: 'peque' }));
+    Curso.animar(L, (t, dt) => {
+      if (dt <= 0) return;
+      acum += dt;
+      if (acum >= 0.16) { acum = 0; cursor = (cursor + 1) % nTr; L.dibujar(); }
+    }, { boton: fila });
+  })();
+
+  // ── Reto 1 · Ponle nombre a cada ruido (escuchar y elegir) ───────────────────────────────────────────
+  (function () {
+    const azar = Curso.azar();
+    const orden = azar.barajar(['blanco', 'rosa', 'marron']);      // el ruido que suena en A, B y C
+    const cont = document.getElementById('r1-tonos');
+    const espectros = {};
+    let ver = false, listo = false;
+    const espectro = id => {
+      if (!espectros[id]) {
+        const W = welch(ruidoAudio(id), 1024, FSA);
+        espectros[id] = tramo(W, 100, 8000, nivelEn(W, 700, 1400));
+      }
+      return espectros[id];
+    };
+    function dibujar(ctx, w, h, C, id) {
+      if (!ver && !listo) { G.texto(ctx, w / 2, h / 2, 'listen to it', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C }); return; }
+      const esc = ejesOct(ctx, { caja: { x: 10, y: 10, w: w - 20, h: h - 30 }, x: [100, 8000], y: [-32, 32], marcasX: [125, 500, 2000, 8000], marcasY: false, C });
+      const d = espectro(id);
+      G.linea(ctx, esc, d.f, d.y, { color: C.espectro, ancho: 1.6, C });
+      if (listo) G.texto(ctx, w - 12, 24, COLOR[id].nombre + ' · ' + (COLOR[id].pend ? 'drops ' + num(-COLOR[id].pend, 0) + ' dB per octave' : 'flat'), { alinear: 'right', color: C.texto, tam: 11, fondo: G.alfa(C.superficie, 0.85), C });
+    }
+    const paneles = orden.map((id, i) => {
+      const panel = crear('div', { class: 'panel-mini' });
+      const cabeza = crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, 'Noise ' + 'ABC'[i]));
+      panel.appendChild(cabeza);
+      Curso.audio.boton(cabeza, () => sonidoRuido(id), 'Listen', { clase: 'peque' });
+      const escena = crear('div', { class: 'escena' });
+      panel.appendChild(escena);
+      const L = G.lienzo(escena, { alto: 104, etiqueta: 'The spectrum of noise ' + 'ABC'[i] + ' (shown when you get it right or with “Show the spectra”)', dibujar: (ctx, w, h, C) => dibujar(ctx, w, h, C, id) });
+      const sel = Curso.eleccion(panel, {
+        etiqueta: 'What color is it?',
+        opciones: [{ valor: '', texto: '—' }, { valor: 'blanco', texto: 'White' }, { valor: 'rosa', texto: 'Pink' }, { valor: 'marron', texto: 'Brown' }], valor: '',
+      });
+      cont.appendChild(panel);
+      return { id, L, sel };
+    });
+    const redibujar = () => paneles.forEach(p => p.L.dibujar());
+    Curso.botones('#r1-fila', [{ id: 'ver', texto: 'Show the spectra', icono: 'ojo', tipo: 'discreto', pulsado: false, alPulsar: on => { ver = on; redibujar(); } }]);
+    Curso.reto('reto-1', {
+      titulo: 'Name each noise', nivel: 'fácil', auto: false,
+      comprobar: () => {
+        const v = paneles.map(p => p.sel.valor);
+        if (v.some(x => !x)) return { ok: false, mensaje: 'Pick a color for each of the three noises.' };
+        if (new Set(v).size < 3) return { ok: false, mensaje: 'You repeated a color: each noise has a different one.' };
+        const bien = paneles.filter(p => p.sel.valor === p.id).length;
+        if (bien === 3) { listo = true; redibujar(); return { ok: true, mensaje: 'All three right: now look at their spectra.' }; }
+        return { ok: false, mensaje: bien === 1
+          ? 'One of the three is right. Compare them with each other: which sounds higher, like a hiss, and which lower?'
+          : 'None of them is in the right place yet. Sort them by how high they sound: the highest is white and the lowest is brown.' };
+      },
+      resolver: () => paneles.forEach(p => p.sel.fijar(p.id)),
+      pista: [
+        'Sort them from the highest to the lowest: the one that sounds like radio static, a hiss, is white, and the lowest, like a waterfall, is brown.',
+        'If you can’t listen, press “Show the spectra”: the flattest is white, and the one that falls the most toward the high pitches is brown.',
+      ],
+      exito: '<p>White hisses, pink sounds like rain and brown like a distant waterfall. The more the spectrum falls toward the high pitches, the lower the noise sounds, and that is what color means: all three have the same total power, but they spread it differently across the frequencies.</p>',
+    });
+  })();
+
+  // ── Reto 2 · Las cuentas de Penzias y Wilson (escribir un número) ────────────────────────────────────
+  (function () {
+    const DATOS = { total: 6.7, atm: 2.3, ant: 0.8, lob: 0.1 };
+    const SOBRA = DATOS.total - DATOS.atm - DATOS.ant - DATOS.lob;      // 3,5 K
+    let resuelto = false;
+    Curso.lecturas('#r2-datos', [
+      { id: 'total', nombre: 'Measured pointing up', valor: '6.7 K', clase: 'cuerpo' },
+      { id: 'atm', nombre: 'Atmosphere', valor: '2.3 K' },
+      { id: 'ant', nombre: 'Antenna losses', valor: '0.8 K' },
+      { id: 'lob', nombre: 'Back lobes', valor: 'less than 0.1 K' },
+    ]);
+    // La bocina, con la pareja de palomas: un dibujo sencillo en un cuadrado de lado s.
+    function antena(ctx, C, z) {
+      const s = Math.min(z.w / 0.92, (z.h - 16) / 0.92), cx = z.x + z.w / 2, cy = z.y + (z.h - 16) * 0.5;
+      const P = (u, v) => [cx + u * s, cy + v * s];
+      const T = -0.36, M = 0.34, w0 = 0.06, w1 = 0.3;
+      ctx.save();
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      ctx.strokeStyle = C.suave; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(...P(-0.5, 0.42)); ctx.lineTo(...P(0.5, 0.42)); ctx.stroke();           // suelo
+      ctx.beginPath(); ctx.moveTo(...P(-0.14, 0.19)); ctx.lineTo(...P(-0.2, 0.42)); ctx.moveTo(...P(0.06, 0.25)); ctx.lineTo(...P(0.13, 0.42)); ctx.stroke();   // patas
+      ctx.beginPath(); ctx.moveTo(...P(T, -w0)); ctx.lineTo(...P(M, -w1)); ctx.lineTo(...P(M, w1)); ctx.lineTo(...P(T, w0)); ctx.closePath();
+      ctx.fillStyle = G.alfa(C.eje, 0.16); ctx.fill(); ctx.stroke();                                         // la bocina
+      ctx.beginPath(); ctx.moveTo(...P(T, -w0)); ctx.lineTo(...P(T - 0.08, -w0)); ctx.lineTo(...P(T - 0.08, w0)); ctx.lineTo(...P(T, w0)); ctx.stroke();   // la garganta
+      ctx.restore();
+      // La paloma, posada en el suelo de la parte estrecha, inclinada como la pared.
+      const ang = Math.atan2(w1 - w0, M - T), u0 = T + 0.14, v0 = w0 + (w1 - w0) * (0.14 / (M - T));
+      const [px, py] = P(u0, v0);
+      ctx.save();
+      ctx.translate(px, py); ctx.rotate(ang); ctx.scale(s, s);
+      ctx.fillStyle = G.alfa(C.cuerpo, 0.85);
+      ctx.beginPath(); ctx.ellipse(0, -0.04, 0.062, 0.036, 0, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.arc(0.058, -0.088, 0.022, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(0.078, -0.092); ctx.lineTo(0.104, -0.083); ctx.lineTo(0.078, -0.078); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(-0.05, -0.05); ctx.lineTo(-0.11, -0.03); ctx.lineTo(-0.05, -0.025); ctx.fill();
+      ctx.fillStyle = C.pantalla;
+      ctx.beginPath(); ctx.arc(0.064, -0.092, 0.005, 0, TAU); ctx.fill();
+      ctx.restore();
+      G.texto(ctx, cx, z.y + z.h - 2, 'horn about 6 m long, with its pair of pigeons', { alinear: 'center', color: C.tenue, tam: 10, C });
+    }
+    // Lo medido frente a lo que se sabía explicar: la parte que sobra, en coral, es el ruido sin explicar.
+    function presupuesto(ctx, C, z) {
+      const caja = { x: z.x + 4, y: z.y + 6, w: z.w - 12, h: z.h - 6 - 38 };
+      const esc = G.ejes(ctx, { caja, x: [0, 7], y: [0, 1], marcasX: [0, 1, 2, 3, 4, 5, 6, 7], formatoX: v => num(v), marcasY: false, etiquetaX: 'noise temperature (K)', C });
+      const alto = Math.min(34, (caja.h - 40) / 2), y1 = caja.y + 18, y2 = y1 + alto + 30;
+      const seg = (v0, v1, y, relleno, borde, guiones) => {
+        const xa = esc.x(v0), xb = esc.x(v1);
+        ctx.save();
+        ctx.fillStyle = relleno; ctx.fillRect(xa, y, xb - xa, alto);
+        ctx.strokeStyle = borde; ctx.lineWidth = 1.2; ctx.setLineDash(guiones || []);
+        ctx.strokeRect(xa + 0.5, y + 0.5, xb - xa - 1, alto - 1);
+        ctx.restore();
+      };
+      G.texto(ctx, esc.x(0), y1 - 5, 'what the antenna measured', { color: C.suave, tam: 11, C });
+      seg(0, DATOS.total, y1, G.alfa(C.suave, 0.5), C.suave);
+      G.texto(ctx, esc.x(DATOS.total / 2), y1 + alto / 2 + 4, '6.7 K', { alinear: 'center', color: C.texto, tam: 12, peso: 600, C });
+      G.texto(ctx, esc.x(0), y2 - 5, 'what they could explain', { color: C.suave, tam: 11, C });
+      let acc = 0;
+      [[DATOS.atm, 0.3], [DATOS.ant, 0.45], [DATOS.lob, 0.65]].forEach(([v, a]) => { seg(acc, acc + v, y2, G.alfa(C.suave, a), C.suave); acc += v; });
+      seg(acc, DATOS.total, y2, G.alfa(C.ruido, 0.22), C.ruido, [4, 3]);
+      G.texto(ctx, esc.x(DATOS.atm / 2), y2 + alto / 2 + 4, 'atmosphere', { alinear: 'center', color: C.texto, tam: 10, C });
+      G.texto(ctx, esc.x((acc + DATOS.total) / 2), y2 + alto / 2 + 4, resuelto ? num(SOBRA, 1) + ' K extra' : 'how much is left?', { alinear: 'center', color: C.texto, tam: 12, peso: 600, C });
+    }
+    const L = G.lienzo('#r2-escena', {
+      alto: w => (w < 560 ? 300 : 210),
+      etiqueta: 'On the left, a horn antenna with two pigeons; on the right, two bars: what the antenna measured, 6.7 kelvin, and what they could explain, with a gap left unexplained',
+      dibujar: (ctx, w, h, C) => {
+        const ancha = w >= 560;
+        const zA = ancha ? { x: 8, y: 8, w: Math.round(w * 0.3), h: h - 16 } : { x: 8, y: 6, w: w - 16, h: 118 };
+        const zB = ancha ? { x: zA.x + zA.w + 14, y: 8, w: w - (zA.x + zA.w + 14) - 8, h: h - 16 } : { x: 8, y: zA.y + zA.h + 6, w: w - 16, h: h - zA.h - 18 };
+        antena(ctx, C, zA);
+        presupuesto(ctx, C, zB);
+      },
+    });
+    let reto = null;
+    const campo = Curso.campo('#r2-mandos', { etiqueta: 'Noise left over', unidad: 'K', ancho: 10, marcador: 'how many?', alEnviar: () => reto.revisar() });
+    reto = Curso.reto('reto-2', {
+      titulo: 'The Penzias and Wilson arithmetic', nivel: 'fácil', auto: false,
+      comprobar: () => {
+        const v = campo.valor;
+        if (!Number.isFinite(v)) return { ok: false, mensaje: 'Type a number, for example 2.5.' };
+        if (Math.abs(v - SOBRA) <= 0.1) { campo.marcar('bien'); resuelto = true; L.dibujar(); return { ok: true, mensaje: num(SOBRA, 1) + ' K are left over: noise that came from nowhere known.' }; }
+        campo.marcar('mal');
+        let m = 'Subtract from the total, 6.7 K, everything they could already explain: the atmosphere, the antenna and the lobes.';
+        if (v > DATOS.total) m = 'There can’t be more left over than what was measured: the total is 6.7 K.';
+        else if (Math.abs(v - (DATOS.total - DATOS.atm)) < 0.06) m = 'You only subtracted the atmosphere. The antenna losses and the back lobes are still missing.';
+        else if (Math.abs(v - (DATOS.atm + DATOS.ant + DATOS.lob)) < 0.06) m = 'Those 3.2 K are what they could explain. What you are after is what is left of the 6.7 K.';
+        else if (Math.abs(v - (DATOS.total - DATOS.atm - DATOS.ant)) < 0.06) m = 'Close: you also need to subtract the back lobes, which contribute about 0.1 K.';
+        return { ok: false, mensaje: m };
+      },
+      resolver: () => { campo.fijar(3.5); },
+      pista: [
+        'Start from the 6.7 K they measured and subtract the three things they could already explain.',
+        '6.7 − 2.3 − 0.8 − 0.1: the last figure is “less than 0.1,” but with 0.1 you get the result they reported.',
+      ],
+      exito: '<p>About 3.5 K of noise were left over, the same in every direction and in every season. They removed the pigeons, cleaned the antenna, and it was still there: it was the cosmic microwave background, the glow of the young universe. What looked like a flaw in the antenna was a signal from the universe.</p>',
+    });
+  })();
+
+  // ── Reto 3 · Pon la pendiente (arrastrar sobre el lienzo, o deslizador) ──────────────────────────────
+  (function () {
+    const azar = Curso.azar();
+    const TIPOS = ['blanco', 'rosa', 'marron', 'azul', 'violeta'];
+    const e = { tipo: 'rosa', W: null, ref: 0, x: null, s: 0 };
+    let esc = null, mS = null, lect = null, reto = null;
+    function nuevo(previo) {
+      let t;
+      do { t = azar.elegir(TIPOS); } while (t === previo);
+      e.tipo = t;
+      e.x = Senal.ruido(t, 2 * FS, azar.entero(1, 99999));
+      e.W = welch(e.x, 1024);
+      e.ref = nivelEn(e.W, 700, 1400);                         // igualado a 0 dB en 1.000 Hz
+    }
+    nuevo(null);
+    const parecido = s => (s > 4.5 ? 'violet' : s > 1.5 ? 'blue' : s >= -1.5 ? 'white' : s >= -4.5 ? 'pink' : 'brown');
+    const L = G.lienzo('#r3-escena', {
+      alto: w => (w < 560 ? 250 : 290), rol: 'slider',
+      etiqueta: 'The spectrum of a noise, in amber, with frequency in octaves, and a purple line that you tilt by dragging it or with the keyboard arrows',
+      dibujar: (ctx, w, h, C) => {
+        esc = ejesOct(ctx, { caja: { x: 46, y: 26, w: w - 46 - 16, h: h - 26 - 36 }, x: [100, 8000], y: [-32, 32], marcasY: [-30, -15, 0, 15, 30], formatoY: v => num(v), etiquetaY: 'dB (matched at 1,000 Hz)', etiquetaX: 'frequency (Hz)', C });
+        const d = tramo(e.W, 100, 8000, e.ref);
+        G.linea(ctx, esc, d.f, d.y, { color: C.espectro, ancho: 1.6, C });
+        G.linea(ctx, esc, [100, 8000], [e.s * Math.log2(0.1), e.s * 3], { color: C.plantilla, ancho: 2.4, C });
+        G.puntos(ctx, esc, [1000], [0], { color: C.plantilla, radio: 3, halo: false, C });
+        const hx = esc.x(4000), hy = esc.y(e.s * 2);
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.plantilla, 0.22); ctx.strokeStyle = C.plantilla; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(hx, hy, 9, 0, TAU); ctx.fill(); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, esc.x(1000) + 8, esc.y(0) - 8, 'pivots at 1,000 Hz', { color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.8), C });
+      },
+    });
+    const mandos = document.getElementById('r3-mandos');
+    const fijar = (s, desdeMando) => {
+      e.s = limitar(Math.round(s * 4) / 4, -9, 9);
+      if (!desdeMando && mS) mS.fijar(e.s, false);
+      lect.fijar('pend', num(e.s, 2) + ' dB per octave');
+      lect.fijar('color', parecido(e.s));
+      L.canvas.setAttribute('aria-valuenow', String(e.s));
+      L.canvas.setAttribute('aria-valuetext', 'Line with a slope of ' + num(e.s, 2) + ' decibels per octave');
+      L.dibujar();
+      Curso.cambio('reto-3');
+    };
+    mS = Curso.mando(mandos, { etiqueta: 'Slope of the line', min: -9, max: 9, paso: 0.25, valor: 0, formato: v => num(v, 2) + ' dB per octave', alCambiar: v => fijar(v, true) });
+    const fila = document.getElementById('r3-fila');
+    lect = Curso.lecturas(fila, [{ id: 'pend', nombre: 'Your line', valor: '0 dB per octave' }, { id: 'color', nombre: 'Resembles', valor: 'white' }]);
+    const botones = Curso.botones(fila, [{ id: 'otro', texto: 'Another noise', icono: 'otra', alPulsar: () => { nuevo(e.tipo); e.s = 0; mS.fijar(0, false); fijar(0, true); reto.reiniciar(); } }]);
+    Curso.audio.boton(botones.otro.parentElement, () => ({ x: e.x, fs: FS, volumen: 0.12, normalizar: false }), 'Listen to this noise');
+    Curso.arrastre(L, {
+      eje: 'y',
+      alBajar: p => { if (!esc || p.x < esc.caja.x - 12 || p.x > esc.caja.x + esc.caja.w + 12) return false; fijar(esc.yi(p.y) / 2); },
+      alMover: p => fijar(esc.yi(p.y) / 2),
+    });
+    L.canvas.tabIndex = 0;
+    L.canvas.setAttribute('aria-valuemin', '-9');
+    L.canvas.setAttribute('aria-valuemax', '9');
+    L.canvas.addEventListener('keydown', ev => {
+      const d = { ArrowUp: 0.25, ArrowRight: 0.25, ArrowDown: -0.25, ArrowLeft: -0.25 }[ev.key];
+      if (d) { ev.preventDefault(); fijar(e.s + d); }
+    });
+    fijar(0, false);
+    reto = Curso.reto('reto-3', {
+      titulo: 'Set the slope', nivel: 'medio',
+      comprobar: () => {
+        const real = COLOR[e.tipo].pend, d = e.s - real;
+        if (Math.abs(d) <= 0.75) return { ok: true, mensaje: 'It is ' + COLOR[e.tipo].nombre + ' noise: its spectrum ' + (Math.abs(real) < 0.1 ? 'is flat.' : (real < 0 ? 'drops ' : 'rises ') + num(Math.abs(real), 0) + ' dB per octave.') };
+        if (Math.abs(real) > 1 && e.s * real <= 0) return { ok: false, mensaje: 'The spectrum ' + (real < 0 ? 'falls' : 'rises') + ' toward the high pitches, and your line ' + (e.s < -0.1 ? 'falls' : e.s > 0.1 ? 'rises' : 'is flat') + '.' };
+        const casi = Math.abs(d) <= 2 ? 'Close: y' : 'Y';
+        return { ok: false, mensaje: casi + (d < 0 ? 'our line falls too much. Raise it a little on the right.' : 'our line doesn’t fall enough. Lower it a little on the right.') };
+      },
+      resolver: () => fijar(COLOR[e.tipo].pend),
+      pista: [
+        'Look at how many decibels the spectrum drops when the frequency doubles, from 500 to 1,000 Hz or from 1,000 to 2,000 Hz, for example, and set that slope. If the spectrum rises, the slope is positive.',
+        'The possible slopes are 0 (white), −3 (pink), −6 (brown), +3 (blue) and +6 (violet): find the closest one.',
+      ],
+      exito: '<p>Each color is a slope: white doesn’t fall at all, pink falls 3 decibels per octave and brown 6, while blue and violet rise 3 and 6. The “color” of a noise is exactly that, which way its spectrum tilts.</p>',
+    });
+  })();
+
+  // ── Reto 4 · Del blanco al rosa (arrastrar las barras de un ecualizador de octavas) ──────────────────
+  (function () {
+    const NOMB = ['125–250', '250–500', '500–1k', '1–2k', '2–4k', '4–8k'];
+    const base = k => 10 * Math.log10(Math.pow(2, k));        // la energía de la octava k del blanco, con la primera en 0 dB
+    const g = [0, 0, 0, 0, 0, 0];                              // ganancia de cada banda, en dB
+    const salida = k => base(k) + g[k];
+    const blanco = Senal.ruido('blanco', 32768, 5);
+    let sel = 0, esc = null;
+    const media = () => g.reduce((a, _, k) => a + salida(k), 0) / 6;
+    const desvio = () => Math.max(...g.map((_, k) => Math.abs(salida(k) - media())));
+    function filtrado() {                                      // el blanco, con la ganancia de cada octava aplicada por FFT
+      const n = blanco.length, re = Float64Array.from(blanco), im = new Float64Array(n);
+      Senal.fft(re, im);
+      for (let k = 0; k <= n / 2; k++) {
+        const f = k * FS / n;
+        const a = f >= 125 && f < 8000 ? Math.pow(10, g[Math.floor(Math.log2(f / 125))] / 20) : 0;
+        re[k] *= a; im[k] *= a;
+        if (k > 0 && k < n / 2) { re[n - k] *= a; im[n - k] *= a; }
+      }
+      Senal.ifft(re, im);
+      return re;
+    }
+    const L = G.lienzo('#r4-escena', {
+      alto: w => (w < 560 ? 270 : 290), rol: 'slider',
+      etiqueta: 'Six bars, one per octave, showing the energy of each; drag the top of each bar, or use the keyboard arrows',
+      dibujar: (ctx, w, h, C) => {
+        const caja = { x: 46, y: 26, w: w - 46 - 14, h: h - 26 - 50 };
+        esc = G.ejes(ctx, { caja, x: [0, 6], y: [-22, 20], marcasX: false, marcasY: [-20, -10, 0, 10, 20], formatoY: v => num(v), etiquetaY: 'energy of each octave (dB)', C });
+        const m = media(), xa = esc.x(0), xb = esc.x(6);
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.plantilla, 0.16);
+        ctx.fillRect(xa, esc.y(m + 1.5), xb - xa, esc.y(m - 1.5) - esc.y(m + 1.5));
+        ctx.strokeStyle = G.alfa(C.plantilla, 0.8); ctx.lineWidth = 1; ctx.setLineDash([5, 4]);
+        ctx.beginPath(); ctx.moveTo(xa, Math.round(esc.y(m)) + 0.5); ctx.lineTo(xb, Math.round(esc.y(m)) + 0.5); ctx.stroke();
+        ctx.restore();
+        const ancho = (esc.x(1) - esc.x(0)) * 0.6;
+        for (let k = 0; k < 6; k++) {
+          const cx = esc.x(k + 0.5), yt = esc.y(salida(k)), yb = caja.y + caja.h;
+          ctx.save();
+          ctx.fillStyle = G.alfa(C.espectro, k === sel ? 0.95 : 0.75);
+          ctx.fillRect(cx - ancho / 2, yt, ancho, yb - yt);
+          ctx.restore();
+          G.puntos(ctx, esc, [k + 0.5], [salida(k)], { color: C.superficie, radio: 5.5, borde: k === sel ? C.acento : C.texto, halo: false, C });
+          G.texto(ctx, cx, caja.y + caja.h + 17, NOMB[k], { alinear: 'center', color: k === sel ? C.texto : C.tenue, tam: 11, peso: k === sel ? 600 : 400, C });
+        }
+        G.texto(ctx, caja.x + caja.w, caja.y + caja.h + 38, 'octaves (Hz)', { alinear: 'right', color: C.tenue, tam: 11, C });
+        G.texto(ctx, xb - 4, esc.y(m + 1.5) - 5, 'average ± 1.5 dB', { alinear: 'right', color: C.plantilla, tam: 10, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+      },
+    });
+    const lect = Curso.lecturas('#r4-fila', [{ id: 'dif', nombre: 'Difference between octaves', valor: '15.0 dB' }, { id: 'ganancia', nombre: 'Selected octave', valor: '0 dB' }]);
+    const estado = () => {
+      const s = [...Array(6)].map((_, k) => salida(k));
+      lect.fijar('dif', num(Math.max(...s) - Math.min(...s), 1) + ' dB');
+      lect.fijar('ganancia', num(g[sel], 1) + ' dB (octave ' + NOMB[sel] + ' Hz)');
+      L.canvas.setAttribute('aria-valuenow', String(g[sel]));
+      L.canvas.setAttribute('aria-valuetext', 'Octave ' + NOMB[sel] + ' hertz: gain of ' + num(g[sel], 1) + ' decibels');
+    };
+    const poner = (k, v) => { g[k] = limitar(Math.round((v - base(k)) * 2) / 2, -20, 5); estado(); L.dibujar(); Curso.cambio('reto-4'); };
+    Curso.arrastre(L, {
+      eje: 'y',
+      alBajar: p => {
+        if (!esc) return false;
+        const k = Math.floor(esc.xi(p.x));
+        if (k < 0 || k > 5 || p.y < esc.caja.y - 14 || p.y > esc.caja.y + esc.caja.h + 8) return false;
+        sel = k;
+        poner(k, esc.yi(p.y));
+      },
+      alMover: p => poner(sel, esc.yi(p.y)),
+    });
+    L.canvas.tabIndex = 0;
+    L.canvas.setAttribute('aria-valuemin', '-20');
+    L.canvas.setAttribute('aria-valuemax', '5');
+    L.canvas.addEventListener('keydown', ev => {
+      if (ev.key === 'ArrowLeft') { ev.preventDefault(); sel = Math.max(0, sel - 1); estado(); L.dibujar(); }
+      else if (ev.key === 'ArrowRight') { ev.preventDefault(); sel = Math.min(5, sel + 1); estado(); L.dibujar(); }
+      else if (ev.key === 'ArrowUp' || ev.key === 'ArrowDown') { ev.preventDefault(); poner(sel, salida(sel) + (ev.key === 'ArrowUp' ? 0.5 : -0.5)); }
+    });
+    const botones = Curso.botones('#r4-fila', [{ id: 'cero', texto: 'Back to white', icono: 'otra', tipo: 'discreto', alPulsar: () => { g.fill(0); estado(); L.dibujar(); Curso.cambio('reto-4'); } }]);
+    Curso.audio.boton(botones.cero.parentElement, () => ({ x: blanco, fs: FS, volumen: 0.1, normalizar: false }), 'Listen to white', { clase: 'peque' });
+    Curso.audio.boton(botones.cero.parentElement, () => ({ x: filtrado(), fs: FS, volumen: 0.1, normalizar: false }), 'Listen to the result', { clase: 'peque' });
+    estado();
+    Curso.reto('reto-4', {
+      titulo: 'From white to pink', nivel: 'medio',
+      comprobar: () => {
+        const d = desvio();
+        if (d <= 1.5) return { ok: true, mensaje: 'All the octaves are within ' + num(d, 1) + ' dB of the average: it is pink noise.' };
+        const s = [...Array(6)].map((_, k) => salida(k));
+        const alta = s.indexOf(Math.max(...s)), baja = s.indexOf(Math.min(...s));
+        return { ok: false, mensaje: 'The ' + NOMB[alta] + ' Hz octave is the strongest and the ' + NOMB[baja] + ' Hz octave the weakest: they differ by ' + num(s[alta] - s[baja], 1) + ' dB. Bring all the bars close to the purple band.' };
+      },
+      resolver: () => { for (let k = 0; k < 6; k++) g[k] = -Math.round(base(k) * 2) / 2; estado(); L.dibujar(); },
+      pista: [
+        'Each octave of white has 3 dB more than the previous one, because it has twice as many hertz. You have to lower each bar by how much it exceeds the first one.',
+        'Leave the first one alone; the second goes down 3 dB, the third 6, the fourth 9, the fifth 12 and the sixth 15.',
+      ],
+      exito: '<p>White noise spreads its power per hertz, and each octave has twice as many hertz as the previous one: 3 decibels more per octave. Pink spreads it per octave, which is how the ear counts, and that is why it sounds more balanced. With the equalizer you did it by hand: lowering each band 3 dB more than the one below is exactly a slope of −3 dB per octave.</p>',
+    });
+  })();
+
+  // ── Reto 5 · Ni peludo ni borroso (el compromiso del método de Welch) ────────────────────────────────
+  (function () {
+    const L_SENAL = 32000, ANCHOS = [256, 512, 1024, 2048, 4096, 8192, 16384];
+    const x = Senal.ruido('blanco', L_SENAL, 4);
+    for (let i = 0; i < L_SENAL; i++) x[i] += 0.15 * Math.sin(TAU * 1000 * i / FS + 0.7) + 0.15 * Math.sin(TAU * 1060 * i / FS + 2.1);
+    const YR = [-50, -12];
+    const cache = {};
+    // Lo que se mide sobre lo que se dibuja: el valle entre los dos picos y la ondulación del suelo de ruido.
+    function medir(n) {
+      if (cache[n]) return cache[n];
+      const W = welch(x, n);
+      const v = [];
+      for (let k = 0; k < W.f.length; k++) if (W.f[k] >= 2000 && W.f[k] <= 7000) v.push(W.psdDb[k]);
+      const media = v.reduce((a, b) => a + b, 0) / v.length, ond = Math.sqrt(v.reduce((a, b) => a + (b - media) * (b - media), 0) / v.length);
+      const pico = fc => { let mk = -1, mv = -1e9; for (let k = 0; k < W.f.length; k++) if (Math.abs(W.f[k] - fc) <= 20 && W.psdDb[k] > mv) { mv = W.psdDb[k]; mk = k; } return { k: mk, db: mv }; };
+      const p1 = pico(1000), p2 = pico(1060), bajo = Math.min(p1.db, p2.db);
+      let valle = 1e9;
+      for (let k = Math.min(p1.k, p2.k); k <= Math.max(p1.k, p2.k); k++) valle = Math.min(valle, W.psdDb[k]);
+      const prof = p1.k === p2.k ? 0 : bajo - valle;
+      return (cache[n] = { n, W, K: W.segmentos, df: W.df, ond, media, bajo, prof, separados: prof >= 3, liso: ond <= 1 });
+    }
+    let n = 1024, esc1 = null;
+    const cont = document.getElementById('r5-paneles');
+    const mk = (titulo, dib) => {
+      const panel = crear('div', { class: 'panel-mini' });
+      panel.appendChild(crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, titulo)));
+      const escena = crear('div', { class: 'escena' });
+      panel.appendChild(escena);
+      cont.appendChild(panel);
+      return G.lienzo(escena, dib);
+    };
+    const Lz = mk('The two tones · 800 to 1,300 Hz', {
+      alto: 190, etiqueta: 'Welch spectrum between 800 and 1,300 hertz, where the two tones are',
+      dibujar: (ctx, w, h, C) => {
+        const m = medir(n);
+        esc1 = G.ejes(ctx, { caja: { x: 40, y: 10, w: w - 40 - 12, h: h - 10 - 28 }, x: [800, 1300], y: YR, marcasX: [800, 900, 1000, 1100, 1200, 1300], formatoX: v => num(v), marcasY: [-40, -30, -20], formatoY: v => num(v), C });
+        const d = tramo(m.W, 790, 1310, 0);
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.plantilla, 0.9); ctx.lineWidth = 1.3; ctx.setLineDash([5, 4]);
+        const yl = Math.round(esc1.y(m.bajo - 3)) + 0.5;
+        ctx.beginPath(); ctx.moveTo(esc1.caja.x, yl); ctx.lineTo(esc1.caja.x + esc1.caja.w, yl); ctx.stroke();
+        ctx.restore();
+        G.linea(ctx, esc1, d.f, d.y, { color: C.espectro, ancho: 2, C });
+        for (const f of [1000, 1060]) {
+          const px = esc1.x(f), py = esc1.caja.y + esc1.caja.h;
+          ctx.save();
+          ctx.fillStyle = C.senal;
+          ctx.beginPath(); ctx.moveTo(px, py - 1); ctx.lineTo(px - 5, py + 8); ctx.lineTo(px + 5, py + 8); ctx.closePath(); ctx.fill();
+          ctx.restore();
+        }
+        G.texto(ctx, esc1.caja.x + esc1.caja.w - 4, esc1.caja.y + 14, 'green triangles: the two tones', { alinear: 'right', color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.8), C });
+      },
+    });
+    const Ls = mk('The noise floor · 2,000 to 7,000 Hz', {
+      alto: 190, etiqueta: 'Welch spectrum between 2,000 and 7,000 hertz, where there is only noise, with a band of plus and minus one decibel',
+      dibujar: (ctx, w, h, C) => {
+        const m = medir(n);
+        const esc = G.ejes(ctx, { caja: { x: 40, y: 10, w: w - 40 - 12, h: h - 10 - 28 }, x: [2000, 7000], y: YR, marcasX: [2000, 3000, 4000, 5000, 6000, 7000], formatoX: v => num(v), marcasY: [-40, -30, -20], formatoY: v => num(v), C });
+        ctx.save();
+        ctx.fillStyle = G.alfa(C.plantilla, 0.18);
+        ctx.fillRect(esc.caja.x, esc.y(m.media + 1), esc.caja.w, esc.y(m.media - 1) - esc.y(m.media + 1));
+        ctx.restore();
+        const d = tramo(m.W, 1990, 7010, 0);
+        G.linea(ctx, esc, d.f, d.y, { color: C.espectro, ancho: 1.6, C });
+        G.texto(ctx, esc.caja.x + esc.caja.w - 4, esc.caja.y + 14, 'purple band: ±1 dB', { alinear: 'right', color: C.tenue, tam: 10, fondo: G.alfa(C.pantalla, 0.8), C });
+      },
+    });
+    const lect = Curso.lecturas('#r5-fila', [
+      { id: 'trozos', nombre: 'Chunks averaged', clase: 'cuerpo' }, { id: 'res', nombre: 'Resolution' },
+      { id: 'ond', nombre: 'Floor ripple', clase: 'respuesta' }, { id: 'valle', nombre: 'Valley between the peaks' },
+    ]);
+    const largo = v => (v >= 15 ? L_SENAL : Math.pow(2, v));
+    const estado = () => {
+      const m = medir(n);
+      lect.fijar('trozos', num(m.K));
+      lect.fijar('res', num(m.df, 1) + ' Hz');
+      lect.fijar('ond', num(m.ond, 1) + ' dB');
+      lect.fijar('valle', m.prof > 0 ? num(m.prof, 1) + ' dB' : 'none');
+      lect.clase('ond', m.liso ? 'destacada' : 'respuesta');
+      lect.clase('valle', m.separados ? 'destacada' : '');
+    };
+    const mN = Curso.mando('#r5-mandos', {
+      etiqueta: 'Length of each chunk', min: 8, max: 15, paso: 1, valor: 10, reto: 'reto-5',
+      formato: v => (v >= 15 ? 'the whole signal (' + num(L_SENAL) + ' samples)' : num(Math.pow(2, v)) + ' samples · ' + num(Math.pow(2, v) / FS * 1000, 1) + ' ms'),
+      alCambiar: v => { n = largo(v); estado(); Lz.dibujar(); Ls.dibujar(); },
+    });
+    estado();
+    Curso.reto('reto-5', {
+      titulo: 'Neither hairy nor blurry', nivel: 'difícil',
+      comprobar: () => {
+        const m = medir(n);
+        if (m.separados && m.liso) return { ok: true, mensaje: 'With chunks of ' + num(n) + ' samples: ' + num(m.K) + ' chunks, two separate peaks and a floor with ' + num(m.ond, 1) + ' dB of ripple.' };
+        if (!m.separados && !m.liso) return { ok: false, mensaje: 'The peaks don’t separate and the floor isn’t smooth: try intermediate lengths.' };
+        if (!m.separados) return { ok: false, mensaje: 'The two tones still merge into a single peak: each chunk is too short to tell them apart. You need longer chunks.' };
+        return { ok: false, mensaje: 'The peaks are now separate, but the floor still trembles ' + num(m.ond, 1) + ' dB: there are too few chunks to average. You need shorter chunks.' };
+      },
+      resolver: () => mN.fijar(11),
+      pista: [
+        'If the two peaks merge, you need longer chunks. If the noise floor trembles a lot, you need more chunks, that is, shorter chunks.',
+        'Try the intermediate lengths: the right one is between 1,024 and 2,048 samples.',
+      ],
+      exito: '<p>Long chunks separate frequencies well, but there are few of them and the spectrum comes out hairy; short ones give many averages and a smooth but blurry spectrum. Welch’s method looks for the middle ground, which is the same trade-off as the tuner in <a href="e05.html">lesson 5</a>, now with noise in the mix.</p>',
+    });
+  })();
+
+  // ── Reto 6 · Promedia hasta que aparezca (la respuesta del cerebro, enterrada en el ruido) ───────────
+  (function () {
+    const azar = Curso.azar();
+    const M = 240, MS = 12;                                   // 240 puntos en 12 ms
+    const resp = new Float64Array(M);                         // respuesta sintética: picos en los primeros milisegundos, 0,5 µV de pico a pico
+    {
+      const picos = [[1.5, 0.55], [2.8, 0.3], [3.7, 0.8], [4.8, 0.4], [5.6, 1], [7.4, -0.7]];
+      for (let i = 0; i < M; i++) { const t = MS * i / (M - 1); let s = 0; for (const [t0, a] of picos) s += a * Math.exp(-Math.pow((t - t0) / (a < 0 ? 0.6 : 0.25), 2)); resp[i] = s; }
+      let mn = Infinity, mx = -Infinity;
+      for (const v of resp) { mn = Math.min(mn, v); mx = Math.max(mx, v); }
+      for (let i = 0; i < M; i++) resp[i] = (resp[i] - (mx + mn) / 2) * 0.5 / (mx - mn);
+    }
+    const e = { sigma: 5, N: 0, S: new Float64Array(M), ultimo: new Float64Array(M) };
+    // Sumar m barridos de golpe: m veces la respuesta más un ruido que crece solo con la raíz de m.
+    function sumar(m) {
+      for (let i = 0; i < M; i++) e.S[i] += m * resp[i] + Math.sqrt(m) * e.sigma * azar.normal();
+      e.N += m;
+      for (let i = 0; i < M; i++) e.ultimo[i] = resp[i] + e.sigma * azar.normal();
+    }
+    const residual = () => e.sigma / Math.sqrt(Math.max(1, e.N));
+    const relacion = () => 0.5 / residual();
+    const rango = v => { let m = 0; for (let i = 0; i < M; i++) m = Math.max(m, Math.abs(v[i])); return Math.max(m * 1.15, 0.3); };
+    let reto = null;
+    function reiniciar() { e.N = 0; e.S.fill(0); sumar(1); }
+    reiniciar();
+    const L = G.lienzo('#r6-escena', {
+      alto: w => (w < 560 ? 330 : 330),
+      etiqueta: 'Top, the latest sweep, with a lot of noise; bottom, the average of all the sweeps added up, where the response gradually shows',
+      dibujar: (ctx, w, h, C) => {
+        const media = new Float64Array(M);
+        for (let i = 0; i < M; i++) media[i] = e.S[i] / e.N;
+        const zonas = [
+          { titulo: 'a single sweep', y: 18, v: e.ultimo, color: C.ruido },
+          { titulo: 'average of ' + num(e.N) + (e.N === 1 ? ' sweep' : ' sweeps'), y: 18 + (h - 18) / 2 + 2, v: media, color: C.senal },
+        ];
+        zonas.forEach((z, j) => {
+          const r = rango(z.v), alto = (h - 18) / 2 - 38;
+          const esc = G.ejes(ctx, { caja: { x: 52, y: z.y + 10, w: w - 52 - 14, h: alto }, x: [0, MS], y: [-r, r], marcasX: j ? [0, 2, 4, 6, 8, 10, 12] : false, formatoX: v => num(v), etiquetaX: j ? 'milliseconds since the click' : null, marcasY: 3, formatoY: v => num(v), C });
+          if (j && relacion() >= 3) G.linea(ctx, esc, Array.from(resp, (_, i) => MS * i / (M - 1)), Array.from(resp), { color: C.senal, ancho: 1.2, guiones: [4, 4], alfa: 0.9, halo: false, C });
+          G.linea(ctx, esc, Array.from(resp, (_, i) => MS * i / (M - 1)), z.v, { color: z.color, ancho: 1.5, alfa: j && relacion() >= 3 ? 0.55 : 1, C });
+          G.texto(ctx, 52, z.y + 6, z.titulo + ' · µV', { color: C.suave, tam: 11, C });
+          // La barrita de escala: lo que mide la respuesta, 0,5 µV, en la escala de esta franja.
+          const xe = esc.caja.x + esc.caja.w - 8;
+          ctx.save();
+          ctx.strokeStyle = C.texto; ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.moveTo(xe, esc.y(0.25)); ctx.lineTo(xe, esc.y(-0.25)); ctx.moveTo(xe - 3, esc.y(0.25)); ctx.lineTo(xe + 3, esc.y(0.25)); ctx.moveTo(xe - 3, esc.y(-0.25)); ctx.lineTo(xe + 3, esc.y(-0.25)); ctx.stroke();
+          ctx.restore();
+          G.texto(ctx, xe - 8, esc.y(0) + 4, 'response: 0.5 µV', { alinear: 'right', color: C.texto, tam: 10, fondo: G.alfa(C.pantalla, 0.8), C });
+        });
+        G.texto(ctx, w - 14, 10, 'synthetic signal', { alinear: 'right', color: C.tenue, tam: 10, C });
+      },
+    });
+    const lect = Curso.lecturas('#r6-lecturas', [
+      { id: 'n', nombre: 'Sweeps added', clase: 'cuerpo' }, { id: 'res', nombre: 'Remaining noise', clase: 'respuesta' }, { id: 'rel', nombre: 'Response / noise' },
+    ]);
+    const pintar = () => {
+      lect.fijar('n', num(e.N));
+      lect.fijar('res', num(residual(), residual() < 1 ? 2 : 1) + ' µV');
+      lect.fijar('rel', num(relacion(), 2) + ' times · ' + num(20 * Math.log10(relacion()), 1) + ' dB');
+      lect.clase('rel', relacion() >= 3 ? 'destacada' : '');
+      L.dibujar();
+    };
+    const eleccion = Curso.eleccion('#r6-mandos', {
+      etiqueta: 'How much noise there is in each sweep', valor: 5,
+      opciones: [{ valor: 2, texto: 'Sleeping baby · 2 µV' }, { valor: 5, texto: 'In between · 5 µV' }, { valor: 20, texto: 'Moving · 20 µV' }],
+      alCambiar: v => { e.sigma = v; reiniciar(); pintar(); Curso.cambio('reto-6'); },
+    });
+    const botones = Curso.botones('#r6-fila', [1, 10, 100, 1000, 10000].map(m => ({ id: 'm' + m, texto: '+' + num(m), alPulsar: () => { sumar(m); pintar(); Curso.cambio('reto-6'); } })).concat([
+      { id: 'otra', texto: 'Start over', icono: 'otra', tipo: 'discreto', alPulsar: () => { reiniciar(); pintar(); reto.reiniciar(); Curso.cambio('reto-6'); } },
+    ]));
+    pintar();
+    reto = Curso.reto('reto-6', {
+      titulo: 'Average until it shows up', nivel: 'difícil',
+      comprobar: () => {
+        if (relacion() >= 3) return { ok: true, mensaje: 'With ' + num(e.N) + ' sweeps the noise is down to ' + num(residual(), 2) + ' µV: the response is ' + num(relacion(), 1) + ' times larger.' };
+        const falta = Math.max(1, Math.ceil(Math.pow(3 * e.sigma / 0.5, 2) - e.N));
+        return { ok: false, mensaje: 'The response is ' + num(relacion(), 2) + ' times larger than the remaining noise; you need 3. You still need about ' + num(falta) + ' more sweeps.' };
+      },
+      resolver: () => { eleccion.fijar(5, false); e.sigma = 5; reiniciar(); sumar(1000); pintar(); },
+      pista: [
+        'To divide the noise by 10 you need 100 sweeps. And by 30?',
+        'The remaining noise is that of one sweep divided by the square root of the number of sweeps. For the 0.5 µV response to triple the 5 µV noise, you need 900 sweeps or more.',
+      ],
+      exito: '<p>Averaging keeps what repeats identically and half cancels what changes: the noise drops with the square root of the number of repetitions. That is why the test is done with the baby asleep: with 2 µV of noise about 150 sweeps are enough, and with 20 µV, that of a moving baby, you would need more than 14,000.</p>',
+    });
+  })();
+
+  // ── En tu voz: el color y el zumbido del silencio de tu habitación ───────────────────────────────────
+  // Se quitan medio segundo al principio y al final (el clic de empezar y parar), se descartan los trozos con un golpe
+  // o una tos, se calcula el espectro de un solo trozo y el promediado de todos (Welch), se ajusta una recta entre 200
+  // y 4.000 Hz y se buscan picos en 50 o 60 Hz y sus múltiplos.
+  (function () {
+    const st = { r: null, ver: 'dos', fs: FS };
+    const lab = Curso.voz('#voz-lab', {
+      ejemplos: ['silencio', 'aaa'], fsAnalisis: FS,
+      alCargar: (x, fs) => { st.fs = fs; st.r = analizar(x, fs); pintar(); },
+    });
+    const escena = crear('div', { class: 'escena' });
+    lab.panel.appendChild(escena);
+    const L = G.lienzo(escena, {
+      alto: w => (w < 560 ? 270 : 320),
+      etiqueta: 'The spectrum of the recording, in decibels and with frequency in octaves: the one for a single chunk, hairy, and the one for all the chunks averaged, smooth',
+      dibujar: (ctx, w, h, C) => {
+        const r = st.r, caja = { x: 50, y: 26, w: w - 50 - 14, h: h - 26 - 38 };
+        const f1 = 31, f2 = Math.min(8000, st.fs / 2 * 0.98);
+        if (!r || !r.W) {
+          G.ejes(ctx, { caja, x: [f1, f2], y: [0, 1], logX: true, marcasX: OCT, formatoX: hz, marcasY: false, C });
+          G.texto(ctx, w / 2, h / 2, r && r.silencioDigital ? 'your recording is digital silence' : r && r.corto ? 'the recording is too short' : 'Record, upload audio or pick an example', { alinear: 'center', base: 'middle', color: C.tenue, tam: 12, C });
+          return;
+        }
+        const d1 = tramo(r.W1, f1, f2, 0), d2 = tramo(r.W, f1, f2, 0);
+        const top = Math.ceil((Math.max(...d2.y) + 4) / 10) * 10, bot = top - 60;
+        const esc = ejesOct(ctx, { caja, x: [f1, f2], y: [bot, top], marcasY: 5, formatoY: v => num(v), etiquetaY: 'dB per hertz', etiquetaX: 'frequency (Hz)', C });
+        if (st.ver !== 'prom') G.linea(ctx, esc, d1.f, d1.y, { color: C.espectro, ancho: 1.2, alfa: st.ver === 'dos' ? 0.5 : 1, halo: st.ver !== 'dos', C });
+        if (st.ver !== 'uno') G.linea(ctx, esc, d2.f, d2.y, { color: C.espectro, ancho: 2.4, C });
+        if (r.recta) G.linea(ctx, esc, [200, 4000], [r.recta.base + r.recta.pend * Math.log2(0.2), r.recta.base + r.recta.pend * 2], { color: C.plantilla, ancho: 2, guiones: [6, 4], C });
+        for (const f of r.zumbido.frecuencias) {
+          const px = esc.x(f);
+          ctx.save();
+          ctx.strokeStyle = G.alfa(C.ruido, 0.7); ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+          ctx.beginPath(); ctx.moveTo(Math.round(px) + 0.5, caja.y); ctx.lineTo(Math.round(px) + 0.5, caja.y + caja.h); ctx.stroke();
+          ctx.restore();
+          G.texto(ctx, px, caja.y + 12, num(f) + ' Hz', { alinear: 'center', color: C.suave, tam: 10, fondo: G.alfa(C.pantalla, 0.85), C });
+        }
+      },
+    });
+    const mandos = crear('div', { class: 'mandos' });
+    lab.panel.appendChild(mandos);
+    Curso.eleccion(mandos, {
+      etiqueta: 'What to draw', valor: 'dos',
+      opciones: [{ valor: 'uno', texto: 'A single chunk' }, { valor: 'prom', texto: 'Averaged' }, { valor: 'dos', texto: 'Both' }],
+      alCambiar: v => { st.ver = v; L.dibujar(); },
+    });
+    const lect = Curso.lecturas(lab.panel, [
+      { id: 'nivel', nombre: 'Level of the silence' }, { id: 'trozos', nombre: 'Chunks averaged', clase: 'cuerpo' },
+      { id: 'pend', nombre: 'Slope', clase: 'respuesta' }, { id: 'color', nombre: 'Resembles' }, { id: 'zumbido', nombre: 'Power-line hum' },
+    ]);
+    const nota = crear('p', { class: 'nota-reto' });
+    lab.panel.appendChild(nota);
+
+    function analizar(x, fs) {
+      const r = { W: null, W1: null, recta: null, zumbido: { frecuencias: [], texto: '—' }, avisos: [] };
+      let y = x.length >= 3 * fs ? x.subarray(Math.round(0.5 * fs), x.length - Math.round(0.5 * fs)) : x;
+      const rms = Senal.rms(y);
+      r.nivel = rms > 0 ? 20 * Math.log10(rms) : -Infinity;
+      if (!(rms > 1e-6)) { r.silencioDigital = true; return r; }
+      if (y.length < 1024) { r.corto = true; return r; }
+      const n = Math.min(y.length >= 2 * fs ? 1024 : 512, Math.pow(2, Math.floor(Math.log2(y.length / 2))));
+      // Trozos con un golpe o una tos: mucha más energía que la mediana.
+      const nb = Math.floor(y.length / n), rb = [];
+      for (let b = 0; b < nb; b++) rb.push(Senal.rms(y.subarray(b * n, (b + 1) * n)));
+      const med = rb.slice().sort((a, c) => a - c)[nb >> 1];
+      const buenos = rb.map((v, b) => (v <= 3 * med ? b : -1)).filter(b => b >= 0);
+      if (buenos.length < nb && buenos.length >= 0.8 * nb && buenos.length >= 4) {
+        const z = new Float64Array(buenos.length * n);
+        buenos.forEach((b, i) => z.set(y.subarray(b * n, (b + 1) * n), i * n));
+        y = z;
+        r.quitados = nb - buenos.length;
+      } else if (buenos.length < 0.8 * nb) r.variable = true;
+      r.W = welch(y, n, fs);
+      const i0 = Math.max(0, Math.floor((y.length - n) / 2));
+      r.W1 = welch(y.subarray(i0, i0 + n), n, fs);
+      r.n = n;
+      const aj = ajuste(r.W, 200, Math.min(4000, fs / 2 * 0.9));
+      if (aj) r.recta = aj;
+      // El zumbido de la red: picos de más de 6 dB sobre sus vecinos en 50 o 60 Hz y sus múltiplos (solo en un silencio).
+      if (r.nivel < -30 && y.length >= 16384) {
+        const H = welch(y, 8192, fs), mejor = { f0: 0, hallados: [] };
+        for (const f0 of [50, 60]) {
+          const hallados = [];
+          for (let h = 1; h <= 5; h++) {
+            const f = f0 * h, k = Math.round(f / H.df);
+            if (k + 9 >= H.f.length || f > fs / 2 * 0.9) break;
+            let pico = -1e9;
+            for (let j = k - 1; j <= k + 1; j++) pico = Math.max(pico, H.psdDb[j]);
+            const vec = [];
+            for (let j = k - 8; j <= k + 8; j++) if (Math.abs(j - k) >= 4) vec.push(H.psdDb[j]);
+            vec.sort((a, c) => a - c);
+            if (pico - vec[vec.length >> 1] >= 6) hallados.push(f);
+          }
+          if (hallados.length > mejor.hallados.length) { mejor.f0 = f0; mejor.hallados = hallados; }
+        }
+        if (mejor.hallados.length) { r.zumbido.frecuencias = mejor.hallados; r.zumbido.texto = num(mejor.f0) + ' Hz and ' + (mejor.hallados.length > 1 ? 'its multiples' : 'nothing else'); }
+        else r.zumbido.texto = 'not visible';
+      } else r.zumbido.texto = r.nivel >= -30 ? 'not searched for' : 'short recording';
+      return r;
+    }
+    function pintar() {
+      const r = st.r;
+      L.dibujar();
+      const nivelTxt = r && Number.isFinite(r.nivel) ? num(r.nivel, 1) + ' dBFS' : '—';
+      lect.fijar('nivel', nivelTxt);
+      lect.fijar('trozos', r && r.W ? num(r.W.segmentos) + ' of ' + num(r.n) + ' samples' : '—');
+      let color = '—', pend = '—';
+      if (r && r.recta) {
+        const s = r.recta.pend;
+        pend = num(s, 1) + ' dB per octave';
+        color = s > 1.5 ? 'blue: more treble than white' : s > -1.5 ? 'white' : s > -4.5 ? 'pink' : 'brown';
+      }
+      lect.fijar('pend', pend);
+      lect.fijar('color', color);
+      lect.fijar('zumbido', r ? r.zumbido.texto : '—');
+      const avisos = [];
+      if (r && r.silencioDigital) avisos.push('Your recording is digital silence, all zeros: the phone or the app has cut the background noise, and without noise there is no color to look at.');
+      else if (r && r.corto) avisos.push('The recording is too short to average: record at least about 3 seconds.');
+      else if (r) {
+        if (r.nivel >= -30) avisos.push('The level is high for a silence: is it really the silence of your room? With a voice or a note, the color you get is that of that sound, not of the background noise.');
+        else if (r.variable) avisos.push('The level changes a lot from one chunk to the next, and it doesn’t look like plain silence: the slope comes from everything that is sounding.');
+        if (r.quitados) avisos.push('I discarded ' + num(r.quitados) + (r.quitados === 1 ? ' chunk' : ' chunks') + ' with much more energy than the rest, such as a bump or a cough.');
+        if (r.n === 512) avisos.push('It is short, so I use chunks of 512 samples: there is less resolution, but more chunks to average.');
+      }
+      nota.textContent = avisos.join(' ');
+      nota.hidden = !avisos.length;
+    }
+  })();
+})();
+</script>
+</body>
+</html>

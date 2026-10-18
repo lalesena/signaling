@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Glossary · Signals, from Zero to Expert</title>
+<meta name="description" content="Glossary of the course “Signals, from Zero to Expert”: every term from the lessons in alphabetical order, with its definition, the picture used to explain it, and a link to the lesson where it appears.">
+<link rel="stylesheet" href="../comun/fuentes.css">
+<link rel="stylesheet" href="../comun/estilo.css">
+<style>
+/* Glossary: its own styles. The terms use the same <dl class="terminos"> as the end of each lesson. */
+.glo .glo-intro { max-width: var(--col); margin: 1.4rem 0 0; color: var(--texto-suave); }
+
+.glo .buscador { margin: 2rem 0 0; }
+.glo .buscador label { margin-bottom: 0.5rem; }
+.glo .buscador-caja { display: flex; align-items: center; background: var(--superficie); border: 1px solid var(--linea-fuerte); border-radius: 12px; box-shadow: var(--sombra); }
+.glo .buscador-caja:focus-within { border-color: var(--acento); box-shadow: 0 0 0 3px var(--acento-suave); }
+.glo .buscador-caja svg { flex: none; width: 19px; height: 19px; margin-left: 0.95rem; fill: none; stroke: var(--texto-tenue); stroke-width: 1.8; stroke-linecap: round; }
+.glo .buscador-caja input { flex: 1; min-width: 0; padding: 0.85rem 0.9rem; border: 0; background: transparent; color: var(--texto); font: 400 1.05rem/1.3 var(--f-texto); }
+.glo .buscador-caja input:focus { outline: none; }
+.glo .buscador-caja input::placeholder { color: var(--texto-tenue); opacity: 1; }
+.glo .cuenta { min-height: 1.5em; margin: 0.65rem 0 0; font: 400 var(--t-2)/1.45 var(--f-mono); color: var(--texto-tenue); }
+
+.glo .letras { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.9rem 0 0; }
+.glo .letras a { display: inline-grid; place-items: center; min-width: 2.2rem; height: 2.2rem; padding: 0 0.3rem; border: 1px solid var(--linea-fuerte); border-radius: 8px; background: var(--superficie); color: var(--acento); font: 600 var(--t-2)/1 var(--f-mono); text-decoration: none; }
+.glo .letras a:hover { border-color: var(--acento); background: var(--acento-suave); }
+
+.glo .aviso-glo { margin: 1.6rem 0 0; }
+.glo .aviso-glo .nota { margin: 0; }
+.glo .grupo { margin-top: 2.4rem; }
+.glo .letra { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin: 0 0 0.35rem; font: 600 1.7rem/1 var(--f-mono); letter-spacing: 0; color: var(--acento); }
+.glo .letra a { font: 400 var(--t-1)/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--texto-tenue); text-decoration: none; }
+.glo .letra a:hover { color: var(--acento); text-decoration: underline; }
+.glo .terminos > div:target { background: var(--acento-suave); box-shadow: 0 0 0 0.6rem var(--acento-suave); border-radius: 6px; }
+.glo .terminos dt { overflow-wrap: anywhere; }
+.glo .glo-def { margin: 0; }
+.glo .glo-def + .imagen-ancla, .glo .terminos dd > .en-leccion + .glo-def { margin-top: 0.7rem; }
+.glo .terminos .en-leccion { display: block; margin-top: 0.35rem; font: 400 var(--t-1)/1.5 var(--f-mono); color: var(--texto-tenue); }
+.glo .terminos .en-leccion a { margin-right: 0.8rem; white-space: nowrap; }
+.glo mark { padding: 0 0.08em; border-radius: 3px; background: color-mix(in srgb, var(--acento) 26%, transparent); color: inherit; }
+.glo .sin-resultados { margin: 2.6rem 0 0; padding: 1.4rem 1.3rem; border: 1px dashed var(--linea-fuerte); border-radius: 14px; text-align: center; color: var(--texto-suave); }
+.glo .sin-resultados p { margin: 0 0 0.9rem; }
+
+.pie.pie-glo .pie-nav:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.pie.pie-glo .pie-nav a[aria-current="page"] { color: var(--texto); font-weight: 600; text-decoration: none; }
+@media (max-width: 40rem) { .glo .letra { font-size: 1.5rem; } }
+</style>
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body>
+<main class="leccion glo" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">All the terms</p>
+    <h1>Glossary</h1>
+    <p class="glo-intro">The terms that come up in the lessons, in alphabetical order. Each one comes with its definition, the picture used to explain it in the course, and a link to the lesson where it appears.</p>
+  </header>
+
+  <form class="buscador" id="buscador" role="search" autocomplete="off">
+    <label class="antetitulo" for="q">Search for a term</label>
+    <div class="buscador-caja">
+      <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="8.6" cy="8.6" r="5.6"/><path d="M13 13l4.4 4.4"/></svg>
+      <input id="q" type="search" placeholder="For example: phase, window" enterkeyhint="search" spellcheck="false" autocomplete="off" aria-controls="lista">
+    </div>
+    <p class="cuenta" id="cuenta" aria-live="polite"></p>
+  </form>
+  <nav class="letras" id="letras" aria-label="Jump to a letter"></nav>
+  <div class="aviso-glo" id="aviso"></div>
+  <div id="lista"><noscript><p class="nota">The glossary is built with JavaScript, which is turned off right now.</p></noscript></div>
+
+</main>
+
+<footer class="pie pie-glo">
+  <div class="pie-interior">
+    <nav class="pie-nav" aria-label="Course pages">
+      <a href="index.html">Course map</a>
+      <a href="glosario.html" aria-current="page">Glossary</a>
+      <a href="examenes.html">Exams</a>
+    </nav>
+    <p class="pie-creditos">Signals, from Zero to Expert · Ena en Curso · Alejandro Ena. Your progress is saved only in this browser.</p>
+  </div>
+</footer>
+
+<script src="temario.js"></script>
+<script src="../comun/graficas.js"></script>
+<script src="../comun/senal.js"></script>
+<script src="../comun/curso.js"></script>
+<script src="datos/e01.js"></script>
+<script src="datos/e02.js"></script>
+<script src="datos/e03.js"></script>
+<script src="datos/e04.js"></script>
+<script src="datos/e05.js"></script>
+<script src="datos/e06.js"></script>
+<script src="datos/e07.js"></script>
+<script src="datos/e08.js"></script>
+<script src="datos/e09.js"></script>
+<script src="datos/e10.js"></script>
+<script src="datos/e11.js"></script>
+<script src="datos/e12.js"></script>
+<script src="datos/e13.js"></script>
+<script src="datos/e14.js"></script>
+<script src="datos/e15.js"></script>
+<script src="datos/e16.js"></script>
+<script src="datos/e17.js"></script>
+<script src="datos/e18.js"></script>
+<script src="datos/e19.js"></script>
+<script src="datos/e20.js"></script>
+<script src="datos/e21.js"></script>
+<script>
+// Glossary · Signals, from Zero to Expert.
+// Reads the terms from the 21 datos/eNN.js files (Curso.datosDe). If one is missing, that lesson is noted as “in preparation”
+// and the rest works the same. Sorting ignores accents and case, and so does the search.
+(function () {
+  'use strict';
+  const T = TEMARIO, crear = Curso.crear, num = Curso.num;
+  const $ = id => document.getElementById(id);
+  const plural = (n, uno, varios) => num(n) + ' ' + (n === 1 ? uno : varios);
+  const unir = partes => (partes.length < 2 ? partes.join('') : partes.slice(0, -1).join(', ') + (partes.length > 2 ? ',' : '') + ' and ' + partes[partes.length - 1]);
+  function rangos(ns) {
+    const partes = [];
+    for (let i = 0; i < ns.length;) {
+      let j = i;
+      while (j + 1 < ns.length && ns[j + 1] === ns[j] + 1) j++;
+      if (j - i >= 2) partes.push(ns[i] + ' to ' + ns[j]); else for (let k = i; k <= j; k++) partes.push(String(ns[k]));
+      i = j + 1;
+    }
+    return unir(partes);
+  }
+
+  // Lowercase text without accents, with the original character index of each one (to highlight what is found)
+  function conMapa(texto) {
+    let n = '';
+    const mapa = [];
+    for (let i = 0; i < texto.length; i++) {
+      const b = texto[i].normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+      for (let k = 0; k < b.length; k++) { n += b[k]; mapa.push(i); }
+    }
+    return { n, mapa };
+  }
+  const norm = s => conMapa(String(s == null ? '' : s)).n.replace(/\s+/g, ' ').trim();
+
+  // ── Gather the terms from all the lessons ──────────────────────────────────────────────────────────
+  const entradas = [], porClave = new Map(), faltan = [];
+  for (const l of T.lecciones) {
+    const d = Curso.datosDe(l.id);
+    const ts = d && Array.isArray(d.terminos) ? d.terminos.filter(t => t && t.termino) : [];
+    if (!ts.length) { faltan.push(l); continue; }
+    for (const t of ts) {
+      const clave = norm(t.termino);
+      let e = porClave.get(clave);
+      if (!e) { e = { clave, termino: String(t.termino), defs: [] }; porClave.set(clave, e); entradas.push(e); }
+      const def = String(t.definicion || ''), img = String(t.imagen || '');
+      // The same term in several lessons, with the same definition, is a single entry with several links
+      let g = e.defs.find(x => norm(x.definicion) === norm(def) && norm(x.imagen) === norm(img));
+      if (!g) { g = { definicion: def, imagen: img, lecciones: [] }; e.defs.push(g); }
+      if (!g.lecciones.includes(l)) g.lecciones.push(l);
+    }
+  }
+  const colador = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+  entradas.sort((a, b) => colador.compare(a.clave, b.clave));
+  const usados = new Set();
+  for (const e of entradas) {
+    e.letra = /[a-z]/.test(e.clave[0] || '') ? e.clave[0].toUpperCase() : '#';
+    let id = 't-' + (e.clave.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'x'), k = 2;
+    while (usados.has(id)) id = id.replace(/-\d+$/, '') + '-' + k++;
+    usados.add(id);
+    e.id = id;
+    e.texto = conMapa([e.termino, ...e.defs.map(g => g.definicion + ' ' + g.imagen)].join(' \n ')).n;
+  }
+
+  // ── Drawing ──────────────────────────────────────────────────────────────────────────────────────────────
+  // The text with what was found inside <mark>
+  function marcar(texto, palabras) {
+    if (!palabras.length) return [texto];
+    const { n, mapa } = conMapa(texto);
+    const tramos = [];
+    for (const p of palabras) for (let i = n.indexOf(p); i >= 0; i = n.indexOf(p, i + p.length)) tramos.push([mapa[i], mapa[i + p.length - 1] + 1]);
+    if (!tramos.length) return [texto];
+    tramos.sort((a, b) => a[0] - b[0]);
+    const unidos = [tramos[0].slice()];
+    for (const t of tramos.slice(1)) { const u = unidos[unidos.length - 1]; if (t[0] <= u[1]) u[1] = Math.max(u[1], t[1]); else unidos.push(t.slice()); }
+    const out = [];
+    let pos = 0;
+    for (const [a, b] of unidos) { if (a > pos) out.push(texto.slice(pos, a)); out.push(crear('mark', {}, texto.slice(a, b))); pos = b; }
+    if (pos < texto.length) out.push(texto.slice(pos));
+    return out;
+  }
+  function entrada(e, palabras) {
+    const dd = crear('dd');
+    for (const g of e.defs) {
+      dd.appendChild(crear('p', { class: 'glo-def' }, marcar(g.definicion, palabras)));
+      if (g.imagen) dd.appendChild(crear('span', { class: 'imagen-ancla' }, marcar(g.imagen, palabras)));
+      const enlaces = g.lecciones.map(l => crear('a', { href: l.id + '.html', title: l.titulo }, 'Lesson ' + l.n + ' · ' + l.corto + ' →'));
+      dd.appendChild(crear('span', { class: 'en-leccion' }, enlaces.map((a, i) => (i ? [' ', a] : a))));
+    }
+    return crear('div', { id: e.id }, crear('dt', {}, marcar(e.termino, palabras)), dd);
+  }
+  function pintar(consulta) {
+    const palabras = norm(consulta).split(' ').filter(Boolean);
+    const visibles = palabras.length ? entradas.filter(e => palabras.every(p => e.texto.includes(p))) : entradas;
+    const lista = $('lista'), letras = $('letras');
+    lista.replaceChildren();
+    letras.replaceChildren();
+    $('cuenta').textContent = !entradas.length ? '' : palabras.length ? num(visibles.length) + ' of ' + plural(entradas.length, 'term', 'terms') : plural(entradas.length, 'term', 'terms') + ' from ' + plural(T.lecciones.length - faltan.length, 'lesson', 'lessons');
+    if (entradas.length && !visibles.length) {
+      lista.appendChild(crear('div', { class: 'sin-resultados' },
+        crear('p', {}, 'No term contains “' + consulta.trim() + '”. Try another word or fewer letters.'),
+        crear('button', { type: 'button', class: 'boton', onclick: () => { $('q').value = ''; pintar(''); $('q').focus(); } }, 'Clear the filter')));
+      return;
+    }
+    const grupos = [];
+    for (const e of visibles) {
+      const g = grupos[grupos.length - 1];
+      if (g && g.letra === e.letra) g.items.push(e); else grupos.push({ letra: e.letra, items: [e] });
+    }
+    for (const g of grupos) {
+      const id = 'letra-' + (g.letra === '#' ? 'num' : g.letra.toLowerCase());
+      letras.appendChild(crear('a', { href: '#' + id, 'aria-label': 'Go to the letter ' + g.letra }, g.letra));
+      lista.appendChild(crear('div', { class: 'grupo' },
+        crear('h2', { class: 'letra', id }, g.letra, crear('a', { href: '#buscador' }, '↑ Search')),
+        crear('dl', { class: 'terminos' }, g.items.map(e => entrada(e, palabras)))));
+    }
+  }
+
+  // What is missing, while it is missing
+  function aviso() {
+    const cont = $('aviso');
+    if (!faltan.length) return;
+    const ns = faltan.map(l => l.n);
+    const todas = faltan.length === T.lecciones.length;
+    cont.appendChild(crear('aside', { class: 'nota' },
+      crear('span', { class: 'antetitulo' }, 'In preparation'),
+      crear('p', {}, todas ? 'There are no terms yet: the lessons are still being written, and each one adds its own when it is published.'
+        : 'The terms for ' + (faltan.length === 1 ? 'lesson ' : 'lessons ') + rangos(ns) + ' are still in preparation. The rest of the glossary already works.')));
+    if (todas) { $('buscador').hidden = true; $('letras').hidden = true; }
+  }
+
+  // A link such as glosario.html#phase or #letra-d: the terms are drawn with JavaScript, so we scroll by hand
+  function irAlHash() {
+    const id = decodeURIComponent((location.hash || '').slice(1));
+    const el = id && document.getElementById(id);
+    if (el) el.scrollIntoView({ block: 'start' });
+  }
+
+  const q = $('q');
+  q.addEventListener('input', () => pintar(q.value));
+  q.addEventListener('keydown', ev => { if (ev.key === 'Escape' && q.value) { q.value = ''; pintar(''); } });
+  $('buscador').addEventListener('submit', ev => ev.preventDefault());
+  aviso();
+  pintar('');
+  irAlHash();
+  window.addEventListener('hashchange', irAlHash);
+})();
+</script>
+</body>
+</html>

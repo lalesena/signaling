@@ -1669,6 +1669,9 @@
 
   const NOTAS = { do: 0, c: 0, re: 2, d: 2, mi: 4, e: 4, fa: 5, f: 5, sol: 7, g: 7, la: 9, a: 9, si: 11, b: 11 };
   const NOMBRES_NOTA = ['Do', 'Do#', 'Re', 'Re#', 'Mi', 'Fa', 'Fa#', 'Sol', 'Sol#', 'La', 'La#', 'Si'];
+  const NOMBRES_NOTA_EN = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+  // Idioma de la página (<html lang="en…"> → inglés). Senal también corre en Node, donde no hay document: español.
+  const enIngles = () => { try { return typeof document !== 'undefined' && !!document.documentElement && /^en/i.test((document.documentElement.getAttribute('lang') || '').trim()); } catch (e) { return false; } };
   // Frecuencia (Hz) de una nota: 'La4' = 'A4' = 440 Hz, 'Do4' = 261,63 Hz, 'Sib3', 'F#5'… (un número pasa tal cual).
   Senal.nota = function (nombre) {
     if (typeof nombre === 'number') return nombre;
@@ -1681,7 +1684,7 @@
   // Nota más cercana a una frecuencia. → { nombre ('La4'), midi, cents (desviación, de −50 a 50), frecuencia (la exacta) }.
   Senal.nombreNota = function (f) {
     const v = 69 + 12 * Math.log2(f / 440), midi = Math.round(v);
-    return { nombre: NOMBRES_NOTA[((midi % 12) + 12) % 12] + (Math.floor(midi / 12) - 1), midi, cents: 100 * (v - midi), frecuencia: 440 * Math.pow(2, (midi - 69) / 12) };
+    return { nombre: (enIngles() ? NOMBRES_NOTA_EN : NOMBRES_NOTA)[((midi % 12) + 12) % 12] + (Math.floor(midi / 12) - 1), midi, cents: 100 * (v - midi), frecuencia: 440 * Math.pow(2, (midi - 69) / 12) };
   };
 
   // ═══════════════════════════════════════════════════════════ Ejemplos sintéticos
@@ -2032,6 +2035,13 @@
   };
 
   // Catálogo para los laboratorios «En tu voz»: los tramos de la grabación de referencia y algunos extra.
+  const TITULOS_EN = {
+    silencio: 'Silence in the room', silbido: 'Sustained whistle', aaaIii: '“Aah” and then “eee”, on the same note',
+    aaa: 'Sustained “aah”', iii: 'Sustained “eee”', silbidoQueSube: 'Whistle that rises and falls',
+    frase: 'Synthetic phrase: “Hello, this is a synthetic signal”', palmadas: 'Three claps in the room and three in the bathroom',
+    melodia: 'Whistled melody', dosSilbidos: 'Two whistles that cross', acorde: 'C major chord', diapason: 'A 440 Hz tuning fork',
+    sirena: 'Siren that rises and falls',
+  };
   EJ.lista = [
     { id: 'silencio', titulo: 'Silencio de la habitación', dur: 3, tramo: 1 },
     { id: 'silbido', titulo: 'Silbido sostenido', dur: 3, tramo: 2 },
@@ -2047,6 +2057,7 @@
     { id: 'diapason', titulo: 'Diapasón de 440 Hz', dur: 3 },
     { id: 'sirena', titulo: 'Sirena que sube y baja', dur: 4 },
   ];
+  if (enIngles()) for (const e of EJ.lista) if (TITULOS_EN[e.id]) e.titulo = TITULOS_EN[e.id];
   // Genera un ejemplo por su id (los de lista y los demás: vocal, eee, ooo, uuu, respuestaSala). → Float64Array.
   EJ.generar = function (id, fs = FS_DEF, opts = {}) {
     const fn = EJ[id];

@@ -1,0 +1,1078 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fourier doesn’t know when: the spectrogram · Signals</title>
+<meta name="description" content="Lesson 11 of the visual course “Signals, from Zero to Expert”: why a song and the same song backwards have the same spectrum, how a sliding window builds the spectrogram and how to read it, with six challenges and your own voice.">
+<link rel="stylesheet" href="../comun/fuentes.css">
+<link rel="stylesheet" href="../comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e11">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Level 4 · Lesson 11</p>
+    <h1>Fourier doesn’t know when: the spectrogram</h1>
+    <aside class="pregunta">
+      <p>A song and the same song played backwards have exactly the same amplitude spectrum: the same Ferris wheels, each one the same size. And yet they sound very different, because a piano played backwards starts softly, swells and cuts off all at once. The spectrum knows everything about which frequencies are in a sound and still can’t tell a recording from its mirror image. What got lost along the way, and how do you get it back?</p>
+    </aside>
+    <ul class="meta"><li>About 50 minutes</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>The idea in one picture</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>Top, the wave of a sound with four notes and a clap, in green, with the purple window sliding along it. On the right, the spectrum of what is inside the window, in amber and turned on its side. Below, the spectrogram, which gains a column of color at each position of the window: time runs to the right, frequency upward, and energy is read from the decibel bar.</figcaption>
+    </figure>
+    <p>In <a href="e04.html">lesson 4</a>, the spectrum came from comparing the signal with a test Ferris wheel for each frequency, and each wheel turned for the whole recording. The <b class="termino">spectrogram</b> does the same with one chunk at a time. You cut out a short chunk with a smooth window, the Hann window from <a href="e05.html">lesson 5</a>, which leaves no edges for energy to escape through. You run Fourier on that chunk, and its spectrum is turned on its side and becomes a column of colors. You slide the window a little and repeat, and the columns, side by side, form a map with time across, frequency up and the energy of each cell as color, in decibels.</p>
+    <p>The procedure is called the <b class="termino" data-termino="Short-time Fourier transform (STFT)">short-time Fourier transform</b>, and the spectrogram is the energy of each of its cells. Move the window along the wave and watch how each position adds a column; with the other control, lengthen or shorten the window and watch how the picture changes.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Step by step</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>What Fourier knows and what it doesn’t</h3>
+      <p>Each test Ferris wheel from lesson 4 turns for the whole recording, and the spectrum says how much the signal resembles each one. That answers very well which wheels are there and how big they are, but since the wheels have no beginning or end, the spectrum has no way of saying when each thing sounds.</p>
+      <p>The clearest proof is to reverse a recording. If you read an audio file from back to front, its amplitude spectrum doesn’t change at all: the same wheels show up with the same size. The only thing that changes is the phase, the starting point of each wheel (<a href="e01.html">lesson 1</a>), and there, spread among all of them, the order in which things sound is hidden. This holds for the spectrum of the whole recording, computed in one go, and it is true of any real signal, as all audio is.</p>
+      <p>As long as the sound doesn’t change, it doesn’t matter: a tuning fork sounds the same from start to finish and its spectrum tells the whole story. Voice, music or birdsong change from one instant to the next, and a signal like that is called a <b class="termino">nonstationary signal</b>. With it, the question is no longer which wheels are there, but which wheels are there right now.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Listen to the two versions of a three-note melody and find the one that plays forward. The amplitude spectra of both, drawn above, are identical, so you will have to trust your ear. Get it right twice in a row.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="fila" id="r1-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>Cut, look and stack</h3>
+      <p>To know which wheels are there right now, it is enough to look only at what is happening right now. You place a short window over the signal, a few tens of milliseconds long, and only what falls inside counts. You run Fourier on that chunk and its spectrum says what sounds at that instant. If you repeat the calculation with the window in one place and then in another, you have a photograph of what sounds at each moment.</p>
+      <p>The window advances in jumps, and the distance between the start of one window and the start of the next is the <b class="termino">hop</b>. A small hop gives many columns per second and a large one gives few, but it doesn’t change how sharp each column comes out, which is down to the duration of the window. In <a href="e10.html">lesson 10</a> the signal was also cut into chunks, but there the chunks were averaged to remove noise; here they are lined up, one next to the other, to see how things change.</p>
+      <p>With a symmetric window, the spectrogram of the reversed recording is exactly the original seen in a mirror, with time turned around. That is the sign that the when is now stored: each column takes its own place, and reversing the recording changes that place.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Four notes sound, one after another, and one of them is 554 Hz. Drag the window, or move it with the keyboard arrows, until it sits on top of that note, well inside it. The spectrum of the chunk tells you what sounds at each spot.</p>
+        <div class="escena" id="r2-escena"></div>
+        <div class="fila" id="r2-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>Four shapes to read almost any sound</h3>
+      <p>A spectrogram reads like a score that the sound draws itself, with time across and the height of the note vertical. A tone that holds, like a sustained whistle, is a horizontal line. If the tone changes, the line curves, and a whistle that rises draws an ascending diagonal. A bang, like a clap or the start of a “p,” lasts an instant and sounds at many frequencies at once, so it draws a vertical line. Noise, like an “s” or the wind, has no note or instant: it spreads over a zone of frequencies and draws a cloud.</p>
+      <p>The fourth shape is a stack of horizontal lines at the same distance from each other, which is what a sung vowel draws and which the next step covers. With these four, the curving line, the vertical, the cloud and the stack, you can interpret almost any spectrogram.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Listen to the four sounds and choose the spectrogram that matches each one. Each drawing fits only one sound, and they are shuffled on every visit.</p>
+        <div class="escena" id="r3-escena"></div>
+        <div class="columnas-2" id="r3-sonidos"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>A note is a stack of lines</h3>
+      <p>When you sing an “aah,” you don’t get a single line, but a stack of horizontal lines at the same distance from each other. They are the harmonics from <a href="e03.html">lesson 3</a>, the wheels sounding at once at a frequency that is a multiple of the fundamental, and the distance between two consecutive lines is exactly the frequency of the fundamental. The note you hear is the lowest line, and the ones above it make up its timbre. A low voice has the lines closer together and a high voice has them farther apart.</p>
+      <p>If you sing an “ah” and then an “ee” on the same note, the lines stay where they were, because the note hasn’t changed. What changes is which ones light up, because the mouth and throat reinforce some zones of frequencies and mute others. Those brighter bands within the stack are the <b class="termino">formants</b>. In the “ee” the first band sits very low and the second very high; in the “ah” the two come closer together in the middle. The numbers vary from one person to another, and that is why it is better to look at the shape than at the figures.</p>
+      <p>Formants also explain why a whisper can be understood. When you whisper, the vocal cords don’t vibrate and the harmonic lines disappear, but the bright bands stay in place, and with them, the vowels.</p>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">This melody has five notes. Tap the spectrogram once per note, at the height of its fundamental, which is the lowest line of each stack. You can drag the marks to correct them.</p>
+        <div class="escena" id="r4-escena"></div>
+        <div class="fila" id="r4-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>The window is a decision</h3>
+      <p>The duration of the window decides the sharpness, and there is no duration that is good for everything. With a short window, onsets and bangs come out thin, but notes blur in frequency and the harmonics merge. With a long window the opposite happens: notes are thin lines and the harmonics separate, but bangs spread out into wide smears. <a href="e12.html">Lesson 12</a> explains why you can’t have both at once.</p>
+      <p>The first spectrograph already had to choose. It was presented in 1946 by Koenig, Dunn and Lacy, of Bell Labs, and it had two filters, a narrow one of 45 hertz and a wide one of 300. With the narrow one you could see each harmonic of the voice going up and down with the intonation; with the wide one, the vowels appeared as dark bands and each vibration of the vocal cords as a vertical line. Its inventors settled on the wide one as a compromise. Today people speak of a <b class="termino" data-termino="Wideband and narrowband">narrowband</b> spectrogram, made with a long window, which shows the harmonics, and a <b class="termino" data-termino="Wideband and narrowband">wideband</b> one, with a short window, which shows the formants and the bangs.</p>
+      <p>The other controls of a spectrogram do different things. The hop only decides how many columns there are per second, and zero padding, as in lesson 5, draws the same column with more points without adding information. The decibel range decides what is seen and what sinks into the black, and that is why the color is not the volume you hear: it depends on the range you have chosen. The sharpness is decided by the duration of the chunk, which is tied to the spacing between rows: with chunks of 512 samples at 11,025 Hz, each chunk lasts about 0.046 s and the rows of the map are 21.6 Hz apart, and the longer the duration, the closer together the rows.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">This synthetic birdsong is a trill, a series of very closely spaced notes, followed by a whistle. With the long window it starts with, the notes merge into a band. Shorten the window until they separate, count how many notes the trill has in its second, and type the number.</p>
+        <div class="escena" id="r5-escena"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>The axis is a decision too</h3>
+      <p>The frequency axis of a spectrogram can be linear, with the hertz spread out evenly, or <b class="termino" data-termino="Logarithmic frequency scale">logarithmic</b>, with each octave taking up the same space, like the octaves on a piano keyboard. The linear one gives almost all the room to the high pitches and very little to the low ones, while the logarithmic one treats notes of any pitch equally.</p>
+      <p>A famous case: in 1999, Aphex Twin hid his own face in sound. It is at the end of the second track of the single <i>Windowlicker</i>, the one titled with a mathematical formula, starting at minute 5:27 and lasting about ten seconds. To see it you need a spectrogram with the frequency axis on a logarithmic scale, and on a linear one it comes out distorted. It is attributed to a program called MetaSynth, which turns an image into sound. The song that gives the single its name hides another image at the end, a spiral. Neither the image nor the audio of those tracks can be here, because they belong to third parties, and that is why the challenge repeats the trick with a word hidden in a synthetic sound.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">There is a four-letter word hidden in this sound, drawn with tones. Find the spectrogram setting that lets you read it and type it in the field.</p>
+        <div class="escena" id="r6-escena"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+
+      <p>The spectrogram is good for much more than looking. Shazam, according to the method Wang published in 2003, doesn’t compare whole songs: it turns each song into a spectrogram and keeps only its peaks, scattered points that look like a starry sky. To recognize what is playing, it slides the constellation of your recording over that of each song until many stars coincide at once, and each pair of peaks forms a small <b class="termino">audio fingerprint</b> that is easy to search for. It withstands a huge amount of noise: in the tests in the paper, it was enough for 1 or 2% of the fingerprints of a 15-second sample to survive. That is the 2003 method, and I don’t know how the app works today.</p>
+      <p>Ornithologists have been reading birdsong with their eyes for more than seventy years. The 1946 paper on the spectrograph already included the song of a nightingale and that of a thrush, which at the end of its song emits two notes at once. In 1954, W. H. Thorpe used the device to study how chaffinches learn to sing. The machine sold afterward, the Sona-Graph, gave its name to the birders’ <b class="termino" data-termino="Sonagram (sonogram)">sonagram</b>. Today the Merlin app, from the Cornell Lab of Ornithology, turns each recording into a spectrogram and classifies it with image-recognition techniques; when its sound identification feature came out, in 2021, it distinguished more than 400 species from the United States and Canada.</p>
+      <p>To view your own recordings outside this page, Audacity has a spectrogram view in which you choose the window size and the scale of the axis, linear or logarithmic.</p>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>In your voice</h2>
+    <p><b>What to record.</b> An “aah” followed by an “eee” on the same note, about 3 seconds each, which are segment 3 of the series’ reference recording. If you want more, try a whistle that goes up and down (segment 4), a sentence (segment 5) or a whistled melody (segment 7). Record with the microphone if your browser allows it; if not, upload audio recorded with your phone or pick one of the synthetic examples.</p>
+    <p><b>What to look at.</b> The spectrogram of whatever you load, with the spectrum of the whole recording turned on its side next to it. In narrowband, your “aah” breaks up into a stack of horizontal lines, closer together the lower your voice is. In wideband, the lines melt into bands and each vibration of your vocal cords shows up as a vertical line. Notice that in the “eee” different bands light up than in the “aah,” even though the note is the same. If you see thin, fixed lines at 50, 100 and 150 Hz even in the silences (60, 120 and 180 Hz in much of the Americas), that is the hum of the power line and not your voice.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>What to remember</h2>
+    <ol class="tres">
+      <li>The spectrum of a whole recording says which wheels are there, but not when they sound: a recording and the same one backwards have the same amplitude spectrum, and the order is hidden in the phase.</li>
+      <li>The spectrogram cuts the signal with a sliding window, runs Fourier on each chunk and stacks the spectra as columns of color: time to the right, frequency upward and energy in decibels. It is read by shapes: the line, the vertical, the stack of harmonics and the cloud.</li>
+      <li>The duration of the window is a decision: short, it shows when well; long, it shows which note well. The hop and the zeros sharpen nothing, and the color depends on the decibel range you choose.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Common mistakes</h2>
+    <ul class="errores">
+      <li><b>“The spectrum already says when each note sounds.”</b> The amplitude spectrum of a recording and that of the same one backwards are identical. The order is in the phase, spread among all the wheels, and can’t be read at a glance. To know when, you have to cut the signal into chunks, which is what the spectrogram does.</li>
+      <li><b>“To see more detail I reduce the hop or pad with zeros.”</b> The hop only adds columns and padding with zeros only draws more points of the same curve, as we saw in lesson 5. The sharpness in frequency is decided by the duration of the window.</li>
+      <li><b>“Each horizontal line is a different note.”</b> A single note from a voice or an instrument is a whole stack of lines, its harmonics. The note is the lowest line, or the distance between the lines, and the “ah” and the “ee” sung on the same note have the same lines, with different bands lit up.</li>
+      <li><b>“The color is the volume you hear.”</b> The color is the energy of each cell in decibels relative to the maximum, and it depends on the chosen range: if you lower the floor, things that couldn’t be heard appear, and if you raise it, they disappear. Besides, the ear doesn’t hear all frequencies equally loud.</li>
+      <li><b>“The longer the window, the better.”</b> A long window sharpens the notes, but turns each bang into a wide smear. There is no best window in general: it depends on what you want to see, and that is what lesson 12 is about.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Open</span>
+      <h2>Math corner</h2>
+      <span class="resumen">The formulas, for anyone who wants them. Each one comes after its reading in words.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>The short-time Fourier transform</h3>
+      <p>For each instant <span class="tex">\tau</span>, the signal is multiplied by the window centered at <span class="tex">\tau</span> and the result is compared with a Ferris wheel of frequency <span class="tex">f</span>, adding up the area of the product:</p>
+      <div class="tex">X(\tau, f) = \int_{-\infty}^{\infty} x(t)\, w(t-\tau)\, e^{-i 2\pi f t}\, dt</div>
+
+      <h3>The spectrogram</h3>
+      <p>The spectrogram is the energy of each cell, and in decibels, ten times its logarithm:</p>
+      <div class="tex">S(\tau, f) = |X(\tau, f)|^2, \qquad S_{\mathrm{dB}} = 10 \log_{10} S</div>
+
+      <h3>In samples</h3>
+      <p>Column <span class="tex">m</span> starts <span class="tex">m</span> hops further on, row <span class="tex">k</span> corresponds to <span class="tex">k</span> times the sampling rate divided by the chunk size <span class="tex">N</span>, and <span class="tex">H</span> is the hop in samples:</p>
+      <div class="tex">X[m,k] = \sum_{n} x[n]\, w[n - mH]\, e^{-i 2\pi k n / N}, \qquad t_m = \frac{mH}{f_s}, \qquad f_k = \frac{k f_s}{N}</div>
+
+      <h3>Chunk duration and row spacing</h3>
+      <p>The chunk lasts as long as it takes <span class="tex">N</span> samples to go by, the rows are separated by the sampling rate divided by <span class="tex">N</span>, and the product of the two always equals one:</p>
+      <div class="tex">\Delta t_{\text{chunk}} = \frac{N}{f_s}, \qquad \Delta f_{\text{row}} = \frac{f_s}{N}, \qquad \Delta t_{\text{chunk}}\,\Delta f_{\text{row}} = 1</div>
+
+      <h3>The song backwards</h3>
+      <p>If <span class="tex">y</span> is <span class="tex">x</span> reversed within a duration <span class="tex">T</span>, and <span class="tex">x</span> is real, the transform of <span class="tex">y</span> is the conjugate of that of <span class="tex">x</span> with a phase twist, and the magnitudes coincide:</p>
+      <div class="tex">y(t) = x(T - t) \;\Rightarrow\; Y(f) = e^{-i 2\pi f T}\, \overline{X(f)} \;\Rightarrow\; |Y(f)| = |X(f)|</div>
+
+      <h3>Its spectrogram, in the mirror</h3>
+      <p>With a symmetric window, the spectrogram of the reversed version is the original with time inverted:</p>
+      <div class="tex">|Y(\tau, f)| = |X(T - \tau, f)|</div>
+
+      <h3>The Shazam fingerprint</h3>
+      <p>Each pair of peaks gives a fingerprint with two frequencies and a time difference. If the sample comes from the song, the differences between the song’s instants and the sample’s instants pile up at a single value, the offset:</p>
+      <div class="tex">h = (f_1,\, f_2,\, t_2 - t_1), \qquad \delta t_k = t'_k - t_k \approx \text{constant}</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Further reading</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Open book</span>Downey, A. B., <a href="https://greenteapress.com/thinkdsp/html/thinkdsp004.html"><i>Think DSP</i>, ch. 3, “Non-periodic signals”</a>. Chirps, the spectrogram, the trade-off between time and frequency, and leakage, with Python code.</li>
+      <li><span class="tipo">Article</span>Wang, A. (2003), <a href="https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf"><i>An Industrial-Strength Audio Search Algorithm</i></a>. Seven clear pages, with the figures of the constellation of peaks and the histogram of offsets.</li>
+      <li><span class="tipo">Manual</span><a href="https://manual.audacityteam.org/man/spectrogram_view.html">Audacity, <i>Spectrogram View</i></a>. How to view your own recordings, with window size and a linear or logarithmic scale.</li>
+      <li><span class="tipo">Article</span>Koenig, W., Dunn, H. K. and Lacy, L. Y. (1946), <a href="https://languagelog.ldc.upenn.edu/myl/koenig1946.pdf"><i>The Sound Spectrograph</i></a>, <i>JASA</i>. The paper that introduced the spectrograph, with voice, birds and the two filters.</li>
+      <li><span class="tipo">Web</span>Bastwood, <a href="http://www.bastwood.com/?page_id=10"><i>The Aphex Face</i></a>. Aphex Twin’s face and why the logarithmic scale is needed.</li>
+      <li><span class="tipo">Open book</span>Smith, S. W., <a href="https://www.dspguide.com/ch10/2.htm"><i>The Scientist and Engineer's Guide to Digital Signal Processing</i>, ch. 10</a>. Why reversing a signal changes the sign of its phase but not the size of its spectrum.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>New terms</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Lesson quiz</h2>
+  </section>
+
+</main>
+
+<script src="temario.js"></script>
+<script src="../comun/graficas.js"></script>
+<script src="../comun/senal.js"></script>
+<script src="../comun/curso.js"></script>
+<script src="datos/e11.js"></script>
+<script>
+(function () {
+// Lección 11 · Fourier no sabe cuándo: el espectrograma. La imagen ancla (la ventana deslizante), los seis retos y el
+// laboratorio «En tu voz». Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo.
+// Convenios: tiempo hacia la derecha y frecuencia hacia arriba; señales en verde, espectros en ámbar, ventanas en
+// púrpura y mapas en magma con su leyenda en dB.
+'use strict';
+const G = Graficas, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+const pot2 = n => Senal.siguientePotencia2(n);
+const redondear = (v, d) => Math.round(v * Math.pow(10, d)) / Math.pow(10, d);
+const ms = v => num(v) + ' ms';
+const altoDe = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); (typeof contenedor === 'string' ? document.querySelector(contenedor) : contenedor).appendChild(f); return f; };
+
+// ── Utilidades de cálculo y dibujo ───────────────────────────────────────────────────────────────────
+// Recorta un mapa (E: { t, f, nT, nF, db }) a una zona [t0, t1] × [f0, f1] y lo deja listo para Graficas.mapa.
+function recortarMapa(E, t0, t1, f0, f1) {
+  const dt = E.nT > 1 ? E.t[1] - E.t[0] : 1, df = E.nF > 1 ? E.f[1] - E.f[0] : 1;
+  const j0 = limitar(Math.floor(t0 / dt), 0, E.nT - 1), j1 = limitar(Math.ceil(t1 / dt), j0, E.nT - 1);
+  const k0 = limitar(Math.floor(f0 / df), 0, E.nF - 1), k1 = limitar(Math.ceil(f1 / df), k0, E.nF - 1);
+  const nT = j1 - j0 + 1, nF = k1 - k0 + 1, datos = new Float32Array(nF * nT);
+  for (let k = 0; k < nF; k++) for (let j = 0; j < nT; j++) datos[k * nT + j] = E.db[(k + k0) * E.nT + j + j0];
+  return { datos, nF, nT, t: E.t.subarray(j0, j1 + 1), f: E.f.subarray(k0, k1 + 1) };
+}
+// Remuestrea las filas de un mapa a una rejilla uniforme en log2(f), entre fmin y fmax. El eje del resultado se
+// dibuja en unidades de log2(f), con marcas en las octavas.
+function mapaLog(E, t0, t1, fmin, fmax, filas) {
+  const dt = E.nT > 1 ? E.t[1] - E.t[0] : 1, df = E.f[1] - E.f[0];
+  const j0 = limitar(Math.floor(t0 / dt), 0, E.nT - 1), j1 = limitar(Math.ceil(t1 / dt), j0, E.nT - 1), nT = j1 - j0 + 1;
+  const lo = Math.log2(fmin), hi = Math.log2(fmax), paso = (hi - lo) / filas;
+  const datos = new Float32Array(filas * nT), f = new Float64Array(filas);
+  for (let r = 0; r < filas; r++) {
+    const lc = lo + (r + 0.5) * paso;
+    f[r] = lc;
+    const a = Math.pow(2, lc - paso / 2) / df, b = Math.pow(2, lc + paso / 2) / df, c = Math.pow(2, lc) / df;
+    const ka = Math.ceil(a), kb = Math.floor(b);
+    for (let j = 0; j < nT; j++) {
+      let v;
+      if (kb >= ka) { v = -Infinity; for (let k = ka; k <= kb && k < E.nF; k++) v = Math.max(v, E.db[k * E.nT + j + j0]); }
+      else { const k = Math.floor(c), u = c - k, v0 = E.db[Math.min(k, E.nF - 1) * E.nT + j + j0], v1 = E.db[Math.min(k + 1, E.nF - 1) * E.nT + j + j0]; v = v0 + u * (v1 - v0); }
+      datos[r * nT + j] = v;
+    }
+  }
+  return { datos, nF: filas, nT, t: E.t.subarray(j0, j1 + 1), f };
+}
+// Un mapa tiempo-frecuencia con sus ejes y su leyenda en dB (frecuencia hacia arriba, escala magma).
+function dibujarMapa(ctx, w, h, C, V, o) {
+  const margen = { izquierda: w < 380 ? 44 : 52, derecha: w < 380 ? 52 : 60, arriba: o.titulo && w >= 520 ? 28 : 14, abajo: 32 };
+  const esc = G.ejes(ctx, { x: o.x, y: o.y, marcasX: o.marcasX, marcasY: o.marcasY, formatoX: o.formatoX, formatoY: o.formatoY, rejilla: false,
+    etiquetaX: o.etiquetaX, etiquetaY: o.etiquetaY || 'frequency (Hz)', margen, C });
+  if (V) G.mapa(ctx, esc, { datos: V.datos, nF: V.nF, nT: V.nT, t: V.t, f: V.f, rango: o.rango });
+  ctx.save();
+  ctx.strokeStyle = C.eje;
+  ctx.strokeRect(Math.round(esc.caja.x) + 0.5, Math.round(esc.caja.y) + 0.5, Math.round(esc.caja.w), Math.round(esc.caja.h));
+  ctx.restore();
+  G.leyenda(ctx, { x: w - margen.derecha + 14, y: esc.caja.y + 14, ancho: 9, alto: Math.max(40, esc.caja.h - 14), rango: o.rango, etiqueta: 'dB', C });
+  if (o.titulo && w >= 520) G.texto(ctx, esc.caja.x + esc.caja.w, 17, o.titulo, { alinear: 'right', color: C.suave, tam: 11, peso: 600, C });
+  return esc;
+}
+// Un mapa pequeño sin leyenda ni ejes numéricos (para los dibujos del reto 3): V con t y f en unidades reales.
+function miniMapa(ctx, w, h, C, V, rango, titulo, dur, fmax) {
+  const caja = { x: 4, y: titulo ? 20 : 4, w: w - 8, h: h - (titulo ? 24 : 8) };
+  const esc = G.ejes(ctx, { caja, x: [0, dur], y: [0, fmax], rejilla: false, marcasX: false, marcasY: false, cero: false, C });
+  if (V) G.mapa(ctx, esc, { datos: V.datos, nF: V.nF, nT: V.nT, t: V.t, f: V.f, rango });
+  ctx.save(); ctx.strokeStyle = C.eje; ctx.strokeRect(caja.x + 0.5, caja.y + 0.5, caja.w - 1, caja.h - 1); ctx.restore();
+  if (titulo) G.texto(ctx, caja.x + 2, 13, titulo, { color: C.suave, tam: 12, peso: 600, C });
+  return esc;
+}
+// Una ventana de Hann dibujada sobre un eje de tiempo: ancho en segundos, centro c.
+const hann = u => (Math.abs(u) < 0.5 ? Math.pow(Math.cos(Math.PI * u), 2) : 0);
+// Una nota pura con principio y final suaves.
+function nota(f, dur, fs, { amp = 1, armonicos = [1], ataque = 0.01, caida = 0.02 } = {}) {
+  const n = Math.round(dur * fs), x = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    const t = i / fs;
+    let s = 0;
+    for (let k = 0; k < armonicos.length; k++) if ((k + 1) * f < fs / 2) s += armonicos[k] * Math.sin(TAU * (k + 1) * f * t);
+    x[i] = amp * s * Math.min(1, t / ataque) * Math.min(1, (dur - t) / caida);
+  }
+  return x;
+}
+const pegar = (...xs) => { let n = 0; for (const x of xs) n += x.length; const y = new Float64Array(n); let o = 0; for (const x of xs) { y.set(x, o); o += x.length; } return y; };
+const invertir = x => { const y = new Float64Array(x.length); for (let i = 0; i < x.length; i++) y[i] = x[x.length - 1 - i]; return y; };
+// Frecuencia del pico del espectro de un trozo (ventana de Hann, relleno ×8, interpolación parabólica).
+function picoDeTrozo(x, fs) {
+  const n = x.length, w = Senal.ventana('hann', n), y = new Float64Array(n);
+  for (let i = 0; i < n; i++) y[i] = x[i] * w[i];
+  const nfft = pot2(n * 8), X = Senal.fftReal(y, nfft), df = fs / nfft, K = Math.floor(nfft / 2);
+  const mag = new Float64Array(K + 1);
+  let mx = 0, im = 1;
+  for (let k = 0; k <= K; k++) { mag[k] = Math.hypot(X.re[k], X.im[k]); if (k > 0 && mag[k] > mx) { mx = mag[k]; im = k; } }
+  let f = im * df;
+  if (im > 0 && im < K) { const a = mag[im - 1], b = mag[im], c = mag[im + 1], d = a - 2 * b + c; if (d !== 0) f = (im + 0.5 * (a - c) / d) * df; }
+  return { f, mag, df, max: mx };
+}
+
+// ── La idea en una imagen: la ventana deslizante construye el espectrograma ──────────────────────────
+// Un sonido de 1,8 s a 8 kHz (cuatro notas con armónicos y una palmada). La ventana de Hann se desliza por la onda y,
+// en cada posición, su espectro (ámbar, tumbado) se añade como una columna del espectrograma.
+(function () {
+  const FS = 8000, DUR = 1.8, FMAX = 3000;
+  const NOTAS = [330, 440, 554, 659];
+  const x = (() => {
+    const partes = [new Float64Array(Math.round(0.05 * FS))];
+    for (const f of NOTAS) partes.push(nota(f, 0.35, FS, { amp: 0.5, armonicos: [1, 0.5, 0.3], ataque: 0.02, caida: 0.04 }));
+    const pal = new Float64Array(Math.round(0.35 * FS)), az = Senal.azar(11);
+    for (let i = 0; i < pal.length; i++) pal[i] = 0.9 * Math.exp(-i / (0.006 * FS)) * az.normal();
+    partes.push(pal);
+    const y = pegar(...partes), z = new Float64Array(Math.round(DUR * FS));
+    z.set(y.subarray(0, z.length));
+    return z;
+  })();
+  const e = { n: 1024, p: 0.62, E: null, V: null, pico: 0, anim: null };
+  function calcular() {
+    e.E = Senal.espectrograma(x, FS, { n: e.n, salto: 32, ventana: 'hann', nfft: Math.max(1024, pot2(e.n)), suelo: -120 });
+    e.V = recortarMapa(e.E, 0, DUR, 0, FMAX);
+  }
+  calcular();
+  const columna = () => limitar(Math.round(e.p * FS / 32), 0, e.E.nT - 1);
+  let mandoPos = null, mandoVen = null;
+  const mandos = document.getElementById('ancla-mandos');
+  const lect = Curso.lecturas(mandos, [
+    { id: 'ven', nombre: 'Window', clase: 'respuesta' },
+    { id: 'pos', nombre: 'Position' },
+    { id: 'pico', nombre: 'Peak in the window', clase: 'senal' },
+  ]);
+  const L = G.lienzo('#ancla-escena', {
+    alto: altoDe(330, 380),
+    etiqueta: 'Top, the wave of four notes and a clap with a purple window that slides along; below, the spectrogram being built column by column, and on the right the spectrum of the chunk inside the window, in amber and turned on its side. The control moves the window through the sound.',
+    dibujar: (ctx, w, h, C) => {
+      const sw = w < 480 ? 52 : 84, izq = w < 380 ? 40 : 48, der = w < 380 ? 52 : 60;
+      const pw = w - izq - sw - der - 8, alto1 = Math.round(h * 0.2), y1 = 16, y2 = y1 + alto1 + 22, alto2 = h - y2 - 34;
+      const rango = [e.E.max - 60, e.E.max];
+      // La onda.
+      const esc1 = G.ejes(ctx, { caja: { x: izq, y: y1, w: pw, h: alto1 }, x: [0, DUR], y: [-1.1, 1.1], marcasX: false, marcasY: false, rejilla: false, C });
+      G.linea(ctx, esc1, null, x, { t0: 0, dt: 1 / FS, color: C.senal, alfa: 0.4, ancho: 1.2, halo: false, C });
+      const T = e.n / FS, a = Math.max(0, e.p - T / 2), b = Math.min(DUR, e.p + T / 2);
+      const i0 = Math.floor(a * FS), i1 = Math.ceil(b * FS), xs = [], ys = [];
+      for (let i = i0; i < i1; i++) { xs.push(i / FS); ys.push(x[i] * hann((i / FS - e.p) / T)); }
+      ctx.save();
+      ctx.fillStyle = G.alfa(C.plantilla, 0.18);
+      ctx.beginPath(); ctx.moveTo(esc1.x(e.p - T / 2), esc1.y(0));
+      for (let u = 0; u <= 40; u++) { const t = e.p - T / 2 + T * u / 40; ctx.lineTo(esc1.x(t), esc1.y(1.05 * hann((t - e.p) / T))); }
+      ctx.lineTo(esc1.x(e.p + T / 2), esc1.y(0)); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = C.plantilla; ctx.lineWidth = 1.8; ctx.stroke();
+      ctx.restore();
+      if (xs.length) G.linea(ctx, esc1, xs, ys, { color: C.senal, ancho: 1.8, C });
+      G.texto(ctx, esc1.caja.x + 2, y1 + 10, 'wave', { color: C.tenue, tam: 10.5, C });
+      // El espectrograma, revelado hasta la ventana.
+      const esc2 = G.ejes(ctx, { caja: { x: izq, y: y2, w: pw, h: alto2 }, x: [0, DUR], y: [0, FMAX], marcasX: [0, 0.5, 1, 1.5], marcasY: [0, 1000, 2000, 3000], formatoX: v => num(v, 1), formatoY: v => num(v),
+        etiquetaX: 'time (s)', etiquetaY: 'frequency (Hz)', rejilla: false, C });
+      ctx.save();
+      ctx.beginPath(); ctx.rect(esc2.caja.x, esc2.caja.y, Math.max(0, esc2.x(e.p) - esc2.caja.x), esc2.caja.h); ctx.clip();
+      G.mapa(ctx, esc2, { datos: e.V.datos, nF: e.V.nF, nT: e.V.nT, t: e.V.t, f: e.V.f, rango });
+      ctx.restore();
+      ctx.save();
+      ctx.strokeStyle = C.eje; ctx.strokeRect(Math.round(esc2.caja.x) + 0.5, Math.round(esc2.caja.y) + 0.5, Math.round(esc2.caja.w), Math.round(esc2.caja.h));
+      ctx.strokeStyle = C.plantilla; ctx.lineWidth = 1.6; ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.moveTo(esc2.x(e.p), esc2.caja.y); ctx.lineTo(esc2.x(e.p), esc2.caja.y + esc2.caja.h); ctx.stroke();
+      // El eco de la ventana en el tiempo: dos guiones que la unen con la onda de arriba.
+      ctx.beginPath(); ctx.moveTo(esc1.x(e.p), esc1.caja.y + esc1.caja.h); ctx.lineTo(esc2.x(e.p), esc2.caja.y); ctx.stroke();
+      ctx.restore();
+      // El espectro del trozo, tumbado a la derecha, con el mismo eje de frecuencias.
+      const j = columna(), x0 = esc2.caja.x + esc2.caja.w + 8;
+      ctx.save();
+      ctx.strokeStyle = C.eje; ctx.strokeRect(Math.round(x0) + 0.5, Math.round(esc2.caja.y) + 0.5, sw, Math.round(esc2.caja.h));
+      ctx.beginPath(); ctx.rect(x0 + 1, esc2.caja.y, sw - 1, esc2.caja.h); ctx.clip();
+      const dbs = [], fs_ = [];
+      for (let k = 0; k < e.V.nF; k++) { dbs.push(limitar((e.V.datos[k * e.V.nT + j] - rango[0]) / (rango[1] - rango[0]), 0, 1)); fs_.push(e.V.f[k]); }
+      ctx.fillStyle = G.alfa(C.espectro, 0.2);
+      ctx.beginPath(); ctx.moveTo(x0, esc2.y(fs_[0]));
+      for (let k = 0; k < fs_.length; k++) ctx.lineTo(x0 + dbs[k] * (sw - 2), esc2.y(fs_[k]));
+      ctx.lineTo(x0, esc2.y(fs_[fs_.length - 1])); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = C.espectro; ctx.lineWidth = 1.8; ctx.beginPath();
+      for (let k = 0; k < fs_.length; k++) { const px = x0 + dbs[k] * (sw - 2), py = esc2.y(fs_[k]); if (k) ctx.lineTo(px, py); else ctx.moveTo(px, py); }
+      ctx.stroke();
+      ctx.restore();
+      G.texto(ctx, x0 + sw / 2, esc2.caja.y + esc2.caja.h + 14, 'spectrum', { color: C.tenue, tam: 10.5, alinear: 'center', C });
+      G.leyenda(ctx, { x: w - der + 18, y: esc2.caja.y + 12, ancho: 9, alto: Math.max(40, esc2.caja.h - 12), rango, etiqueta: 'dB', C });
+    },
+  });
+  function pintar() {
+    const j = columna(), col = new Float64Array(e.E.nF);
+    for (let k = 0; k < col.length; k++) col[k] = e.E.db[k * e.E.nT + j];
+    let mx = -Infinity, km = 0;
+    for (let k = 1; k < col.length && e.E.f[k] <= FMAX; k++) if (col[k] > mx) { mx = col[k]; km = k; }
+    e.pico = e.E.f[km];
+    lect.fijar('ven', ms(1000 * e.n / FS));
+    lect.fijar('pos', num(e.p, 2) + ' s');
+    lect.fijar('pico', mx > e.E.max - 45 ? num(e.pico, 0) + ' Hz' : 'no note');
+    L.canvas.setAttribute('aria-valuetext', 'Window at ' + num(e.p, 2) + ' s');
+    L.dibujar();
+  }
+  mandoPos = Curso.mando(mandos, { etiqueta: 'Window position', min: 0, max: DUR, paso: 0.01, valor: e.p, formato: v => num(v, 2) + ' s',
+    alCambiar: v => { e.p = v; if (e.anim) e.anim.pausar(); pintar(); } });
+  mandoVen = Curso.mando(mandos, { etiqueta: 'Window length', escala: 'log', min: 64, max: 2048, paso: 1, valor: 1024, clase: 'respuesta',
+    formato: v => ms(1000 * Math.round(v) / FS),
+    alCambiar: v => { e.n = Math.round(v); calcular(); pintar(); } });
+  const bots = filaBotones(mandos);
+  Curso.audio.boton(bots, () => ({ x, fs: FS, volumen: 0.6 }), 'Listen to the sound');
+  e.anim = Curso.animar(L, (t, dt) => {
+    if (dt > 0) {
+      e.p += dt * 0.4;
+      if (e.p > DUR + 0.5) e.p = 0;
+      mandoPos.fijar(limitar(e.p, 0, DUR), false);
+    }
+    pintar();
+  }, { boton: bots });
+  pintar();
+})();
+
+// ── Reto 1 · ¿Cuál va al derecho? (escuchar y elegir) ────────────────────────────────────────────────
+// Una melodía de tres notas con sonido de piano (ataque seco y caída exponencial) y la misma invertida. Los
+// espectros de amplitudes de las dos grabaciones enteras son idénticos: solo el oído (o la onda) las distingue.
+(function () {
+  const FS = 16000, NFFT = 32768, azar = Curso.azar();
+  const SETS = [[523, 659, 784], [659, 523, 784], [784, 659, 523], [523, 784, 659], [659, 784, 523], [784, 523, 659]];
+  function piano(f, dur) {
+    const n = Math.round(dur * FS), x = new Float64Array(n);
+    for (let i = 0; i < n; i++) { const t = i / FS; x[i] = (Math.sin(TAU * f * t) + 0.35 * Math.sin(TAU * 2 * f * t)) * Math.min(1, t / 0.001) * Math.exp(-t / 0.25); }
+    return x;
+  }
+  const e = { ronda: null, racha: 0, mensaje: '', ondas: false, d: 0 };
+  function nueva(previa) {
+    let f; do { f = azar.elegir(SETS); } while (previa && f === previa.notas);
+    const derecho = pegar(...f.map(g => piano(g, 0.4))), revés = invertir(derecho);
+    const alDerecho = azar.real() < 0.5 ? 'A' : 'B';
+    const A = alDerecho === 'A' ? derecho : revés, B = alDerecho === 'A' ? revés : derecho;
+    const espec = s => { const X = Senal.fftReal(s, NFFT), K = NFFT / 2, m = new Float64Array(K); for (let k = 0; k < K; k++) m[k] = Math.hypot(X.re[k], X.im[k]); return m; };
+    const mA = espec(A), mB = espec(B);
+    let mx = 0, dm = 0;
+    for (let k = 0; k < mA.length; k++) { mx = Math.max(mx, mA[k]); dm = Math.max(dm, Math.abs(mA[k] - mB[k])); }
+    e.ronda = { notas: f, A, B, derecho: alDerecho, mA, mB, mx, dif: dm / mx };
+  }
+  nueva(null);
+  const lect = Curso.lecturas('#r1-fila', [
+    { id: 'dif', nombre: 'Largest difference between the spectra', clase: 'respuesta' },
+    { id: 'racha', nombre: 'Correct in a row' },
+  ]);
+  const L = G.lienzo('#r1-escena', {
+    alto: altoDe(210, 230),
+    etiqueta: 'The amplitude spectra of the two versions, A and B, drawn one on top of the other: they are the same. With the “Show the waves” button, you see the two waves in time.',
+    dibujar: (ctx, w, h, C) => {
+      const r = e.ronda;
+      if (!e.ondas) {
+        const esc = G.ejes(ctx, { x: [450, 850], y: [0, 1.1], marcasY: false, marcasX: [500, 600, 700, 800], formatoX: v => num(v), etiquetaX: 'frequency (Hz)', etiquetaY: 'amplitude spectrum', margen: { izquierda: 14, derecha: 14, arriba: 26, abajo: 30 }, C });
+        const f = [], a = [], b = [];
+        const df = FS / NFFT;
+        for (let k = Math.floor(450 / df); k <= Math.ceil(850 / df); k++) { f.push(k * df); a.push(r.mA[k] / r.mx); b.push(r.mB[k] / r.mx); }
+        G.linea(ctx, esc, f, a, { color: C.espectro, ancho: 3.2, C });
+        G.linea(ctx, esc, f, b, { color: C.cuerpo, ancho: 1.2, guiones: [4, 4], halo: false, alfa: 0.9, C });
+        G.texto(ctx, esc.caja.x + 4, esc.caja.y + 12, 'A and B, overlaid', { color: C.tenue, tam: 10.5, C });
+      } else {
+        const alto = (h - 14) / 2;
+        [['A', r.A], ['B', r.B]].forEach(([n, s], i) => {
+          const esc = G.ejes(ctx, { caja: { x: 14, y: 8 + i * alto + 6, w: w - 28, h: alto - 26 }, x: [0, 1.2], y: [-1.1, 1.1], marcasY: false, marcasX: i ? [0, 0.4, 0.8, 1.2] : false, formatoX: v => num(v, 1), etiquetaX: i ? 'time (s)' : undefined, rejilla: false, C });
+          G.linea(ctx, esc, null, s, { t0: 0, dt: 1 / FS, color: C.senal, ancho: 1.2, C });
+          G.texto(ctx, esc.caja.x + 4, esc.caja.y + 11, 'version ' + n, { color: C.tenue, tam: 10.5, peso: 600, C });
+        });
+      }
+    },
+  });
+  function pintar() {
+    lect.fijar('dif', num(e.ronda.dif, 3));
+    lect.fijar('racha', Math.min(e.racha, 2) + ' of 2');
+    L.dibujar();
+  }
+  const fila = document.getElementById('r1-fila'), bots = crear('div', { class: 'botones' });
+  fila.appendChild(bots);
+  Curso.audio.boton(bots, () => ({ x: e.ronda.A, fs: FS, volumen: 0.6 }), 'Version A');
+  Curso.audio.boton(bots, () => ({ x: e.ronda.B, fs: FS, volumen: 0.6 }), 'Version B');
+  const responder = letra => {
+    if (e.racha >= 2) return;
+    if (letra === e.ronda.derecho) { e.racha += 1; e.mensaje = e.racha < 2 ? 'Right: ' + letra + ' was the forward one. Another round, with a new melody.' : ''; }
+    else { e.racha = 0; e.mensaje = 'No: ' + e.ronda.derecho + ' was the forward one. A piano note starts with a sharp strike and fades away gradually; backwards it swells and cuts off all at once.'; }
+    if (e.racha < 2) nueva(e.ronda);
+    pintar();
+    Curso.cambio('reto-1');
+  };
+  const b = Curso.botones(bots, [
+    { id: 'A', texto: 'A plays forward', alPulsar: () => responder('A') },
+    { id: 'B', texto: 'B plays forward', alPulsar: () => responder('B') },
+    { id: 'ondas', texto: 'Show the waves', icono: 'ojo', tipo: 'discreto', pulsado: false, alPulsar: on => { e.ondas = typeof on === 'boolean' ? on : !e.ondas; pintar(); } },
+  ]);
+  pintar();
+  Curso.reto('reto-1', {
+    titulo: 'Which one plays forward?', nivel: 'fácil',
+    comprobar: () => ({ ok: e.racha >= 2, mensaje: e.mensaje }),
+    resolver: () => { e.racha = 2; e.mensaje = ''; pintar(); },
+    pista: [
+      'Notice how each note starts: a sharp strike that fades slowly, like a piano key, or a sound that swells and cuts off all at once.',
+      'If you can’t hear it, press “Show the waves”: the forward one has the big peaks at the start of each note.',
+    ],
+    exito: '<p>Same amplitude spectrum, different sound. The order of the notes is not in the size of the Ferris wheels, but in their phase, and the spectrum doesn’t show it. To know when each thing sounds you have to cut the signal into chunks, and that is what comes next.</p>',
+  });
+})();
+
+// ── Reto 2 · Desliza la ventana (arrastrar sobre el lienzo) ──────────────────────────────────────────
+// Cuatro notas de 0,5 s (330, 440, 554 y 659 Hz) en orden aleatorio; una ventana de Hann de 64 ms que se arrastra.
+// Debajo, el espectro del trozo y su pico, medido sobre la señal.
+(function () {
+  const FS = 8000, DUR = 2, VEN = 0.064, objetivo = 554, azar = Curso.azar();
+  const e = { orden: azar.barajar([330, 440, 554, 659]), c: 0.12, x: null, esp: null, pico: 0 };
+  e.x = pegar(...e.orden.map(f => nota(f, 0.5, FS, { amp: 0.8, ataque: 0.02, caida: 0.02 })));
+  const inicio = f => e.orden.indexOf(f) * 0.5;
+  let esc1 = null;
+  function medir() {
+    const n = Math.round(VEN * FS), i0 = Math.round(e.c * FS) - n / 2, t = new Float64Array(n);
+    for (let i = 0; i < n; i++) t[i] = e.x[i0 + i] || 0;
+    const r = picoDeTrozo(t, FS);
+    e.esp = r; e.pico = r.max > 1e-6 ? r.f : NaN;
+  }
+  const lect = Curso.lecturas('#r2-fila', [
+    { id: 'c', nombre: 'Center of the window', clase: 'respuesta' },
+    { id: 'pico', nombre: 'Spectrum peak', clase: 'senal' },
+  ]);
+  const Lw = G.lienzo('#r2-escena', {
+    alto: altoDe(300, 330), rol: 'slider',
+    etiqueta: 'Top, the wave of four notes in a row with a purple window that you can drag or move with the keyboard arrows; below, the spectrum of the chunk inside the window, in amber',
+    dibujar: (ctx, w, h, C) => {
+      const alto1 = Math.round(h * 0.4);
+      esc1 = G.ejes(ctx, { caja: { x: 14, y: 8, w: w - 28, h: alto1 }, x: [0, DUR], y: [-1.1, 1.1], marcasY: false, marcasX: [0, 0.5, 1, 1.5, 2], formatoX: v => num(v, 1), etiquetaX: 'time (s)', rejilla: false, C });
+      G.linea(ctx, esc1, null, e.x, { t0: 0, dt: 1 / FS, color: C.senal, ancho: 1, alfa: 0.55, halo: false, C });
+      const a = e.c - VEN / 2, xs = [], ys = [];
+      for (let u = 0; u <= 60; u++) { const t = a + VEN * u / 60; xs.push(t); ys.push(1.0 * hann((t - e.c) / VEN)); }
+      ctx.save();
+      ctx.fillStyle = G.alfa(C.plantilla, 0.28);
+      ctx.beginPath(); ctx.moveTo(esc1.x(xs[0]), esc1.y(0));
+      for (let u = 0; u < xs.length; u++) ctx.lineTo(esc1.x(xs[u]), esc1.y(ys[u]));
+      ctx.lineTo(esc1.x(xs[xs.length - 1]), esc1.y(0)); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = C.plantilla; ctx.lineWidth = 2; ctx.stroke();
+      // El asa: una cabeza arriba de la ventana.
+      ctx.fillStyle = C.acento; ctx.strokeStyle = C.pantalla; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(esc1.x(e.c), esc1.y(1.05), 7, 0, TAU); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      // El espectro del trozo.
+      const y2 = 8 + alto1 + 40, esc2 = G.ejes(ctx, { caja: { x: 14, y: y2, w: w - 28, h: h - y2 - 34 }, x: [200, 900], y: [0, 1.15], marcasY: false, marcasX: [300, 400, 500, 600, 700, 800], formatoX: v => num(v), etiquetaX: 'frequency (Hz)', C });
+      if (e.esp && e.esp.max > 1e-6) {
+        const f = [], m = [], K = Math.ceil(900 / e.esp.df);
+        for (let k = Math.floor(200 / e.esp.df); k <= K; k++) { f.push(k * e.esp.df); m.push(e.esp.mag[k] / (e.esp.max * 1)); }
+        G.linea(ctx, esc2, f, m, { color: C.espectro, ancho: 2.4, C });
+        G.texto(ctx, esc2.x(e.pico) + 6, esc2.caja.y + 12, num(e.pico, 0) + ' Hz', { color: C.texto, tam: 11, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+      } else G.texto(ctx, esc2.caja.x + esc2.caja.w / 2, esc2.caja.y + esc2.caja.h / 2, 'nothing sounds here', { alinear: 'center', color: C.tenue, tam: 12, C });
+    },
+  });
+  function mover(c) {
+    e.c = limitar(c, VEN / 2, DUR - VEN / 2);
+    medir();
+    lect.fijar('c', num(e.c, 2) + ' s');
+    lect.fijar('pico', Number.isFinite(e.pico) ? num(e.pico, 0) + ' Hz' : '—');
+    Lw.canvas.setAttribute('aria-valuenow', e.c.toFixed(2));
+    Lw.canvas.setAttribute('aria-valuetext', 'Window centered at ' + num(e.c, 2) + ' s; peak at ' + (Number.isFinite(e.pico) ? num(e.pico, 0) + ' hertz' : 'none'));
+    Lw.dibujar();
+    Curso.cambio('reto-2');
+  }
+  Curso.arrastre(Lw, { eje: 'x', alBajar: p => { if (!esc1) return false; mover(esc1.xi(p.x)); }, alMover: p => mover(esc1.xi(p.x)) });
+  Lw.canvas.tabIndex = 0;
+  Lw.canvas.setAttribute('aria-valuemin', '0'); Lw.canvas.setAttribute('aria-valuemax', String(DUR));
+  Lw.canvas.addEventListener('keydown', ev => {
+    const d = { ArrowRight: 0.01, ArrowUp: 0.01, ArrowLeft: -0.01, ArrowDown: -0.01 }[ev.key];
+    if (d) { ev.preventDefault(); mover(e.c + d * (ev.shiftKey ? 5 : 1)); }
+  });
+  const bots = filaBotones('#r2-fila');
+  Curso.audio.boton(bots, () => ({ x: e.x, fs: FS, volumen: 0.5 }), 'Listen to the four notes');
+  medir();
+  mover(e.c);
+  Curso.reto('reto-2', {
+    titulo: 'Slide the window', nivel: 'fácil',
+    comprobar: () => {
+      const i0 = inicio(objetivo), i1 = i0 + 0.5;
+      const dentro = e.c > i0 + VEN / 2 && e.c < i1 - VEN / 2;
+      if (dentro && Math.abs(e.pico - objetivo) <= 15) return { ok: true, mensaje: 'The window is over the ' + num(e.pico, 0) + ' Hz note.' };
+      if (Number.isFinite(e.pico) && Math.abs(e.pico - objetivo) <= 15) return { ok: false, mensaje: '554 Hz sounds there, but the window touches the edge of the note: move it closer to the center.' };
+      if (!Number.isFinite(e.pico)) return { ok: false, mensaje: '' };
+      return { ok: false, mensaje: num(e.pico, 0) + ' Hz sounds here. ' + (e.pico < objetivo ? 'Look for a higher note.' : 'Look for a lower note.') };
+    },
+    resolver: () => mover(inicio(objetivo) + 0.25),
+    pista: [
+      'Move the window along the wave and look at the amber peak: it tells you which frequency sounds in the chunk.',
+      'Each note lasts half a second, and the four sound one after another: 330, 440, 554 and 659 Hz, in shuffled order. Look for the peak closest to 554.',
+    ],
+    exito: '<p>You have just made one column of the spectrogram by hand: cut out a chunk, run Fourier on it and read what sounds at that instant. If you repeat it everywhere and stack the columns, the whole spectrogram comes out.</p>',
+  });
+})();
+
+// ── Reto 3 · Cada sonido, su dibujo (escuchar y elegir) ──────────────────────────────────────────────
+// Cuatro sonidos sintéticos de 3 s a 16 kHz y sus cuatro espectrogramas, mezclados con letras A–D. Se calculan
+// al llegar al paso.
+(function () {
+  const FS = 16000, DUR = 3, FMAX = 6000, azar = Curso.azar();
+  const SONIDOS = [
+    { id: 'sube', nombre: 'A whistle that rises and falls', crear: () => Senal.ejemplos.silbidoQueSube(FS, { dur: DUR }) },
+    { id: 'palmadas', nombre: 'Three claps', crear: () => Senal.ejemplos.palmadas(FS, { sala: 'habitacion', dur: DUR }) },
+    { id: 'aaa', nombre: 'A sung “aah”', crear: () => Senal.ejemplos.vocal(FS, { vocal: 'a', f0: 130, dur: DUR }) },
+    { id: 'sss', nombre: 'A long “sss”', crear: () => {
+      const n = Math.round(DUR * FS), r = Senal.ruido('blanco', n, Senal.azar(21)), f = Senal.biquad('pasoAlto', 3000, FS);
+      const y = Senal.filtrar(f, Senal.filtrar(f, r)), x = new Float64Array(n), a = Math.round(1.2 * FS), l = Math.round(0.6 * FS);
+      for (let i = 0; i < l; i++) x[a + i] = y[a + i] * hann((i - l / 2) / l);
+      return x;
+    } },
+  ];
+  const memoria = {};
+  const senal = s => memoria[s.id] || (memoria[s.id] = s.crear());
+  const orden = azar.barajar(SONIDOS.map(s => s.id));          // orden[i] = sonido que dibuja la letra i
+  const LETRAS = ['A', 'B', 'C', 'D'];
+  const dibujoDe = id => LETRAS[orden.indexOf(id)];
+  const e = { V: null, max: 0 };
+  const calcular = () => {
+    if (e.V) return;
+    e.V = {};
+    let mx = -Infinity;
+    for (const s of SONIDOS) {
+      const E = Senal.espectrograma(senal(s), FS, { n: 512, salto: 256, ventana: 'hann', suelo: -120 });
+      e.V[s.id] = recortarMapa(E, 0, DUR, 0, FMAX);
+      mx = Math.max(mx, E.max);
+    }
+    e.max = mx;
+    L.dibujar();
+  };
+  let reto = null;
+  const L = G.lienzo('#r3-escena', {
+    alto: w => (w < 560 ? 270 : 170),
+    etiqueta: 'Four spectrograms, labeled A, B, C and D, of four different sounds. Time runs to the right and frequency upward, up to 6,000 hertz.',
+    dibujar: (ctx, w, h, C) => {
+      const cols = w < 560 ? 2 : 4, filas = 4 / cols, cw = w / cols, ch = h / filas;
+      for (let i = 0; i < 4; i++) {
+        const c = i % cols, f = Math.floor(i / cols);
+        ctx.save(); ctx.translate(c * cw, f * ch);
+        const rango = [e.max - 60, e.max];
+        miniMapa(ctx, cw - 6, ch - 6, C, e.V ? e.V[orden[i]] : null, rango, LETRAS[i], DUR, FMAX);
+        if (!e.V) G.texto(ctx, cw / 2, ch / 2, 'calculating…', { alinear: 'center', color: C.tenue, tam: 11, C });
+        ctx.restore();
+      }
+    },
+  });
+  const cont = document.getElementById('r3-sonidos');
+  const eleccion = {};
+  for (const s of SONIDOS) {
+    const panel = crear('div', { class: 'panel-mini' });
+    const cabeza = crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, s.nombre));
+    panel.appendChild(cabeza);
+    Curso.audio.boton(cabeza, () => ({ x: senal(s), fs: FS, volumen: 0.6 }), 'Listen', { clase: 'peque' });
+    eleccion[s.id] = Curso.eleccion(panel, { etiqueta: 'Which picture is it?', valor: '', reto: 'reto-3', opciones: LETRAS.map(l => ({ valor: l, texto: l })) });
+    cont.appendChild(panel);
+  }
+  Curso.alVerse(L.canvas, calcular);
+  Curso.reto('reto-3', {
+    titulo: 'Each sound, its picture', nivel: 'fácil',
+    comprobar: () => {
+      const puestos = SONIDOS.filter(s => eleccion[s.id].valor), bien = SONIDOS.filter(s => eleccion[s.id].valor === dibujoDe(s.id)).length;
+      const usadas = new Set(puestos.map(s => eleccion[s.id].valor));
+      if (bien === 4) return { ok: true, mensaje: 'All four, with their pictures.' };
+      if (!puestos.length) return { ok: false, mensaje: '' };
+      if (puestos.length < 4) return { ok: false, mensaje: 'You have chosen ' + puestos.length + ' of 4. Listen to the ones you are missing.' };
+      if (usadas.size < 4) return { ok: false, mensaje: 'You repeated a picture: each sound has its own.' };
+      return { ok: false, mensaje: 'You got ' + bien + ' of 4. Think about the shape of each one: a diagonal, vertical lines, a stack of lines and a cloud.' };
+    },
+    resolver: () => { calcular(); for (const s of SONIDOS) eleccion[s.id].fijar(dibujoDe(s.id)); },
+    pista: [
+      'Look for four shapes: a diagonal, vertical lines, a stack of horizontal lines and a cloud up high.',
+      'Claps are bangs, and a bang lasts an instant and sounds at many frequencies at once; the “sss” has no note, only a puff of high pitches.',
+    ],
+    exito: '<p>The curving line is a tone that changes; the vertical, a bang; the stack of lines, a note with harmonics, and the cloud, a noise. With those four shapes you can read almost any sound.</p>',
+  });
+})();
+
+// ── Reto 4 · Lee la partitura (tocar para colocar) ───────────────────────────────────────────────────
+// Cinco notas de duración desigual (0,2 a 0,6 s), entre 200 y 800 Hz, cada una con tres armónicos (1; 0,6; 0,4), a 8 kHz.
+// El alumno toca el espectrograma para colocar una marca por nota, en la altura de su fundamental.
+(function () {
+  const FS = 8000, FMAX = 2600, azar = Curso.azar(), POOL = [220, 247, 262, 294, 330, 370, 392, 440, 494, 523, 587, 659, 740, 784];
+  const e = { notas: [], x: null, dur: 0, V: null, E: null, marcas: [], cursor: { t: 0.3, f: 440 }, activo: -1, enfocado: false };
+  (function crear5() {
+    let prev = 0, t = 0.05;
+    const durs = azar.barajar([0.2, 0.3, 0.4, 0.5, 0.6]);
+    for (let i = 0; i < 5; i++) {
+      let f; do { f = azar.elegir(POOL); } while (prev && Math.abs(Math.log(f / prev)) < Math.log(1.15));
+      e.notas.push({ f, t0: t, t1: t + durs[i] });
+      t += durs[i] + 0.02; prev = f;
+    }
+    e.dur = t + 0.05;
+    const partes = [new Float64Array(Math.round(0.05 * FS))];
+    e.notas.forEach((n, i) => { partes.push(nota(n.f, n.t1 - n.t0, FS, { amp: 0.45, armonicos: [1, 0.6, 0.4], ataque: 0.015, caida: 0.02 })); partes.push(new Float64Array(Math.round(0.02 * FS))); });
+    partes.push(new Float64Array(Math.round(0.05 * FS)));
+    e.x = pegar(...partes);
+  })();
+  const tol = f0 => Math.max(0.04 * f0, 35);      // un poco menos que un semitono, pero nunca menos de lo que se puede apuntar en pantalla
+  let esc = null, rango = [-60, 0];
+  const lect = Curso.lecturas('#r4-fila', [{ id: 'n', nombre: 'Marks placed', clase: 'respuesta' }, { id: 'cur', nombre: 'Cursor', }]);
+  const calcular = () => {
+    if (e.V) return;
+    e.E = Senal.espectrograma(e.x, FS, { n: 256, salto: 32, ventana: 'hann', nfft: 1024, suelo: -120 });
+    e.V = recortarMapa(e.E, 0, e.dur, 0, FMAX);
+    rango = [e.E.max - 60, e.E.max];
+    L.dibujar();
+  };
+  const L = G.lienzo('#r4-escena', {
+    alto: altoDe(280, 330), rol: 'application',
+    etiqueta: 'Spectrogram of a five-note melody. Tap at the height of the fundamental of each note to place a mark; with the keyboard, move the cursor with the arrow keys and press Enter to place it.',
+    dibujar: (ctx, w, h, C) => {
+      esc = dibujarMapa(ctx, w, h, C, e.V, { x: [0, e.dur], y: [0, FMAX], marcasX: [0, 0.5, 1, 1.5, 2], marcasY: [0, 500, 1000, 1500, 2000, 2500], formatoX: v => num(v, 1), formatoY: v => num(v), etiquetaX: 'time (s)', rango });
+      if (!e.V) G.texto(ctx, w / 2, h / 2, 'calculating…', { alinear: 'center', color: C.tenue, tam: 12, C });
+      e.marcas.forEach((m, i) => {
+        const px = esc.x(m.t), py = esc.y(m.f);
+        ctx.save();
+        ctx.fillStyle = C.acento; ctx.strokeStyle = C.pantalla; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(px, py, 9, 0, TAU); ctx.fill(); ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, px, py + 4, String(i + 1), { alinear: 'center', color: C.pantalla, tam: 11, peso: 700, C });
+      });
+      if (e.enfocado) {
+        const px = esc.x(e.cursor.t), py = esc.y(e.cursor.f);
+        ctx.save(); ctx.strokeStyle = C.texto; ctx.lineWidth = 1.2; ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(px, esc.caja.y); ctx.lineTo(px, esc.caja.y + esc.caja.h); ctx.moveTo(esc.caja.x, py); ctx.lineTo(esc.caja.x + esc.caja.w, py); ctx.stroke();
+        ctx.restore();
+      }
+    },
+  });
+  function pintar() { lect.fijar('n', e.marcas.length + ' of 5'); lect.fijar('cur', num(e.cursor.t, 2) + ' s · ' + num(e.cursor.f, 0) + ' Hz'); L.dibujar(); Curso.cambio('reto-4'); }
+  const dePunto = p => ({ t: limitar(esc.xi(p.x), 0, e.dur), f: limitar(esc.yi(p.y), 0, FMAX) });
+  const cercana = p => { let k = -1, d = 16; e.marcas.forEach((m, i) => { const dd = Math.hypot(esc.x(m.t) - p.x, esc.y(m.f) - p.y); if (dd < d) { d = dd; k = i; } }); return k; };
+  Curso.arrastre(L, { cursor: 'toque', eje: 'ambos',
+    alBajar: p => {
+      if (!esc || !e.V) return false;
+      if (p.x < esc.caja.x || p.x > esc.caja.x + esc.caja.w || p.y < esc.caja.y || p.y > esc.caja.y + esc.caja.h) return false;
+      const k = cercana(p);
+      if (k >= 0) e.activo = k;
+      else if (e.marcas.length < 5) { e.marcas.push(dePunto(p)); e.activo = e.marcas.length - 1; }
+      else { e.activo = -1; return false; }
+      pintar();
+    },
+    alMover: p => { if (e.activo >= 0 && e.marcas[e.activo]) { e.marcas[e.activo] = dePunto(p); pintar(); } },
+    alSoltar: () => { e.activo = -1; },
+  });
+  L.canvas.tabIndex = 0;
+  L.canvas.addEventListener('focus', () => { e.enfocado = true; L.dibujar(); });
+  L.canvas.addEventListener('blur', () => { e.enfocado = false; L.dibujar(); });
+  L.canvas.addEventListener('keydown', ev => {
+    const k = ev.key, paso = ev.shiftKey ? 5 : 1;
+    if (k === 'ArrowRight') e.cursor.t = limitar(e.cursor.t + 0.02 * paso, 0, e.dur);
+    else if (k === 'ArrowLeft') e.cursor.t = limitar(e.cursor.t - 0.02 * paso, 0, e.dur);
+    else if (k === 'ArrowUp') e.cursor.f = limitar(e.cursor.f * Math.pow(1.01, paso), 50, FMAX);
+    else if (k === 'ArrowDown') e.cursor.f = limitar(e.cursor.f / Math.pow(1.01, paso), 50, FMAX);
+    else if ((k === 'Enter' || k === ' ') && e.marcas.length < 5) e.marcas.push({ t: e.cursor.t, f: e.cursor.f });
+    else if (k === 'Backspace') e.marcas.pop();
+    else return;
+    ev.preventDefault();
+    pintar();
+  });
+  const bots = filaBotones('#r4-fila');
+  Curso.audio.boton(bots, () => ({ x: e.x, fs: FS, volumen: 0.5 }), 'Listen to the melody');
+  Curso.botones(bots, [
+    { id: 'quitar', texto: 'Remove the last one', tipo: 'discreto', alPulsar: () => { e.marcas.pop(); pintar(); } },
+    { id: 'todas', texto: 'Remove all', icono: 'otra', tipo: 'discreto', alPulsar: () => { e.marcas = []; pintar(); } },
+  ]);
+  Curso.alVerse(L.canvas, calcular);
+  lect.fijar('n', '0 of 5'); lect.fijar('cur', '—');
+  Curso.reto('reto-4', {
+    titulo: 'Read the score', nivel: 'medio',
+    comprobar: () => {
+      if (!e.marcas.length) return { ok: false, mensaje: '' };
+      const usadas = new Map(), fallos = [];
+      for (const m of e.marcas) {
+        const k = e.notas.findIndex(n => m.t >= n.t0 && m.t <= n.t1);
+        if (k < 0) { fallos.push('A mark falls between two notes: put it inside one of the stacks.'); continue; }
+        const f0 = e.notas[k].f;
+        if (Math.abs(m.f - f0) <= tol(f0)) { usadas.set(k, (usadas.get(k) || 0) + 1); continue; }
+        if (Math.abs(m.f - 2 * f0) <= tol(2 * f0) || Math.abs(m.f - 3 * f0) <= tol(3 * f0)) fallos.push('A mark is on a harmonic: the note is the lowest line of the stack.');
+        else fallos.push(m.f < f0 ? 'A mark is too low for its note.' : 'A mark is too high for its note.');
+      }
+      const duplicadas = [...usadas.values()].some(v => v > 1);
+      if (usadas.size === 5 && e.marcas.length === 5 && !duplicadas) return { ok: true, mensaje: 'All five notes, in place.' };
+      if (fallos.length) return { ok: false, mensaje: fallos[0] };
+      if (duplicadas) return { ok: false, mensaje: 'There are two marks on the same note: each note gets just one.' };
+      return { ok: false, mensaje: usadas.size + ' of 5 notes are right so far. ' + (5 - usadas.size) + ' to go.' };
+    },
+    alReiniciar: () => { e.marcas = []; pintar(); },
+    resolver: () => { calcular(); e.marcas = e.notas.map(n => ({ t: (n.t0 + n.t1) / 2, f: n.f })); L.dibujar(); },
+    pista: [
+      'Each note is a stack of lines: the note is the bottom one, and the ones above it are its harmonics.',
+      'The lines of a stack are spaced as far apart as the bottom one is from the floor: if the bottom one is at 300 Hz, the others are at 600 and 900.',
+    ],
+    exito: '<p>You have read a score that the sound draws itself. Each note is a stack of lines, and the bottom one marks its pitch; the ones above are the harmonics, which give it its timbre.</p>',
+  });
+})();
+
+// ── Reto 5 · El trino (deslizador de ventana y escribir un número) ───────────────────────────────────
+// Un canto sintético de 2 s a 16 kHz: un trino de N notas en un segundo (N entre 9 y 14), cada una un barrido de
+// 40 ms de 6.000 a 3.500 Hz, y después un silbido de 0,5 s a 3.000 Hz. La ventana empieza en 384 ms, donde las
+// notas se funden; con 32 ms o menos se separan bien.
+(function () {
+  const FS = 16000, azar = Curso.azar();
+  const e = { N: azar.entero(9, 14), ms: 384, V: null, E: null, x: null, contraste: 0 };
+  function cantar(N) {
+    const x = new Float64Array(2 * FS);
+    for (let i = 0; i < N; i++) {
+      const i0 = Math.round((0.1 + i / N) * FS), n = Math.round(0.04 * FS);
+      let ph = 0;
+      for (let k = 0; k < n; k++) { const u = k / n; ph += TAU * (6000 - 2500 * u) / FS; x[i0 + k] += 0.6 * Math.pow(Math.sin(Math.PI * u), 2) * Math.sin(ph); }
+    }
+    const i0 = Math.round(1.3 * FS), n = Math.round(0.5 * FS);
+    for (let k = 0; k < n; k++) x[i0 + k] += 0.5 * Math.sin(TAU * 3000 * k / FS) * Math.pow(Math.sin(Math.PI * k / n), 2);
+    return x;
+  }
+  e.x = cantar(e.N);
+  const lect = Curso.lecturas('#r5-fila', [
+    { id: 'ven', nombre: 'Window', clase: 'respuesta' },
+    { id: 'filas', nombre: 'Rows every' },
+    { id: 'cols', nombre: 'Columns per second' },
+  ]);
+  let reto = null, campo = null, mando = null, calculado = false;
+  function calcular() {
+    const n = Math.max(16, Math.round(e.ms * FS / 1000)), salto = Math.max(16, Math.round(n / 8)), nfft = Math.max(512, pot2(2 * n));
+    const E = Senal.espectrograma(e.x, FS, { n, salto, ventana: 'hann', nfft, suelo: -120 });
+    e.E = E; e.V = recortarMapa(E, 0, 2, 2000, 7000);
+    e.n = n; e.salto = salto; calculado = true;
+    lect.fijar('ven', ms(1000 * n / FS));
+    lect.fijar('filas', num(FS / n, 1) + ' Hz');
+    lect.fijar('cols', num(FS / salto, 0));
+    L.dibujar();
+  }
+  const L = G.lienzo('#r5-escena', {
+    alto: altoDe(260, 320),
+    etiqueta: 'Spectrogram of a fast trill of notes that fall in pitch, followed by a whistle at 3,000 hertz. Time runs to the right and frequency upward, from 2,000 to 7,000 hertz.',
+    dibujar: (ctx, w, h, C) => {
+      const rango = e.E ? [e.E.max - 60, e.E.max] : [-60, 0];
+      dibujarMapa(ctx, w, h, C, e.V, { x: [0, 2], y: [2000, 7000], marcasX: [0, 0.5, 1, 1.5, 2], marcasY: [2000, 3000, 4000, 5000, 6000, 7000], formatoX: v => num(v, 1), formatoY: v => num(v),
+        etiquetaX: 'time (s)', rango, titulo: 'synthetic birdsong · ' + ms(e.ms) + ' window' });
+      if (!e.V) G.texto(ctx, w / 2, h / 2, 'calculating…', { alinear: 'center', color: C.tenue, tam: 12, C });
+    },
+  });
+  mando = Curso.mando('#r5-mandos', { etiqueta: 'Window length', escala: 'log', min: 4, max: 512, paso: 0.5, valor: e.ms, formato: v => ms(v), clase: 'respuesta',
+    alCambiar: v => { e.ms = v; calcular(); Curso.cambio('reto-5'); } });
+  const bots = filaBotones('#r5-fila');
+  Curso.audio.boton(bots, () => ({ x: e.x, fs: FS, volumen: 0.5 }), 'Listen to the birdsong');
+  campo = Curso.campo(bots, { etiqueta: 'Notes in the trill', marcador: 'how many?', ancho: 9, reto: 'reto-5', alEnviar: () => reto.revisar() });
+  const asegurar = () => { if (!calculado) calcular(); };
+  Curso.alVerse(L.canvas, asegurar);
+  reto = Curso.reto('reto-5', {
+    titulo: 'The trill', nivel: 'medio', auto: false,
+    comprobar: () => {
+      asegurar();
+      const v = campo.valor;
+      if (!Number.isFinite(v)) return { ok: false, mensaje: 'Type how many notes the trill has, for example 10.' };
+      if (v === e.N) { campo.marcar('bien'); return { ok: true, mensaje: 'Yes: ' + e.N + ' notes in one second.' }; }
+      campo.marcar('mal');
+      if (e.ms > 60) return { ok: false, mensaje: 'With this window the notes are merged. Shorten it until they show up separate and count them.' };
+      return { ok: false, mensaje: v < e.N ? 'You missed some: the trill lasts one second and starts around 0.1.' : 'You counted too many. Count each stroke only once.' };
+    },
+    alReiniciar: () => { campo.fijar(''); mando.fijar(384); },
+    resolver: () => { mando.fijar(16); campo.fijar(e.N); },
+    pista: [
+      'If the notes merge into a smear, try a shorter window: a few tens of milliseconds or less.',
+      'Count the notes that fit in half a second of the trill and multiply by two, or count them all, since the trill lasts exactly one second.',
+    ],
+    exito: '<p>With the long window, the notes merge into a band; with the short one, each one separates. The first spectrograph, in 1946, ran into the same thing: its narrow filter left the fast trill of a thrush almost blurred, and with the wide one you could see each note.</p>',
+  });
+})();
+
+// ── Reto 6 · El mensaje escondido (elegir escala, deslizadores y escribir) ───────────────────────────
+// Una palabra de cuatro letras, dibujada con tonos breves: 14 filas espaciadas por octavas (de 400 a 6.400 Hz) y
+// columnas de 100 ms, con letras de 5 × 7 píxeles en las que cada fila del dibujo son dos filas de tonos.
+// El espectrograma empieza con eje lineal y de 100 a 8.000 Hz, donde la palabra sale aplastada abajo.
+(function () {
+  const FS = 16000, azar = Curso.azar(), COL = 0.1, T0 = 0.15, FILAS = 14, F_BASE = 400, DUR = 2.6;
+  const FUENTE = {
+    H: ['10001', '10001', '10001', '11111', '10001', '10001', '10001'],
+    O: ['01110', '10001', '10001', '10001', '10001', '10001', '01110'],
+    L: ['10000', '10000', '10000', '10000', '10000', '10000', '11111'],
+    A: ['01110', '10001', '10001', '11111', '10001', '10001', '10001'],
+    N: ['10001', '11001', '10101', '10011', '10001', '10001', '10001'],
+    D: ['11110', '10001', '10001', '10001', '10001', '10001', '11110'],
+    T: ['11111', '00100', '00100', '00100', '00100', '00100', '00100'],
+    S: ['01111', '10000', '10000', '01110', '00001', '00001', '11110'],
+    B: ['11110', '10001', '10001', '11110', '10001', '10001', '11110'],
+  };
+  const PALABRAS = ['BAND', 'DATA', 'HOLD', 'SOLD', 'BOLD'];
+  const e = { palabra: azar.elegir(PALABRAS), escala: 'lineal', fmin: 100, fmax: 8000, x: null, E: null, V: null, calculado: false };
+  const filaHz = k => F_BASE * Math.pow(2, 4 * k / (FILAS - 1));
+  function sintetizar(palabra) {
+    const x = new Float64Array(Math.round(DUR * FS)), n = Math.round(COL * FS);
+    let col = 0;
+    for (const letra of palabra) {
+      const g = FUENTE[letra];
+      for (let c = 0; c < 5; c++, col++) {
+        for (let r = 0; r < 7; r++) {
+          if (g[r][c] !== '1') continue;
+          for (const k of [2 * (6 - r), 2 * (6 - r) + 1]) {
+            const f = filaHz(k), i0 = Math.round((T0 + col * COL) * FS);
+            for (let i = 0; i < n; i++) x[i0 + i] += Math.sin(TAU * f * i / FS) * Math.pow(Math.sin(Math.PI * i / n), 2);
+          }
+        }
+      }
+      col += 1;
+    }
+    let mx = 0;
+    for (let i = 0; i < x.length; i++) mx = Math.max(mx, Math.abs(x[i]));
+    for (let i = 0; i < x.length; i++) x[i] *= 0.8 / (mx || 1);
+    return x;
+  }
+  const lect = Curso.lecturas('#r6-fila', [
+    { id: 'escala', nombre: 'Frequency axis', clase: 'respuesta' },
+    { id: 'rango', nombre: 'Showing' },
+  ]);
+  const L = G.lienzo('#r6-escena', {
+    alto: altoDe(280, 340),
+    etiqueta: 'Spectrogram of a synthetic sound about 2.6 seconds long that hides a four-letter word. Time runs to the right and frequency upward; the axis can be linear or logarithmic.',
+    dibujar: (ctx, w, h, C) => {
+      const rango = e.E ? [e.E.max - 45, e.E.max] : [-60, 0];
+      const log = e.escala === 'log';
+      const marcas = [50, 100, 200, 400, 800, 1600, 3200, 6400].filter(v => v >= e.fmin && v <= e.fmax);
+      dibujarMapa(ctx, w, h, C, e.V, { x: [0, DUR], y: log ? [Math.log2(e.fmin), Math.log2(e.fmax)] : [e.fmin, e.fmax],
+        marcasX: [0, 0.5, 1, 1.5, 2, 2.5], formatoX: v => num(v, 1), etiquetaX: 'time (s)',
+        marcasY: log ? marcas.map(Math.log2) : 5, formatoY: log ? v => num(Math.pow(2, v), 0) : v => num(v, 0),
+        etiquetaY: log ? 'frequency (Hz, logarithmic)' : 'frequency (Hz)', rango, titulo: 'synthetic sound' });
+      if (!e.V) G.texto(ctx, w / 2, h / 2, 'calculating…', { alinear: 'center', color: C.tenue, tam: 12, C });
+    },
+  });
+  function vista() {
+    if (!e.E) return;
+    e.V = e.escala === 'log' ? mapaLog(e.E, 0, DUR, e.fmin, e.fmax, 200) : recortarMapa(e.E, 0, DUR, e.fmin, e.fmax);
+    lect.fijar('escala', e.escala === 'log' ? 'logarithmic' : 'linear');
+    lect.fijar('rango', num(e.fmin, 0) + ' to ' + num(e.fmax, 0) + ' Hz');
+    L.dibujar();
+  }
+  function calcular() {
+    if (e.calculado) return;
+    e.calculado = true;
+    e.x = sintetizar(e.palabra);
+    e.E = Senal.espectrograma(e.x, FS, { n: 1024, salto: 128, ventana: 'hann', nfft: 2048, suelo: -120 });
+    vista();
+  }
+  const mandos = document.getElementById('r6-mandos');
+  let reto = null;
+  const eleccion = Curso.eleccion(mandos, { etiqueta: 'Frequency axis', valor: 'lineal', reto: 'reto-6',
+    opciones: [{ valor: 'lineal', texto: 'Linear' }, { valor: 'log', texto: 'Logarithmic' }], alCambiar: v => { e.escala = v; vista(); } });
+  const mMin = Curso.mando(mandos, { etiqueta: 'Minimum frequency', escala: 'log', min: 20, max: 2000, paso: 1, valor: e.fmin, formato: v => num(v, 0) + ' Hz', reto: 'reto-6',
+    alCambiar: v => { e.fmin = Math.min(v, e.fmax * 0.8); vista(); } });
+  const mMax = Curso.mando(mandos, { etiqueta: 'Maximum frequency', escala: 'log', min: 1000, max: 8000, paso: 10, valor: e.fmax, formato: v => num(v, 0) + ' Hz', reto: 'reto-6',
+    alCambiar: v => { e.fmax = Math.max(v, e.fmin * 1.25); vista(); } });
+  const bots = filaBotones('#r6-fila');
+  Curso.audio.boton(bots, () => { calcular(); return { x: e.x, fs: FS, volumen: 0.5 }; }, 'Listen to the sound');
+  const input = crear('input', { type: 'text', id: 'r6-palabra', autocomplete: 'off', spellcheck: 'false', maxlength: '8', placeholder: 'what does it say?' });
+  const campo = crear('div', { class: 'campo' }, crear('label', { for: 'r6-palabra' }, 'Hidden word'), crear('span', { class: 'campo-caja' }, input));
+  bots.appendChild(campo);
+  input.style.width = 'calc(8ch + 1.4rem)';
+  input.addEventListener('input', () => { campo.classList.remove('bien', 'mal'); Curso.cambio('reto-6'); });
+  input.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); reto.revisar(); } });
+  Curso.alVerse(L.canvas, calcular);
+  lect.fijar('escala', 'lineal'); lect.fijar('rango', '100 to 8,000 Hz');
+  reto = Curso.reto('reto-6', {
+    titulo: 'The hidden message', nivel: 'difícil', auto: false,
+    comprobar: () => {
+      calcular();
+      const v = input.value.trim().toUpperCase();
+      if (!v) return { ok: false, mensaje: 'Change the axis and the limits until a word can be read, and type it.' };
+      if (v !== e.palabra) { campo.classList.remove('bien'); campo.classList.add('mal'); return { ok: false, mensaje: 'That’s not it. If the letters come out squashed or cut off, change the axis or the frequency limits.' }; }
+      if (e.escala !== 'log') return { ok: false, mensaje: 'That is the word, but with this axis the letters come out distorted. Set the axis to logarithmic to see it properly.' };
+      if (e.fmin > 450 || e.fmax < 5500) return { ok: false, mensaje: 'That is what it says, but the limits cut off the drawing: the word runs from roughly 400 to 6,400 Hz. Open them up.' };
+      campo.classList.remove('mal'); campo.classList.add('bien');
+      return { ok: true, mensaje: 'The word was ' + e.palabra + ', and it reads well with the logarithmic axis.' };
+    },
+    alReiniciar: () => { input.value = ''; campo.classList.remove('bien', 'mal'); eleccion.fijar('lineal'); mMin.fijar(100, false); mMax.fijar(8000, false); e.fmin = 100; e.fmax = 8000; vista(); },
+    resolver: () => { calcular(); eleccion.fijar('log', false); e.escala = 'log'; mMin.fijar(350, false); mMax.fijar(7000, false); e.fmin = 350; e.fmax = 7000; input.value = e.palabra; vista(); },
+    pista: [
+      'The letters are drawn octave by octave: try the logarithmic scale.',
+      'Then open up the limits so the drawing isn’t cut off: it runs from about 400 to about 6,400 Hz.',
+    ],
+    exito: '<p>Aphex Twin did the same in 1999 with his face: it only looks right with the frequency axis on a logarithmic scale. On a linear one, the low pitches get squashed at the bottom and the high ones stretched, and the drawing is distorted.</p>',
+  });
+})();
+
+// ── En tu voz: el espectrograma de lo que cargues, con su espectro tumbado, en banda estrecha o ancha ──
+(function () {
+  const FSA = 22050;
+  const st = { x: null, fs: FSA, dur: 0, banda: 'estrecha', eje: 'lineal', A: null, nota: '' };
+  const lab = Curso.voz('#voz-lab', {
+    ejemplos: ['aaaIii', 'silbidoQueSube', 'frase', 'palmadas', 'melodia'],
+    fsAnalisis: FSA,
+    alCargar: (x, fs, nombre, info) => { st.sintetico = !!(info && info.sintetico); st.x = x; st.fs = fs; st.dur = x.length / fs; st.A = { estrecha: null, ancha: null }; analizar(); },
+  });
+  const BANDAS = { estrecha: 1024, ancha: 128 };
+  const controles = crear('div', { class: 'mandos' });
+  lab.panel.appendChild(controles);
+  Curso.eleccion(controles, { etiqueta: 'Window', valor: 'estrecha', opciones: [{ valor: 'estrecha', texto: 'Narrowband (46 ms)' }, { valor: 'ancha', texto: 'Wideband (5.8 ms)' }], alCambiar: v => { st.banda = v; analizar(); } });
+  Curso.eleccion(controles, { etiqueta: 'Frequency axis', valor: 'lineal', opciones: [{ valor: 'lineal', texto: 'Linear (0 to 8 kHz)' }, { valor: 'log', texto: 'Logarithmic (50 Hz to 11 kHz)' }], alCambiar: v => { st.eje = v; analizar(); } });
+  const escena = crear('div', { class: 'escena' });
+  lab.panel.appendChild(escena);
+  const lect = Curso.lecturas(lab.panel, [
+    { id: 'trozo', nombre: 'Chunk analyzed', clase: 'respuesta' },
+    { id: 'filas', nombre: 'Rows every' },
+  ]);
+  const nota = crear('p', { class: 'nota-reto' }, 'Pick an audio file or record your own to see its spectrogram.');
+  lab.panel.appendChild(nota);
+
+  const L = G.lienzo(escena, {
+    alto: altoDe(300, 360),
+    etiqueta: 'Spectrogram of the loaded audio, with the spectrum of the whole recording turned on its side to its right and the same frequency axis. Time runs to the right and frequency upward.',
+    dibujar: (ctx, w, h, C) => {
+      const A = st.A && st.A[st.banda];
+      const log = st.eje === 'log', fmin = log ? 50 : 0, fmax = log ? 11000 : 8000;
+      const sw = w < 480 ? 50 : 80, izq = w < 380 ? 44 : 52, der = w < 380 ? 48 : 56, arriba = 14, abajo = 32;
+      const caja = { x: izq, y: arriba, w: w - izq - sw - der - 8, h: h - arriba - abajo };
+      const marcasLin = [0, 2000, 4000, 6000, 8000], marcasLog = [100, 200, 500, 1000, 2000, 5000, 10000];
+      const esc = G.ejes(ctx, { caja, x: [0, Math.max(0.1, st.dur)], y: log ? [Math.log2(fmin), Math.log2(fmax)] : [fmin, fmax], marcasX: false,
+        marcasY: log ? marcasLog.map(Math.log2) : marcasLin, formatoY: log ? v => num(Math.pow(2, v), 0) : v => num(v, 0), formatoX: v => num(v, 1),
+        etiquetaX: 'time (s)', etiquetaY: 'frequency (Hz)', rejilla: false, C });
+      if (!A) { G.texto(ctx, caja.x + caja.w / 2, caja.y + caja.h / 2, 'Record, upload audio or pick an example', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+      const rango = [A.E.max - 70, A.E.max], V = log ? A.vlog : A.vlin;
+      G.mapa(ctx, esc, { datos: V.datos, nF: V.nF, nT: V.nT, t: V.t, f: V.f, rango });
+      ctx.save(); ctx.strokeStyle = C.eje; ctx.strokeRect(Math.round(caja.x) + 0.5, Math.round(caja.y) + 0.5, Math.round(caja.w), Math.round(caja.h)); ctx.restore();
+      // El espectro de la grabación entera, tumbado: potencia media de cada fila, en dB.
+      const x0 = caja.x + caja.w + 8;
+      ctx.save();
+      ctx.strokeStyle = C.eje; ctx.strokeRect(Math.round(x0) + 0.5, Math.round(caja.y) + 0.5, sw, Math.round(caja.h));
+      ctx.beginPath(); ctx.rect(x0 + 1, caja.y, sw - 1, caja.h); ctx.clip();
+      ctx.strokeStyle = C.espectro; ctx.lineWidth = 1.6; ctx.beginPath();
+      let primero = true;
+      const E = A.E, df = E.f[1] - E.f[0];
+      for (let k = 0; k < E.nF; k++) {
+        const fq = E.f[k];
+        if (fq < fmin || fq > fmax) continue;
+        const px = x0 + limitar((A.medio[k] - A.maxMedio + 70) / 70, 0, 1) * (sw - 2), py = esc.y(log ? Math.log2(Math.max(fq, fmin)) : fq);
+        if (primero) { ctx.moveTo(px, py); primero = false; } else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+      ctx.restore();
+      G.texto(ctx, x0 + sw / 2, caja.y + caja.h + 14, 'spectrum', { color: C.tenue, tam: 10.5, alinear: 'center', C });
+      G.leyenda(ctx, { x: w - der + 18, y: caja.y + 12, ancho: 9, alto: Math.max(40, caja.h - 12), rango, etiqueta: 'dB', C });
+    },
+  });
+
+  function calcularBanda(clave) {
+    const n = BANDAS[clave], salto = n / 4;
+    const T = Senal.stft(st.x, st.fs, { n, salto, ventana: 'hann', nfft: n });
+    const E = Senal.mapaDb(T, { suelo: -120 }), P = Senal.potencia(T);
+    const medio = new Float64Array(E.nF);
+    let mx = -Infinity;
+    for (let k = 0; k < E.nF; k++) { let s = 0; for (let j = 0; j < E.nT; j++) s += P[k * E.nT + j]; medio[k] = 10 * Math.log10(Math.max(s / E.nT, 1e-18)); mx = Math.max(mx, medio[k]); }
+    return { n, E, medio, maxMedio: mx, vlin: recortarMapa(E, 0, st.dur, 0, 8000), vlog: mapaLog(E, 0, st.dur, 50, 11000, 220) };
+  }
+  function analizar() {
+    if (!st.x || !st.x.length) return;
+    if (st.x.length < 2048) { nota.textContent = 'The audio is too short to analyze.'; return; }
+    if (!st.A[st.banda]) st.A[st.banda] = calcularBanda(st.banda);
+    const A = st.A[st.banda], T = A.n / st.fs;
+    lect.fijar('trozo', ms(1000 * T) + ' · hop of ' + ms(250 * T));
+    lect.fijar('filas', num(st.fs / A.n, 1) + ' Hz');
+    // Aviso de audio sin agudos: comprimido o con un micrófono de banda estrecha.
+    let alta = -Infinity;
+    for (let k = 0; k < A.E.nF; k++) if (A.E.f[k] > 8000) alta = Math.max(alta, A.medio[k]);
+    const sinAgudos = !st.sintetico && alta < A.maxMedio - 60;
+    nota.textContent = (st.banda === 'estrecha'
+      ? 'With the long window, notes are thin lines and the harmonics of a vowel separate into lines.'
+      : 'With the short window, the harmonics merge into bands, which are the formants, and each vibration of the vocal cords is a vertical line.')
+      + (sinAgudos ? ' Above 8 kHz there is almost nothing: it may be a compressed audio file or a narrowband microphone, like those in hands-free kits.' : '');
+    L.dibujar();
+  }
+})();
+
+})();
+</script>
+</body>
+</html>

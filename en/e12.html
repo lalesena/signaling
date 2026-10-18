@@ -1,0 +1,1144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The uncertainty principle isn’t just quantum · Signals</title>
+<meta name="description" content="Lesson 12 of the visual course “Signals, from Zero to Expert”: why the tuner, the equalizer and the spectrogram run into the same limit as Heisenberg, with tiles, six challenges and your own voice.">
+<link rel="stylesheet" href="../comun/fuentes.css">
+<link rel="stylesheet" href="../comun/estilo.css">
+<script>try{var t=localStorage.getItem('senales:tema'),h=document.documentElement;if(t==='agua'||t==='papel'){h.setAttribute('data-tema-previo',h.getAttribute('data-theme')||'');h.setAttribute('data-theme',t==='agua'?'dark':'light')}}catch(e){}</script>
+</head>
+<body data-leccion="e12">
+<main class="leccion" id="contenido">
+
+  <header class="cabecera">
+    <p class="antetitulo">Level 4 · Lesson 12</p>
+    <h1>The uncertainty principle isn’t just quantum</h1>
+    <aside class="pregunta">
+      <p>The tuning app takes a moment to decide which note you are whistling, and it isn’t that your phone is slow. If you give it a very brief note, it doesn’t get it right, and if you give it a finger snap, it doesn’t even try, because a snap has no note. Heisenberg’s uncertainty principle sounds like particle physics, but the tuner, the equalizer on your stereo and a bird’s trill run into the same limit every day. What is it, and why is there no window that gets around it?</p>
+    </aside>
+    <ul class="meta"><li>About 45 minutes</li></ul>
+  </header>
+
+  <section id="imagen">
+    <h2>The idea in one picture</h2>
+    <figure class="ancla">
+      <div class="marco">
+        <div class="escena" id="ancla-escena"></div>
+        <div class="mandos" id="ancla-mandos"></div>
+      </div>
+      <figcaption>A plane with time running to the right and frequency upward, divided into tiles. With the control you choose how long the window lasts: the longer it is, the wider and lower each tile gets, and the shorter it is, the narrower and taller, but its area doesn’t change. The snap is the vertical line and the note is the horizontal line, and of each one you only know what fits in the tile it touches.</figcaption>
+    </figure>
+    <p>In <a href="e11.html">lesson 11</a> the spectrogram was built by sliding a window along the sound and stacking one column of color for each chunk, and the duration of that window was a decision. Each cell of that map is a <b class="termino">tile</b>: a rectangle of the time–frequency plane, as wide as the window lasts and as tall as the frequency spacing that window can tell apart, which according to the rule from <a href="e05.html">lesson 5</a> is roughly one divided by its duration.</p>
+    <p>A tile can be stretched wide by flattening it, or the other way around, but there is no way to shrink it in both directions at once. With a short window you separate two nearby events in time well, the <b class="termino">time resolution</b>, and two nearby notes poorly, the <b class="termino">frequency resolution</b>, and with a long window the opposite happens. That choice between seeing when well or seeing which one well is the <b class="termino">time–frequency trade-off</b>. Move the control and check that, while the tile changes shape, its area stays the same.</p>
+  </section>
+
+  <section id="pasos">
+    <h2>Step by step</h2>
+
+    <article class="paso" id="paso-1">
+      <h3>A snap and a note that never ends</h3>
+      <p>Snap your fingers. The sound happens at a very precise instant, but it has no note: its energy is spread over almost all frequencies at once, and that is why it sounds like a dry “tick” with no pitch. Now imagine the opposite, a note that sounded forever. It would have an exact frequency and no instant, because it wouldn’t start or end at any moment.</p>
+      <p>In 1946, the engineer Dennis Gabor realized that describing a sound only in time, or only in frequencies, were two exaggerations: the first forgets the notes, and the second, with the eternal waves of Fourier from <a href="e04.html">lesson 4</a>, forgets the instants. What we hear is both at once, so he drew a plane with time and frequency, and showed that no device can divide it into cells smaller than a minimum.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">An inventor with two ideas</span>
+        <p>The same Gabor who drew the tiles invented holography the following year, in 1947, while working as an engineer at the British company Thomson-Houston, and he received the Nobel Prize in Physics for it in 1971.</p>
+      </aside>
+      <p>Every real sound lives between those two extremes and occupies a tile with whatever shape fits it. That of a snap is tall and narrow, because you know well when it happens and poorly which note it has, and that of a long note is low and wide, because you know well which note it is and poorly exactly when it began. In the challenge, each of the six sounds has to go to its own.</p>
+
+      <div class="reto" id="reto-1">
+        <p class="reto-objetivo">Listen to each sound and decide which tile suits it: the tall, narrow one, which keeps the instant, or the low, wide one, which keeps the note. Manage to place all six.</p>
+        <div class="escena" id="r1-escena"></div>
+        <div class="columnas-2" id="r1-sonidos"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-2">
+      <h3>The tile that can’t be shrunk</h3>
+      <p>To see the limit with numbers you need a simple sound: a pure note, a single Ferris wheel from <a href="e01.html">lesson 1</a>, trimmed by a bell curve, so that it starts softly, grows to the center and fades out just as softly. That elementary signal is the <b class="termino" data-termino="Gabor atom (elementary signal)">Gabor atom</b>, and the width of the bell decides how long the note lasts. The shorter it is, the wider its spectrum spreads, and the longer, the narrower.</p>
+      <p>To say how much, you have to decide how to measure the width of something that fades away gradually. The usual way is the standard deviation of its energy, the same idea that measures how spread out exam grades are around the average: here it says how spread out the energy is around its central instant and its central frequency. With that measure, the product of the two widths never drops below a specific value, a little less than a tenth, about 0.08 turns (the exact equation is in the math corner). A bell 10 milliseconds wide, for example, takes up at least about 8 hertz in frequency, and that minimum is called the <b class="termino">Gabor limit</b>.</p>
+      <p>The exact number depends on how the width is measured: with the “effective duration” that Gabor himself used, for example, the minimum is one half. What doesn’t depend on anything is that a minimum exists, and that only one shape reaches it exactly: the Ferris wheel trimmed by a Gaussian bell curve.</p>
+      <p>It is the same inequality that appears in quantum mechanics, and hence the name <b class="termino" data-termino="Uncertainty principle (time–frequency)">uncertainty principle</b>. There, the position of a particle and its momentum are linked like the time and frequency of a sound, because one is the Fourier transform of the other. Gabor himself wrote that his results could have been derived from quantum mechanics by replacing position with time, momentum with frequency and Planck’s constant with one, and added that this is where the paths part ways. In a sound there is nothing mysterious and nobody disturbing it when you measure: it is a property of any wave, the same one that keeps a trimmed Ferris wheel from having a single speed.</p>
+
+      <div class="reto" id="reto-2">
+        <p class="reto-objetivo">Squeeze the note until it lasts as long as a snap, 2 milliseconds wide or less, and see how tall its tile gets. Then stretch it until the tile is less than 10 hertz tall. Drag the right edge of the tile or use the control; ▶ lets you hear the note.</p>
+        <div class="escena" id="r2-onda"></div>
+        <div class="columnas-2">
+          <div class="escena" id="r2-espectro"></div>
+          <div class="escena" id="r2-plano"></div>
+        </div>
+        <div class="mandos" id="r2-mandos"></div>
+        <div class="fila" id="r2-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-3">
+      <h3>The bell and the other windows</h3>
+      <p>So far the window has been a Gaussian bell curve, but the spectrogram in lesson 11 used others: Hann, Hamming, rectangular. Each one leaves a tile of a different size, and only the bell, the <b class="termino">Gaussian window</b>, reaches exactly the minimum. The reason is that its spectrum is another bell just as smooth, with no edges or jumps for energy to escape to distant frequencies. Any abrupt edge spreads energy far from the peak, that leakage from lesson 5, and enlarges the tile.</p>
+      <p>“The best” here means the one with the smallest tile, and it isn’t good for everything. To measure the height of a peak well, or to keep the leakage far from it very low, other windows are used, and that is why Hann is the everyday choice.</p>
+
+      <div class="reto" id="reto-3">
+        <p class="reto-objetivo">Try the five windows and find one whose tile stays less than 0.2% above the minimum. The reading below says how many times the minimum the tile of the window you have selected measures.</p>
+        <div class="columnas-2">
+          <div class="escena" id="r3-ventana"></div>
+          <div class="escena" id="r3-espectro"></div>
+        </div>
+        <div class="mandos" id="r3-mandos"></div>
+        <div class="fila" id="r3-lecturas"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-4">
+      <h3>The tuner</h3>
+      <p>With this you can see why your tuner takes a while. You play two nearly identical strings, one at 440 Hz and one at 442 Hz, and you want the app to tell them apart. As we saw in lesson 5, two notes a few hertz apart blend into a beat, a slow pulse that goes up and down, and they can’t be separated until the window has listened long enough to see a couple of those pulses. With a Hann window, to see a 3 dB gap between the two peaks you need to listen for at least twice one divided by the difference between the notes, which is close to a second for 440 and 442 Hz.</p>
+      <p>It isn’t that the phone is slow: the more alike two notes are, the longer it takes for them to drift out of phase and for the difference to show. It is the law of the tile seen from the notes, because for the tile to be narrow in frequency it has to be long in time.</p>
+      <p>The equalizer from <a href="e06.html">lesson 6</a> runs into the same thing. A very narrow band, a few hertz wide, is slow to react and, when the sound cuts off, keeps ringing a little. Gabor had already noticed it in resonators: the time they take to die out, multiplied by their tuning width, gives a number of the order of one.</p>
+      <aside class="nota al-margen">
+        <span class="antetitulo">The same wall, in the first spectrograph</span>
+        <p>The inventors of the spectrograph ran into it in their first paper, also from 1946. With the narrow filter, the fast trill of a thrush came out almost completely blurred; with the wide one, every note could be seen.</p>
+      </aside>
+
+      <div class="reto" id="reto-4">
+        <p class="reto-objetivo">Listen to the two notes for the time the control sets and make their spectrum show two separate peaks, with a gap of at least 3 dB between them. With “Another pair of notes” you change the difference between the two and try again.</p>
+        <div class="escena" id="r4-tiempo"></div>
+        <div class="escena" id="r4-espectro"></div>
+        <div class="mandos" id="r4-mandos"></div>
+        <div class="fila" id="r4-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-5">
+      <h3>Bangs and harmonics at once</h3>
+      <p>A sustained voice, an “aah,” is a sum of Ferris wheels: the fundamental and its harmonics, spaced from each other by exactly the frequency of the fundamental (<a href="e03.html">lesson 3</a>). To see them as separate horizontal lines, the window has to last at least about twice one divided by that frequency. But if the same recording has a snap, the window stretches it out in time: with a Hann window, the footprint of a snap takes up a little more than a third of the window’s duration.</p>
+      <p>With a high voice there is a range of windows that works for both things, even if it is narrow. With a low voice, as you are about to check, there is none.</p>
+
+      <div class="reto" id="reto-5">
+        <p class="reto-objetivo">Move the window until the harmonics of the “aah” show up separate, with a gap of at least 3 dB between the second and the third, and at the same time the snap is a thin line, no more than 5 milliseconds wide. Then pick the low voice and try again.</p>
+        <div class="escena" id="r5-mapa"></div>
+        <div class="mandos" id="r5-mandos"></div>
+        <div class="fila" id="r5-fila"></div>
+      </div>
+    </article>
+
+    <article class="paso" id="paso-6">
+      <h3>Can the two things be separated?</h3>
+      <p>The two conditions of the previous challenge can be stated in general. To separate two notes a few hertz apart, the Hann window has to last at least twice as long as one pulse of their beat, that is, twice one divided by the difference between them. To separate two bangs, it can’t last more than twice the spacing between them. Both requirements fit in the same window only if the bangs are at least one beat pulse apart; put another way, if you multiply the spacing between the bangs, in seconds, by the difference between the notes, in hertz, the result has to be at least one.</p>
+      <p>It is the tile again, with another face: asking for both things at once is asking for a tile narrower in time and in frequency than its minimum area allows.</p>
+
+      <div class="reto" id="reto-6">
+        <p class="reto-objetivo">Each case mixes two bangs (two vertical lines) and two notes (two horizontal lines). Move the window until you separate the two bangs and the two notes at once, or press “Impossible” if you think no window exists that can do it. Solve two cases in a row.</p>
+        <div class="escena" id="r6-mapa"></div>
+        <div class="mandos" id="r6-mandos"></div>
+        <div class="fila" id="r6-fila"></div>
+      </div>
+
+      <p>It is worth being clear about what this limit does not say. It doesn’t prevent measuring the frequency of a single clean note very precisely: if there is little noise, a tuner can tune much more finely than the rule of one divided by the duration suggests. What it prevents is separating two very close notes, or knowing when and which at once with a single measurement. Nor does it prevent sharpening the picture if you assume something about the signal, and that is exactly what reassignment and synchrosqueezing will do in <a href="e18.html">lessons 18</a> and <a href="e19.html">19</a>.</p>
+      <p>Nor is there one window that is good for all signals. A whistle that rises while it sounds forces a choice between two evils: with a long window, the note changes inside it and the spectrogram line gets thicker, and with a short one it gets thicker because of the uncertainty. In between there is a window that leaves the line as thin as possible, and for a whistle that rises 2,000 hertz per second, the best Gaussian window is about 9 milliseconds wide; for one four times faster, half of that. The best window depends on the signal, and in a single recording there are sounds of every kind.</p>
+      <aside class="nota">
+        <span class="antetitulo">What about the ear?</span>
+        <p>In 2013, an experiment with twelve people, many of them musicians, found that some could tell both when a note arrives and whether it is higher better than a spectrogram would allow. Its authors concluded that the ear doesn’t work like a simple filter bank. Other researchers responded that the experiment didn’t measure the same thing as the limit. What nobody disputes is that the ear is not a spectrogram: it does more complicated things.</p>
+      </aside>
+    </article>
+  </section>
+
+  <section id="voz">
+    <h2>In your voice</h2>
+    <p><b>What to record.</b> Three claps and then a long “aah” on a comfortable note, all in a single recording of about 8 seconds: they are segments 6 and 3 of the series’ reference recording. Clap away from the phone so it doesn’t saturate, and if you can, in a room without much echo. Record with the microphone if your browser allows it; if not, upload audio recorded with your phone or try the synthetic examples.</p>
+    <p><b>What to look at.</b> The same audio comes out in two spectrograms with the same color scale, one with a short window and one with a long one. In the short one, each clap is a thin vertical line and your “aah” breaks up into wide bands crossed by little vertical lines, one for each pulse of your vocal cords. In the long one, the harmonics of the “aah” separate as horizontal lines and each clap turns into a wide smear, with its echo tail. Bring the two windows closer with the controls and look for the middle ground: with a high voice it shows up, and with a low one it doesn’t.</p>
+    <div id="voz-lab"></div>
+  </section>
+
+  <section id="recuerda">
+    <h2>What to remember</h2>
+    <ol class="tres">
+      <li>What is concentrated in time is spread out in frequency, and the other way around. Each measurement occupies a tile of the time–frequency plane that can be stretched or flattened, but not shrunk, and that is why a short window shows when well and a long one shows which one well.</li>
+      <li>Measured with standard deviations, the product of the width in time and the width in frequency has a minimum, the Gabor limit, and only a Ferris wheel trimmed by a Gaussian bell curve reaches it. The exact value depends on how the width is measured; that the minimum exists does not.</li>
+      <li>It is the same inequality as Heisenberg’s, but in a sound there is nothing quantum: it is a property of all waves. It doesn’t prevent measuring a clean note precisely, but separating and locating things with a single window.</li>
+    </ol>
+  </section>
+
+  <section id="errores">
+    <h2>Common mistakes</h2>
+    <ul class="errores">
+      <li><b>“With a more powerful computer, or more samples per second, the limit disappears.”</b> The limit depends on how long the window lasts, not on the sampling rate or the computing power. More samples per second add frequencies at the top, but they don’t sharpen the ones that were already there.</li>
+      <li><b>“Zero padding sharpens the frequency and gets around the limit.”</b> Zero padding only draws more points of the same curve, as we saw in lesson 5. The tile stays just as tall.</li>
+      <li><b>“The limit prevents measuring the frequency of a note precisely.”</b> What it prevents is separating two nearby components, or knowing when and which at once. A single clean note, with little noise, can be measured far more precisely than one divided by its duration.</li>
+      <li><b>“It’s the same as Heisenberg, so it’s quantum.”</b> It is the same mathematical inequality with a different meaning: in a sound there are no particles or observers disturbing it when you measure. It is a property of all waves.</li>
+      <li><b>“With the rectangular window the tile is smaller, because it uses all the samples.”</b> The other way around: its abrupt edges spread energy far from the peak and, measured with standard deviations, its tile is vastly larger. The smallest is the Gaussian bell curve.</li>
+    </ul>
+  </section>
+
+  <details id="rincon" class="rincon">
+    <summary>
+      <span class="pliegue">Open</span>
+      <h2>Math corner</h2>
+      <span class="resumen">The formulas, for anyone who wants them. Each one comes after its reading in words.</span>
+    </summary>
+    <div class="rincon-cuerpo">
+      <h3>Where a signal is and how spread out it is</h3>
+      <p>The energy of the signal is the integral of its squared value, and it is treated as if it were a probability. The mean instant <span class="tex">\bar t</span> and the standard deviation in time <span class="tex">\sigma_t</span> are computed from the energy of the signal, and the mean frequency <span class="tex">\bar f</span> and the standard deviation in frequency <span class="tex">\sigma_f</span>, from the energy of its spectrum <span class="tex">X(f)</span>:</p>
+      <div class="tex">E = \int |x(t)|^2\,dt, \qquad \sigma_t^2 = \frac{1}{E}\int (t-\bar t)^2\,|x(t)|^2\,dt, \qquad \sigma_f^2 = \frac{1}{E}\int (f-\bar f)^2\,|X(f)|^2\,df</div>
+
+      <h3>The limit</h3>
+      <p>The product of the two widths never drops below one over four pi, with frequency measured in hertz:</p>
+      <div class="tex">\sigma_t\,\sigma_f \;\ge\; \frac{1}{4\pi}</div>
+
+      <h3>The equality</h3>
+      <p>It is reached only by a Ferris wheel of any speed trimmed by a Gaussian bell curve, shifted in time to wherever you like:</p>
+      <div class="tex">x(t) = A\, e^{-\frac{(t-t_0)^2}{4\sigma_t^2}}\, e^{i(2\pi f_0 t + \varphi)}</div>
+
+      <h3>Gabor’s version</h3>
+      <p>Gabor multiplied each standard deviation by the square root of two pi to call them “effective durations,” and with that measure the minimum is one half:</p>
+      <div class="tex">\Delta t = \sqrt{2\pi}\,\sigma_t,\quad \Delta f = \sqrt{2\pi}\,\sigma_f \;\Rightarrow\; \Delta t\,\Delta f \ge \tfrac{1}{2}</div>
+
+      <h3>Why it is true, in one line</h3>
+      <p>With the center at zero, the Cauchy–Schwarz inequality between <span class="tex">t\,x(t)</span> and the derivative of <span class="tex">x</span> gives a quarter of the squared energy. Since the energy of the derivative is four pi squared times the energy of <span class="tex">f\,X(f)</span>, the limit follows. Equality requires the derivative to be proportional to <span class="tex">t\,x(t)</span>, and only the bell curve satisfies that:</p>
+      <div class="tex">\left(\int t^2|x|^2dt\right)\left(\int |x'|^2dt\right) \ge \frac{E^2}{4}, \qquad \int |x'|^2dt = 4\pi^2\!\int f^2|X(f)|^2df</div>
+
+      <h3>The same inequality in quantum mechanics</h3>
+      <p>If momentum is written as Planck’s constant times the “spatial frequency” of the wave, according to the de Broglie relation, multiplying the limit by <span class="tex">h</span> gives Kennard’s inequality for position and momentum:</p>
+      <div class="tex">p = h\,\nu_x \;\Rightarrow\; \sigma_x\,\sigma_p \ge \frac{h}{4\pi} = \frac{\hbar}{2}</div>
+
+      <h3>The Hann window</h3>
+      <p>A Hann window of duration <span class="tex">T</span> stays within 2.6% of the minimum:</p>
+      <div class="tex">\sigma_t \approx 0.1414\,T, \qquad \sigma_f = \frac{1}{\sqrt{3}\,T}, \qquad \sigma_t\,\sigma_f \approx 1.026\cdot\frac{1}{4\pi}</div>
+
+      <h3>Rules of thumb with the Hann window</h3>
+      <p>Measured with a 3 dB gap between peaks: two notes <span class="tex">\Delta f</span> hertz apart are separated if the window lasts at least two divided by that difference, and two bangs <span class="tex">d</span> seconds apart, if they are at least half a window apart. Both fit together if the product is at least one:</p>
+      <div class="tex">T \ge \frac{2}{\Delta f}, \qquad d \ge \frac{T}{2} \;\Rightarrow\; d\,\Delta f \ge 1</div>
+
+      <h3>The best window for a rising tone</h3>
+      <p>For a tone that rises <span class="tex">c</span> hertz every second, with a Gaussian window of standard deviation <span class="tex">\sigma</span> measured in the amplitude, the spectrogram line is as thin as possible with this window, and its minimum width, as the standard deviation of the energy in frequency, is:</p>
+      <div class="tex">\sigma_{\text{opt}} = \frac{1}{\sqrt{2\pi c}}, \qquad \sigma_f^{\min} = \sqrt{\frac{c}{2\pi}}</div>
+    </div>
+  </details>
+
+  <section id="saber-mas">
+    <h2>Further reading</h2>
+    <ul class="recursos">
+      <li><span class="tipo">Article</span>Gabor, D. (1946). <a href="https://doi.org/10.1049/ji-3-2.1946.0074"><i>Theory of communication</i></a>, <i>Journal of the IEE</i>. The origin of the information plane, the tiles and the elementary signals; pages 429 to 435 read well without being an expert, in an open-access <a href="http://www.granularsynthesis.com/pdf/gabor.pdf">scanned copy</a>.</li>
+      <li><span class="tipo">Open book</span>Downey, A. B., <a href="https://greenteapress.com/thinkdsp/html/thinkdsp004.html"><i>Think DSP</i>, § 3.5, “The Gabor limit”</a>. The trade-off between time and frequency, with numbers and code.</li>
+      <li><span class="tipo">Video</span>3Blue1Brown (2018), <a href="https://www.3blue1brown.com/lessons/uncertainty-principle">“The more general uncertainty principle, beyond quantum”</a>. From sound to Heisenberg, with animations.</li>
+      <li><span class="tipo">Encyclopedia</span>Hilgevoord, J. and Uffink, J., <a href="https://plato.stanford.edu/entries/qt-uncertainty/">“The Uncertainty Principle”</a>, <i>Stanford Encyclopedia of Philosophy</i>. The quantum version, well told: Heisenberg, Kennard and what it doesn’t mean.</li>
+      <li><span class="tipo">Manual</span><a href="https://manual.audacityteam.org/man/spectrogram_view.html">Audacity, <i>Spectrogram View</i></a>. To try the trade-off with your own recordings, changing the window size.</li>
+      <li><span class="tipo">Articles</span>Oppenheim, J. N. and Magnasco, M. O. (2013), <a href="https://arxiv.org/abs/1208.4611">“Human time-frequency acuity beats the Fourier uncertainty principle”</a>, and the response by Thekkadath, G. S. and Spanner, M. (2015), <a href="https://arxiv.org/abs/1501.06890">“Comment…”</a>. The debate about the ear and the limit.</li>
+    </ul>
+  </section>
+
+  <section id="terminos">
+    <h2>New terms</h2>
+  </section>
+
+  <section id="examen">
+    <h2>Lesson quiz</h2>
+  </section>
+
+</main>
+
+<script src="temario.js"></script>
+<script src="../comun/graficas.js"></script>
+<script src="../comun/senal.js"></script>
+<script src="../comun/curso.js"></script>
+<script src="datos/e12.js"></script>
+<script>
+// Lección 12 · El principio de incertidumbre no es solo cuántico: la imagen ancla (las baldosas), los seis retos y el
+// laboratorio «En tu voz». Lo común (barra, progreso, términos, examen y pie) lo monta Curso solo.
+// Convenios: tiempo hacia la derecha y frecuencia hacia arriba; ventanas y baldosas en púrpura, espectros en ámbar,
+// señales en verde y mapas en magma con su leyenda en dB. Las anchuras se miden siempre con la desviación típica de
+// la energía, y «área» es el producto de las dos anchuras dividido por su mínimo, 1/(4π).
+(function () {
+  'use strict';
+  const G = Graficas, TAU = Math.PI * 2, num = Curso.num, crear = Curso.crear;
+  const limitar = (x, a, b) => Math.min(b, Math.max(a, x));
+  const FS = 16000;
+  const pot2 = n => Senal.siguientePotencia2(n);
+  const redondear = (v, d) => Math.round(v * Math.pow(10, d)) / Math.pow(10, d);
+  const ms = v => num(v) + ' ms';
+  const db = v => num(v, 1) + ' dB';
+  const altoDe = (movil, escritorio) => w => (w < 560 ? movil : escritorio);
+
+  // ── Utilidades de cálculo ────────────────────────────────────────────────────────────────────────────
+  // Anchuras de una señal real: desviación típica de su energía en el tiempo (s) y en frecuencia (Hz).
+  // unaCara: solo las frecuencias positivas (señales con una portadora); si no, todo el eje (ventanas, centradas en 0 Hz).
+  function anchuras(x, fs, { unaCara = false, relleno = 16 } = {}) {
+    const n = x.length;
+    let E = 0, m = 0;
+    for (let i = 0; i < n; i++) { const e = x[i] * x[i]; E += e; m += e * i; }
+    if (!(E > 0)) return { st: 0, sf: 0, area: NaN };
+    m /= E;
+    let v = 0;
+    for (let i = 0; i < n; i++) v += (i - m) * (i - m) * x[i] * x[i];
+    const st = Math.sqrt(v / E) / fs;
+    const nfft = pot2(n * relleno), X = Senal.fftReal(x, nfft), df = fs / nfft, kmax = unaCara ? nfft / 2 : nfft - 1;
+    const pot = k => X.re[k] * X.re[k] + X.im[k] * X.im[k];
+    const frec = k => (k <= nfft / 2 ? k : k - nfft) * df;
+    let P = 0, mf = 0;
+    for (let k = 0; k <= kmax; k++) { const p = pot(k); P += p; mf += p * frec(k); }
+    mf /= P;
+    let vf = 0;
+    for (let k = 0; k <= kmax; k++) { const d = frec(k) - mf; vf += d * d * pot(k); }
+    const sf = Math.sqrt(vf / P);
+    return { st, sf, area: st * sf * 4 * Math.PI };
+  }
+  // Hueco, en dB, entre dos picos de un espectro de amplitud: cuánto baja el valle respecto al más bajo de los dos
+  // picos. Vale 0 si se funden en uno solo.
+  function huecoEntrePicos(f, mag, f1, f2) {
+    const df = f[1] - f[0], i1 = Math.round((f1 - f[0]) / df), i2 = Math.round((f2 - f[0]) / df);
+    const w = Math.max(1, Math.round(0.35 * (f2 - f1) / df));
+    let p1 = 0, p2 = 0, v = Infinity;
+    for (let i = i1 - w; i <= i1 + w; i++) p1 = Math.max(p1, mag[i] || 0);
+    for (let i = i2 - w; i <= i2 + w; i++) p2 = Math.max(p2, mag[i] || 0);
+    for (let i = i1; i <= i2; i++) v = Math.min(v, mag[i]);
+    return v > 0 ? Math.max(0, 20 * Math.log10(Math.min(p1, p2) / v)) : 60;
+  }
+  // Dos tonos de igual amplitud que están en cuadratura en el centro del trozo: así el hueco no depende de en qué
+  // punto de su batido empiece la ventana (es el promedio de todas las fases).
+  function dosTonos(f1, f2, dur, fs) {
+    const n = Math.max(8, Math.round(dur * fs)), x = new Float64Array(n);
+    for (let i = 0; i < n; i++) { const t = i / fs - dur / 2; x[i] = Math.cos(TAU * f1 * t) + Math.cos(TAU * f2 * t + Math.PI / 2); }
+    return x;
+  }
+  // Espectro (Hann, con relleno ×16) de dos tonos que suenan T segundos, y el hueco entre sus picos.
+  function espectroDeTonos(f1, f2, T, fs) {
+    const x = dosTonos(f1, f2, T, fs), e = Senal.espectro(x, fs, { ventana: 'hann', nfft: pot2(x.length * 16) });
+    return { f: e.f, mag: e.mag, hueco: huecoEntrePicos(e.f, e.mag, f1, f2) };
+  }
+  // Hueco, en dB, que una ventana de Hann de T segundos deja entre dos golpes separados d segundos (la energía de dos
+  // impulsos vista por la ventana; coincide con el cálculo numérico del espectrograma).
+  function huecoDeGolpes(T, d) {
+    const h = u => (Math.abs(u) < T / 2 ? Math.pow(Math.cos(Math.PI * u / T), 4) : 0);
+    const pico = h(0) + h(d), medio = 2 * h(d / 2);
+    return medio > 1e-9 ? Math.max(0, 10 * Math.log10(pico / medio)) : 60;
+  }
+  // Recorta un mapa (E: { t, f, nT, nF, db }) a una zona [t0, t1] × [f0, f1] y lo deja listo para Graficas.mapa.
+  function recortarMapa(E, t0, t1, f0, f1) {
+    const dt = E.nT > 1 ? E.t[1] - E.t[0] : 1, df = E.nF > 1 ? E.f[1] - E.f[0] : 1;
+    const j0 = limitar(Math.floor(t0 / dt), 0, E.nT - 1), j1 = limitar(Math.ceil(t1 / dt), j0, E.nT - 1);
+    const k0 = limitar(Math.floor(f0 / df), 0, E.nF - 1), k1 = limitar(Math.ceil(f1 / df), k0, E.nF - 1);
+    const nT = j1 - j0 + 1, nF = k1 - k0 + 1, datos = new Float32Array(nF * nT);
+    for (let k = 0; k < nF; k++) for (let j = 0; j < nT; j++) datos[k * nT + j] = E.db[(k + k0) * E.nT + j + j0];
+    return { datos, nF, nT, t: E.t.subarray(j0, j1 + 1), f: E.f.subarray(k0, k1 + 1) };
+  }
+  // Un mapa tiempo-frecuencia con sus ejes y su leyenda en dB (frecuencia hacia arriba, escala magma).
+  function dibujarMapa(ctx, w, h, C, V, o) {
+    const margen = { izquierda: w < 380 ? 44 : 52, derecha: w < 380 ? 52 : 60, arriba: o.titulo ? 28 : 14, abajo: 32 };
+    const esc = G.ejes(ctx, { x: o.x, y: o.y, marcasX: o.marcasX, marcasY: o.marcasY, formatoX: o.formatoX, formatoY: o.formatoY, rejilla: false,
+      etiquetaX: o.etiquetaX, etiquetaY: o.etiquetaY || 'frequency (Hz)', margen, C });
+    if (V) G.mapa(ctx, esc, { datos: V.datos, nF: V.nF, nT: V.nT, t: V.t, f: V.f, rango: o.rango });
+    ctx.save();
+    ctx.strokeStyle = C.eje;
+    ctx.strokeRect(Math.round(esc.caja.x) + 0.5, Math.round(esc.caja.y) + 0.5, Math.round(esc.caja.w), Math.round(esc.caja.h));
+    ctx.restore();
+    G.leyenda(ctx, { x: w - margen.derecha + 14, y: esc.caja.y + 14, ancho: 9, alto: Math.max(40, esc.caja.h - 14), rango: o.rango, etiqueta: 'dB', C });
+    if (o.titulo) G.texto(ctx, esc.caja.x + 4, 17, o.titulo, { color: C.suave, tam: 11, peso: 600, C });
+    return esc;
+  }
+  // El dibujo de una baldosa en su plano: un rectángulo púrpura con borde.
+  function rectangulo(ctx, x0, y0, x1, y1, C, { alfa = 0.28, borde = 1.6, color = C.plantilla } = {}) {
+    ctx.save();
+    ctx.fillStyle = G.alfa(color, alfa);
+    ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+    if (borde) { ctx.strokeStyle = color; ctx.lineWidth = borde; ctx.strokeRect(x0 + 0.5, y0 + 0.5, x1 - x0 - 1, y1 - y0 - 1); }
+    ctx.restore();
+  }
+  const filaBotones = contenedor => { const f = crear('div', { class: 'botones' }); document.querySelector(contenedor).appendChild(f); return f; };
+
+  // ── La idea en una imagen: las baldosas ──────────────────────────────────────────────────────────────
+  // El plano de 0 a 400 ms y de 0 a 400 Hz, cuadriculado en baldosas de ancho T y alto 1/T (área de una vuelta,
+  // siempre la misma). La ventana «respira» sola entre 5 y 200 ms hasta que el lector toca el mando.
+  (function () {
+    const T_MIN = 5, T_MAX = 200, LN_MID = (Math.log(T_MIN) + Math.log(T_MAX)) / 2, LN_AMP = (Math.log(T_MAX) - Math.log(T_MIN)) / 2;
+    const TC = 237, FN = 163;                          // el chasquido (ms) y la nota (Hz) del dibujo
+    const e = { T: 20, u: 0 };
+    const deU = u => Math.exp(LN_MID + LN_AMP * Math.sin(u));
+    const aU = T => Math.asin(limitar((Math.log(T) - LN_MID) / LN_AMP, -1, 1));
+    e.u = aU(e.T);
+    let anim = null, mando = null;
+    const L = G.lienzo('#ancla-escena', {
+      alto: altoDe(280, 330),
+      etiqueta: 'The time–frequency plane divided into tiles of equal area, with a snap, which is a vertical line, and a note, which is a horizontal line. The control changes the shape of the tiles.',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { x: [0, 400], y: [0, 400], marcasX: [0, 100, 200, 300, 400], marcasY: [0, 100, 200, 300, 400], rejilla: false,
+          etiquetaX: 'time (ms)', etiquetaY: 'frequency (Hz)', margen: { izquierda: 46, derecha: 14, arriba: 28, abajo: 32 }, C });
+        const W = e.T, H = 1000 / e.T;                 // ancho en ms y alto en Hz: ancho × alto = 1 vuelta
+        const nc = Math.ceil(400 / W - 1e-9), nr = Math.ceil(400 / H - 1e-9), ic = Math.floor(TC / W), ir = Math.floor(FN / H);
+        for (let i = 0; i < nc; i++) {
+          for (let j = 0; j < nr; j++) {
+            const x0 = esc.x(i * W), x1 = esc.x(Math.min(400, (i + 1) * W)), y0 = esc.y(Math.min(400, (j + 1) * H)), y1 = esc.y(j * H);
+            const enC = i === ic, enF = j === ir;
+            const a = enC && enF ? 0.62 : enC || enF ? 0.3 : ((i + j) % 2 ? 0.07 : 0.15);
+            ctx.fillStyle = G.alfa(C.plantilla, a);
+            ctx.fillRect(x0, y0, x1 - x0 + 0.6, y1 - y0 + 0.6);
+          }
+        }
+        // Las junturas entre baldosas, solo si no se apelmazan.
+        ctx.save();
+        ctx.strokeStyle = G.alfa(C.plantilla, 0.55);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        if (esc.x(W) - esc.x(0) >= 4) for (let i = 1; i < nc; i++) { const x = Math.round(esc.x(i * W)) + 0.5; ctx.moveTo(x, esc.caja.y); ctx.lineTo(x, esc.caja.y + esc.caja.h); }
+        if (esc.y(0) - esc.y(H) >= 4) for (let j = 1; j < nr; j++) { const y = Math.round(esc.y(j * H)) + 0.5; ctx.moveTo(esc.caja.x, y); ctx.lineTo(esc.caja.x + esc.caja.w, y); }
+        ctx.stroke();
+        ctx.strokeStyle = C.eje;
+        ctx.strokeRect(Math.round(esc.caja.x) + 0.5, Math.round(esc.caja.y) + 0.5, Math.round(esc.caja.w), Math.round(esc.caja.h));
+        ctx.restore();
+        // La baldosa que toca el chasquido y la nota, con sus medidas.
+        const bx0 = esc.x(ic * W), bx1 = esc.x(Math.min(400, (ic + 1) * W)), by0 = esc.y(Math.min(400, (ir + 1) * H)), by1 = esc.y(ir * H);
+        rectangulo(ctx, bx0, by0, bx1, by1, C, { alfa: 0, borde: 2.2, color: C.texto });
+        G.linea(ctx, esc, [TC, TC], [0, 400], { color: C.senal, ancho: 2.4, C });
+        G.linea(ctx, esc, [0, 400], [FN, FN], { color: C.senal, ancho: 2.4, C });
+        const fondo = G.alfa(C.pantalla, 0.88);
+        G.texto(ctx, esc.x(TC) + 6, esc.caja.y + 14, 'snap', { color: C.texto, tam: 11, peso: 600, fondo, C });
+        G.texto(ctx, esc.caja.x + 6, esc.y(FN) - 7, 'note', { color: C.texto, tam: 11, peso: 600, fondo, C });
+        // Ancho y alto de la baldosa tocada, con sendos corchetes.
+        const yb = Math.max(esc.caja.y + 24, by0 - 7);
+        ctx.save();
+        ctx.strokeStyle = C.texto; ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(bx0, yb - 3); ctx.lineTo(bx0, yb + 3); ctx.moveTo(bx0, yb); ctx.lineTo(bx1, yb); ctx.moveTo(bx1, yb - 3); ctx.lineTo(bx1, yb + 3);
+        const xb = bx1 + 8 < esc.caja.x + esc.caja.w - 4 ? bx1 + 8 : bx0 - 8;
+        ctx.moveTo(xb - 3, by0); ctx.lineTo(xb + 3, by0); ctx.moveTo(xb, by0); ctx.lineTo(xb, by1); ctx.moveTo(xb - 3, by1); ctx.lineTo(xb + 3, by1);
+        ctx.stroke();
+        ctx.restore();
+        G.texto(ctx, (bx0 + bx1) / 2, yb - 6, ms(W), { alinear: 'center', color: C.texto, tam: 11, peso: 600, fondo, C });
+        const derecha = xb > bx1;
+        G.texto(ctx, derecha ? xb + 7 : xb - 7, (by0 + by1) / 2 + 4, num(H) + ' Hz', { alinear: derecha ? 'left' : 'right', color: C.texto, tam: 11, peso: 600, fondo, C });
+      },
+    });
+    const mandos = document.getElementById('ancla-mandos');
+    const lect = Curso.lecturas(mandos, [
+      { id: 'ancho', nombre: 'Tile width', clase: 'respuesta' },
+      { id: 'alto', nombre: 'Tile height' },
+      { id: 'area', nombre: 'Width × height' },
+    ]);
+    function pintar() {
+      lect.fijar('ancho', ms(e.T));
+      lect.fijar('alto', num(1000 / e.T) + ' Hz');
+      lect.fijar('area', '1 turn');
+      L.dibujar();
+    }
+    mando = Curso.mando(mandos, { etiqueta: 'Window length', escala: 'log', min: T_MIN, max: T_MAX, paso: 0.1, valor: e.T, formato: v => ms(v),
+      alCambiar: v => { e.T = v; e.u = aU(v); if (anim) anim.pausar(); pintar(); } });
+    const fila = crear('div', { class: 'botones' });
+    mandos.appendChild(fila);
+    anim = Curso.animar(L, (t, dt) => {
+      if (dt > 0) { e.u += dt * 0.5; e.T = deU(e.u); mando.fijar(e.T, false); lect.fijar('ancho', ms(e.T)); lect.fijar('alto', num(1000 / e.T) + ' Hz'); }
+      L.dibujar();
+    }, { boton: fila });
+    pintar();
+  })();
+
+  // ── Reto 1 · Cada sonido, su baldosa (escuchar y elegir) ─────────────────────────────────────────────
+  (function () {
+    const ruido = (n, semilla) => Senal.ruido('blanco', n, Senal.azar(semilla));
+    const banda = (x, fc, Q) => Senal.filtrar(Senal.biquad('pasoBanda', fc, FS, { Q }), x);
+    // Una nota con armónicos, vibrato suave y principio y final suaves.
+    function nota(f0, dur, armonicos, { vibrato = 0, ataque = 0.05, caida = 0.15 } = {}) {
+      const n = Math.round(dur * FS), x = new Float64Array(n);
+      let fase = 0;
+      for (let i = 0; i < n; i++) {
+        const t = i / FS, f = f0 * (1 + vibrato * Math.sin(TAU * 5.5 * t) * Math.min(1, t / 0.4));
+        fase += TAU * f / FS;
+        let s = 0;
+        for (let k = 0; k < armonicos.length; k++) if ((k + 1) * f < FS / 2) s += armonicos[k] * Math.sin((k + 1) * fase);
+        x[i] = s * Math.min(1, t / ataque) * Math.min(1, (dur - t) / caida);
+      }
+      return x;
+    }
+    const SONIDOS = [
+      { id: 'palmada', nombre: 'Clap', baldosa: 'A', crear: () => {
+        const n = Math.round(0.15 * FS), a = banda(ruido(n, 3), 1400, 0.9), b = banda(ruido(n, 4), 4000, 0.7), x = new Float64Array(n);
+        for (let i = 0; i < n; i++) { const t = i / FS; x[i] = (1 - Math.exp(-t / 0.0005)) * Math.exp(-t / 0.012) * (a[i] + 0.4 * b[i]); }
+        return x; } },
+      { id: 'violin', nombre: 'Long violin note', baldosa: 'B', crear: () => nota(220, 2, [1, 0.5, 0.33, 0.25, 0.2, 0.16, 0.14, 0.12, 0.11, 0.1], { vibrato: 0.004, ataque: 0.12, caida: 0.2 }) },
+      { id: 'chasquido', nombre: 'Finger snap', baldosa: 'A', crear: () => {
+        const n = Math.round(0.04 * FS), a = banda(ruido(n, 5), 2300, 3), b = Senal.filtrar(Senal.biquad('pasoAlto', 1500, FS), ruido(n, 6)), x = new Float64Array(n);
+        for (let i = 0; i < n; i++) { const t = i / FS; x[i] = (1 - Math.exp(-t / 0.00015)) * (Math.exp(-t / 0.002) * (0.6 * a[i] + 0.5 * b[i])); }
+        return x; } },
+      { id: 'silbido', nombre: 'Sustained whistle', baldosa: 'B', crear: () => Senal.ejemplos.silbido(FS, { f: 880, dur: 2 }) },
+      { id: 'boligrafo', nombre: 'Pen click', baldosa: 'A', crear: () => {
+        const n = Math.round(0.03 * FS), a = banda(ruido(n, 7), 3500, 2), x = new Float64Array(n);
+        for (let i = 0; i < n; i++) { const t = i / FS; x[i] = (1 - Math.exp(-t / 0.0001)) * Math.exp(-t / 0.0012) * a[i]; }
+        return x; } },
+      { id: 'organo', nombre: 'Low organ note', baldosa: 'B', crear: () => nota(110, 2, [1, 0.7, 0.2, 0.5, 0.1, 0.25, 0.05, 0.12], { ataque: 0.03, caida: 0.1 }) },
+    ];
+    const memoria = {};
+    const senal = s => memoria[s.id] || (memoria[s.id] = s.crear());
+    let reto = null, L = null;
+    const cont = document.getElementById('r1-sonidos');
+    const eleccion = {};
+    for (const s of SONIDOS) {
+      const panel = crear('div', { class: 'panel-mini' });
+      const cabeza = crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, s.nombre));
+      panel.appendChild(cabeza);
+      Curso.audio.boton(cabeza, () => ({ x: senal(s), fs: FS, volumen: 0.6 }), 'Listen', { clase: 'peque' });
+      eleccion[s.id] = Curso.eleccion(panel, { etiqueta: 'Which tile suits it?', valor: '', reto: 'reto-1', alCambiar: () => L.dibujar(),
+        opciones: [{ valor: 'A', texto: 'Tall and narrow' }, { valor: 'B', texto: 'Low and wide' }] });
+      cont.appendChild(panel);
+    }
+    const colocados = letra => SONIDOS.filter(s => eleccion[s.id].valor === letra);
+    L = G.lienzo('#r1-escena', {
+      alto: altoDe(190, 170),
+      etiqueta: 'Two tiles: the tall, narrow one, which keeps the instant, and the low, wide one, which keeps the note, with the sounds you have placed in each',
+      dibujar: (ctx, w, h, C) => {
+        const mitad = w / 2;
+        [['A', 'Tall and narrow', 'you know when'], ['B', 'Low and wide', 'you know which']].forEach(([letra, titulo, sub], k) => {
+          const x0 = k * mitad + 6, ancho = mitad - 12;
+          ctx.save();
+          ctx.strokeStyle = C.linea; ctx.lineWidth = 1;
+          ctx.strokeRect(x0 + 0.5, 6.5, ancho - 1, h - 13);
+          ctx.restore();
+          // El plano en miniatura, con sus dos ejes y la baldosa.
+          const px = x0 + 12, py = 30, pw = Math.min(ancho * 0.42, 86), ph = 66;
+          ctx.save();
+          ctx.strokeStyle = C.eje; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(px + 0.5, py); ctx.lineTo(px + 0.5, py + ph + 0.5); ctx.lineTo(px + pw, py + ph + 0.5); ctx.stroke();
+          ctx.restore();
+          const bw = letra === 'A' ? pw * 0.2 : pw * 0.85, bh = letra === 'A' ? ph * 0.9 : ph * 0.23;
+          rectangulo(ctx, px + (pw - bw) / 2, py + ph - bh - 3, px + (pw + bw) / 2, py + ph - 3, C, { alfa: 0.3 });
+          G.texto(ctx, px + 2, py - 4, 'f', { color: C.tenue, tam: 10, C });
+          G.texto(ctx, px + pw, py + ph + 12, 't', { color: C.tenue, tam: 10, alinear: 'right', C });
+          G.texto(ctx, x0 + 12, 19, letra + ' · ' + titulo, { color: C.texto, tam: 11, peso: 600, C });
+          G.texto(ctx, x0 + 12, py + ph + 24, sub, { color: C.tenue, tam: 10, C });
+          // Los sonidos colocados aquí.
+          const lista = colocados(letra);
+          const tx = px + pw + 14;
+          lista.forEach((s, i) => G.texto(ctx, tx, py + 12 + i * 15, s.nombre, { color: C.suave, tam: 10.5, C }));
+          if (!lista.length) G.texto(ctx, tx, py + 12, '—', { color: C.tenue, tam: 11, C });
+        });
+      },
+    });
+    reto = Curso.reto('reto-1', {
+      titulo: 'Each sound, its tile', nivel: 'fácil',
+      comprobar: () => {
+        const puestos = colocados('A').length + colocados('B').length, bien = SONIDOS.filter(s => eleccion[s.id].valor === s.baldosa).length;
+        if (bien === SONIDOS.length) return { ok: true, mensaje: 'All six sounds, on their tiles.' };
+        if (!puestos) return { ok: false, mensaje: '' };
+        if (puestos < SONIDOS.length) return { ok: false, mensaje: 'You have placed ' + puestos + ' of 6. Listen to the ones you are missing.' };
+        return { ok: false, mensaje: num(SONIDOS.length - bien) + (SONIDOS.length - bien === 1 ? ' sound is' : ' sounds are') + ' misplaced. Think about each one: what could you say better about it, when it happens or which note it has?' };
+      },
+      resolver: () => { for (const s of SONIDOS) eleccion[s.id].fijar(s.baldosa); L.dibujar(); },
+      pista: [
+        'Ask yourself what you could say better about each sound: the exact moment it happens or which note it has.',
+        'Those that last a long time have a clear note and a fuzzy start; those that last an instant, the other way around.',
+      ],
+      exito: '<p>What is brief is located well in time and poorly in frequency, and what lasts, the other way around. Each sound picks the shape of its tile, but none manages to make it tiny, and that is what the rest of the lesson is about.</p>',
+    });
+  })();
+
+  // ── Reto 2 · Achica la baldosa (arrastrar el borde, o el mando; y oír) ───────────────────────────────
+  // El átomo de Gabor: una noria de 800 Hz recortada por una campana. Se mide, sobre la señal muestreada, la anchura
+  // en el tiempo y en frecuencia (desviaciones típicas de la energía); la baldosa tiene por lados el doble de cada una.
+  (function () {
+    const F0 = 800, S_MIN = 1, S_MAX = 40, FS2 = 16000;
+    const e = { s2: 12, m1: false, m2: false, x: null, st: 0, sf: 0, area: 1, esp: null };
+    let mando = null, reto = null, escPlano = null;
+    const atomo = s2 => {                            // s2: ancho de la baldosa en el tiempo (2σ_t), en ms
+      const st = s2 / 2000, sa = Math.SQRT2 * st, mitad = Math.ceil(6 * sa * FS2), x = new Float64Array(2 * mitad + 1);
+      for (let i = 0; i < x.length; i++) { const t = (i - mitad) / FS2; x[i] = Math.exp(-t * t / (4 * st * st)) * Math.cos(TAU * F0 * t); }
+      return x;
+    };
+    function recalcular() {
+      e.x = atomo(e.s2);
+      const a = anchuras(e.x, FS2, { unaCara: true });
+      e.st = a.st; e.sf = a.sf; e.area = a.area;
+      const esp = Senal.espectro(e.x, FS2, { ventana: 'rect', nfft: pot2(e.x.length * 16) });
+      let mx = 0;
+      for (let i = 0; i < esp.mag.length; i++) if (esp.mag[i] > mx) mx = esp.mag[i];
+      e.esp = { f: esp.f, mag: esp.mag, max: mx || 1 };
+      if (e.s2 <= S_MIN * 2 + 1e-9) e.m1 = true;
+      if (2 * e.sf <= 10) e.m2 = true;
+    }
+    const lect = Curso.lecturas('#r2-fila', [
+      { id: 'ancho', nombre: 'Tile width', clase: 'respuesta' },
+      { id: 'alto', nombre: 'Tile height' },
+      { id: 'area', nombre: 'Area', clase: 'senal' },
+      { id: 'm1', nombre: 'Goal 1 · ≤ 2 ms wide' },
+      { id: 'm2', nombre: 'Goal 2 · < 10 Hz tall' },
+    ]);
+    function pintar() {
+      lect.fijar('ancho', ms(2 * e.st * 1000));
+      lect.fijar('alto', num(2 * e.sf, 1) + ' Hz');
+      lect.fijar('area', num(e.area, 2) + ' times the minimum');
+      lect.fijar('m1', e.m1 ? 'achieved' : 'still to do');
+      lect.fijar('m2', e.m2 ? 'achieved' : 'still to do');
+      lect.clase('m1', e.m1 ? 'destacada' : '');
+      lect.clase('m2', e.m2 ? 'destacada' : '');
+      Lplano.canvas.setAttribute('aria-valuenow', String(redondear(e.s2, 1)));
+      Lplano.canvas.setAttribute('aria-valuetext', 'Tile ' + num(e.s2, 1) + ' ms wide and ' + num(2 * e.sf, 1) + ' Hz tall');
+      Londa.dibujar(); Lesp.dibujar(); Lplano.dibujar();
+    }
+    const Londa = G.lienzo('#r2-onda', {
+      alto: altoDe(120, 140),
+      etiqueta: 'The wave of the note, in green, inside its bell curve, in purple. Time runs to the right, from minus 60 to 60 milliseconds',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { x: [-60, 60], y: [-1.2, 1.2], marcasY: false, marcasX: [-60, -30, 0, 30, 60], formatoX: v => num(v), etiquetaX: 'time (ms)', margen: { izquierda: 14, derecha: 14, arriba: 10, abajo: 30 }, C });
+        const st = e.s2 / 2000, env = t => Math.exp(-(t / 1000) * (t / 1000) / (4 * st * st));
+        G.curva(ctx, esc, t => env(t), { color: C.plantilla, ancho: 1.8, guiones: [5, 4], halo: false, n: 300, C });
+        G.curva(ctx, esc, t => -env(t), { color: C.plantilla, ancho: 1.8, guiones: [5, 4], halo: false, n: 300, C });
+        G.curva(ctx, esc, t => env(t) * Math.cos(TAU * F0 * t / 1000), { color: C.senal, ancho: 1.7, n: 1400, C });
+      },
+    });
+    const Lesp = G.lienzo('#r2-espectro', {
+      alto: altoDe(150, 170),
+      etiqueta: 'The spectrum of the note, in amber: a bell curve centered at 800 hertz that widens the shorter the note is',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { x: [300, 1300], y: [0, 1.15], marcasY: false, marcasX: [400, 800, 1200], formatoX: v => num(v), etiquetaX: 'frequency (Hz)', margen: { izquierda: 14, derecha: 14, arriba: 12, abajo: 30 }, C });
+        if (!e.esp) return;
+        const f = e.esp.f, m = new Float64Array(f.length);
+        for (let i = 0; i < m.length; i++) m[i] = e.esp.mag[i] / e.esp.max;
+        G.linea(ctx, esc, f, m, { color: C.espectro, ancho: 2.2, C });
+        G.texto(ctx, esc.caja.x + 4, esc.caja.y + 12, 'spectrum', { color: C.tenue, tam: 10.5, C });
+      },
+    });
+    const Lplano = G.lienzo('#r2-plano', {
+      alto: altoDe(150, 170), rol: 'slider',
+      etiqueta: 'The time–frequency plane with the tile of the note, in purple. Drag its right edge, or use the keyboard arrows, to change its width',
+      dibujar: (ctx, w, h, C) => {
+        escPlano = G.ejes(ctx, { x: [-30, 30], y: [600, 1000], marcasX: [-30, 0, 30], marcasY: [700, 800, 900], formatoX: v => num(v), etiquetaX: 'time (ms)', rejilla: false, margen: { izquierda: 44, derecha: 14, arriba: 12, abajo: 30 }, C });
+        const esc = escPlano, st = e.st * 1000, sf = e.sf;
+        // El límite: las cuatro ramas de la curva que ninguna baldosa puede cruzar.
+        const K = 1000 / (4 * Math.PI);
+        for (const sx of [-1, 1]) for (const sy of [-1, 1]) {
+          const xs = [], ys = [];
+          for (let i = 0; i <= 60; i++) { const t = 0.4 * Math.pow(30 / 0.4, i / 60); xs.push(sx * t); ys.push(F0 + sy * K / t); }
+          G.linea(ctx, esc, xs, ys, { color: C.plantilla, ancho: 1.3, alfa: 0.9, guiones: [4, 4], halo: false, C });
+        }
+        G.texto(ctx, esc.x(30) - 3, esc.y(F0 + K / 30) - 5, 'limit', { alinear: 'right', color: C.plantilla, tam: 10.5, peso: 600, fondo: G.alfa(C.pantalla, 0.85), C });
+        rectangulo(ctx, esc.x(-st), esc.y(F0 + sf), esc.x(st), esc.y(F0 - sf), C, { alfa: 0.3, borde: 2 });
+        // El asa del borde derecho.
+        const ax = esc.x(st), ay = esc.y(F0);
+        ctx.save();
+        ctx.fillStyle = C.acento; ctx.strokeStyle = C.pantalla; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(ax, ay, 7, 0, TAU); ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = C.pantalla; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(ax - 2.5, ay - 3); ctx.lineTo(ax - 2.5, ay + 3); ctx.moveTo(ax + 2.5, ay - 3); ctx.lineTo(ax + 2.5, ay + 3); ctx.stroke();
+        ctx.restore();
+      },
+    });
+    mando = Curso.mando('#r2-mandos', { etiqueta: 'Tile width', escala: 'log', min: S_MIN, max: S_MAX, paso: 0.1, valor: e.s2, formato: v => ms(v), reto: 'reto-2',
+      alCambiar: v => { e.s2 = v; recalcular(); pintar(); } });
+    // Arrastrar el borde derecho de la baldosa (el ancho es el doble de su distancia al centro), o las flechas del teclado.
+    const desdeX = px => { if (!escPlano) return; mando.fijar(limitar(2 * Math.abs(escPlano.xi(px)), S_MIN, S_MAX)); };
+    Curso.arrastre(Lplano, { eje: 'x', alBajar: p => { if (!escPlano) return false; desdeX(p.x); }, alMover: p => desdeX(p.x) });
+    Lplano.canvas.tabIndex = 0;
+    Lplano.canvas.setAttribute('aria-valuemin', String(S_MIN));
+    Lplano.canvas.setAttribute('aria-valuemax', String(S_MAX));
+    Lplano.canvas.addEventListener('keydown', ev => {
+      const s = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[ev.key];
+      if (!s) return;
+      ev.preventDefault();
+      mando.fijar(limitar(e.s2 * Math.pow(1.07, s), S_MIN, S_MAX));
+    });
+    const fila = document.getElementById('r2-fila');
+    const bots = crear('div', { class: 'botones' });
+    fila.appendChild(bots);
+    Curso.audio.boton(bots, () => ({ x: (() => { const a = atomo(e.s2), pad = Math.round(0.06 * FS2), y = new Float64Array(a.length + 2 * pad); y.set(a, pad); return y; })(), fs: FS2, volumen: 0.5 }), 'Listen to the note');
+    Curso.botones(bots, [{ id: 'otra', texto: 'Start over', icono: 'otra', tipo: 'discreto', alPulsar: () => reto.reiniciar() }]);
+    recalcular();
+    e.m1 = false; e.m2 = false;
+    pintar();
+    reto = Curso.reto('reto-2', {
+      titulo: 'Shrink the tile', nivel: 'fácil',
+      alReiniciar: () => { e.m1 = false; e.m2 = false; mando.fijar(12, false); e.s2 = 12; recalcular(); e.m1 = false; e.m2 = false; pintar(); },
+      comprobar: () => {
+        if (e.m1 && e.m2) return { ok: true, mensaje: 'Both goals: the tile has been very narrow and very low, and its area never dropped below ' + num(e.area, 2) + ' times the minimum.' };
+        if (!e.m1 && !e.m2) return { ok: false, mensaje: 'Start with either one: squeeze the note down to 2 ms, or stretch it until the tile drops below 10 Hz. Watch the area reading.' };
+        return { ok: false, mensaje: e.m1 ? 'Goal 1 achieved: the tile is extremely narrow and extremely tall. Now the other extreme: stretch the note until the tile is less than 10 Hz tall.' : 'Goal 2 achieved: the tile is extremely low and extremely long. Now squeeze the note until it lasts 2 ms or less.' };
+      },
+      resolver: () => { mando.fijar(1.8); mando.fijar(40); },
+      pista: [
+        'Watch the area reading: no matter how much you stretch or squeeze the tile, it never drops below 1.00 times the minimum.',
+        'For the snap you have to reach the short end of the control; to get below 10 hertz you need a note more than 30 milliseconds wide.',
+      ],
+      exito: '<p>The narrowest tile sounds like a snap and is extremely tall, and the lowest one sounds like a note and is extremely long. Its area never changed at any point: you can deform the tile, but not shrink it.</p>',
+    });
+  })();
+
+  // ── Reto 3 · La mejor ventana (elegir y deslizador) ──────────────────────────────────────────────────
+  (function () {
+    const N = 512, SIGMA0 = N / 6 * 1000 / FS;      // ventana de 512 muestras a 16 kHz (32 ms); σ de la campana en ms
+    const NOMBRES = { rect: 'Rectangular window', hann: 'Hann window', hamming: 'Hamming window', blackman: 'Blackman window', gauss: 'Gaussian window' };
+    const e = { tipo: 'hann', sigma: SIGMA0, w: null, area: 1, st: 0, sf: 0, esp: null };
+    let eleccion = null, mando = null;
+    const crearVentana = () => (e.tipo === 'gauss' ? Senal.ventana('gauss', N, { sigma: e.sigma * FS / 1000 }) : Senal.ventana(e.tipo, N));
+    function recalcular() {
+      e.w = crearVentana();
+      const a = anchuras(e.w, FS, { relleno: 32 });
+      e.st = a.st; e.sf = a.sf; e.area = a.area;
+      const nfft = pot2(N * 32), X = Senal.fftReal(e.w, nfft), nf = Math.floor(nfft * 520 / FS), mag = new Float64Array(nf), m0 = Math.hypot(X.re[0], X.im[0]);
+      for (let k = 0; k < nf; k++) mag[k] = Math.max(-110, 20 * Math.log10(Math.max(Math.hypot(X.re[k], X.im[k]) / m0, 1e-12)));
+      e.esp = { mag, df: FS / nfft };
+    }
+    const lect = Curso.lecturas('#r3-lecturas', [
+      { id: 'st', nombre: 'Width in time' },
+      { id: 'sf', nombre: 'Width in frequency' },
+      { id: 'area', nombre: 'Area of the tile', clase: 'senal' },
+    ]);
+    function pintar() {
+      lect.fijar('st', num(e.st * 1000, 2) + ' ms');
+      lect.fijar('sf', num(e.sf, 1) + ' Hz');
+      lect.fijar('area', num(e.area, 3) + ' times the minimum');
+      lect.clase('area', e.area <= 1.002 ? 'destacada senal' : 'senal');
+      Lv.dibujar(); Le.dibujar();
+    }
+    const Lv = G.lienzo('#r3-ventana', {
+      alto: altoDe(150, 170),
+      etiqueta: 'The shape of the chosen window, in purple, over 32 milliseconds',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { x: [0, 1000 * N / FS], y: [0, 1.15], marcasY: false, marcasX: [0, 8, 16, 24, 32], formatoX: v => num(v), etiquetaX: 'time (ms)', margen: { izquierda: 14, derecha: 14, arriba: 12, abajo: 30 }, C });
+        if (!e.w) return;
+        const xs = new Float64Array(N);
+        for (let i = 0; i < N; i++) xs[i] = 1000 * i / FS;
+        const rel = G.alfa(C.plantilla, 0.16);
+        ctx.save();
+        ctx.fillStyle = rel;
+        ctx.beginPath(); ctx.moveTo(esc.x(xs[0]), esc.y(0));
+        for (let i = 0; i < N; i++) ctx.lineTo(esc.x(xs[i]), esc.y(e.w[i]));
+        ctx.lineTo(esc.x(xs[N - 1]), esc.y(0)); ctx.closePath(); ctx.fill();
+        ctx.restore();
+        G.linea(ctx, esc, xs, e.w, { color: C.plantilla, ancho: 2.2, C });
+        G.texto(ctx, esc.caja.x + 4, esc.caja.y + 12, NOMBRES[e.tipo].toLowerCase(), { color: C.tenue, tam: 10.5, C });
+      },
+    });
+    const Le = G.lienzo('#r3-espectro', {
+      alto: altoDe(150, 170),
+      etiqueta: 'The spectrum of the window, in amber and in decibels: the faster it falls, the less energy escapes to distant frequencies',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { x: [0, 500], y: [-100, 0], marcasY: [-100, -60, -20, 0], marcasX: [0, 100, 200, 300, 400, 500], formatoX: v => num(v), etiquetaX: 'frequency (Hz)', etiquetaY: 'dB', margen: { izquierda: 44, derecha: 14, arriba: 24, abajo: 30 }, C });
+        if (!e.esp) return;
+        const fx = new Float64Array(e.esp.mag.length);
+        for (let k = 0; k < fx.length; k++) fx[k] = k * e.esp.df;
+        G.linea(ctx, esc, fx, e.esp.mag, { color: C.espectro, ancho: 2, C });
+      },
+    });
+    const mandos = document.getElementById('r3-mandos');
+    eleccion = Curso.eleccion(mandos, { etiqueta: 'Window', valor: e.tipo, reto: 'reto-3',
+      opciones: [{ valor: 'rect', texto: 'Rectangular' }, { valor: 'hann', texto: 'Hann' }, { valor: 'hamming', texto: 'Hamming' }, { valor: 'blackman', texto: 'Blackman' }, { valor: 'gauss', texto: 'Gaussian' }],
+      alCambiar: v => { e.tipo = v; mando.input.disabled = v !== 'gauss'; mando.el.style.opacity = v === 'gauss' ? '1' : '0.45'; recalcular(); pintar(); } });
+    mando = Curso.mando(mandos, { etiqueta: 'Width of the bell curve', min: 2.4, max: 11, paso: 0.05, valor: e.sigma, formato: v => num(v, 2) + ' ms', reto: 'reto-3',
+      alCambiar: v => { e.sigma = v; recalcular(); pintar(); } });
+    mando.input.disabled = true;
+    mando.el.style.opacity = '0.45';
+    recalcular();
+    pintar();
+    Curso.reto('reto-3', {
+      titulo: 'The best window', nivel: 'medio',
+      comprobar: () => {
+        if (e.area <= 1.002) return { ok: true, mensaje: 'Area of ' + num(e.area, 4) + ' times the minimum: the bell curve reaches it.' };
+        const dif = num(100 * (e.area - 1), 1) + '% above the minimum';
+        if (e.tipo === 'rect') return { ok: false, mensaje: 'The rectangular window stops dead at the edges and leaves a tile ' + num(e.area, 1) + ' times larger than the minimum. Try a smooth window.' };
+        if (e.tipo === 'hamming') return { ok: false, mensaje: 'Hamming leaves a small step at the edges, and that enlarges the tile: ' + num(e.area, 2) + ' times the minimum.' };
+        if (e.tipo === 'hann') return { ok: false, mensaje: 'Hann is very good, only ' + dif + ', but it doesn’t get there. Is there one with no edge at all?' };
+        if (e.tipo === 'blackman') return { ok: false, mensaje: 'Blackman stays ' + dif + ': close. Only one shape reaches the exact minimum.' };
+        return { ok: false, mensaje: e.area > 1.1 ? 'The bell curve is so wide that it gets cut off at the edges and those jumps enlarge the tile. Narrow it.' : 'Close: the bell curve still reaches the edges slightly cut off (' + dif + '). Narrow it a little more.' };
+      },
+      resolver: () => { eleccion.fijar('gauss'); mando.fijar(4); },
+      pista: [
+        'Windows with jumps at the edges leak, and leaks enlarge the tile.',
+        'Try the bell curve and narrow its width until it almost reaches zero at the edges.',
+      ],
+      exito: '<p>Only the Gaussian bell curve reaches exactly the minimum, and only if it fades out completely before the edges. Blackman stays 0.4% above and Hann 2.6%, which is why it is such a good everyday choice. The rectangular window, with its abrupt edges, is far away.</p>',
+    });
+  })();
+
+  // ── Reto 4 · El afinador (deslizador y oír) ──────────────────────────────────────────────────────────
+  // Dos tonos de 440 Hz y 440 + Δf Hz sonando T segundos, vistos con una ventana de Hann (relleno ×16). El análisis se
+  // hace a 2 kHz, que sobra para estas frecuencias; el sonido, a 16 kHz.
+  (function () {
+    const FA = 2000, azar = Curso.azar();
+    const e = { df: azar.elegir([2, 3, 4, 5]), T: 0.3, hueco: 0, esp: null };
+    let mando = null;
+    const recalcular = () => { const r = espectroDeTonos(440, 440 + e.df, e.T, FA); e.hueco = r.hueco; e.esp = r; };
+    const lect = Curso.lecturas('#r4-fila', [
+      { id: 'df', nombre: 'Difference between the notes', clase: 'respuesta' },
+      { id: 'T', nombre: 'You listen for' },
+      { id: 'prod', nombre: 'Seconds × hertz' },
+      { id: 'hueco', nombre: 'Gap between the peaks', clase: 'senal' },
+    ]);
+    function pintar() {
+      lect.fijar('df', num(e.df) + ' Hz');
+      lect.fijar('T', num(e.T, 2) + ' s');
+      lect.fijar('prod', num(e.T * e.df, 2));
+      lect.fijar('hueco', db(e.hueco));
+      lect.clase('hueco', redondear(e.hueco, 1) >= 3 ? 'destacada senal' : 'senal');
+      Lt.dibujar(); Le.dibujar();
+    }
+    const Lt = G.lienzo('#r4-tiempo', {
+      alto: altoDe(110, 120),
+      etiqueta: 'The mixture of the two notes over the time you listen: the rise and fall of the beat, in green, and the Hann window that trims it, in purple',
+      dibujar: (ctx, w, h, C) => {
+        const esc = G.ejes(ctx, { x: [0, e.T], y: [-2.3, 2.3], marcasY: false, formatoX: v => num(v, 2), etiquetaX: 'time (s)', margen: { izquierda: 14, derecha: 14, arriba: 8, abajo: 30 }, C });
+        const env = t => 2 * Math.abs(Math.cos(Math.PI * e.df * (t - e.T / 2) + Math.PI / 4)), han = t => Math.pow(Math.cos(Math.PI * (t - e.T / 2) / e.T), 2);
+        const n = Math.min(900, Math.max(200, Math.round(e.T * e.df * 40)));
+        G.curva(ctx, esc, t => env(t), { color: C.senal, ancho: 1.6, n, alfa: 0.9, C });
+        G.curva(ctx, esc, t => -env(t), { color: C.senal, ancho: 1.6, n, alfa: 0.9, C });
+        G.curva(ctx, esc, t => 2.1 * han(t), { color: C.plantilla, ancho: 2, guiones: [6, 4], halo: false, n: 200, C });
+        G.curva(ctx, esc, t => -2.1 * han(t), { color: C.plantilla, ancho: 2, guiones: [6, 4], halo: false, n: 200, C });
+        G.texto(ctx, esc.caja.x + 4, esc.caja.y + 12, 'window', { color: C.plantilla, tam: 10.5, peso: 600, C });
+      },
+    });
+    const Le = G.lienzo('#r4-espectro', {
+      alto: altoDe(170, 200),
+      etiqueta: 'The spectrum of the two notes, in amber, between 430 and 455 hertz, with a vertical mark at each true note',
+      dibujar: (ctx, w, h, C) => {
+        const x0 = 440 - 9, x1 = 440 + e.df + 9;
+        const esc = G.ejes(ctx, { x: [x0, x1], y: [0, 1.6], marcasY: false, marcasX: Math.round(x1 - x0) > 20 ? 6 : 5, formatoX: v => num(v), etiquetaX: 'frequency (Hz)', margen: { izquierda: 14, derecha: 14, arriba: 14, abajo: 30 }, C });
+        if (!e.esp) return;
+        for (const [f, c, n] of [[440, C.senal, '440'], [440 + e.df, C.respuesta, num(440 + e.df)]]) {
+          G.linea(ctx, esc, [f, f], [0, 1.6], { color: c, ancho: 1.4, guiones: [4, 4], alfa: 0.85, halo: false, C });
+          G.texto(ctx, esc.x(f) + (f === 440 ? -4 : 4), esc.caja.y + 12, n + ' Hz', { alinear: f === 440 ? 'right' : 'left', color: c, tam: 10.5, peso: 600, fondo: G.alfa(C.pantalla, 0.8), C });
+        }
+        G.linea(ctx, esc, e.esp.f, e.esp.mag, { color: C.espectro, ancho: 2.4, C });
+      },
+    });
+    const mandos = document.getElementById('r4-mandos');
+    mando = Curso.mando(mandos, { etiqueta: 'Listening time', escala: 'log', min: 0.1, max: 3, paso: 0.01, valor: e.T, formato: v => num(v, 2) + ' s', reto: 'reto-4', clase: 'senal',
+      alCambiar: v => { e.T = v; recalcular(); pintar(); } });
+    const fila = document.getElementById('r4-fila');
+    const bots = crear('div', { class: 'botones' });
+    fila.appendChild(bots);
+    Curso.audio.boton(bots, () => {
+      const dur = Math.max(0.1, e.T), n = Math.round(dur * FS), x = new Float64Array(n);
+      for (let i = 0; i < n; i++) { const t = i / FS; x[i] = 0.5 * Math.sin(TAU * 440 * t) + 0.5 * Math.sin(TAU * (440 + e.df) * t); }
+      return { x, fs: FS, volumen: 0.5 };
+    }, 'Listen to the two notes');
+    let reto = null;
+    Curso.botones(bots, [{ id: 'otra', texto: 'Another pair of notes', icono: 'otra', alPulsar: () => {
+      let d; do { d = azar.elegir([2, 3, 4, 5]); } while (d === e.df);
+      e.df = d; recalcular(); pintar(); reto.reiniciar(); Curso.cambio('reto-4');
+    } }]);
+    recalcular();
+    pintar();
+    reto = Curso.reto('reto-4', {
+      titulo: 'The tuner', nivel: 'medio',
+      comprobar: () => {
+        const h = redondear(e.hueco, 1);
+        if (h >= 3) return { ok: true, mensaje: 'Two separate peaks, with a ' + db(e.hueco) + ' gap, listening for ' + num(e.T, 2) + ' s: ' + num(e.T * e.df, 2) + ' seconds per hertz of difference.' };
+        if (h < 0.5) return { ok: false, mensaje: 'The two notes merge into a single mountain. Listen for longer.' };
+        return { ok: false, mensaje: 'Close: two peaks are starting to show, with a ' + db(e.hueco) + ' gap, and you need 3 dB. Listen a little longer.' };
+      },
+      resolver: () => mando.fijar(Math.min(3, Math.ceil(300 / e.df) / 100)),
+      pista: [
+        'The more alike the two notes are, the longer you have to listen: roughly twice as long as the beat pulse takes to go around once.',
+        'Look at the “Seconds × hertz” reading: when it reaches 2, the gap reaches 3 dB.',
+      ],
+      exito: '<p>To separate two notes two hertz apart you need close to a second of listening, and for two five hertz apart, close to four tenths. What stays constant is the product of time and difference, which has to reach 2. It is the law of the tile seen from the notes.</p>',
+    });
+  })();
+
+  // ── Reto 5 · Armónicos y chasquido en el mismo espectrograma (deslizador y elegir) ────────────────────
+  (function () {
+    const F_VOZ = { aguda: 250, grave: 120 };
+    const e = { voz: 'aguda', T: 11.5, V: null, hueco: 0, ancho: 0, E: null, x: null };
+    const senales = {};
+    function senalVoz(voz) {
+      if (senales[voz]) return senales[voz];
+      const x = new Float64Array(2 * FS), v = Senal.ejemplos.vocal(FS, { vocal: 'a', f0: F_VOZ[voz], dur: 1 });
+      for (let i = 0; i < v.length; i++) x[i] = 0.5 * v[i];
+      const az = Senal.azar(5), i0 = Math.round(1.4 * FS);
+      for (let i = 0; i < 24; i++) x[i0 + i] += 0.9 * Math.exp(-i / 5) * az.normal();     // un chasquido: ráfaga de 1,5 ms
+      return (senales[voz] = x);
+    }
+    function recalcular() {
+      const x = senalVoz(e.voz), f0 = F_VOZ[e.voz];
+      const n = Math.max(8, Math.round(e.T * FS / 1000)), salto = Math.max(16, Math.round(n / 8)), nfft = Math.max(512, pot2(4 * n));
+      const S = Senal.stft(x, FS, { n, salto, ventana: 'hann', nfft });
+      const P = Senal.potencia(S), dt = salto / FS, nF = S.nF, nT = S.nT;
+      // Hueco entre los armónicos 2.º y 3.º: en el espectro medio de la vocal (de 0,25 a 0,85 s).
+      const j0 = Math.ceil(0.25 / dt), j1 = Math.floor(0.85 / dt), med = new Float64Array(nF);
+      for (let k = 0; k < nF; k++) { let s = 0; for (let j = j0; j <= j1; j++) s += P[k * nT + j]; med[k] = s / (j1 - j0 + 1); }
+      const df = S.f[1] - S.f[0], pico = fc => { let m = 0, im = 0; for (let k = Math.round((fc - 0.3 * f0) / df); k <= Math.round((fc + 0.3 * f0) / df); k++) if (med[k] > m) { m = med[k]; im = k; } return [m, im]; };
+      const [p2, i2] = pico(2 * f0), [p3, i3] = pico(3 * f0);
+      let v = Infinity;
+      for (let k = i2; k <= i3; k++) v = Math.min(v, med[k]);
+      e.hueco = v > 0 ? 10 * Math.log10(Math.min(p2, p3) / v) : 60;
+      // Anchura del chasquido: a media potencia, en la energía total de cada columna cerca de 1,4 s.
+      const a = Math.floor(1.25 / dt), b = Math.ceil(1.55 / dt), tr = new Float64Array(b - a + 1);
+      let mx = 0, im = 0;
+      for (let j = a; j <= b; j++) { let s = 0; for (let k = 0; k < nF; k++) s += P[k * nT + j]; tr[j - a] = s; if (s > mx) { mx = s; im = j - a; } }
+      let lo = im, hi = im;
+      while (lo > 0 && tr[lo] > mx / 2) lo--;
+      while (hi < tr.length - 1 && tr[hi] > mx / 2) hi++;
+      const fa = lo + (mx / 2 - tr[lo]) / ((tr[lo + 1] - tr[lo]) || 1), fb = hi - 1 + (tr[hi - 1] - mx / 2) / ((tr[hi - 1] - tr[hi]) || 1);
+      e.ancho = Math.max(0, (fb - fa) * dt * 1000);
+      // El mapa en dB, solo hasta 4 kHz.
+      const E = Senal.mapaDb(S, { suelo: -120 });
+      e.V = recortarMapa(E, 0, 2, 0, 4000);
+    }
+    const lect = Curso.lecturas('#r5-fila', [
+      { id: 'T', nombre: 'Tile of the window', clase: 'respuesta' },
+      { id: 'hueco', nombre: 'Gap between harmonics 2 and 3', clase: 'senal' },
+      { id: 'ancho', nombre: 'Width of the snap', clase: 'senal' },
+    ]);
+    function pintar() {
+      lect.fijar('T', ms(e.T) + ' × ' + num(1000 / e.T) + ' Hz');
+      lect.fijar('hueco', db(e.hueco));
+      lect.fijar('ancho', num(e.ancho, 1) + ' ms');
+      lect.clase('hueco', redondear(e.hueco, 1) >= 3 ? 'destacada senal' : 'senal');
+      lect.clase('ancho', redondear(e.ancho, 1) <= 5 ? 'destacada senal' : 'senal');
+      L.dibujar();
+    }
+    const RANGO = [-95, -5];
+    const L = G.lienzo('#r5-mapa', {
+      alto: altoDe(260, 300),
+      etiqueta: 'Spectrogram of a one-second synthetic “aah” followed, after a silence, by a snap; time runs to the right and frequency upward, up to 4,000 hertz',
+      dibujar: (ctx, w, h, C) => {
+        if (!e.V) { dibujarMapa(ctx, w, h, C, null, { x: [0, 2], y: [0, 4000], marcasX: [0, 0.5, 1, 1.5, 2], formatoX: v => num(v, 1), etiquetaX: 'time (s)', rango: RANGO }); G.texto(ctx, w / 2, h / 2, 'calculating…', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+        dibujarMapa(ctx, w, h, C, e.V, { x: [0, 2], y: [0, 4000], marcasX: [0, 0.5, 1, 1.5, 2], marcasY: [0, 1000, 2000, 3000, 4000], formatoX: v => num(v, 1), etiquetaX: 'time (s)', rango: RANGO, titulo: ms(e.T) + ' Hann window' + (e.voz === 'grave' ? ' · low voice (120 Hz)' : ' · high voice (250 Hz)') });
+      },
+    });
+    const mandos = document.getElementById('r5-mandos');
+    let eleccion = null, mando = null;
+    mando = Curso.mando(mandos, { etiqueta: 'Window length', escala: 'log', min: 2, max: 100, paso: 0.1, valor: e.T, formato: v => ms(v), reto: 'reto-5', clase: 'respuesta',
+      alCambiar: v => { e.T = v; recalcular(); pintar(); } });
+    eleccion = Curso.eleccion(mandos, { etiqueta: 'Voice', valor: e.voz, reto: 'reto-5',
+      opciones: [{ valor: 'aguda', texto: 'High (250 Hz)' }, { valor: 'grave', texto: 'Low (120 Hz)' }],
+      alCambiar: v => { e.voz = v; recalcular(); pintar(); } });
+    const bots = crear('div', { class: 'botones' });
+    document.getElementById('r5-fila').appendChild(bots);
+    Curso.audio.boton(bots, () => ({ x: senalVoz(e.voz), fs: FS, volumen: 0.6 }), 'Listen to the “aah” and the snap');
+    const asegurar = () => { if (!e.V) { recalcular(); pintar(); } };
+    Curso.alVerse(L.canvas, asegurar);
+    Curso.reto('reto-5', {
+      titulo: 'Harmonics and snap', nivel: 'medio',
+      comprobar: () => {
+        asegurar();
+        const okH = redondear(e.hueco, 1) >= 3, okA = redondear(e.ancho, 1) <= 5;
+        if (okH && okA) return { ok: true, mensaje: db(e.hueco) + ' gap between the harmonics and a ' + num(e.ancho, 1) + ' ms snap: both things at once.' };
+        if (e.voz === 'grave') {
+          if (okH) return { ok: false, mensaje: 'With this voice the harmonics already separate, but at the cost of a ' + num(e.ancho, 1) + ' ms snap. Try shortening the window and see what happens to the harmonics.' };
+          return { ok: false, mensaje: 'With the low voice, the harmonics ask for a longer window and the snap for a shorter one. Move the control both ways and see if any point works.' };
+        }
+        if (okA) return { ok: false, mensaje: 'The snap is a thin line, but the harmonics still merge (' + db(e.hueco) + '). Lengthen the window a little.' };
+        if (okH) return { ok: false, mensaje: 'The harmonics are now visible, but the snap has widened to ' + num(e.ancho, 1) + ' ms. Shorten the window a little.' };
+        return { ok: false, mensaje: 'Not yet: the harmonics don’t separate and the snap isn’t thin. Try between 8 and 15 ms.' };
+      },
+      resolver: () => { eleccion.fijar('aguda'); mando.fijar(11.5); },
+      pista: [
+        'The harmonics of this voice are 250 Hz apart. To see them as lines you need a window of roughly 2/250 of a second, a little over 8 ms.',
+        'The snap takes up a little more than a third of the window. For it to measure less than 5 ms, the window can’t go past about 13 ms.',
+      ],
+      exito: '<p>With a high voice there is a range of windows, between about 10 and 13 ms, that shows the harmonics and the snap at the same time. Pick the low voice and you will see that at 120 Hz the range disappears: the harmonics ask for more than 17 ms and the snap for less than 13. No window works for everything.</p>',
+    });
+  })();
+
+  // ── Reto 6 · ¿Se pueden separar las dos cosas? (deslizador y botón «Imposible») ───────────────────────
+  (function () {
+    const FS6 = 16000, TC = 0.4, TM = 0.9;
+    const azar = Curso.azar();
+    const e = { caso: null, T: 20, V: null, huecoG: 0, huecoN: 0, racha: 0, resuelto: false, revelado: false, mensaje: '', vista: null };
+    const PARES = [];
+    for (const d of [5, 10, 20, 40]) for (const df of [10, 20, 50, 100, 200]) {
+      const p = d * df / 1000;
+      if (p >= 1.25) PARES.push({ d, df, p, posible: true }); else if (p <= 0.8) PARES.push({ d, df, p, posible: false });
+    }
+    function nuevoCaso(previo) {
+      const posible = azar.real() < 0.5, lista = PARES.filter(c => c.posible === posible && !(previo && c.d === previo.d && c.df === previo.df));
+      return azar.elegir(lista);
+    }
+    e.caso = nuevoCaso(null);
+    // La señal del caso: dos notas sostenidas (1.000 Hz y 1.000 + Δf, en cuadratura a los 0,9 s) y dos golpes.
+    function senal(c) {
+      const x = new Float64Array(Math.round(1.2 * FS6));
+      for (let i = 0; i < x.length; i++) { const t = i / FS6 - TM; x[i] = 0.5 * Math.cos(TAU * 1000 * t) + 0.5 * Math.cos(TAU * (1000 + c.df) * t + Math.PI / 2); }
+      x[Math.round(TC * FS6)] += 60;
+      x[Math.round((TC + c.d / 1000) * FS6)] += 60;
+      return x;
+    }
+    // La zona que se enseña: alrededor de los dos golpes y de las dos notas.
+    const zona = c => ({ t0: TC - 2.2 * c.d / 1000, t1: TC + 3.2 * c.d / 1000, f0: 1000 - 2.2 * c.df, f1: 1000 + 3.2 * c.df });
+    function recalcular() {
+      const c = e.caso, z = zona(c), T = e.T / 1000;
+      // El espectrograma, solo del trozo que se enseña (más medio ventana a cada lado).
+      const n = Math.max(8, Math.round(T * FS6)), margen = Math.ceil(n / 2) + 8;
+      const x = senal(c), i0 = Math.max(0, Math.floor(z.t0 * FS6) - margen), i1 = Math.min(x.length, Math.ceil(z.t1 * FS6) + margen);
+      const salto = limitar(Math.round(n / 16), 4, 64), nfft = Math.max(2048, pot2(2 * n));
+      const S = Senal.stft(x.subarray(i0, i1), FS6, { n, salto, ventana: 'hann', nfft });
+      const E = Senal.mapaDb(S, { suelo: -120 }), t0 = i0 / FS6;
+      const R = recortarMapa(E, z.t0 - t0, z.t1 - t0, z.f0, z.f1);
+      R.t = R.t.map(v => (v + t0) * 1000);              // en este mapa el tiempo va en milisegundos, como su eje
+      e.V = R;
+      // Los dos huecos: las notas, con la ventana de Hann sobre las dos notas solas; los golpes, con la ventana sobre los dos golpes.
+      const tonos = espectroDeTonos(1000, 1000 + c.df, T, 4000);
+      e.huecoN = tonos.hueco;
+      e.huecoG = huecoDeGolpes(T, c.d / 1000);
+    }
+    const lect = Curso.lecturas('#r6-fila', [
+      { id: 'd', nombre: 'Bang spacing', clase: 'respuesta' },
+      { id: 'df', nombre: 'Note spacing', clase: 'respuesta' },
+      { id: 'hg', nombre: 'Gap between the bangs', clase: 'senal' },
+      { id: 'hn', nombre: 'Gap between the notes', clase: 'senal' },
+    ]);
+    const racha = crear('span', { class: 'racha' });
+    function pintar() {
+      const c = e.caso;
+      lect.fijar('d', ms(c.d));
+      lect.fijar('df', num(c.df) + ' Hz');
+      lect.fijar('hg', e.huecoG >= 60 ? 'more than 60 dB' : db(e.huecoG));
+      lect.fijar('hn', e.huecoN >= 60 ? 'more than 60 dB' : db(e.huecoN));
+      lect.clase('hg', redondear(e.huecoG, 1) >= 3 ? 'destacada senal' : 'senal');
+      lect.clase('hn', redondear(e.huecoN, 1) >= 3 ? 'destacada senal' : 'senal');
+      racha.innerHTML = '';
+      racha.append(crear('span', { class: 'puntos', 'aria-hidden': 'true' }, [0, 1].map(i => crear('i', { class: i < e.racha ? 'si' : '' }))), 'Cases in a row: ' + Math.min(e.racha, 2) + ' of 2');
+      botones.otro.hidden = !(e.resuelto || e.revelado);
+      botones.imposible.disabled = e.resuelto || e.revelado;
+      L.etiquetar('Spectrogram of two bangs and two notes with a ' + ms(e.T) + ' Hann window: the bangs are ' + ms(c.d) + ' apart and the notes, ' + num(c.df) + ' hertz');
+      L.dibujar();
+    }
+    const RANGO = [-65, 25];
+    const L = G.lienzo('#r6-mapa', {
+      alto: altoDe(260, 300),
+      etiqueta: 'Spectrogram of two bangs and two notes',
+      dibujar: (ctx, w, h, C) => {
+        const c = e.caso, z = zona(c);
+        if (!e.V) { dibujarMapa(ctx, w, h, C, null, { x: [0, 1], y: [0, 1], rango: RANGO }); G.texto(ctx, w / 2, h / 2, 'calculating…', { alinear: 'center', color: C.tenue, tam: 12, C }); return; }
+        dibujarMapa(ctx, w, h, C, e.V, { x: [z.t0 * 1000, z.t1 * 1000], y: [z.f0, z.f1], formatoX: v => num(v - TC * 1000), etiquetaX: 'time (ms) since the first bang', rango: RANGO,
+          formatoY: v => num(v), titulo: ms(e.T) + ' Hann window' });
+      },
+    });
+    const mandos = document.getElementById('r6-mandos');
+    const mando = Curso.mando(mandos, { etiqueta: 'Window length', escala: 'log', min: 2, max: 400, paso: 0.5, valor: e.T, formato: v => ms(v), reto: 'reto-6', clase: 'respuesta',
+      alCambiar: v => { e.T = v; recalcular(); evaluar(); pintar(); } });
+    const fila = document.getElementById('r6-fila');
+    fila.appendChild(racha);
+    const bots = crear('div', { class: 'botones' });
+    fila.appendChild(bots);
+    const botones = Curso.botones(bots, [
+      { id: 'imposible', texto: 'Impossible', tipo: 'principal', alPulsar: () => declarar() },
+      { id: 'otro', texto: 'Another case', icono: 'otra', alPulsar: () => otro() },
+    ]);
+    function ventanasQueSirven() { const c = e.caso; return [2000 / c.df, 2 * c.d]; }
+    function evaluar() {
+      if (e.resuelto || e.revelado) return;
+      const c = e.caso, okN = redondear(e.huecoN, 1) >= 3, okG = redondear(e.huecoG, 1) >= 3;
+      if (okN && okG) {
+        e.resuelto = true; e.racha += 1;
+        const [a, b] = ventanasQueSirven();
+        e.mensaje = 'The two bangs and the two notes are separated with ' + ms(e.T) + '. Any window between ' + ms(a) + ' and ' + ms(b) + ' would have worked.' + (e.racha < 2 ? ' Press “Another case.”' : '');
+      } else if (okN) e.mensaje = 'The notes already show up separate, but the bangs merge: shorten the window.';
+      else if (okG) e.mensaje = 'The bangs already show up separate, but the notes merge: lengthen the window.';
+      else e.mensaje = e.T < 2000 / c.df ? 'The bangs look fine, but the notes still merge into a single line. Lengthen the window.' : 'Neither the bangs nor the notes separate with this window. Try another length.';
+    }
+    function declarar() {
+      if (e.resuelto || e.revelado) return;
+      const c = e.caso, [a, b] = ventanasQueSirven();
+      if (c.posible) {
+        e.racha = 0; e.revelado = true;
+        e.mensaje = 'It was possible: between ' + ms(a) + ' and ' + ms(b) + ' the bangs and the notes were separated at once. Press “Another case” and start the streak over.';
+      } else {
+        e.resuelto = true; e.racha += 1;
+        e.mensaje = 'Exactly: to separate the notes you need a window longer than ' + ms(a) + ', and to separate the bangs, shorter than ' + ms(b) + '. Both can’t fit.' + (e.racha < 2 ? ' Press “Another case.”' : '');
+      }
+      pintar();
+      Curso.cambio('reto-6');
+    }
+    function otro() {
+      e.caso = nuevoCaso(e.caso); e.resuelto = false; e.revelado = false; e.mensaje = '';
+      if (e.racha >= 2) e.racha = 0;
+      recalcular(); evaluar(); pintar(); Curso.cambio('reto-6');
+    }
+    const asegurar = () => { if (!e.V) { recalcular(); evaluar(); pintar(); } };
+    Curso.alVerse(L.canvas, asegurar);
+    pintar();
+    Curso.reto('reto-6', {
+      titulo: 'Can the two things be separated?', nivel: 'difícil',
+      comprobar: () => (e.racha >= 2 ? { ok: true, mensaje: 'Two cases in a row: you now know when a window that works exists and when it doesn’t.' } : { ok: false, mensaje: e.mensaje }),
+      resolver: () => { e.racha = 2; e.resuelto = true; e.mensaje = ''; if (e.V) pintar(); },
+      pista: [
+        'Look at the two gap readings: each one has to reach 3 dB. The bangs ask for a short window and the notes for a long one.',
+        'Multiply the spacing between the bangs, in seconds, by the difference between the notes, in hertz: if it doesn’t reach one, no window will work.',
+      ],
+      exito: '<p>Separating two bangs and two notes with a Hann window is only possible if the spacing between the bangs, in seconds, multiplied by the difference between the notes, in hertz, reaches at least one. It is the tile again: its area doesn’t drop below a minimum.</p>',
+    });
+  })();
+
+  // ── En tu voz: dos espectrogramas del mismo audio, uno con ventana corta y otro con ventana larga ─────
+  (function () {
+    const st = { x: null, fs: FS, dur: 0, f0: null, corta: 4, larga: 64, A: null, B: null, rango: [-90, 0] };
+    // Tres palmadas y una «aaa»: lo que pide la lección, en una sola grabación sintética de unos 5,5 s.
+    function palmadasYAaa(fs) {
+      const p = Senal.ejemplos.palmadas(fs, { sala: 'habitacion', dur: 3 }), v = Senal.ejemplos.vocal(fs, { vocal: 'a', f0: 130, dur: 2.5 });
+      const x = new Float64Array(p.length + Math.round(0.2 * fs) + v.length);
+      x.set(p, 0);
+      x.set(v, p.length + Math.round(0.2 * fs));
+      return x;
+    }
+    const lab = Curso.voz('#voz-lab', {
+      ejemplos: [{ id: 'palmadas-aaa', nombre: 'Claps and “aah”', crear: fs => palmadasYAaa(fs) }, 'palmadas', 'aaa'],
+      fsAnalisis: FS,
+      alCargar: (x, fs) => { st.x = x; st.fs = fs; st.dur = x.length / fs; analizar(); },
+    });
+    const dos = crear('div', { class: 'columnas-2' });
+    lab.panel.appendChild(dos);
+    const paneles = ['corta', 'larga'].map(clave => {
+      const panel = crear('div', { class: 'panel-mini' });
+      panel.appendChild(crear('div', { class: 'cabeza-mini' }, crear('span', { class: 'rotulo-mini' }, clave === 'corta' ? 'Short window' : 'Long window')));
+      const escena = crear('div', { class: 'escena' });
+      panel.appendChild(escena);
+      dos.appendChild(panel);
+      const mapa = G.lienzo(escena, {
+        alto: altoDe(210, 250),
+        etiqueta: 'Spectrogram of the loaded audio with a ' + (clave === 'corta' ? 'short' : 'long') + ' window, with the same color scale as the other',
+        dibujar: (ctx, w, h, C) => {
+          const V = clave === 'corta' ? st.A : st.B;
+          dibujarMapa(ctx, w, h, C, V ? V.vista : null, { x: [0, Math.max(0.1, st.dur)], y: [0, 5000], marcasY: [0, 1000, 2000, 3000, 4000, 5000], formatoX: v => num(v, 1), etiquetaX: 'time (s)', rango: st.rango });
+          if (!V) G.texto(ctx, w / 2, h / 2, 'Record, upload audio or pick an example', { alinear: 'center', color: C.tenue, tam: 12, C });
+        },
+      });
+      const lect = Curso.lecturas(panel, [
+        { id: 'baldosa', nombre: 'Tile', clase: clave === 'corta' ? 'respuesta' : '' },
+        { id: 'palmada', nombre: 'A clap takes up' },
+      ]);
+      const mando = Curso.mando(panel, {
+        etiqueta: 'Window length', escala: 'log', min: clave === 'corta' ? 2 : 20, max: clave === 'corta' ? 30 : 200, paso: 0.5, valor: st[clave], formato: v => ms(v),
+        alCambiar: v => { st[clave] = v; analizar(); },
+      });
+      return { clave, mapa, lect, mando };
+    });
+    const fila = crear('div', { class: 'fila' });
+    lab.panel.appendChild(fila);
+    const lectGeneral = Curso.lecturas(fila, [
+      { id: 'f0', nombre: 'Your note, approximately', clase: 'senal' },
+      { id: 'minima', nombre: 'Window to see your harmonics' },
+    ]);
+    const nota = crear('p', { class: 'nota-reto' }, 'Pick an audio file or record your own to see the two windows.');
+    lab.panel.appendChild(nota);
+
+    function espectrogramaDe(ms_) {
+      const maxN = Math.max(8, Math.floor(st.x.length / 2));            // nunca una ventana más larga que media grabación
+      const n = Math.max(8, Math.min(maxN, Math.round(ms_ * st.fs / 1000))), salto = Math.max(16, Math.round(n / 4)), nfft = Math.max(512, pot2(2 * n));
+      const E = Senal.espectrograma(st.x, st.fs, { n, salto, ventana: 'hann', nfft, suelo: -120 });
+      return { n, E, vista: recortarMapa(E, 0, st.dur, 0, 5000) };
+    }
+    function analizar() {
+      if (!st.x || !st.x.length) return;
+      st.A = espectrogramaDe(st.corta);
+      st.B = espectrogramaDe(st.larga);
+      const M = Math.max(st.A.E.max, st.B.E.max);
+      st.rango = [M - 75, M];
+      // Tu nota: la mediana de las estimaciones de YIN.
+      let f0 = null;
+      try {
+        const y = Senal.yin(st.x, st.fs, { fmin: 60, fmax: 600 }), v = Array.from(y.f0).filter(Number.isFinite).sort((a, b) => a - b);
+        if (v.length >= 3) f0 = v[v.length >> 1];
+      } catch (err) { f0 = null; }
+      st.f0 = f0;
+      for (const p of paneles) {
+        const A = p.clave === 'corta' ? st.A : st.B, T = A.n / st.fs;
+        p.lect.fijar('baldosa', ms(T * 1000) + ' × ' + num(1 / T) + ' Hz');
+        p.lect.fijar('palmada', ms(0.37 * T * 1000));
+        p.mapa.dibujar();
+      }
+      lectGeneral.fijar('f0', f0 ? num(f0, 0) + ' Hz' : 'can’t find it');
+      lectGeneral.fijar('minima', f0 ? 'at least ' + ms(2000 / f0) : '—');
+      nota.textContent = f0
+        ? 'To separate your harmonics, which are ' + num(f0, 0) + ' Hz apart, the Hann window has to last at least about ' + num(2000 / f0, 0) + ' ms, and with that window each clap spreads out to about ' + num(0.37 * 2000 / f0, 0) + ' ms. The “A clap takes up” reading is the footprint of a sharp bang with each window: a little more than a third of its duration.'
+        : 'I couldn’t find a sustained note in this audio, so I can’t estimate the window your harmonics would need. Still, look at how the claps, if there are any, change between the two windows.';
+    }
+  })();
+})();
+</script>
+</body>
+</html>
